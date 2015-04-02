@@ -1,0 +1,14 @@
+{
+	"billingKey": "12345",
+	"build": 1,
+	"minSdk": 16,
+	"analyticsIdIos": undefined,
+	"analyticsIdAndroid": undefined,
+	"analyticsIdOther": undefined,
+	"admobIdIosBanner": undefined,
+	"admobIdIosInterstitial": undefined,
+	"admobIdAndroidBanner": undefined,
+	"admobIdAndroidInterstitial": undefined,
+	"admobIdOtherBanner": undefined,
+	"admobIdOtherInterstitial": undefined
+}

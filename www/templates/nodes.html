@@ -1,0 +1,32 @@
+<ion-view view-title="Nodes" class="nodes">
+	<ion-nav-bar class="bar-light" align-title="center">
+		<ion-nav-buttons side="left">
+			<button class="button button-compass button-clear" ng-click="util.dashboard('back')"><i class="icon ion-ios-arrow-left"> Dashboard</i></button>
+		</ion-nav-buttons>
+		<ion-nav-buttons side="right">
+			<button class="button button-compass button-clear" ng-show="searching"><ion-spinner></ion-spinner></button>
+		</ion-nav-buttons>
+	</ion-nav-bar>
+	<ion-header-bar class="bar-subheader item-input-inset">
+		<label class="item-input-wrapper">
+			<i class="icon ion-ios-search placeholder-icon"></i>
+			<input type="search" placeholder="Search" ng-model="searchString">
+		</label>
+		<button class="button button-clear" ng-click="searchString = ''">Cancel</button>
+	</ion-header-bar>
+	<ion-content delegate-handle="nodes-scroll">
+		<ion-refresher pulling-text="Pull to Refresh..." on-refresh="updateSearch(searchString)"></ion-refresher>
+		<ion-list>
+			<ion-item ng-repeat="node in nodes track by node.id" ng-click="viewNode(node)">
+				<span class="item-note">{{node.id}}</span>
+				<span ng-if="node.foreignId">
+					{{node.label}}
+					<p class="shift-1">{{node.getDisplayId()}}</p>
+				</span>
+				<span ng-if="!node.foreignId">
+					{{node.label}}
+				</span>
+			</ion-item>
+		</ion-list>
+	</ion-content>
+</ion-view>

@@ -1,0 +1,24 @@
+.alarms {
+	.item-complex .item-content, .item-radio .item-content {
+		background-color: inherit;
+	}
+	.message {
+		height: 42px;
+		overflow-y: hidden !important;
+	}
+
+	.legend {
+		&.row {
+			padding: 0;
+		}
+		&.box {
+			.col {
+				padding: 10px;
+				text-align: center;
+			}
+		}
+		.icon {
+			border: 0;
+		}
+	}
+}

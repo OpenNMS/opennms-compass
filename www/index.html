@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html xmlns:ng="http://angularjs.org" lang="en">
+<!--<![endif]-->
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+<meta name="format-detection" content="telephone=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+
+<!-- build:css(.tmp) styles/3rdparty.css -->
+<!-- endbuild -->
+
+<!-- build:css(.tmp) styles/cm.css -->
+<link rel="stylesheet" href="css/opennms.css" />
+<!-- endbuild -->
+
+<style>
+	 [ng\:cloak], [ng-cloak], .ng-cloak {
+		display: none !important;
+	}
+</style>
+
+<!-- IE Fix for HTML5 Tags -->
+<!--[if lt IE 9]>
+<script src="lib/html5shiv/dist/html5shiv.js"></script>
+<![endif]-->
+
+<title>OpenNMS Compass</title>
+</head>
+<body class="antialiased off-canvas hide-extras" ng-class="themeType" ng-cloak animation="no-animation">
+	<ion-nav-view></ion-nav-view>
+
+	<!-- build:js scripts/shim.js -->
+	<script src="lib/modernizr/modernizr.js"></script>
+	<script src="lib/classlist/classList.min.js"></script>
+	<script src="lib/es5-shim/es5-shim.min.js"></script>
+	<!-- endbuild -->
+
+	<!-- build:js scripts/3rdparty.js -->
+	<script src="lib/jquery/dist/jquery.min.js"></script>
+	<script src="lib/jquery-visible/jquery.visible.min.js"></script>
+	<script src="lib/async/lib/async.js"></script>
+	<script src="lib/momentjs/min/moment.min.js"></script>
+	<script src="lib/x2js/xml2json.min.js"></script>
+	<!-- endbuild -->
+
+	<!-- build:js scripts/ipv6.js -->
+	<script src="lib/ipv6/lib/browser/jsbn.js"></script>
+	<script src="lib/ipv6/lib/browser/jsbn2.js"></script>
+	<script src="lib/ipv6/lib/browser/sprintf.js"></script>
+	<script src="lib/ipv6/ipv6.js"></script>
+	<!-- endbuild -->
+
+	<!-- build:js scripts/angular.js -->
+	<script src="lib/angular/angular.min.js"></script>
+	<script src="lib/angular-animate/angular-animate.min.js"></script>
+	<script src="lib/angular-cookies/angular-cookies.min.js"></script>
+	<script src="lib/angular-sanitize/angular-sanitize.min.js"></script>
+	<script src="lib/angular-ui-router/release/angular-ui-router.min.js"></script>
+	<script src="lib/ionic/release/js/ionic.min.js"></script>
+	<script src="lib/ionic/release/js/ionic-angular.min.js"></script>
+	<script src="lib/angularLocalStorage/src/angularLocalStorage.js"></script>
+	<script src="lib/ng-resize/ngresize.min.js"></script>
+	<!-- endbuild -->
+
+    <!-- build.js scripts/charts.js -->
+	<script src="lib/d3/d3.min.js"></script>
+	<script src="lib/d3pie/d3pie/d3pie.min.js"></script>
+    <!-- endbuild -->
+
+	<!-- build:js scripts/models.js -->
+	<script src="scripts/opennms/models/Array.js"></script>
+	<script src="scripts/opennms/models/String.js"></script>
+	<script src="scripts/opennms/models/Alarm.js"></script>
+	<script src="scripts/opennms/models/AlarmFilter.js"></script>
+	<script src="scripts/opennms/models/AlarmSummary.js"></script>
+	<script src="scripts/opennms/models/AvailabilityCategory.js"></script>
+	<script src="scripts/opennms/models/AvailabilityNode.js"></script>
+	<script src="scripts/opennms/models/AvailabilityIpInterface.js"></script>
+	<script src="scripts/opennms/models/AvailabilitySection.js"></script>
+	<script src="scripts/opennms/models/AvailabilityService.js"></script>
+	<script src="scripts/opennms/models/DonutWidget.js"></script>
+	<script src="scripts/opennms/models/Event.js"></script>
+	<script src="scripts/opennms/models/Metric.js"></script>
+	<script src="scripts/opennms/models/MonitoredService.js"></script>
+	<script src="scripts/opennms/models/Node.js"></script>
+	<script src="scripts/opennms/models/Outage.js"></script>
+	<script src="scripts/opennms/models/OutageSummary.js"></script>
+	<script src="scripts/opennms/models/Report.js"></script>
+	<script src="scripts/opennms/models/ReportGraph.js"></script>
+	<script src="scripts/opennms/models/RestError.js"></script>
+	<!-- endbuild -->
+
+	<!-- build:js scripts/cm.js -->
+	<script src="scripts/opennms/main.js"></script>
+	<script src="scripts/opennms/controllers/Alarms.js"></script>
+	<script src="scripts/opennms/controllers/Dashboard.js"></script>
+	<script src="scripts/opennms/controllers/Nodes.js"></script>
+	<script src="scripts/opennms/controllers/Settings.js"></script>
+	<script src="scripts/opennms/services/Ads.js"></script>
+	<script src="scripts/opennms/services/Alarms.js"></script>
+	<script src="scripts/opennms/services/Availability.js"></script>
+	<script src="scripts/opennms/services/BuildConfig.js"></script>
+	<script src="scripts/opennms/services/Config.js"></script>
+	<script src="scripts/opennms/services/Errors.js"></script>
+	<script src="scripts/opennms/services/Events.js"></script>
+	<script src="scripts/opennms/services/IAP.js"></script>
+	<script src="scripts/opennms/services/Info.js"></script>
+	<script src="scripts/opennms/services/Modals.js"></script>
+	<script src="scripts/opennms/services/Nodes.js"></script>
+	<script src="scripts/opennms/services/Outages.js"></script>
+	<script src="scripts/opennms/services/Rest.js"></script>
+	<script src="scripts/opennms/services/Util.js"></script>
+	<!-- endbuild -->
+
+	<script src="lib/ngCordova/dist/ng-cordova.min.js"></script>
+	<script src="cordova.js"></script>
+	<script>
+		ionic.Platform.ready(function() {
+			console.log('Platform is ready.  Bootstrapping.');
+			angular.bootstrap(document, ['opennms.Main']);
+		});
+	</script>
+</body>
+</html>

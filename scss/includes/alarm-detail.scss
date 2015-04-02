@@ -1,0 +1,16 @@
+.alarm-detail {
+	.item.item-divider {
+		/* make sure his borders are higher than the rows */
+		z-index: 3;
+		background-color: $item-divider-bg;
+	}
+	.item {
+		background-color: transparent;
+		p {
+			color: $item-default-text;
+		}
+	}
+	.row.item {
+		border: 0;
+	}
+}

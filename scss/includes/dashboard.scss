@@ -1,0 +1,73 @@
+$server-title-height: 34px;
+
+$arrow-top-offset: 60px;
+$arrow-touch-padding: 20px;
+$arrow-edge-padding: 10px;
+
+.dashboard {
+	.nav-bar-title img {
+		vertical-align: baseline;
+		margin: 4px;
+	}
+	.bar-subheader {
+		border-bottom: 1px solid #eee;
+	}
+	h3.title {
+		text-align: center;
+		margin-top: 0;
+		font-size: $font-size-base;
+	}
+	.error {
+		color: red;
+	}
+	ion-item.outages.item {
+		border: none;
+		padding: 0;
+	}
+	.alarms.col, .outages.col {
+		padding: 0;
+		margin: 0;
+	}
+	.alarms {
+		text-align: center;
+	}
+	.outages {
+		text-align: center;
+	}
+	.availability {
+		.header {
+			background-color: #666;
+			color: white;
+		}
+		.noright {
+			padding-right: 0;
+		}
+		.nobottom {
+			padding-bottom: 0;
+		}
+	}
+	.left-arrow {
+		position: absolute;
+		left: 0;
+		top: $arrow-top-offset;
+		z-index: 10;
+		padding-top: $arrow-touch-padding;
+		padding-left: $arrow-edge-padding;
+		padding-right: $arrow-touch-padding;
+		padding-bottom: $arrow-touch-padding;
+		font-size: ($arrow-touch-padding * 2);
+		line-height: ($arrow-touch-padding * 2);
+	}
+	.right-arrow {
+		position: absolute;
+		right: 0;
+		top: $arrow-top-offset;
+		z-index: 10;
+		padding-top: $arrow-touch-padding;
+		padding-left: $arrow-touch-padding;
+		padding-right: $arrow-edge-padding;
+		padding-bottom: $arrow-touch-padding;
+		font-size: ($arrow-touch-padding * 2);
+		line-height: ($arrow-touch-padding * 2);
+	}
+}

@@ -1,0 +1,160 @@
+.icon.severity.severity-CRITICAL {
+	color: $severity-alarm-critical-border;
+	background-color: transparent;
+}
+.box .severity-CRITICAL {
+	color: $severity-alarm-critical-text;
+	background-color: $severity-alarm-critical-bg;
+	border: 1px solid $severity-alarm-critical-border;
+	&.disabled {
+		background-color: lighten($severity-alarm-critical-bg, 10%);
+		color: lighten($severity-alarm-critical-text, 50%);
+	}
+}
+.severity-CRITICAL {
+	background-color: $severity-alarm-critical-bg;
+}
+
+.icon.severity.severity-MAJOR {
+	color: $severity-alarm-major-border;
+	background-color: transparent;
+}
+.box .severity-MAJOR {
+	color: $severity-alarm-major-text;
+	background-color: $severity-alarm-major-bg;
+	border: 1px solid $severity-alarm-major-border;
+	&.disabled {
+		background-color: lighten($severity-alarm-critical-bg, 10%);
+		color: lighten($severity-alarm-critical-text, 50%);
+	}
+}
+.severity-MAJOR {
+	background-color: $severity-alarm-major-bg;
+}
+
+.icon.severity.severity-MINOR {
+	color: $severity-alarm-minor-border;
+	background-color: transparent;
+}
+.box .severity-MINOR {
+	color: $severity-alarm-minor-text;
+	background-color: $severity-alarm-minor-bg;
+	border: 1px solid $severity-alarm-minor-border;
+	&.disabled {
+		background-color: lighten($severity-alarm-critical-bg, 10%);
+		color: lighten($severity-alarm-critical-text, 50%);
+	}
+}
+.severity-MINOR {
+	background-color: $severity-alarm-minor-bg;
+}
+
+.icon.severity.severity-WARNING {
+	color: $severity-alarm-warning-border;
+	background-color: transparent;
+}
+.box .severity-WARNING {
+	color: $severity-alarm-warning-text;
+	background-color: $severity-alarm-warning-bg;
+	border: 1px solid $severity-alarm-warning-border;
+	&.disabled {
+		background-color: lighten($severity-alarm-critical-bg, 10%);
+		color: lighten($severity-alarm-critical-text, 50%);
+	}
+}
+.severity-WARNING {
+	background-color: $severity-alarm-warning-bg;
+}
+
+.icon.severity.severity-INDETERMINATE {
+	color: $severity-alarm-indeterminate-border;
+	background-color: transparent;
+}
+.box .severity-INDETERMINATE {
+	color: $severity-alarm-indeterminate-text;
+	background-color: $severity-alarm-indeterminate-bg;
+	border: 1px solid $severity-alarm-indeterminate-border;
+	&.disabled {
+		background-color: lighten($severity-alarm-critical-bg, 10%);
+		color: lighten($severity-alarm-critical-text, 50%);
+	}
+}
+.severity-INDETERMINATE {
+	background-color: $severity-alarm-indeterminate-bg;
+}
+
+.icon.severity.severity-NORMAL {
+	color: $severity-alarm-normal-border;
+	background-color: transparent;
+}
+.box .severity-NORMAL {
+	color: $severity-alarm-normal-text;
+	background-color: $severity-alarm-normal-bg;
+	border: 1px solid $severity-alarm-normal-border;
+	&.disabled {
+		background-color: lighten($severity-alarm-critical-bg, 10%);
+		color: lighten($severity-alarm-critical-text, 50%);
+	}
+}
+.severity-NORMAL {
+	background-color: $severity-alarm-normal-bg;
+}
+
+.icon.severity.severity-CLEARED {
+	color: $severity-alarm-cleared-border;
+	background-color: transparent;
+}
+.box .severity-CLEARED {
+	color: $severity-alarm-cleared-text;
+	background-color: $severity-alarm-cleared-bg;
+	border: 1px solid $severity-alarm-cleared-border;
+	&.disabled {
+		background-color: lighten($severity-alarm-critical-bg, 10%);
+		color: lighten($severity-alarm-critical-text, 50%);
+	}
+}
+.severity-CLEARED {
+	background-color: $severity-alarm-cleared-bg;
+}
+
+.severity-CRITICAL {
+	.bottom-fade {
+		background: linear-gradient(to bottom, rgba($severity-alarm-critical-bg,0) 0%,rgba($severity-alarm-critical-bg,1) 70%);
+	}
+}
+
+.severity-MAJOR {
+	.bottom-fade {
+		background: linear-gradient(to bottom, rgba($severity-alarm-major-bg,0) 0%,rgba($severity-alarm-major-bg,1) 70%);
+	}
+}
+
+.severity-MINOR {
+	.bottom-fade {
+		background: linear-gradient(to bottom, rgba($severity-alarm-minor-bg,0) 0%,rgba($severity-alarm-minor-bg,1) 70%);
+	}
+}
+
+.severity-WARNING {
+	.bottom-fade {
+		background: linear-gradient(to bottom, rgba($severity-alarm-warning-bg,0) 0%,rgba($severity-alarm-warning-bg,1) 70%);
+	}
+}
+
+.severity-INDETERMINATE {
+	.bottom-fade {
+		background: linear-gradient(to bottom, rgba($severity-alarm-indeterminate-bg,0) 0%,rgba($severity-alarm-indeterminate-bg,1) 70%);
+	}
+}
+
+.severity-NORMAL {
+	.bottom-fade {
+		background: linear-gradient(to bottom, rgba($severity-alarm-normal-bg,0) 0%,rgba($severity-alarm-normal-bg,1) 70%);
+	}
+}
+
+.severity-CLEARED {
+	.bottom-fade {
+		background: linear-gradient(to bottom, rgba($severity-alarm-cleared-bg,0) 0%,rgba($severity-alarm-cleared-bg,1) 70%);
+	}
+}

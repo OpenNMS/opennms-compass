@@ -1,0 +1,50 @@
+{
+  "name": "OpenNMS",
+  "version": "2.0.0",
+  "description": "OpenNMS Compass",
+  "dependencies": {
+    "gulp": "*",
+    "gulp-concat": "*",
+    "gulp-minify-css": "*",
+    "gulp-rename": "*",
+    "gulp-sass": "*",
+    "gulp-util": "*"
+  },
+  "devDependencies": {
+    "bower": "*",
+    "commonmark": "*",
+    "cordova-android": "*",
+    "fs.extra": "*",
+    "gulp-bytediff": "^0.2.1",
+    "gulp-jasmine": "*",
+    "gulp-jshint": "*",
+    "gulp-karma": "*",
+    "gulp-ng-annotate": "^0.5.2",
+    "gulp-sourcemaps": "^1.5.0",
+    "gulp-uglify": "^1.1.0",
+    "jshint": "*",
+    "jshint-stylish": "*",
+    "karma": "*",
+    "karma-chrome-launcher": "*",
+    "karma-firefox-launcher": "*",
+    "karma-jasmine": "*",
+    "karma-phantomjs-launcher": "*",
+    "karma-safari-launcher": "*",
+    "karma-webdriver-launcher": "*",
+    "line-reader": "*",
+    "shelljs": "*"
+  },
+  "cordovaPlugins": [
+    "org.apache.cordova.console",
+    "org.apache.cordova.geolocation",
+    "org.apache.cordova.inappbrowser",
+    "org.apache.cordova.network-information",
+    "org.apache.cordova.splashscreen",
+    "org.apache.cordova.statusbar",
+    "com.google.cordova.admob",
+    "cc.fovea.cordova.purchase",
+    "com.ionic.keyboard",
+    "https://github.com/RangerRick/cordova-certificate-plugin.git",
+    "com.ohh2ahh.plugins.appavailability"
+  ]
+}

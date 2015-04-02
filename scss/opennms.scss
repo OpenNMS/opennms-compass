@@ -1,0 +1,116 @@
+$ionicons-font-path: "../lib/ionic/release/fonts" !default;
+
+$fontPath: "../fonts" !default;
+$imagePath: "../images" !default;
+
+/* OVERRIDE IONIC VARIABLES HERE */
+
+$positive:                        #129a48;
+
+$button-positive-bg:              $positive;
+$button-positive-text:            #fff;
+$button-positive-border:          darken($positive, 10%);
+$button-positive-active-bg:       darken($positive, 10%);
+$button-positive-active-border:   darken($positive, 10%);
+
+$bar-light-bg:                    rgba(white, 1.0);
+$bar-light-text:                  black;
+$bar-light-border:                white;
+$bar-light-active-bg:             white;
+$bar-light-active-border:         white;
+
+$modal-inset-mode-break-point:    1064;  // @media min-width
+$modal-inset-mode-top:            0;
+$modal-inset-mode-right:          0;
+$modal-inset-mode-bottom:         0;
+$modal-inset-mode-left:           0;
+$modal-inset-mode-min-height:     240px;
+
+/* END OVERRIDE IONIC VARIABLES HERE */
+
+@import "www/lib/ionic/scss/ionic";
+
+/* OPENNMS GLOBAL COLORS */
+
+$severity-alarm-critical-text: black;
+$severity-alarm-critical-bg: #f5cdcd;
+$severity-alarm-critical-border: #cc0000;
+
+$severity-alarm-major-text: black;
+$severity-alarm-major-bg: #ffd7cd;
+$severity-alarm-major-border: #ff3300;
+
+$severity-alarm-minor-text: black;
+$severity-alarm-minor-bg: #ffebcd;
+$severity-alarm-minor-border: #ff9900;
+
+$severity-alarm-warning-text: black;
+$severity-alarm-warning-bg: #fff5cd;
+$severity-alarm-warning-border: #ffcc00;
+
+$severity-alarm-indeterminate-text: black;
+$severity-alarm-indeterminate-bg: #ebebcd;
+$severity-alarm-indeterminate-border: #999900;
+
+$severity-alarm-normal-text: black;
+$severity-alarm-normal-bg: #d7e1cd;
+/* $severity-alarm-normal-border: #336600; */
+$severity-alarm-normal-border: green;
+
+$severity-alarm-cleared-text: black;
+$severity-alarm-cleared-bg: #eeeeee;
+$severity-alarm-cleared-border: #999;
+
+@import
+	"includes/theme",
+	"includes/alarms",
+	"includes/alarm-detail",
+	"includes/dashboard",
+	"includes/node-detail",
+	"includes/outage-list",
+	"includes/severity"
+;
+
+/* other miscellaneous UI classes */
+
+.no-top {
+	border-top: 0;
+}
+
+.no-bottom {
+	border-bottom: 0;
+}
+
+.shift-1 {
+	padding-left: 20px;
+}
+
+.shift-2 {
+	padding-left: 40px;
+}
+
+.spacer {
+	padding-bottom: 40px;
+}
+
+.no-padding {
+	padding: 0;
+}
+
+.pull-right {
+	text-align: right;
+}
+
+.monospace {
+	font-family: monospace, serif;
+}
+
+.bottom-fade {
+	z-index: 100;
+	height: 40px;
+	position: absolute;
+	right: 0;
+	left: 0;
+	bottom: 0;
+}
+

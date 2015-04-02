@@ -1,0 +1,35 @@
+<ion-view view-title="Alarms" class="alarms">
+	<ion-nav-bar class="bar-light" align-title="center">
+		<ion-nav-buttons side="left">
+			<button ng-if="modal" class="button button-compass button-clear" ng-click="modal.show()"><i class="icon ion-ios-settings"></i> Filter</button>
+		</ion-nav-buttons>
+		<ion-nav-buttons side="right">
+			<button class="button button-compass button-clear" ui-sref="dashboard" nav-direction="forward">Dashboard <i class="icon ion-ios-arrow-right"></i></button>
+		</ion-nav-buttons>
+	</ion-nav-bar>
+	<ion-header-bar class="bar bar-subheader legend row box" ng-if="legend.length &gt; 0">
+		<div ng-class="'col severity-' + item.severity + ' ' + (severities[item.severity]? 'enabled':'disabled')" ng-repeat="item in legend" ng-click="toggleSeverity(item)"><i ng-class="'icon severity severity-' + item.severity + ' ' + util.icon(item.severity)"></i> {{item.count}}</div>
+	</ion-header-bar>
+	<ion-content delegate-handle="alarms-scroll" ng-class="legend.length &gt; 0? 'has-subheader':''">
+		<ion-refresher pulling-text="Pull to Refresh..." on-refresh="refreshAlarms()"></ion-refresher>
+		<ion-list can-swipe="true">
+			<ion-item ng-if="alarms &amp;&amp; alarms.length === 0">
+				No {{filter.showAcknowledged? 'matching':'unacknowledged'}} alarms found.
+			</ion-item>
+			<ion-item ng-class="'item item-text-wrap item-icon-right severity-' + alarm.severity" ng-repeat="alarm in alarms | severity track by alarm.id"
+				collection-item-height="120" ng-click="openAlarm(alarm)">
+				<ion-delete-button class="ion-ios-checkmark-outline" ng-click="acknowledge(alarm)"></ion-delete-button>
+				<span class="item-note">{{alarm.lastEventTime.fromNow()}}</span>
+				<h2>{{alarm.title}}<span ng-if="alarm.severity === 'CLEARED'"> (Cleared)</span></h2>
+				<p>{{alarm.nodeLabel}}</p>
+				<p ng-bind-html="alarm.logMessage" class="message"></p>
+				<i ng-class="'icon severity severity-' + alarm.severity + ' ' + util.icon(alarm.severity)" title="{{alarm.severity}}"></i>
+				<ion-option-button ng-click="clear(alarm, $event)" ng-if="alarm.severity !== 'CLEARED'">Clear</ion-option-button>
+				<ion-option-button ng-click="escalate(alarm, $event)" ng-if="alarm.severity !== 'CRITICAL'">Escalate</ion-option-button>
+				<ion-option-button ng-click="toggleAck(alarm, $event)">{{alarm.ackUser? 'Unack':'Ack'}}</ion-option-button>
+				<div class="bottom-fade"></div>
+			</ion-item>
+		</ion-list>
+		<!-- <ion-infinite-scroll on-infinite="getAlarms()" ng-if="canLoadMore()"></ion-infinite-scroll> -->
+	</ion-content>
+</ion-view>

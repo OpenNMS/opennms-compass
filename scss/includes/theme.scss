@@ -1,0 +1,145 @@
+$meridian-blue: #277eb7;
+$horizon-green: #509c49;
+
+@mixin compass-theme($dark, $light) {
+	.tabs .tab-item .badge, .badge {
+		&.badge-compass {
+			@include badge-style($dark, $light);
+		}
+	}
+
+	.bar {
+		&.bar-compass {
+			@include bar-style($dark, darken($dark, 10%), $light);
+			&.bar-footer {
+				background-image: linear-gradient(180deg, darken($dark, 10%), darken($dark, 10%) 50%, transparent 50%);
+			}
+		}
+	}
+
+	.bar-compass {
+		.button {
+			@include button-style($dark, darken($dark, 10%), darken($dark, 10%), darken($dark, 10%), $light);
+			@include button-clear(#fff, $bar-title-font-size);
+		}
+	}
+
+	.button {
+		&.button-compass {
+			@include button-style($dark, darken($dark, 10%), darken($dark, 10%), darken($dark, 10%), $light);
+			@include button-clear($dark);
+			@include button-outline($dark);
+		}
+	}
+
+	.checkbox-compass  {
+		@include checkbox-style($dark, $dark, $dark);
+	}
+
+	.item {
+		&.item-compass {
+			@include item-style($dark, darken($dark, 10%), $light);
+		}
+	}
+
+	.item.active,
+	.item.activated,
+	.item-complex.active .item-content,
+	.item-complex.activated .item-content,
+	.item .item-content.active,
+	.item .item-content.activated {
+		&.item-compass {
+			@include item-active-style(darken($dark, 10%), darken($dark, 10%));
+		}
+	}
+
+	.item-complex {
+		&.item-compass > .item-content {
+			@include item-style($dark, darken($dark, 10%), $light);
+			&.active, &:active {
+				@include item-active-style(darken($dark, 10%), darken($dark, 10%));
+			}
+		}
+	}
+
+	.item-select {
+		&.item-compass {
+			select {
+				background:$dark;
+				color:$light;
+			}
+				&:after, .input-label {
+				color:$light;
+			}
+		}
+	}
+
+	.range {
+		&.range-compass {
+			input { @include range-style($dark); }
+		}
+	}
+
+	.spinner {
+		&.spinner-compass {
+			stroke: $dark;
+			fill: $dark;
+		}
+	}
+
+	.tabs-compass > .tabs,
+	.tabs.tabs-compass {
+		@include tab-style($dark, $dark, $light);
+		@include tab-badge-style($light, $dark);
+	}
+
+	.tabs-striped {
+		@include tabs-striped('tabs-compass', $light, $dark);
+		@include tabs-striped-background('tabs-background-compass', $dark);
+		@include tabs-striped-color('tabs-color-compass', $dark);
+	}
+
+	@include tabs-background('tabs-background-compass', $dark, darken($dark,10%));
+	@include tabs-color('tabs-color-compass', $dark);
+
+	ion-tabs {
+		@include tabs-standard-color('tabs-color-active-compass', $dark, darken($dark,50%));
+	}
+
+	.tab-item.tab-item-active,
+	.tab-item.active,
+	.tab-item.activated {
+		&.tab-item-compass {
+			color: $dark;
+		}
+	}
+
+	.toggle {
+		&.toggle-compass  {
+			@include toggle-style($dark, $dark);
+		}
+	}
+
+	.toggle-small {
+		.toggle-compass {
+			@include toggle-small-style($dark);
+		}
+	}
+
+	.compass, a.compass {
+		color: $dark;
+	}
+	.compass-bg {
+		background-color: $dark;
+	}
+	.compass-border {
+		border-color: $dark;
+	}
+}
+
+.horizon {
+	@include compass-theme($horizon-green, #fff);
+}
+.meridian {
+	@include compass-theme($meridian-blue, #fff);
+}
