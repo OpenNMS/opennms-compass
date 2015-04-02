@@ -31,6 +31,10 @@
 			checkAvailability();
 		});
 
+		var isSupported = function() {
+			return hasAvailability.promise;
+		};
+
 		var getAvailability = function() {
 			var deferred = $q.defer();
 
@@ -132,6 +136,7 @@
 		};
 
 		return {
+			supported: isSupported,
 			availability: getAvailability,
 			category: getCategory,
 			nodes: getNodes,

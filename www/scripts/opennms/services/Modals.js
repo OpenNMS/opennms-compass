@@ -11,11 +11,12 @@
 		'opennms.services.Config',
 		'opennms.services.Errors',
 		'opennms.services.Events',
+		'opennms.services.Info',
 		'opennms.services.Nodes',
 		'opennms.services.Outages',
 		'opennms.services.Util',
 	])
-	.factory('Modals', ['$q', '$rootScope', '$interval', '$ionicModal', '$ionicPopup', 'AlarmService', 'AvailabilityService', 'Errors', 'EventService', 'NodeService', 'OutageService', 'Settings', 'util', function($q, $rootScope, $interval, $ionicModal, $ionicPopup, AlarmService, AvailabilityService, Errors, EventService, NodeService, OutageService, Settings, util) {
+	.factory('Modals', ['$q', '$rootScope', '$interval', '$ionicModal', '$ionicPopup', 'AlarmService', 'AvailabilityService', 'Errors', 'EventService', 'Info', 'NodeService', 'OutageService', 'Settings', 'util', function($q, $rootScope, $interval, $ionicModal, $ionicPopup, AlarmService, AvailabilityService, Errors, EventService, Info, NodeService, OutageService, Settings, util) {
 		console.log('Views: initializing.');
 
 		var $scope = $rootScope.$new();
@@ -374,12 +375,20 @@
 					return error.message;
 				}
 			};
+
 			modal.scope.clear = function() {
 				Errors.reset();
 				modal.scope.errors = [];
 			};
 			modal.scope.show = function() {
 				modal.scope.errors = Errors.get();
+				Info.get().then(function(info) {
+					modal.scope.info = info;
+				});
+				AvailabilityService.supported().then(function(isSupported) {
+					modal.scope.hasAvailability = isSupported;
+				});
+
 				modal.show();
 			};
 			modal.scope.hide = function() {
