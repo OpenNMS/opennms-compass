@@ -16,36 +16,38 @@
 		'opennms.services.Outages',
 		'opennms.services.Util',
 	])
-	.factory('Modals', function($q, $rootScope, $interval, $ionicModal, $ionicPopup, AlarmService, AvailabilityService, Errors, EventService, Info, NodeService, OutageService, Settings, util) {
-		console.log('Views: initializing.');
-
+	.factory('NodeModal', function($q, $rootScope, $interval, $ionicModal, AvailabilityService, EventService, NodeService, OutageService) {
+		console.log('NodeModal: initializing.');
 		var $scope = $rootScope.$new();
-		$scope.util = util;
-		$scope.settings = Settings;
+		var nodeModal = $q.defer();
 
-		$scope.alarmModal = $q.defer();
-		$scope.infoModal = $q.defer();
-		$scope.nodeModal = $q.defer();
-		$scope.outageModal = $q.defer();
-		$scope.settingsModal = $q.defer();
+		$scope.availabilityColor = function(value) {
+			if (value >= 99.99) {
+				return 'severity severity-NORMAL';
+			} else if (value >= 97) {
+				return 'severity severity-WARNING';
+			} else if (value >= 0) {
+				return 'severity severity-CRITICAL';
+			}
+			return 'severity severity-INDETERMINATE';
+		};
 
 		$ionicModal.fromTemplateUrl('templates/node-detail.html', {
 			scope: $scope.$new(),
 			animation: 'slide-in-up'
 		}).then(function(modal) {
-			$scope.nodeModal.resolve(modal);
+			nodeModal.resolve(modal);
 
 			var timer;
 
-			modal.scope.availabilityColor = function(value) {
-				if (value >= 99.99) {
-					return 'severity severity-NORMAL';
-				} else if (value >= 97) {
-					return 'severity severity-WARNING';
-				} else if (value >= 0) {
-					return 'severity severity-CRITICAL';
-				}
-				return 'severity severity-INDETERMINATE';
+			var resetModel = function() {
+				modal.scope.node = {};
+				modal.scope.availability = undefined;
+				modal.scope.outages = undefined;
+				modal.scope.events = undefined;
+				modal.scope.alarms = undefined;
+				modal.scope.ipInterfaces = undefined;
+				modal.scope.snmpInterfaces = undefined;
 			};
 
 			modal.scope.updateData = function() {
@@ -87,30 +89,13 @@
 					modal.scope.node.sysObjectId));
 			};
 
-			var startRefresh = function() {
-				//timer = $interval(modal.scope.updateData, Settings.refreshInterval());
-				modal.scope.updateData();
-			};
-
-			var stopRefresh = function() {
-				if (timer) {
-					$interval.cancel(timer);
-				}
-			};
-
 			modal.scope.show = function(node) {
 				// first, clear everything out
-				modal.scope.node = {};
-				modal.scope.availability = undefined;
-				modal.scope.outages = undefined;
-				modal.scope.events = undefined;
-				modal.scope.alarms = undefined;
-				modal.scope.ipInterfaces = undefined;
-				modal.scope.snmpInterfaces = undefined;
+				resetModel();
 
 				var showNode = function(node) {
 					modal.scope.node = node;
-					startRefresh();
+					modal.scope.updateData();
 					modal.show();
 				};
 
@@ -131,17 +116,41 @@
 					console.log('Hiding node: ' + modal.scope.node.id);
 				}
 				modal.hide();
+				resetModel();
 			};
 			modal.scope.$on('opennms.settings.changed', function(ev, newSettings, oldSettings, changedSettings) {
 				if (timer && changedSettings && changedSettings.refreshInterval) {
-					stopRefresh();
-					startRefresh();
+					modal.scope.updateData();
 				}
 			});
-			modal.scope.$on('modal.hidden', function() {
-				stopRefresh();
+		});
+
+		$scope.$on('$destroy', function() {
+			nodeModal.promise.then(function(modal) {
+				modal.scope.hide();
+				modal.remove();
 			});
 		});
+
+		return {
+			show: function(node) {
+				nodeModal.promise.then(function(modal) {
+					modal.scope.show(node);
+				});
+			},
+		};
+	})
+	.factory('Modals', function($q, $rootScope, $interval, $ionicModal, $ionicPopup, AlarmService, AvailabilityService, Errors, EventService, Info, NodeService, OutageService, Settings, util, NodeModal) {
+		console.log('Modals: initializing.');
+
+		var $scope = $rootScope.$new();
+		$scope.util = util;
+		$scope.settings = Settings;
+
+		$scope.alarmModal = $q.defer();
+		$scope.infoModal = $q.defer();
+		$scope.outageModal = $q.defer();
+		$scope.settingsModal = $q.defer();
 
 		$ionicModal.fromTemplateUrl('templates/outages.html', {
 			scope: $scope.$new(),
@@ -179,9 +188,7 @@
 			};
 
 			modal.scope.showNode = function(id) {
-				$scope.nodeModal.promise.then(function(modal) {
-					modal.scope.show(id);
-				});
+				NodeModal.show(id);
 			};
 
 			modal.scope.refreshOutages = function() {
@@ -405,10 +412,6 @@
 				modal.scope.hide();
 				modal.remove();
 			});
-			$scope.nodeModal.promise.then(function(modal) {
-				modal.scope.hide();
-				modal.remove();
-			});
 			$scope.outageModal.promise.then(function(modal) {
 				modal.scope.hide();
 				modal.remove();
@@ -431,9 +434,7 @@
 				});
 			},
 			node: function(node) {
-				$scope.nodeModal.promise.then(function(modal) {
-					modal.scope.show(node);
-				});
+				NodeModal.show(node);
 			},
 			outages: function() {
 				$scope.outageModal.promise.then(function(modal) {
