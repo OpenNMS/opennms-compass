@@ -12,12 +12,7 @@
 <meta name="format-detection" content="telephone=no" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 
-<!-- build:css(.tmp) styles/3rdparty.css -->
-<!-- endbuild -->
-
-<!-- build:css(.tmp) styles/cm.css -->
-<link rel="stylesheet" href="css/opennms.css" />
-<!-- endbuild -->
+<link rel="stylesheet" href="css/opennms.min.css" />
 
 <style>
 	 [ng\:cloak], [ng-cloak], .ng-cloak {
@@ -35,45 +30,45 @@
 <body class="antialiased off-canvas hide-extras" ng-class="themeType" ng-cloak animation="no-animation">
 	<ion-nav-view></ion-nav-view>
 
-	<!-- build:js scripts/shim.js -->
+	<!-- build:shim scripts/shim.js -->
 	<script src="lib/modernizr/modernizr.js"></script>
-	<script src="lib/classlist/classList.min.js"></script>
-	<script src="lib/es5-shim/es5-shim.min.js"></script>
+	<script src="lib/classlist/classList.js"></script>
+	<script src="lib/es5-shim/es5-shim.js"></script>
 	<!-- endbuild -->
 
-	<!-- build:js scripts/3rdparty.js -->
-	<script src="lib/jquery/dist/jquery.min.js"></script>
-	<script src="lib/jquery-visible/jquery.visible.min.js"></script>
+	<!-- build:thirdparty scripts/3rdparty.js -->
+	<script src="lib/jquery/dist/jquery.js"></script>
+	<script src="lib/jquery-visible/jquery.visible.js"></script>
 	<script src="lib/async/lib/async.js"></script>
-	<script src="lib/momentjs/min/moment.min.js"></script>
-	<script src="lib/x2js/xml2json.min.js"></script>
+	<script src="lib/momentjs/moment.js"></script>
+	<script src="lib/x2js/xml2json.js"></script>
 	<!-- endbuild -->
 
-	<!-- build:js scripts/ipv6.js -->
+	<!-- build:ipv6 scripts/ipv6.js -->
 	<script src="lib/ipv6/lib/browser/jsbn.js"></script>
 	<script src="lib/ipv6/lib/browser/jsbn2.js"></script>
 	<script src="lib/ipv6/lib/browser/sprintf.js"></script>
 	<script src="lib/ipv6/ipv6.js"></script>
 	<!-- endbuild -->
 
-	<!-- build:js scripts/angular.js -->
-	<script src="lib/angular/angular.min.js"></script>
-	<script src="lib/angular-animate/angular-animate.min.js"></script>
-	<script src="lib/angular-cookies/angular-cookies.min.js"></script>
-	<script src="lib/angular-sanitize/angular-sanitize.min.js"></script>
-	<script src="lib/angular-ui-router/release/angular-ui-router.min.js"></script>
-	<script src="lib/ionic/release/js/ionic.min.js"></script>
-	<script src="lib/ionic/release/js/ionic-angular.min.js"></script>
+	<!-- build:angular scripts/angular.js -->
+	<script src="lib/angular/angular.js"></script>
+	<script src="lib/angular-animate/angular-animate.js"></script>
+	<script src="lib/angular-cookies/angular-cookies.js"></script>
+	<script src="lib/angular-sanitize/angular-sanitize.js"></script>
+	<script src="lib/angular-ui-router/release/angular-ui-router.js"></script>
+	<script src="lib/ionic/release/js/ionic.js"></script>
+	<script src="lib/ionic/release/js/ionic-angular.js"></script>
 	<script src="lib/angularLocalStorage/src/angularLocalStorage.js"></script>
-	<script src="lib/ng-resize/ngresize.min.js"></script>
+	<script src="lib/ng-resize/ngresize.js"></script>
 	<!-- endbuild -->
 
-    <!-- build.js scripts/charts.js -->
-	<script src="lib/d3/d3.min.js"></script>
-	<script src="lib/d3pie/d3pie/d3pie.min.js"></script>
+    <!-- build:charts scripts/charts.js -->
+	<script src="lib/d3/d3.js"></script>
+	<script src="lib/d3pie/d3pie/d3pie.js"></script>
     <!-- endbuild -->
 
-	<!-- build:js scripts/models.js -->
+	<!-- build:models scripts/models.js -->
 	<script src="scripts/opennms/models/Array.js"></script>
 	<script src="scripts/opennms/models/String.js"></script>
 	<script src="scripts/opennms/models/Alarm.js"></script>
@@ -96,7 +91,7 @@
 	<script src="scripts/opennms/models/RestError.js"></script>
 	<!-- endbuild -->
 
-	<!-- build:js scripts/cm.js -->
+	<!-- build:opennms scripts/opennms.js -->
 	<script src="scripts/opennms/main.js"></script>
 	<script src="scripts/opennms/controllers/Alarms.js"></script>
 	<script src="scripts/opennms/controllers/Dashboard.js"></script>
