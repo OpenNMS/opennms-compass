@@ -9,7 +9,7 @@
 		'ionic',
 		'opennms.services.Rest'
 	])
-	.factory('OutageService', ['$q', 'RestService', function($q, RestService) {
+	.factory('OutageService', function($q, RestService) {
 		console.log('OutageService: Initializing.');
 
 		var getOutages = function(all) {
@@ -95,6 +95,6 @@
 			node: getOutagesForNode,
 			summaries: getOutageSummaries,
 		};
-	}]);
+	});
 
 }());

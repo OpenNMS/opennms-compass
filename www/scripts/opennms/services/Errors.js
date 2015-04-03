@@ -6,7 +6,7 @@
 	angular.module('opennms.services.Errors', [
 		'ionic',
 	])
-	.factory('Errors', ['$rootScope', function($rootScope) {
+	.factory('Errors', function($rootScope) {
 		console.log('Errors: Initializing.');
 
 		var _errors = {};
@@ -59,6 +59,6 @@
 				}
 			},
 		};
-	}]);
+	});
 
 }());

@@ -16,7 +16,7 @@
 		'opennms.services.BuildConfig',
 		'opennms.services.Config',
 	])
-	.factory('Settings', ['storage', '$rootScope', '$injector', function(storage, $rootScope, $injector) {
+	.factory('Settings', function(storage, $rootScope, $injector) {
 		var $scope = $rootScope.$new();
 
 		$scope.settings = storage.get('opennms.settings');
@@ -173,5 +173,5 @@
 				return $injector.get('config.build.build');
 			}
 		};
-	}]);
+	});
 }());

@@ -20,7 +20,7 @@
 			return addr;
 		};
 	})
-	.factory('util', ['$state', '$window', '$ionicHistory', '$ionicViewSwitcher', function($state, $window, $ionicHistory, $ionicViewSwitcher) {
+	.factory('util', function($state, $window, $ionicHistory, $ionicViewSwitcher) {
 		console.log('Util: Initializing.');
 
 		var goToDashboard = function(direction) {
@@ -84,6 +84,6 @@
 			showKeyboard: showKeyboard,
 			hideKeyboard: hideKeyboard
 		};
-	}]);
+	});
 
 }());

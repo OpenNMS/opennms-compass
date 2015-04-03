@@ -9,7 +9,7 @@
 		'ionic',
 		'opennms.services.Rest',
 	])
-	.factory('AvailabilityService', ['$q', '$rootScope', 'RestService', function($q, $rootScope, RestService) {
+	.factory('AvailabilityService', function($q, $rootScope, RestService) {
 		console.log('AvailabilityService: Initializing.');
 
 		var hasAvailability;
@@ -142,6 +142,6 @@
 			nodes: getNodes,
 			node: getNode,
 		};
-	}]);
+	});
 
 }());

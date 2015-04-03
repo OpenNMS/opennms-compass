@@ -8,7 +8,7 @@
 		'opennms.services.Rest',
 		'opennms.services.Settings'
 	])
-	.factory('Info', ['$q', '$rootScope', '$http', '$timeout', 'RestService', 'Settings', function($q, $rootScope, $http, $timeout, RestService, Settings) {
+	.factory('Info', function($q, $rootScope, $http, $timeout, RestService, Settings) {
 		console.log('Info: Initializing.');
 
 		var defaultInfo = {
@@ -63,6 +63,6 @@
 				return info.promise;
 			}
 		};
-	}]);
+	});
 
 }());

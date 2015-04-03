@@ -10,7 +10,7 @@
 		'opennms.services.Settings',
 	])
 
-   	.factory('RestService', ['$q', '$http', '$rootScope', '$window', 'Settings', function($q, $http, $rootScope, $window, Settings) {
+   	.factory('RestService', function($q, $http, $rootScope, $window, Settings) {
 		console.log('RestService: Initializing.');
 
 		var x2js = new X2JS();
@@ -108,6 +108,6 @@
 			},
 			put: doPut
 		};
-	}]);
+	});
 
 }());

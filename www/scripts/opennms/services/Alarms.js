@@ -10,7 +10,7 @@
 		'opennms.services.Rest',
 		'opennms.services.Util',
 	])
-	.factory('AlarmService', ['$q', 'RestService', 'util', function($q, RestService, util) {
+	.factory('AlarmService', function($q, RestService, util) {
 		console.log('AlarmService: Initializing.');
 
 		var getAlarms = function(filter) {
@@ -129,6 +129,6 @@
 			acknowledge: acknowledge,
 			unacknowledge: unacknowledge,
 		};
-	}]);
+	});
 
 }());

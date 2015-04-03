@@ -8,7 +8,7 @@
 		'ionic',
 		'opennms.services.Rest'
 	])
-	.factory('NodeService', ['$q', 'RestService', function($q, RestService) {
+	.factory('NodeService', function($q, RestService) {
 		console.log('NodeService: Initializing.');
 
 		var searchNodes = function(search) {
@@ -62,6 +62,6 @@
 			search: searchNodes,
 			get: getNode
 		};
-	}]);
+	});
 
 }());

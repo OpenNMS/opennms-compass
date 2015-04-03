@@ -16,7 +16,7 @@
 		'opennms.services.Outages',
 		'opennms.services.Util',
 	])
-	.factory('Modals', ['$q', '$rootScope', '$interval', '$ionicModal', '$ionicPopup', 'AlarmService', 'AvailabilityService', 'Errors', 'EventService', 'Info', 'NodeService', 'OutageService', 'Settings', 'util', function($q, $rootScope, $interval, $ionicModal, $ionicPopup, AlarmService, AvailabilityService, Errors, EventService, Info, NodeService, OutageService, Settings, util) {
+	.factory('Modals', function($q, $rootScope, $interval, $ionicModal, $ionicPopup, AlarmService, AvailabilityService, Errors, EventService, Info, NodeService, OutageService, Settings, util) {
 		console.log('Views: initializing.');
 
 		var $scope = $rootScope.$new();
@@ -447,6 +447,6 @@
 			},
 		};
 		return $scope.modals;
-	}]);
+	});
 
 }());
