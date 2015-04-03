@@ -33,7 +33,7 @@
 		'opennms.services.Settings',
 		'opennms.services.Util',
 	])
-	.controller('DashboardCtrl', function($q, $scope, $interval, $timeout, $state, $document, $window, $ionicLoading, $ionicPopup, $ionicSlideBoxDelegate, $cordovaInAppBrowser, resize, AlarmService, AvailabilityService, Errors, Info, Modals, OutageService, Settings, util) {
+	.controller('DashboardCtrl', function($q, $rootScope, $scope, $interval, $timeout, $state, $document, $window, $ionicLoading, $ionicPopup, $ionicSlideBoxDelegate, $cordovaInAppBrowser, resize, AlarmService, AvailabilityService, Errors, Info, Modals, OutageService, Settings, util) {
 		console.log('DashboardCtrl: Initializing.');
 
 		var updateArrows = function(height) {
@@ -78,9 +78,10 @@
 		var onWidget = function(info) {
 			//console.log('onDirty: ' + angular.toJson(info));
 			$scope.$broadcast('scroll.refreshComplete');
-			$scope.landscape = info.landscape;
-			$scope.width     = info.width;
-			$scope.height    = info.height;
+			$rootScope.landscape = info.landscape;
+			$scope.landscape     = info.landscape;
+			$scope.width         = info.width;
+			$scope.height        = info.height;
 
 			updateArrows(info.height);
 		};

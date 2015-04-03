@@ -27,7 +27,7 @@
 
 <title>OpenNMS Compass</title>
 </head>
-<body class="antialiased off-canvas hide-extras" ng-class="themeType" ng-cloak animation="no-animation">
+<body class="antialiased off-canvas hide-extras" ng-class="themeType + ' ' + (landscape?'landscape':'portrait')" ng-cloak animation="no-animation">
 	<ion-nav-view></ion-nav-view>
 
 	<!-- build:shim scripts/shim.js -->
