@@ -7988,6 +7988,21 @@ a.button {
   font-size: 40px;
   line-height: 40px; }
 
+.nodes .node-display-id {
+  font-size: smaller;
+  display: block;
+  padding-left: 20px; }
+
+@media (orientation: landscape) {
+  .nodes .node-display-id {
+    color: #888;
+    display: inline-block;
+    padding-left: 10px; }
+    .nodes .node-display-id:before {
+      content: "("; }
+    .nodes .node-display-id:after {
+      content: ")"; } }
+
 .node-detail .availability.severity {
   border-collapse: collapse;
   border-top: 1px solid #888;

@@ -1,0 +1,23 @@
+.nodes {
+	.node-display-id {
+		font-size: smaller;
+		display: block;
+		padding-left: 20px;
+	}
+}
+
+@media (orientation:landscape) {
+	.nodes {
+		.node-display-id {
+			&:before {
+				content: "(";
+			}
+			&:after {
+				content: ")";
+			}
+			color: #888;
+			display: inline-block;
+			padding-left: 10px;
+		}
+	}	
+}

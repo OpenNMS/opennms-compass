@@ -17,11 +17,11 @@
 	<ion-content delegate-handle="nodes-scroll">
 		<ion-refresher pulling-text="Pull to Refresh..." on-refresh="updateSearch(searchString)"></ion-refresher>
 		<ion-list>
-			<ion-item ng-repeat="node in nodes track by node.id" ng-click="viewNode(node)">
+			<ion-item ng-repeat="node in nodes track by node.id" ng-click="viewNode(node)" class="item-text-wrap">
 				<span class="item-note">{{node.id}}</span>
 				<span ng-if="node.foreignId">
 					{{node.label}}
-					<p class="shift-1">{{node.getDisplayId()}}</p>
+					<div class="node-display-id">{{node.getDisplayId()}}</div>
 				</span>
 				<span ng-if="!node.foreignId">
 					{{node.label}}
