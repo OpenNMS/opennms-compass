@@ -22,7 +22,7 @@
 		'opennms.controllers.Nodes',
 		'opennms.controllers.Settings',
 	])
-	.config(['$stateProvider', '$urlRouterProvider', '$ionicConfigProvider', function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
+	.config(['$stateProvider', '$urlRouterProvider', '$ionicConfigProvider', '$cordovaInAppBrowserProvider', function($stateProvider, $urlRouterProvider, $ionicConfigProvider, $cordovaInAppBrowserProvider) {
 		$urlRouterProvider.otherwise('/dashboard');
 
 		$stateProvider
@@ -46,6 +46,13 @@
 		$ionicConfigProvider.views.maxCache(20);
 		$ionicConfigProvider.views.forwardCache(true);
 		$ionicConfigProvider.views.swipeBackEnabled(false);
+
+		$cordovaInAppBrowserProvider.setDefaultOptions({
+			location:'no',
+			enableViewportScale:'yes',
+			transitionstyle:'fliphorizontal',
+			toolbarposition:'top'
+		});
 	}])
 	.run(['$rootScope', '$timeout', '$window', '$ionicPlatform', 'Ads', 'IAP', 'Info', 'Modals', 'Settings', function($rootScope, $timeout, $window, $ionicPlatform, Ads, IAP, Info, Modals, Settings) {
 		var updateTheme = function() {

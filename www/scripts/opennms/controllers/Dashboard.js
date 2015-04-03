@@ -33,7 +33,7 @@
 		'opennms.services.Settings',
 		'opennms.services.Util',
 	])
-	.controller('DashboardCtrl', function($q, $scope, $interval, $timeout, $state, $document, $window, $ionicLoading, $ionicPopup, $ionicSlideBoxDelegate, resize, AlarmService, AvailabilityService, Errors, Info, Modals, OutageService, Settings, util) {
+	.controller('DashboardCtrl', function($q, $scope, $interval, $timeout, $state, $document, $window, $ionicLoading, $ionicPopup, $ionicSlideBoxDelegate, $cordovaInAppBrowser, resize, AlarmService, AvailabilityService, Errors, Info, Modals, OutageService, Settings, util) {
 		console.log('DashboardCtrl: Initializing.');
 
 		var updateArrows = function(height) {
@@ -130,6 +130,10 @@
 					$scope.logo = 'images/horizon.svg';
 				}
 			});
+		};
+
+		$scope.openServer = function() {
+			$cordovaInAppBrowser.open(Settings.URL(), '_blank');
 		};
 
 		var refreshing = false;
