@@ -77,6 +77,7 @@
 
 		var onWidget = function(info) {
 			//console.log('onDirty: ' + angular.toJson(info));
+			$scope.$broadcast('scroll.refreshComplete');
 			$scope.landscape = info.landscape;
 			$scope.width     = info.width;
 			$scope.height    = info.height;

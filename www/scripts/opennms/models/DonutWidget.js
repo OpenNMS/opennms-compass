@@ -228,27 +228,19 @@ DonutWidget.prototype.redraw = function redraw() {
 			}];
 		}
 
-		if (element.visible()) {
-			//console.log(self.getLogMessage('redraw', 'element is visible'));
-			if (self.pie) {
-				console.log(self.getLogMessage('redraw', 'pie exists, redrawing'));
-				self.merge_(self.pie.options, options);
-				self.pie.options.data.content = options.data.content;
-				//console.log('pie.options='+angular.toJson(self.pie.options));
-				self.pie.destroy();
-				self.pie.recreate();
-			} else {
-				/*jshint -W055 */
-				console.log(self.getLogMessage('redraw', 'pie does not exist'));
-				//console.log('options='+angular.toJson(options));
-				self.pie = new d3pie(elementId + '-' + orientation, options);
-			}
+		//console.log(self.getLogMessage('redraw', 'element is visible'));
+		if (self.pie) {
+			console.log(self.getLogMessage('redraw', 'pie exists, redrawing'));
+			self.merge_(self.pie.options, options);
+			self.pie.options.data.content = options.data.content;
+			//console.log('pie.options='+angular.toJson(self.pie.options));
+			self.pie.destroy();
+			self.pie.recreate();
 		} else {
-			console.log(self.getLogMessage('redraw', 'element is NOT visible, re-marking dirty and refreshing in 200ms'));
-			self.dirty = true;
-			setTimeout(function() {
-				self.refresh();
-			}, 200);
+			/*jshint -W055 */
+			console.log(self.getLogMessage('redraw', 'pie does not exist'));
+			//console.log('options='+angular.toJson(options));
+			self.pie = new d3pie(elementId + '-' + orientation, options);
 		}
 	} else {
 		console.log(self.getLogMessage('redraw', 'element does not exist, staying dirty'));
