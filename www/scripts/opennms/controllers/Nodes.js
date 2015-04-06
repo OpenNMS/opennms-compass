@@ -70,17 +70,25 @@
 			});
 		};
 
-		$scope.$watch('searchString', function(newValue) {
-			storage.set('opennms.nodes.search-string', newValue);
-			delayedSearch();
-		});
-
-		$scope.$on('ionicView.beforeEnter', function() {
+		$scope.refreshData = function() {
 			$ionicLoading.show({
 				noBackdrop: true,
 				hideOnStateChange: true
 			});
 			$scope.updateSearch($scope.searchString);
+		};
+
+		$scope.$watch('searchString', function(newValue) {
+			storage.set('opennms.nodes.search-string', newValue);
+			delayedSearch();
+		});
+
+		$scope.$on('opennms.settings.changed', function(ev, newSettings, oldSettings, changedSettings) {
+			$scope.refreshData();
+		});
+
+		$scope.$on('ionicView.beforeEnter', function() {
+			$scope.refreshData();
 		});
 	}]);
 
