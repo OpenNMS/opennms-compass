@@ -16,7 +16,7 @@
 		'opennms.services.Outages',
 		'opennms.services.Util',
 	])
-	.factory('NodeModal', function($q, $rootScope, $interval, $ionicModal, AvailabilityService, EventService, NodeService, OutageService) {
+	.factory('NodeModal', function($q, $rootScope, $interval, $ionicModal, $ionicPopup, $cordovaGeolocation, AvailabilityService, EventService, Info, NodeService, OutageService) {
 		console.log('NodeModal: initializing.');
 		var $scope = $rootScope.$new();
 		var nodeModal = $q.defer();
@@ -42,6 +42,8 @@
 
 			var resetModel = function() {
 				modal.scope.node = {};
+				modal.scope.canUpdateGeolocation = false;
+				modal.scope.hasAddress = false;
 				modal.scope.availability = undefined;
 				modal.scope.outages = undefined;
 				modal.scope.events = undefined;
@@ -50,8 +52,24 @@
 				modal.scope.snmpInterfaces = undefined;
 			};
 
+			var showNode = function(node) {
+				modal.scope.node = node;
+				modal.scope.updateData();
+				modal.show();
+			};
+
 			modal.scope.updateData = function() {
-				console.log('Modals.node-detail: getting updated data for node ' + modal.scope.node.id);
+				console.log('NodeModal.updateData: getting updated data for node ' + modal.scope.node.id);
+
+				modal.scope.address = modal.scope.node.getAddress();
+				if (modal.scope.address.city || modal.scope.address.state || modal.scope.address.zip) {
+					modal.scope.hasAddress = true;
+				}
+
+				NodeService.canSetLocation().then(function(isValid) {
+					modal.scope.canUpdateGeolocation = isValid;
+				});
+
 				var avail = AvailabilityService.node(modal.scope.node.id).then(function(results) {
 					//console.log('AvailabilityService got results:',results);
 					modal.scope.availability = results;
@@ -89,22 +107,55 @@
 					modal.scope.node.sysObjectId));
 			};
 
+			modal.scope.submitCoordinates = function() {
+				$cordovaGeolocation.getCurrentPosition({
+					timeout: 5000,
+					enableHighAccuracy: true
+				}).then(function(position) {
+					var longitude = position.coords.longitude.toFixed(6);
+					var latitude = position.coords.latitude.toFixed(6);
+					$ionicPopup.confirm({
+						'title': 'Update Coordinates?',
+						'template': 'Update <strong>' + modal.scope.node.label + '</strong> to latitude ' + latitude + ' and longitude ' + longitude + '?',
+						'cancelType': 'button-default',
+						'okType': 'button-compass'
+					}).then(function(confirmed) {
+						if (confirmed) {
+							console.log('NodeModal.submitCoordinates: posting latitude=' + latitude + ', longitude=' + longitude);
+							NodeService.setLocation(modal.scope.node, longitude, latitude).then(function() {
+								console.log('Submitted coordinates.  Refreshing.');
+								modal.scope.refreshNode();
+							});
+						} else {
+							console.log('NodeModal.submitCoordinates: user canceled.');
+						}
+					});
+				}, function(err) {
+					console.log('failure:',err);
+				});
+			};
+
+			modal.scope.refreshNode = function() {
+				if (modal.scope.node.id) {
+					NodeService.get(modal.scope.node.id).then(function(n) {
+						showNode(n);
+					}, function(err) {
+						err.caller = 'NodeModal.refreshNode';
+						console.log(err.toString());
+					});
+				}
+			};
+
 			modal.scope.show = function(node) {
 				// first, clear everything out
 				resetModel();
-
-				var showNode = function(node) {
-					modal.scope.node = node;
-					modal.scope.updateData();
-					modal.show();
-				};
 
 				if (angular.isNumber(node)) {
 					// we were passed a node ID, look it up first
 					NodeService.get(node).then(function(n) {
 						showNode(n);
 					}, function(err) {
-						err.caller = 'EventService.getEventsForNode';
+						err.caller = 'NodeModal.show';
 						console.log(err.toString());
 					});
 				} else {
@@ -391,6 +442,9 @@
 				modal.scope.errors = Errors.get();
 				Info.get().then(function(info) {
 					modal.scope.info = info;
+				});
+				NodeService.canSetLocation().then(function(canSet) {
+					modal.scope.canSetLocation = canSet;
 				});
 				AvailabilityService.supported().then(function(isSupported) {
 					modal.scope.hasAvailability = isSupported;

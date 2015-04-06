@@ -64,17 +64,17 @@ function RestError(url, data, status, statusText, time) {
 
 RestError.prototype.toString = function() {
   'use strict';
-  var ret = 'Error ';
-  if (this.status && this.status > 0) {
+  var self = this, ret = 'Error ';
+  if (self.status && self.status > 0) {
     ret += this.status + ' ';
   }
-  ret += 'requesting URL ' + this.url + ': ';
-  if (this.caller) {
-    ret = this.caller + ': ' + ret;
+  ret += 'requesting URL ' + self.url + ': ';
+  if (self.caller) {
+    ret = self.caller + ': ' + ret;
   }
-  if (this.statusText) {
-    ret += ' ' + this.statusText;
+  if (self.statusText) {
+    ret += ' ' + self.statusText;
   }
-  ret += ' [' + this.time.format('lll') + ']';
+  ret += ' [' + self.time.format('lll') + ']';
   return ret;
 };

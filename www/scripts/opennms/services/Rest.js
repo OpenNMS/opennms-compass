@@ -13,6 +13,7 @@
    	.factory('RestService', function($q, $http, $rootScope, $window, Settings) {
 		console.log('RestService: Initializing.');
 
+		var requestTimeout = 10000;
 		var x2js = new X2JS();
 		/* jshint -W069 */ /* "better written in dot notation" */
 		$http.defaults.headers.common['Accept'] = 'application/xml';
@@ -73,7 +74,7 @@
 				params: myparams,
 				headers: headers,
 				withCredentials: true,
-				timeout: 10000,
+				timeout: requestTimeout,
 			}).success(function(data) {
 				//console.log('Rest.doQuery:',data);
 				deferred.resolve(data);
@@ -89,7 +90,39 @@
 		};
 
 		var doPut = function(restFragment, params, headers) {
-			return doQuery('PUT', restFragment, params, headers);
+			var h = angular.copy(headers) || {};
+			h['Content-Type'] = 'application/x-www-form-urlencoded';
+			return doQuery('PUT', restFragment, params, h);
+		};
+
+		var doPostXml = function(restFragment, data, headers) {
+			var deferred = $q.defer();
+			var url = getUrl(restFragment);
+
+			if (!Settings.isServerConfigured()) {
+				deferred.reject(new RestError(url, undefined, 0, 'Server information is not complete.'));
+				return deferred.promise;
+			}
+
+			if (!headers) {
+				headers = {};
+			}
+			if (!headers['Content-Type']) {
+				headers['Content-Type'] = 'application/xml';
+			}
+
+			$http.post(url, data, {
+				withCredentials: true,
+				timeout: requestTimeout,
+				headers: headers,
+			}).success(function(data) {
+				//console.log('Rest.doQuery:',data);
+				deferred.resolve(data);
+			}).error(function(data, status, headers, config, statusText) {
+				deferred.reject(new RestError(url, data, status, statusText));
+			});
+
+			return deferred.promise;
 		};
 
 		return {
@@ -106,7 +139,8 @@
 				});
 				return deferred.promise;
 			},
-			put: doPut
+			put: doPut,
+			postXml: doPostXml,
 		};
 	});
 

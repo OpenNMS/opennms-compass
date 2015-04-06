@@ -2,6 +2,7 @@
 	'use strict';
 
 	/* global ionic: true */
+	/* global VersionCompare: true */
 
 	angular.module('opennms.services.Info', [
 		'ionic',
@@ -61,7 +62,12 @@
 		return {
 			get: function() {
 				return info.promise;
-			}
+			},
+			validateVersion: function(version) {
+				return info.promise.then(function(info) {
+					return VersionCompare.gte(info.version, version);
+				});
+			},
 		};
 	});
 

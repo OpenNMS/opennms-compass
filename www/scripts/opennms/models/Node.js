@@ -83,8 +83,25 @@ function Node(node) {
    */
   self.assets = node['assetRecord'];
 
-  if (self.assets && self.assets.lastModifiedDate && self.assets.lastModifiedDate.trim() !== '') {
-    self.assets.lastModifiedDate = moment(self.assets.lastModifiedDate);
+  if (self.assets) {
+    if (!self.isEmpty_(self.assets.lastModifiedDate)) {
+      self.assets.lastModifiedDate = moment(self.assets.lastModifiedDate);
+    }
+    if (!self.isEmpty_(self.assets.id)) {
+      self.assets.id = parseInt(self.assets.id, 10);
+    }
+    if (!self.isEmpty_(self.assets.latitude)) {
+      self.assets.latitude = parseFloat(self.assets.latitude);
+    }
+    if (!self.isEmpty_(self.assets.longitude)) {
+      self.assets.longitude = parseFloat(self.assets.longitude);
+    }
+    if (!self.isEmpty_(self.assets.node)) {
+      self.assets.node = parseInt(self.assets.node, 10);
+    }
+    if (self.assets.category === 'Unspecified') {
+      delete self.assets.category;
+    }
   }
 
   /**
@@ -101,7 +118,7 @@ function Node(node) {
   if (self.categories) {
     self.categories = self.categories.map(function(cat) {
       return {
-        id: cat._id,
+        id: parseInt(cat._id, 10),
         name: cat._name
       };
     });
@@ -183,4 +200,44 @@ Node.prototype.getDisplayId = function() {
     ret += self.foreignId;
   }
   return ret;
+};
+
+Node.prototype.isEmpty_ = function(str) {
+  'use strict';
+  if (str && str !== '') {
+    return false;
+  } else {
+    return true;
+  }
+};
+
+Node.prototype.getAddress = function() {
+  'use strict';
+  var assets, prop, ret,
+    self = this;
+
+  if (this.assets) {
+    assets = this.assets;
+    if ((!self.isEmpty_(assets.city) && !self.isEmpty_(assets.zip)) || (!self.isEmpty_(assets.latitude) && !self.isEmpty_(assets.longitude))) {
+      ret = {
+        address1: undefined,
+        address2: undefined,
+        city: undefined,
+        state: undefined,
+        zip: undefined,
+        country: undefined,
+        longitude: undefined,
+        latitude: undefined,
+      };
+      for (prop in ret) {
+        if (self.isEmpty_(assets[prop])) {
+          delete ret[prop];
+        } else {
+          ret[prop] = assets[prop];
+        }
+      }
+      return ret;
+    }
+  }
+  return undefined;
 };

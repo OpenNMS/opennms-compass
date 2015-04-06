@@ -1,14 +1,16 @@
 (function() {
 	'use strict';
 
+	/* global $: true */
 	/* global ionic: true */
 	/* global Node: true */
 
 	angular.module('opennms.services.Nodes', [
 		'ionic',
+		'opennms.services.Info',
 		'opennms.services.Rest'
 	])
-	.factory('NodeService', function($q, RestService) {
+	.factory('NodeService', function($q, Info, RestService) {
 		console.log('NodeService: Initializing.');
 
 		var searchNodes = function(search) {
@@ -58,9 +60,47 @@
 			return deferred.promise;
 		};
 
+		var canSetLocation = function() {
+			return Info.get().then(function(info) {
+				if (info.packageName === 'meridian') {
+					//console.log('NodeModal.updateData: Meridian can update geolocation.');
+					return true;
+				} else {
+					Info.validateVersion('15.0.2').then(function(isValid) {
+						//console.log('NodeModal.updateData: OpenNMS can update geolocation? ' + (isValid? 'yes':'no'));
+						return isValid;
+					});
+				}
+			});
+		};
+
+		var setLocation = function(node, longitude, latitude) {
+			var deferred = $q.defer();
+
+			RestService.put('/nodes/' + node.id + '/assetRecord', {
+				'geolocation.longitude': longitude,
+				'geolocation.latitude': latitude
+			}).then(function() {
+				deferred.resolve(true);
+			}, function(err) {
+				if (err.toString().contains('request was redirected')) {
+					deferred.resolve(true);
+				} else if (err.status === 400 || err.status === 0) {
+					deferred.resolve(true);
+				} else {
+					err.caller = 'NodeService.setLocation';
+					deferred.reject(err);
+				}
+			});
+
+			return deferred.promise;
+		};
+
 		return {
 			search: searchNodes,
-			get: getNode
+			get: getNode,
+			canSetLocation: canSetLocation,
+			setLocation: setLocation,
 		};
 	});
 

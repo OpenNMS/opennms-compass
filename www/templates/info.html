@@ -5,7 +5,7 @@
 	</ion-header-bar>
 	<ion-content>
 		<ion-list>
-			<ion-item class="item-divider">About OpenNMS Compass</ion-item>
+			<ion-item class="item-divider item-compass">About OpenNMS Compass</ion-item>
 			<ion-item class="item-text-wrap">
 				<div class="row">
 					<div class="col col-25">Version:</div>
@@ -17,7 +17,7 @@
 				</div>
 				<div class="row">
 					<div class="col col-25">Server:</div>
-					<div class="col">{{settings.URL()}}</div>
+					<div class="col" ng-click="util.openServer()">{{settings.URL()}}</div>
 				</div>
 				<div class="row">
 					<div class="col col-25">User:</div>
@@ -25,7 +25,7 @@
 				</div>
 			</ion-item>
 			<span ng-if="settings.getServerName() !== undefined">
-				<ion-item class="item-divider">
+				<ion-item class="item-divider item-compass">
 					OpenNMS Server Information
 				</ion-item>
 				<ion-item>
@@ -39,7 +39,12 @@
 					</div>
 				</ion-item>
 				<ion-item class="item-text-wrap" ng-if="info.hasAvailability">Your OpenNMS server supports the Availability API.</ion-item>
-				<ion-item class="item-text-wrap" ng-if="!info.hasAvailability">Your OpenNMS server does not support the Availability API. Dashboard availability by category requires Meridian 2015 or Horizon 15.0.2.</ion-item>
+				<ion-item class="item-text-wrap severity-WARNING" ng-if="!info.hasAvailability">Your OpenNMS server does not support the Availability API. Dashboard availability by category requires Meridian 2015 or Horizon 15.0.2.</ion-item>
+				<ion-item class="item-text-wrap" ng-if="canSetLocation">Your OpenNMS server
+				supports updating node geolocation information.</ion-item>
+				<ion-item class="item-text-wrap severity-WARNING" ng-if="!canSetLocation">Your OpenNMS server
+				does not support updating node geolocation information.  Updating node coordinates
+				requires Meridian 2015 or Horizon 15.0.2.</ion-item>
 			</span>
 			<span ng-if="errors &amp;&amp; errors.length &gt; 0">
 				<ion-item class="item-divider item-assertive row">

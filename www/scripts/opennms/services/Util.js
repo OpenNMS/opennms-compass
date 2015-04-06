@@ -8,6 +8,8 @@
 
 	angular.module('opennms.services.Util', [
 		'ionic',
+		'ngCordova',
+		'opennms.services.Settings',
 	])
 	.filter('ip', function() {
 		return function(addr) {
@@ -20,7 +22,7 @@
 			return addr;
 		};
 	})
-	.factory('util', function($state, $window, $ionicHistory, $ionicViewSwitcher) {
+	.factory('util', function($state, $window, $cordovaInAppBrowser, $ionicHistory, $ionicViewSwitcher, Settings) {
 		console.log('Util: Initializing.');
 
 		var goToDashboard = function(direction) {
@@ -64,6 +66,11 @@
 			}
 		};
 
+		var openServer = function() {
+			console.log('open server: ' + Settings.URL());
+			$cordovaInAppBrowser.open(Settings.URL(), '_blank');
+		};
+
 		return {
 			dashboard: goToDashboard,
 			icon: function(severity) {
@@ -82,7 +89,8 @@
 				return ret;
 			},
 			showKeyboard: showKeyboard,
-			hideKeyboard: hideKeyboard
+			hideKeyboard: hideKeyboard,
+			openServer: openServer,
 		};
 	});
 
