@@ -62,7 +62,7 @@
 				console.log('NodeModal.updateData: getting updated data for node ' + modal.scope.node.id);
 
 				modal.scope.address = modal.scope.node.getAddress();
-				if (modal.scope.address.city || modal.scope.address.state || modal.scope.address.zip) {
+				if (modal.scope.address && (modal.scope.address.city || modal.scope.address.state || modal.scope.address.zip)) {
 					modal.scope.hasAddress = true;
 				}
 
