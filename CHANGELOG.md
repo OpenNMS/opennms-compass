@@ -1,15 +1,28 @@
-## 2.0.0 (2015-04-03)
+<a name="2.0.0"</a>
+## 2.0.0 (2015-04-06)
 
 
 #### Bug Fixes
 
-* **dashboard:** sometimes donuts would not render after rotate ([a6d441a7](https://github.com/nicksrandall/kotojs/commit/a6d441a702b585bc84e2ccffa955afac8c7ad029))
-* **ios:** support rotation on iPhone ([f6a49209](https://github.com/nicksrandall/kotojs/commit/f6a492099a37c16cbd8e84b57d371ac2b0d92797))
 
+* **ads**  Don't minify BuildConfig.js ((bb810a07))
+* **dashboard**  sometimes donuts would not render after rotate ((a6d441a7))
+* **info**  fix word-wrap for long server names ((ff4a0d80))
+* **ios**
+  *  fix orientation parsing on fresh install ((617c4be7))
+  *  support rotation on iPhone ((f6a49209))
+* **nodes**
+  *  handle NPE checking addresses ((927d9d46))
+  *  node list refreshes on settings change ((4021965d))
+* **settings**  don't autocorrect username ((2343683f))
 
 #### Features
 
-* **dashboard:** clicking server name launches opennms in a browser ([ba4146a5](https://github.com/nicksrandall/kotojs/commit/ba4146a5bb983c923fccdc452c7cd157336e1b60))
-* **info:** add server information to the info popup ([f730bb0c](https://github.com/nicksrandall/kotojs/commit/f730bb0ca3ca059e42a2e246e0e701b981c9b9f7))
+
+* **dashboard**  clicking server name launches opennms in a browser ((ba4146a5))
+* **info**  add server information to the info popup ((f730bb0c))
+* **nodes**
+  *  better node list layout in landscape mode ((13857c30))
+  *  set node geolocation with a button ((7f95d42f))
 
 
