@@ -28,7 +28,7 @@ gulp.task('default', ['sass', 'lint', 'test']);
 
 gulp.task('sass', function(done) {
 	gulp.src([paths.sass])
-		.pipe(sass())
+		.pipe(sass({errLogToConsole:true}))
 		.pipe(gulp.dest('./www/css/'))
 		.pipe(minifyCss({
 			keepSpecialComments: 0
