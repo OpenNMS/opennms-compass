@@ -67,6 +67,10 @@
     {
       "locator": "https://github.com/RangerRick/cordova-HTTP.git",
       "id": "com.synconset.cordovaHTTP"
+    },
+    {
+      "locator": "https://github.com/phonegap-build/PushPlugin.git",
+      "id": "com.phonegap.plugins.PushPlugin"
     }
   ],
   "cordovaPlatforms": [

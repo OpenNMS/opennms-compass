@@ -20,6 +20,7 @@ var addList = [
 
 /* 3rd-party plugins */
 	'cordova-plugin-admobpro',
+	'https://github.com/phonegap-build/PushPlugin.git',
 
 /* android/ios only */
 	'cc.fovea.cordova.purchase',
