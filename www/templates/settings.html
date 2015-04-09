@@ -4,50 +4,56 @@
 		<h1 class="title">Settings</h1>
 		<button class="button button-compass button-clear button-compass" ng-click="save()">Save</button>
 	</ion-header-bar>
-	<ion-content scroll="true" ng-keypress="handleKey($event)">
-		<form class="list">
-			<label class="item item-input item-stacked-label">
-				<span class="input-label">Server URL</span>
-				<input type="url" placeholder="e.g., http://demo.opennms.org/opennms/" ng-model="settings.server" autocapitalize="off" required>
-			</label>
-			<label class="item item-input item-floating-label">
-				<span class="input-label">Username</span>
-				<input type="text" placeholder="Username" ng-model="settings.username" autocapitalize="off" autocorrect="off" required>
-			</label>
-			<label class="item item-input item-floating-label">
-				<span class="input-label">Password</span>
-				<input type="password" placeholder="Password" ng-model="settings.password" autocapitalize="off" required>
-			</label>
-			<!--
-			<label class="item item-input item-stacked-label">
-				<span class="input-label">Refresh Interval (Seconds)</span>
-				<span class="range range-compass" style="padding-left: 0">
-				{{getRefreshInterval()}}
-				<input type="range" name="refreshInterval" ng-model="settings.refreshInterval" min="5000" max="300000">
-				</span>
-			</label>
-			-->
-			<span ng-if="products">
-				<span ng-if="products.disable_ads">
+	<ion-content scroll="false">
+		<ion-tabs class="tabs-compass tabs-icon-only" ng-keypress="handleKey($event)">
+			<ion-tab title="Server" icon-on="ion-ios-gear" icon-off="ion-ios-gear-outline" scroll="true">
+				<ion-view><ion-content scroll="true">
+				<form class="list">
 					<ion-item class="item-divider">
-						{{products.disable_ads.title}} <span style="float:right" ng-if="products.disable_ads.owned">Purchased <i class="icon ion-ios-checkmark balanced"></i></span>
+						Server Settings
 					</ion-item>
-					<ion-item class="item-text-wrap">
-						<p>{{products.disable_ads.description}}</p>
-						<button class="button button-block button-compass" ng-click="removeAds('disable_ads')" ng-disabled="disabled('disable_ads')">{{products.disable_ads.title}} {{products.disable_ads.price}}</button>
-					</ion-item>
-				</span>
-				<span ng-if="showUpgrade()">
-					<ion-item class="item-divider">
-						{{products.disable_ads_free.title}} <span style="float:right" ng-if="products.disable_ads_free.owned">Purchased <i class="icon ion-ios-checkmark balanced"></i></span>
-					</ion-item>
-					<ion-item class="item-text-wrap">
-						<p>{{products.disable_ads_free.description}}</p>
-						<p>Old Mobile App: <strong>{{hasOpenNMS? 'Detected':'Not Detected'}}</strong></p>
-						<button class="button button-block button-compass" ng-click="removeAds('disable_ads_free')" ng-disabled="disabled('disable_ads_free')">{{products.disable_ads_free.title}} {{products.disable_ads_free.price}}</button>
-					</ion-item>
-				</span>
-			</span>
-		</form>
+					<label class="item item-input item-stacked-label">
+						<span class="input-label">Server URL</span>
+						<input type="url" placeholder="e.g., http://demo.opennms.org/opennms/" ng-model="settings.server" autocapitalize="off" required>
+					</label>
+					<label class="item item-input item-floating-label">
+						<span class="input-label">Username</span>
+						<input type="text" placeholder="Username" ng-model="settings.username" autocapitalize="off" autocorrect="off" required>
+					</label>
+					<label class="item item-input item-floating-label">
+						<span class="input-label">Password</span>
+						<input type="password" placeholder="Password" ng-model="settings.password" autocapitalize="off" required>
+					</label>
+				</form>
+				</ion-content></ion-view>
+			</ion-tab>
+			<ion-tab title="IAP" icon-on="ion-ios-cart" icon-off="ion-ios-cart-outline" ng-if="products">
+				<ion-view><ion-content scroll="true">
+				<form class="list">
+					<span class="iap">
+						<span ng-if="products.disable_ads">
+							<ion-item class="item-divider">
+								{{products.disable_ads.title}} <span style="float:right" ng-if="products.disable_ads.owned">Purchased <i class="icon ion-ios-checkmark balanced"></i></span>
+							</ion-item>
+							<ion-item class="item-text-wrap">
+								<p>{{products.disable_ads.description}}</p>
+								<button class="button button-block button-compass" ng-click="removeAds('disable_ads')" ng-disabled="disabled('disable_ads')">{{products.disable_ads.title}} {{products.disable_ads.price}}</button>
+							</ion-item>
+						</span>
+						<span ng-if="showUpgrade()">
+							<ion-item class="item-divider">
+								{{products.disable_ads_free.title}} <span style="float:right" ng-if="products.disable_ads_free.owned">Purchased <i class="icon ion-ios-checkmark balanced"></i></span>
+							</ion-item>
+							<ion-item class="item-text-wrap">
+								<p>{{products.disable_ads_free.description}}</p>
+								<p>Old Mobile App: <strong>{{hasOpenNMS? 'Detected':'Not Detected'}}</strong></p>
+								<button class="button button-block button-compass" ng-click="removeAds('disable_ads_free')" ng-disabled="disabled('disable_ads_free')">{{products.disable_ads_free.title}} {{products.disable_ads_free.price}}</button>
+							</ion-item>
+						</span>
+					</span>
+				</form>
+				</ion-content></ion-view>
+			</ion-tab>
+		</ion-tabs>
 	</ion-content>
 </ion-modal-view>
