@@ -53,7 +53,28 @@
     "com.google.cordova.admob",
     "cc.fovea.cordova.purchase",
     "com.ionic.keyboard",
-    "https://github.com/RangerRick/cordova-certificate-plugin.git",
-    "com.ohh2ahh.plugins.appavailability"
+    {
+      "locator": "https://github.com/RangerRick/cordova-certificate-plugin.git",
+      "id": "com.raccoonfink.cordova.plugins.certificates"
+    },
+    "com.ohh2ahh.plugins.appavailability",
+    "com.google.playservices"
+  ],
+  "cordovaPlatforms": [
+    {
+      "platform": "android",
+      "version": "3.7.1",
+      "locator": "android"
+    },
+    {
+      "platform": "browser",
+      "version": "3.5.2",
+      "locator": "browser"
+    },
+    {
+      "platform": "ios",
+      "version": "3.8.0",
+      "locator": "ios"
+    }
   ]
 }
