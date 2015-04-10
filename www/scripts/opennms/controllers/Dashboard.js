@@ -68,7 +68,7 @@
 					sortOrder: 'none'
 				},
 				footer: {
-					text: 'Unacknowleged Alarms By Severity',
+					text: 'Pending Problems',
 					location: 'bottom-center',
 					color: 'black',
 				},
