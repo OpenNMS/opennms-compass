@@ -68,7 +68,7 @@
 					sortOrder: 'none'
 				},
 				footer: {
-					text: 'Unacknowleged Alarms By Severity',
+					text: 'Pending Problems',
 					location: 'bottom-center',
 					color: 'black',
 				},
@@ -259,6 +259,15 @@
 		$scope.currentSlide = 0;
 		$scope.landscape = true;
 		updateLogo();
+
+		$scope.$on('opennms.dirty', function(ev, type) {
+			switch(type) {
+				case 'alarms':
+				case 'outages':
+					$scope.refreshData();
+					break;
+			}
+		});
 
 		$scope.serverName = Settings.getServerName();
 		$scope.$on('opennms.errors.updated', function(ev, errors) {

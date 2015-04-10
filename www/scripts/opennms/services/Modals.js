@@ -169,6 +169,17 @@
 				modal.hide();
 				resetModel();
 			};
+			modal.scope.$on('opennms.dirty', function(ev, type) {
+				if (!modal.scope.node) {
+					// not yet initialized, ignore it
+					return;
+				}
+				switch(type) {
+					case 'alarms':
+						modal.scope.refreshNode();
+						break;
+				}
+			});
 			modal.scope.$on('opennms.settings.changed', function(ev, newSettings, oldSettings, changedSettings) {
 				if (timer && changedSettings && changedSettings.refreshInterval) {
 					modal.scope.updateData();

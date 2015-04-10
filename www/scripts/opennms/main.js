@@ -46,6 +46,7 @@
 		$ionicConfigProvider.views.maxCache(20);
 		$ionicConfigProvider.views.forwardCache(true);
 		$ionicConfigProvider.views.swipeBackEnabled(false);
+		$ionicConfigProvider.tabs.position('bottom');
 
 		$cordovaInAppBrowserProvider.setDefaultOptions({
 			location:'no',

@@ -38,8 +38,8 @@
 						<div class="col">{{info.version}}</div>
 					</div>
 				</ion-item>
-				<ion-item class="item-text-wrap" ng-if="info.hasAvailability">Your OpenNMS server supports the Availability API.</ion-item>
-				<ion-item class="item-text-wrap severity-WARNING" ng-if="!info.hasAvailability">Your OpenNMS server does not support the Availability API. Dashboard availability by category requires Meridian 2015 or Horizon 15.0.2.</ion-item>
+				<ion-item class="item-text-wrap" ng-if="hasAvailability">Your OpenNMS server supports the Availability API.</ion-item>
+				<ion-item class="item-text-wrap severity-WARNING" ng-if="!hasAvailability">Your OpenNMS server does not support the Availability API. Dashboard availability by category requires Meridian 2015 or Horizon 15.0.2.</ion-item>
 				<ion-item class="item-text-wrap" ng-if="canSetLocation">Your OpenNMS server
 				supports updating node geolocation information.</ion-item>
 				<ion-item class="item-text-wrap severity-WARNING" ng-if="!canSetLocation">Your OpenNMS server
