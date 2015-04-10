@@ -260,6 +260,15 @@
 		$scope.landscape = true;
 		updateLogo();
 
+		$scope.$on('opennms.dirty', function(ev, type) {
+			switch(type) {
+				case 'alarms':
+				case 'outages':
+					$scope.refreshData();
+					break;
+			}
+		});
+
 		$scope.serverName = Settings.getServerName();
 		$scope.$on('opennms.errors.updated', function(ev, errors) {
 			$scope.errors = Errors.get();

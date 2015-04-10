@@ -105,19 +105,47 @@
 		};
 
 		var clear = function(alarm) {
-			return RestService.put('/alarms/' + alarm.id + '?clear=true', {limit:0});
+			var deferred = $q.defer();
+			RestService.put('/alarms/' + alarm.id + '?clear=true', {limit:0}).then(function(response) {
+				util.dirty('alarms');
+				deferred.resolve(response);
+			}, function(err) {
+				deferred.reject(err);
+			});
+			return deferred.promise;
 		};
 
 		var escalate = function(alarm) {
-			return RestService.put('/alarms/' + alarm.id + '?escalate=true', {limit:0});
+			var deferred = $q.defer();
+			RestService.put('/alarms/' + alarm.id + '?escalate=true', {limit:0}).then(function(response) {
+				util.dirty('alarms');
+				deferred.resolve(response);
+			}, function(err) {
+				deferred.reject(err);
+			});
+			return deferred.promise;
 		};
 
 		var acknowledge = function(alarm) {
-			return RestService.put('/alarms/' + alarm.id + '?ack=true', {limit:0});
+			var deferred = $q.defer();
+			RestService.put('/alarms/' + alarm.id + '?ack=true', {limit:0}).then(function(response) {
+				util.dirty('alarms');
+				deferred.resolve(response);
+			}, function(err) {
+				deferred.reject(err);
+			});
+			return deferred.promise;
 		};
 
 		var unacknowledge = function(alarm) {
-			return RestService.put('/alarms/' + alarm.id + '?ack=false', {limit:0});
+			var deferred = $q.defer();
+			RestService.put('/alarms/' + alarm.id + '?ack=false', {limit:0}).then(function(response) {
+				util.dirty('alarms');
+				deferred.resolve(response);
+			}, function(err) {
+				deferred.reject(err);
+			});
+			return deferred.promise;
 		};
 
 		return {

@@ -22,8 +22,8 @@
 			return addr;
 		};
 	})
-	.factory('util', function($state, $window, $cordovaInAppBrowser, $ionicHistory, $ionicViewSwitcher, Settings) {
-		console.log('Util: Initializing.');
+	.factory('util', function($rootScope, $state, $window, $cordovaInAppBrowser, $ionicHistory, $ionicViewSwitcher, Settings) {
+		console.log('util: Initializing.');
 
 		var goToDashboard = function(direction) {
 			$ionicHistory.nextViewOptions({
@@ -56,19 +56,26 @@
 		};
 
 		var showKeyboard = function() {
+			console.log('util.showKeyboard');
 			if ($window.cordova && $window.cordova.plugins && $window.cordova.plugins.Keyboard) {
 				cordova.plugins.Keyboard.show();
 			}
 		};
 		var hideKeyboard = function() {
+			console.log('util.hideKeyboard');
 			if ($window.cordova && $window.cordova.plugins && $window.cordova.plugins.Keyboard) {
 				cordova.plugins.Keyboard.close();
 			}
 		};
 
 		var openServer = function() {
-			console.log('open server: ' + Settings.URL());
+			console.log('util.openServer: ' + Settings.URL());
 			$cordovaInAppBrowser.open(Settings.URL(), '_blank');
+		};
+
+		var markDirty = function(type) {
+			console.log('util.markDirty: ' + type);
+			$rootScope.$broadcast('opennms.dirty', type);
 		};
 
 		return {
@@ -91,6 +98,7 @@
 			showKeyboard: showKeyboard,
 			hideKeyboard: hideKeyboard,
 			openServer: openServer,
+			dirty: markDirty,
 		};
 	});
 

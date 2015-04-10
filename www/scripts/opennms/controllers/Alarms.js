@@ -141,7 +141,7 @@
 
 		var doThenRefresh = function(promise) {
 			promise['finally'](function() {
-				$scope.refreshAlarms();
+				util.dirty('alarms');
 			});
 		};
 
@@ -152,10 +152,8 @@
 		$scope.toggleAck = function(alarm, e) {
 			e.preventDefault();
 			e.stopPropagation();
-			var promise;
 			if (alarm.ackUser) {
-				promise = AlarmService.unacknowledge(alarm);
-				promise.then(undefined, function(err) {
+				AlarmService.unacknowledge(alarm).then(undefined, function(err) {
 					if (err.status === 403) {
 						$ionicPopup.alert({
 							title: 'Permission Denied',
@@ -165,10 +163,8 @@
 						});
 					}
 				});
-				doThenRefresh(promise);
 			} else {
-				promise = AlarmService.acknowledge(alarm);
-				promise.then(undefined, function(err) {
+				AlarmService.acknowledge(alarm).then(undefined, function(err) {
 					if (err.status === 403) {
 						$ionicPopup.alert({
 							title: 'Permission Denied',
@@ -178,7 +174,6 @@
 						});
 					}
 				});
-				doThenRefresh(promise);
 			}
 			$ionicListDelegate.closeOptionButtons();
 		};
@@ -186,9 +181,7 @@
 		$scope.clear = function(alarm, e) {
 			e.preventDefault();
 			e.stopPropagation();
-			var clear = AlarmService.clear(alarm);
-			doThenRefresh(clear);
-			clear.then(undefined, function(err) {
+			AlarmService.clear(alarm).then(undefined, function(err) {
 				if (err.status === 403) {
 					$ionicPopup.alert({
 						title: 'Permission Denied',
@@ -204,9 +197,7 @@
 		$scope.escalate = function(alarm, e) {
 			e.preventDefault();
 			e.stopPropagation();
-			var escalate = AlarmService.escalate(alarm);
-			doThenRefresh(escalate);
-			escalate.then(undefined, function(err) {
+			AlarmService.escalate(alarm).then(undefined, function(err) {
 				if (err.status === 403) {
 					$ionicPopup.alert({
 						title: 'Permission Denied',
@@ -218,6 +209,12 @@
 			});
 			$ionicListDelegate.closeOptionButtons();
 		};
+
+		$scope.$on('opennms.dirty', function(ev, type) {
+			if (type === 'alarms') {
+				$scope.refreshAlarms();
+			}
+		});
 
 		$scope.$on('modal.hidden', function() {
 			$scope.refreshAlarms();
