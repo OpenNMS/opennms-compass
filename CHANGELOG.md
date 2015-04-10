@@ -6,6 +6,7 @@
 
 
 * **ads**  Don't minify BuildConfig.js ((bb810a07))
+* **alarms**  make sure refresh happens after alarm modification (COMPASS-38) ((ba1596d6))
 * **dashboard**
   *  make alarm donut say "Pending Problems" like the OpenNMS UI (COMPASS-34) ((0770e753))
   *  sometimes donuts would not render after rotate ((a6d441a7))
