@@ -17,6 +17,7 @@
 		'opennms.services.Ionic',
 		'opennms.services.Modals',
 		'opennms.services.Outages',
+		'opennms.services.Push',
 		'opennms.services.Settings',
 		'opennms.services.Util',
 		'opennms.controllers.Alarms',
