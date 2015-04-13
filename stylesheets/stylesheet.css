@@ -57,10 +57,13 @@ body {
 }
 
 a {
-  color: #d5000d;
+  color: #237cb7;
 }
 a:hover {
-  color: #c5000c;
+  color: #4d9c2d;
+}
+a:visited {
+  color: #237cb7;
 }
 
 header {
@@ -72,7 +75,6 @@ header h1 {
   font-family: 'Chivo', 'Helvetica Neue', Helvetica, Arial, serif;
   font-size: 48px; font-weight: 900;
   line-height: 1.2;
-  color: #303030;
   letter-spacing: -1px;
 }
 
@@ -89,8 +91,11 @@ header h2 {
   font-size: 24px;
   font-weight: normal;
   line-height: 1.3;
-  color: #aaa;
   letter-spacing: -1px;
+  color: #555;
+}
+header h2 a, header h2 a:visited {
+  color: #555;
 }
 
 #container {
@@ -254,36 +259,37 @@ form {
 
 h1 {
   font-size: 32px;
+  color: #237cb7;
 }
 
 h2 {
   margin-bottom: 8px;
   font-size: 22px;
   font-weight: bold;
-  color: #303030;
+  color: #237cb7;
 }
 
 h3 {
   margin-bottom: 8px;
   font-size: 18px;
   font-weight: bold;
-  color: #d5000d;
+  color: #237cb7;
 }
 
 h4 {
   font-size: 16px;
   font-weight: bold;
-  color: #303030;
+  color: #237cb7;
 }
 
 h5 {
   font-size: 1em;
-  color: #303030;
+  color: #237cb7;
 }
 
 h6 {
   font-size: .8em;
-  color: #303030;
+  color: #237cb7;
 }
 
 p {
