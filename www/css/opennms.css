@@ -8009,6 +8009,8 @@ a.button {
   border-bottom: 1px solid #888; }
 .node-detail .events.ion-loading-d {
   font-size: 20px; }
+.node-detail .row {
+  font-size: 90%; }
 
 .outage-list .item {
   border-top: 0;
