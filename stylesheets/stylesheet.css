@@ -80,11 +80,13 @@ header h1 {
 
 sup {
   font-size: 120%;
+  color: #237cb7;
 }
 
 sup.reg {
   vertical-align: text-top;
   font-size: 50%;
+  color: #237cb7;
 }
 
 header h2 {
