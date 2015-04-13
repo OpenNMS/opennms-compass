@@ -7929,7 +7929,7 @@ a.button {
 .alarm-detail .item.item-divider {
   /* make sure his borders are higher than the rows */
   z-index: 3;
-  background-color: #f5f5f5; }
+  /* background-color: $item-divider-bg; */ }
 .alarm-detail .item {
   background-color: transparent; }
   .alarm-detail .item p {
