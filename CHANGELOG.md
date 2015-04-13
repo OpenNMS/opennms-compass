@@ -1,5 +1,5 @@
 <a name="2.0.0"</a>
-## 2.0.0 (2015-04-10)
+## 2.0.0 (2015-04-13)
 
 
 #### Bug Fixes
@@ -9,6 +9,7 @@
 * **alarms**  make sure refresh happens after alarm modification (COMPASS-38) ((ba1596d6))
 * **dashboard**
   *  make alarm donut say "Pending Problems" like the OpenNMS UI (COMPASS-34) ((0770e753))
+  *  shrink fonts to fit on iPhone 4S ((19209605))
   *  sometimes donuts would not render after rotate ((a6d441a7))
 * **info**
   *  fix "availability" notice (COMPASS-35) ((11432917))
@@ -21,6 +22,7 @@
   *  handle NPE checking addresses ((927d9d46))
   *  node list refreshes on settings change ((4021965d))
 * **settings**  don't autocorrect username ((2343683f))
+* **styles**  correct meridian/horizon blue+fix alarm detail ((2787c862))
 
 #### Features
 
