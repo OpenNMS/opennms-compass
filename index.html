@@ -7,6 +7,7 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+    <link rel="stylesheet" type="text/css" href="bower_components/magnific-popup/dist/magnific-popup.css" media="screen">
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
@@ -42,8 +43,8 @@
 
 <div style="overflow: hidden">
 
-<img class="screenshot" src="images/screenshot-dashboard-alarms.png" />
-<img class="screenshot" src="images/screenshot-dashboard-outages.png" />
+<a href="images/screenshot-dashboard-alarms.png" class="popup"><img class="screenshot" src="images/screenshot-dashboard-alarms.png" /></a>
+<a href="images/screenshot-dashboard-outages.png" class="popup"><img class="screenshot" src="images/screenshot-dashboard-outages.png" /></a>
 
 <h4><a id="features-dashboard" class="anchor" href="#features-dashboard" aria-hidden="true"><span class="octicon octicon-link"></span></a>Outage and Alarm Dashboard</h4>
 
@@ -55,8 +56,8 @@
 
 <div style="overflow: hidden">
 
-<img class="screenshot" src="images/screenshot-alarms-list.png" />
-<img class="screenshot" src="images/screenshot-alarms-detail.png" />
+<a href="images/screenshot-alarms-list.png" class="popup"><img class="screenshot" src="images/screenshot-alarms-list.png" /></a>
+<a href="images/screenshot-alarms-detail.png" class="popup"><img class="screenshot" src="images/screenshot-alarms-detail.png" /></a>
 
 <h4><a id="features-alarms" class="anchor" href="#features-alarms" aria-hidden="true"><span class="octicon octicon-link"></span></a>Alarm Details</h4>
 
@@ -67,7 +68,7 @@ the list, or from the alarm's details.</p>
 
 <div style="overflow: hidden">
 
-<img class="screenshot" src="images/screenshot-node-detail.png" />
+<a href="images/screenshot-node-detail.png" class="popup"><img class="screenshot" src="images/screenshot-node-detail.png" /></a>
 
 <h4><a id="features-nodes" class="anchor" href="#features-nodes" aria-hidden="true"><span class="octicon octicon-link"></span></a>Node Details</h4>
 
@@ -102,5 +103,17 @@ the list, or from the alarm's details.</p>
         
       </div>
     </div>
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/magnific-popup/dist/jquery.magnific-popup.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        $('.popup').magnificPopup({
+          type:'image',
+          gallery: {
+            enabled: true
+          }
+        });
+      });
+    </script>
   </body>
 </html>
