@@ -4,6 +4,9 @@
 			<button class="button button-compass button-clear" ng-click="hide()">Close</button>
 		</div>
 		<h1 class="title">{{node.label}}</h1>
+		<div class="buttons">
+			<button class="button button-compass button-clear" ng-click="graphs()">Graphs <i class="icon ion-stats-bars"></i></button>
+		</div>
 	</ion-header-bar>
 	<ion-content>
 		<ion-refresher pulling-text="Pull to Refresh..." on-refresh="refreshNode()"></ion-refresher>

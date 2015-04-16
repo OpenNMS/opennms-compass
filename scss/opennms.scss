@@ -74,6 +74,11 @@ $severity-alarm-cleared-border: #999;
 
 /* other miscellaneous UI classes */
 
+.c3-area {
+	stroke-width: 0;
+	opacity: 1.0;
+}
+
 .no-top {
 	border-top: 0;
 }

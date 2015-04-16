@@ -12,6 +12,7 @@
 <meta name="format-detection" content="telephone=no" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 
+<link rel="stylesheet" href="lib/c3/c3.min.css" />
 <link rel="stylesheet" href="css/opennms.min.css" />
 
 <style>
@@ -67,6 +68,25 @@
     <!-- build:charts scripts/charts.js -->
 	<script src="lib/d3/d3.js"></script>
 	<script src="lib/d3pie/d3pie/d3pie.js"></script>
+	<script src="lib/c3/c3.js"></script>
+    <!-- endbuild -->
+
+	<!-- build:backshift scripts/backshift.js -->
+	<script src="lib/backshift/src/Compat.js"></script>
+	<script src="lib/backshift/src/Backshift.js"></script>
+	<script src="lib/backshift/src/Backshift.Class.js"></script>
+	<script src="lib/backshift/src/Backshift.Class.Configurable.js"></script>
+	<script src="lib/backshift/src/Backshift.Math.js"></script>
+	<script src="lib/backshift/src/Backshift.Stats.js"></script>
+	<script src="lib/backshift/src/Backshift.Utilities.Url.js"></script>
+	<script src="lib/backshift/src/Backshift.Utilities.RpnToJexlConverter.js"></script>
+    <script src="lib/backshift/src/Backshift.Utilities.RrdGraphVisitor.js"></script>
+    <script src="lib/backshift/src/Backshift.Utilities.RrdGraphConverter.js"></script>
+    <script src="lib/backshift/src/Backshift.Data.js"></script>
+    <script src="lib/backshift/src/Backshift.Data.OnmsRRD.js"></script>
+    <script src="lib/backshift/src/Backshift.Data.Factory.js"></script>
+    <script src="lib/backshift/src/Backshift.Graph.js"></script>
+    <script src="lib/backshift/src/Backshift.Graph.C3.js"></script>
     <!-- endbuild -->
 
 	<!-- build:models scripts/models.js -->
@@ -87,9 +107,8 @@
 	<script src="scripts/opennms/models/Node.js"></script>
 	<script src="scripts/opennms/models/Outage.js"></script>
 	<script src="scripts/opennms/models/OutageSummary.js"></script>
-	<script src="scripts/opennms/models/Report.js"></script>
-	<script src="scripts/opennms/models/ReportGraph.js"></script>
 	<script src="scripts/opennms/models/RestError.js"></script>
+	<script src="scripts/opennms/models/Resource.js"></script>
 	<!-- endbuild -->
 
 	<script src="scripts/opennms/services/BuildConfig.js"></script>
@@ -111,6 +130,7 @@
 	<script src="scripts/opennms/services/Modals.js"></script>
 	<script src="scripts/opennms/services/Nodes.js"></script>
 	<script src="scripts/opennms/services/Outages.js"></script>
+	<script src="scripts/opennms/services/Resources.js"></script>
 	<script src="scripts/opennms/services/Rest.js"></script>
 	<script src="scripts/opennms/services/Util.js"></script>
 	<!-- endbuild -->

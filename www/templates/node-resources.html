@@ -1,0 +1,17 @@
+<ion-modal-view class="node-resources">
+	<ion-header-bar>
+		<div class="buttons">
+			<button class="button button-compass button-clear" ng-click="hide()">Close</button>
+		</div>
+		<h1 class="title">Choose Resources</h1>
+		<div class="buttons">
+			<button class="button button-compass button-clear" ng-click="graph()">Graph</button>
+		</div>
+	</ion-header-bar>
+	<ion-content>
+		<ion-refresher pulling-text="Pull to Refresh..." on-refresh="refreshResources()"></ion-refresher>
+		<ion-list>
+			<ion-checkbox ng-model="resource.enabled" ng-repeat="resource in resources">{{resource.label}}</ion-checkbox>
+		</ion-list>
+	</ion-content>
+</ion-modal-view>

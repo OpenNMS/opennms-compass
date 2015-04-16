@@ -7592,27 +7592,27 @@ a.button {
 /* OPENNMS GLOBAL COLORS */
 /* $severity-alarm-normal-border: #336600; */
 .horizon .tabs .tab-item .badge.badge-compass, .horizon .badge.badge-compass {
-  background-color: #509c49;
+  background-color: #4d9c2d;
   color: #fff; }
 .horizon .bar.bar-compass {
-  border-color: #3e7939;
-  background-color: #509c49;
-  background-image: linear-gradient(0deg, #3e7939, #3e7939 50%, transparent 50%);
+  border-color: #397422;
+  background-color: #4d9c2d;
+  background-image: linear-gradient(0deg, #397422, #397422 50%, transparent 50%);
   color: #fff; }
   .horizon .bar.bar-compass .title {
     color: #fff; }
   .horizon .bar.bar-compass.bar-footer {
-    background-image: linear-gradient(180deg, #3e7939, #3e7939 50%, transparent 50%); }
+    background-image: linear-gradient(180deg, #397422, #397422 50%, transparent 50%); }
 .horizon .bar-compass .button {
-  border-color: #3e7939;
-  background-color: #509c49;
+  border-color: #397422;
+  background-color: #4d9c2d;
   color: #fff; }
   .horizon .bar-compass .button:hover {
     color: #fff;
     text-decoration: none; }
   .horizon .bar-compass .button.active, .horizon .bar-compass .button.activated {
-    border-color: #3e7939;
-    background-color: #3e7939;
+    border-color: #397422;
+    background-color: #397422;
     box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.1); }
   .horizon .bar-compass .button.button-clear {
     border-color: transparent;
@@ -7624,71 +7624,71 @@ a.button {
     border-color: transparent;
     background: none; }
 .horizon .button.button-compass {
-  border-color: #3e7939;
-  background-color: #509c49;
+  border-color: #397422;
+  background-color: #4d9c2d;
   color: #fff; }
   .horizon .button.button-compass:hover {
     color: #fff;
     text-decoration: none; }
   .horizon .button.button-compass.active, .horizon .button.button-compass.activated {
-    border-color: #3e7939;
-    background-color: #3e7939;
+    border-color: #397422;
+    background-color: #397422;
     box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.1); }
   .horizon .button.button-compass.button-clear {
     border-color: transparent;
     background: none;
     box-shadow: none;
-    color: #509c49; }
+    color: #4d9c2d; }
   .horizon .button.button-compass.button-icon {
     border-color: transparent;
     background: none; }
   .horizon .button.button-compass.button-outline {
-    border-color: #509c49;
+    border-color: #4d9c2d;
     background: transparent;
-    color: #509c49; }
+    color: #4d9c2d; }
     .horizon .button.button-compass.button-outline.active, .horizon .button.button-compass.button-outline.activated {
-      background-color: #509c49;
+      background-color: #4d9c2d;
       box-shadow: none;
       color: #fff; }
 .horizon .checkbox-compass input:before, .horizon .checkbox-compass .checkbox-icon:before {
-  border-color: #509c49; }
+  border-color: #4d9c2d; }
 .horizon .checkbox-compass input:checked:before, .horizon .checkbox-compass input:checked + .checkbox-icon:before {
-  background: #509c49;
-  border-color: #509c49; }
+  background: #4d9c2d;
+  border-color: #4d9c2d; }
 .horizon .item.item-compass {
-  border-color: #3e7939;
-  background-color: #509c49;
+  border-color: #397422;
+  background-color: #4d9c2d;
   color: #fff; }
 .horizon .item.active.item-compass, .horizon .item.activated.item-compass, .horizon .item-complex.active .item-content.item-compass, .horizon .item-complex.activated .item-content.item-compass, .horizon .item .item-content.active.item-compass, .horizon .item .item-content.activated.item-compass {
-  border-color: #3e7939;
-  background-color: #3e7939; }
+  border-color: #397422;
+  background-color: #397422; }
 .horizon .item-complex.item-compass > .item-content {
-  border-color: #3e7939;
-  background-color: #509c49;
+  border-color: #397422;
+  background-color: #4d9c2d;
   color: #fff; }
   .horizon .item-complex.item-compass > .item-content.active, .horizon .item-complex.item-compass > .item-content:active {
-    border-color: #3e7939;
-    background-color: #3e7939; }
+    border-color: #397422;
+    background-color: #397422; }
 .horizon .item-select.item-compass select {
-  background: #509c49;
+  background: #4d9c2d;
   color: #fff; }
 .horizon .item-select.item-compass:after, .horizon .item-select.item-compass .input-label {
   color: #fff; }
 .horizon .range.range-compass input::-webkit-slider-thumb:before {
-  background: #509c49; }
+  background: #4d9c2d; }
 .horizon .spinner.spinner-compass {
-  stroke: #509c49;
-  fill: #509c49; }
+  stroke: #4d9c2d;
+  fill: #4d9c2d; }
 .horizon .tabs-compass > .tabs, .horizon .tabs.tabs-compass {
-  border-color: #509c49;
-  background-color: #509c49;
-  background-image: linear-gradient(0deg, #509c49, #509c49 50%, transparent 50%);
+  border-color: #4d9c2d;
+  background-color: #4d9c2d;
+  background-image: linear-gradient(0deg, #4d9c2d, #4d9c2d 50%, transparent 50%);
   color: #fff; }
   .horizon .tabs-compass > .tabs .tab-item .badge, .horizon .tabs.tabs-compass .tab-item .badge {
     background-color: #fff;
-    color: #509c49; }
+    color: #4d9c2d; }
 .horizon .tabs-striped.tabs-compass .tabs {
-  background-color: #509c49; }
+  background-color: #4d9c2d; }
 .horizon .tabs-striped.tabs-compass .tab-item {
   color: rgba(255, 255, 255, 0.4);
   opacity: 1; }
@@ -7703,77 +7703,77 @@ a.button {
 .horizon .tabs-striped.tabs-top .tab-item.tab-item-active .badge, .horizon .tabs-striped.tabs-top .tab-item.active .badge, .horizon .tabs-striped.tabs-top .tab-item.activated .badge {
   top: 4%; }
 .horizon .tabs-striped.tabs-background-compass .tabs {
-  background-color: #509c49;
+  background-color: #4d9c2d;
   background-image: none; }
 .horizon .tabs-striped.tabs-color-compass .tab-item {
-  color: rgba(80, 156, 73, 0.4);
+  color: rgba(77, 156, 45, 0.4);
   opacity: 1; }
   .horizon .tabs-striped.tabs-color-compass .tab-item .badge {
     opacity: 0.4; }
   .horizon .tabs-striped.tabs-color-compass .tab-item.tab-item-active, .horizon .tabs-striped.tabs-color-compass .tab-item.active, .horizon .tabs-striped.tabs-color-compass .tab-item.activated {
     margin-top: -2px;
-    color: #509c49;
-    border: 0 solid #509c49;
+    color: #4d9c2d;
+    border: 0 solid #4d9c2d;
     border-top-width: 2px; }
     .horizon .tabs-striped.tabs-color-compass .tab-item.tab-item-active .badge, .horizon .tabs-striped.tabs-color-compass .tab-item.active .badge, .horizon .tabs-striped.tabs-color-compass .tab-item.activated .badge {
       top: 2px;
       opacity: 1; }
 .horizon .tabs-background-compass .tabs, .horizon .tabs-background-compass > .tabs {
-  background-color: #509c49;
-  background-image: linear-gradient(0deg, #3e7939, #3e7939 50%, transparent 50%);
-  border-color: #3e7939; }
+  background-color: #4d9c2d;
+  background-image: linear-gradient(0deg, #397422, #397422 50%, transparent 50%);
+  border-color: #397422; }
 .horizon .tabs-color-compass .tab-item {
-  color: rgba(80, 156, 73, 0.4);
+  color: rgba(77, 156, 45, 0.4);
   opacity: 1; }
   .horizon .tabs-color-compass .tab-item .badge {
     opacity: 0.4; }
   .horizon .tabs-color-compass .tab-item.tab-item-active, .horizon .tabs-color-compass .tab-item.active, .horizon .tabs-color-compass .tab-item.activated {
-    color: #509c49;
-    border: 0 solid #509c49; }
+    color: #4d9c2d;
+    border: 0 solid #4d9c2d; }
     .horizon .tabs-color-compass .tab-item.tab-item-active .badge, .horizon .tabs-color-compass .tab-item.active .badge, .horizon .tabs-color-compass .tab-item.activated .badge {
       opacity: 1; }
 .horizon ion-tabs.tabs-color-active-compass .tab-item {
   color: black; }
   .horizon ion-tabs.tabs-color-active-compass .tab-item.tab-item-active, .horizon ion-tabs.tabs-color-active-compass .tab-item.active, .horizon ion-tabs.tabs-color-active-compass .tab-item.activated {
-    color: #509c49; }
+    color: #4d9c2d; }
 .horizon .tab-item.tab-item-active.tab-item-compass, .horizon .tab-item.active.tab-item-compass, .horizon .tab-item.activated.tab-item-compass {
-  color: #509c49; }
+  color: #4d9c2d; }
 .horizon .toggle.toggle-compass input:checked + .track {
-  border-color: #509c49;
-  background-color: #509c49; }
+  border-color: #4d9c2d;
+  background-color: #4d9c2d; }
 .horizon .toggle-small .toggle-compass input:checked + .track {
-  background-color: rgba(80, 156, 73, 0.5); }
+  background-color: rgba(77, 156, 45, 0.5); }
 .horizon .toggle-small .toggle-compass input:checked + .track .handle {
-  background-color: #509c49; }
+  background-color: #4d9c2d; }
 .horizon .compass, .horizon a.compass {
-  color: #509c49; }
+  color: #4d9c2d; }
 .horizon .compass-bg {
-  background-color: #509c49; }
+  background-color: #4d9c2d; }
 .horizon .compass-border {
-  border-color: #509c49; }
+  border-color: #4d9c2d; }
 
 .meridian .tabs .tab-item .badge.badge-compass, .meridian .badge.badge-compass {
-  background-color: #277eb7;
+  background-color: #237cb7;
   color: #fff; }
 .meridian .bar.bar-compass {
-  border-color: #1e618d;
-  background-color: #277eb7;
-  background-image: linear-gradient(0deg, #1e618d, #1e618d 50%, transparent 50%);
+  border-color: #1b5f8c;
+  background-color: #237cb7;
+  background-image: linear-gradient(0deg, #1b5f8c, #1b5f8c 50%, transparent 50%);
   color: #fff; }
   .meridian .bar.bar-compass .title {
     color: #fff; }
   .meridian .bar.bar-compass.bar-footer {
-    background-image: linear-gradient(180deg, #1e618d, #1e618d 50%, transparent 50%); }
+    background-image: linear-gradient(180deg, #1b5f8c, #1b5f8c 50%, transparent 50%); }
 .meridian .bar-compass .button {
-  border-color: #1e618d;
-  background-color: #277eb7;
+  border-color: #1b5f8c;
+  background-color: #237cb7;
   color: #fff; }
   .meridian .bar-compass .button:hover {
     color: #fff;
     text-decoration: none; }
   .meridian .bar-compass .button.active, .meridian .bar-compass .button.activated {
-    border-color: #1e618d;
-    background-color: #1e618d;
+    border-color: #1b5f8c;
+    background-color: #1b5f8c;
     box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.1); }
   .meridian .bar-compass .button.button-clear {
     border-color: transparent;
@@ -7785,71 +7785,71 @@ a.button {
     border-color: transparent;
     background: none; }
 .meridian .button.button-compass {
-  border-color: #1e618d;
-  background-color: #277eb7;
+  border-color: #1b5f8c;
+  background-color: #237cb7;
   color: #fff; }
   .meridian .button.button-compass:hover {
     color: #fff;
     text-decoration: none; }
   .meridian .button.button-compass.active, .meridian .button.button-compass.activated {
-    border-color: #1e618d;
-    background-color: #1e618d;
+    border-color: #1b5f8c;
+    background-color: #1b5f8c;
     box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.1); }
   .meridian .button.button-compass.button-clear {
     border-color: transparent;
     background: none;
     box-shadow: none;
-    color: #277eb7; }
+    color: #237cb7; }
   .meridian .button.button-compass.button-icon {
     border-color: transparent;
     background: none; }
   .meridian .button.button-compass.button-outline {
-    border-color: #277eb7;
+    border-color: #237cb7;
     background: transparent;
-    color: #277eb7; }
+    color: #237cb7; }
     .meridian .button.button-compass.button-outline.active, .meridian .button.button-compass.button-outline.activated {
-      background-color: #277eb7;
+      background-color: #237cb7;
       box-shadow: none;
       color: #fff; }
 .meridian .checkbox-compass input:before, .meridian .checkbox-compass .checkbox-icon:before {
-  border-color: #277eb7; }
+  border-color: #237cb7; }
 .meridian .checkbox-compass input:checked:before, .meridian .checkbox-compass input:checked + .checkbox-icon:before {
-  background: #277eb7;
-  border-color: #277eb7; }
+  background: #237cb7;
+  border-color: #237cb7; }
 .meridian .item.item-compass {
-  border-color: #1e618d;
-  background-color: #277eb7;
+  border-color: #1b5f8c;
+  background-color: #237cb7;
   color: #fff; }
 .meridian .item.active.item-compass, .meridian .item.activated.item-compass, .meridian .item-complex.active .item-content.item-compass, .meridian .item-complex.activated .item-content.item-compass, .meridian .item .item-content.active.item-compass, .meridian .item .item-content.activated.item-compass {
-  border-color: #1e618d;
-  background-color: #1e618d; }
+  border-color: #1b5f8c;
+  background-color: #1b5f8c; }
 .meridian .item-complex.item-compass > .item-content {
-  border-color: #1e618d;
-  background-color: #277eb7;
+  border-color: #1b5f8c;
+  background-color: #237cb7;
   color: #fff; }
   .meridian .item-complex.item-compass > .item-content.active, .meridian .item-complex.item-compass > .item-content:active {
-    border-color: #1e618d;
-    background-color: #1e618d; }
+    border-color: #1b5f8c;
+    background-color: #1b5f8c; }
 .meridian .item-select.item-compass select {
-  background: #277eb7;
+  background: #237cb7;
   color: #fff; }
 .meridian .item-select.item-compass:after, .meridian .item-select.item-compass .input-label {
   color: #fff; }
 .meridian .range.range-compass input::-webkit-slider-thumb:before {
-  background: #277eb7; }
+  background: #237cb7; }
 .meridian .spinner.spinner-compass {
-  stroke: #277eb7;
-  fill: #277eb7; }
+  stroke: #237cb7;
+  fill: #237cb7; }
 .meridian .tabs-compass > .tabs, .meridian .tabs.tabs-compass {
-  border-color: #277eb7;
-  background-color: #277eb7;
-  background-image: linear-gradient(0deg, #277eb7, #277eb7 50%, transparent 50%);
+  border-color: #237cb7;
+  background-color: #237cb7;
+  background-image: linear-gradient(0deg, #237cb7, #237cb7 50%, transparent 50%);
   color: #fff; }
   .meridian .tabs-compass > .tabs .tab-item .badge, .meridian .tabs.tabs-compass .tab-item .badge {
     background-color: #fff;
-    color: #277eb7; }
+    color: #237cb7; }
 .meridian .tabs-striped.tabs-compass .tabs {
-  background-color: #277eb7; }
+  background-color: #237cb7; }
 .meridian .tabs-striped.tabs-compass .tab-item {
   color: rgba(255, 255, 255, 0.4);
   opacity: 1; }
@@ -7864,54 +7864,54 @@ a.button {
 .meridian .tabs-striped.tabs-top .tab-item.tab-item-active .badge, .meridian .tabs-striped.tabs-top .tab-item.active .badge, .meridian .tabs-striped.tabs-top .tab-item.activated .badge {
   top: 4%; }
 .meridian .tabs-striped.tabs-background-compass .tabs {
-  background-color: #277eb7;
+  background-color: #237cb7;
   background-image: none; }
 .meridian .tabs-striped.tabs-color-compass .tab-item {
-  color: rgba(39, 126, 183, 0.4);
+  color: rgba(35, 124, 183, 0.4);
   opacity: 1; }
   .meridian .tabs-striped.tabs-color-compass .tab-item .badge {
     opacity: 0.4; }
   .meridian .tabs-striped.tabs-color-compass .tab-item.tab-item-active, .meridian .tabs-striped.tabs-color-compass .tab-item.active, .meridian .tabs-striped.tabs-color-compass .tab-item.activated {
     margin-top: -2px;
-    color: #277eb7;
-    border: 0 solid #277eb7;
+    color: #237cb7;
+    border: 0 solid #237cb7;
     border-top-width: 2px; }
     .meridian .tabs-striped.tabs-color-compass .tab-item.tab-item-active .badge, .meridian .tabs-striped.tabs-color-compass .tab-item.active .badge, .meridian .tabs-striped.tabs-color-compass .tab-item.activated .badge {
       top: 2px;
       opacity: 1; }
 .meridian .tabs-background-compass .tabs, .meridian .tabs-background-compass > .tabs {
-  background-color: #277eb7;
-  background-image: linear-gradient(0deg, #1e618d, #1e618d 50%, transparent 50%);
-  border-color: #1e618d; }
+  background-color: #237cb7;
+  background-image: linear-gradient(0deg, #1b5f8c, #1b5f8c 50%, transparent 50%);
+  border-color: #1b5f8c; }
 .meridian .tabs-color-compass .tab-item {
-  color: rgba(39, 126, 183, 0.4);
+  color: rgba(35, 124, 183, 0.4);
   opacity: 1; }
   .meridian .tabs-color-compass .tab-item .badge {
     opacity: 0.4; }
   .meridian .tabs-color-compass .tab-item.tab-item-active, .meridian .tabs-color-compass .tab-item.active, .meridian .tabs-color-compass .tab-item.activated {
-    color: #277eb7;
-    border: 0 solid #277eb7; }
+    color: #237cb7;
+    border: 0 solid #237cb7; }
     .meridian .tabs-color-compass .tab-item.tab-item-active .badge, .meridian .tabs-color-compass .tab-item.active .badge, .meridian .tabs-color-compass .tab-item.activated .badge {
       opacity: 1; }
 .meridian ion-tabs.tabs-color-active-compass .tab-item {
   color: black; }
   .meridian ion-tabs.tabs-color-active-compass .tab-item.tab-item-active, .meridian ion-tabs.tabs-color-active-compass .tab-item.active, .meridian ion-tabs.tabs-color-active-compass .tab-item.activated {
-    color: #277eb7; }
+    color: #237cb7; }
 .meridian .tab-item.tab-item-active.tab-item-compass, .meridian .tab-item.active.tab-item-compass, .meridian .tab-item.activated.tab-item-compass {
-  color: #277eb7; }
+  color: #237cb7; }
 .meridian .toggle.toggle-compass input:checked + .track {
-  border-color: #277eb7;
-  background-color: #277eb7; }
+  border-color: #237cb7;
+  background-color: #237cb7; }
 .meridian .toggle-small .toggle-compass input:checked + .track {
-  background-color: rgba(39, 126, 183, 0.5); }
+  background-color: rgba(35, 124, 183, 0.5); }
 .meridian .toggle-small .toggle-compass input:checked + .track .handle {
-  background-color: #277eb7; }
+  background-color: #237cb7; }
 .meridian .compass, .meridian a.compass {
-  color: #277eb7; }
+  color: #237cb7; }
 .meridian .compass-bg {
-  background-color: #277eb7; }
+  background-color: #237cb7; }
 .meridian .compass-border {
-  border-color: #277eb7; }
+  border-color: #237cb7; }
 
 .alarms .item-complex .item-content, .alarms .item-radio .item-content {
   background-color: inherit; }
@@ -8153,6 +8153,10 @@ a.button {
   background: linear-gradient(to bottom, rgba(238, 238, 238, 0) 0%, #eeeeee 70%); }
 
 /* other miscellaneous UI classes */
+.c3-area {
+  stroke-width: 0;
+  opacity: 1; }
+
 .no-top {
   border-top: 0; }
 

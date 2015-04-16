@@ -2,6 +2,7 @@
 	'use strict';
 
 	/* global ionic: true */
+	/* global Backshift: true */
 
 	angular.module('opennms.services.Modals', [
 		'ionic',
@@ -14,9 +15,184 @@
 		'opennms.services.Info',
 		'opennms.services.Nodes',
 		'opennms.services.Outages',
+		'opennms.services.Resources',
+		'opennms.services.Rest',
+		'opennms.services.Settings',
 		'opennms.services.Util',
 	])
-	.factory('NodeModal', function($q, $rootScope, $interval, $ionicModal, $ionicPopup, $cordovaGeolocation, AvailabilityService, EventService, Info, NodeService, OutageService) {
+	.factory('NodeGraphModal', function($q, $rootScope, $timeout, $ionicModal, ResourceService, RestService, Settings) {
+		console.log('NodeGraphModal: initializing.');		
+		var $scope = $rootScope.$new();
+		var nodeGraphModal = $q.defer();
+
+		$ionicModal.fromTemplateUrl('templates/node-graphs.html', {
+			scope: $scope.$new(),
+			animation: 'slide-in-up'
+		}).then(function(modal) {
+			nodeGraphModal.resolve(modal);
+
+			modal.scope.graphs = {};
+	        var end = Date.now(),
+		        start = end - (4 * 60 * 60 * 1000);
+
+			var fetchDefinition = function(resource, report) {
+				ResourceService.report(report).then(function(r) {
+					//console.log('got report for ' + report + ':',r);
+					var rrdGraphConverter = new Backshift.Utilities.RrdGraphConverter({
+						graphDef: r,
+						resourceId: resource
+					});
+					var model = rrdGraphConverter.model;
+
+					// Update the model to use OpenNMS' ReST Measurements API
+					model.dataProcessor = {};
+					model.dataProcessor.type = 'onmsrrd';
+					model.dataProcessor.url = RestService.url('/measurements');
+					model.dataProcessor.username = Settings.username();
+					model.dataProcessor.password = Settings.password();
+
+					//console.log(angular.toJson(model));
+
+					$timeout(function() {
+						//console.log('model=',model);
+		                var bsGraph = new Backshift.Graph.C3({
+		                    model: model,
+		                    element: document.getElementById(resource+'-'+report),
+		                    start: Math.floor(Number(start) / 1000),
+		                    end: Math.floor(Number(end) / 1000),
+		                    refreshRate: 0
+		                });
+		                bsGraph.render();
+					}, 1000);
+				});
+			};
+
+			var fetchGraphs = function(id) {
+				//console.log('id='+id);
+				ResourceService.graphs(id).then(function(g) {
+					//console.log(id + ' graphs:',g);
+					modal.scope.graphs[id] = g;
+					var i, len = g.length;
+					for (i=0; i < len; i++) {
+						fetchDefinition(id, g[i]);
+					}
+				});
+			};
+
+			modal.scope.show = function(node, resources) {
+				//console.log('show node: ', node);
+				modal.scope.node = node;
+				modal.scope.resources = [];
+				var i, len = resources.length, resource;
+
+				for (i=0; i < len; i++) {
+					resource = resources[i];
+					if (resource.enabled) {
+						modal.scope.resources.push(resource);
+
+					}
+				}
+
+				len = modal.scope.resources.length;
+				for (i=0; i < len; i++) {
+					fetchGraphs(modal.scope.resources[i].id);
+				}
+
+				modal.show();
+				return modal.scope.resources;
+			};
+
+			modal.scope.hide = function() {
+				delete modal.scope.resources;
+				delete modal.scope.graphs;
+				modal.hide();
+			};
+		});
+
+		$scope.$on('$destroy', function() {
+			nodeGraphModal.promise.then(function(modal) {
+				modal.scope.hide();
+				modal.remove();
+			});
+		});
+
+		return {
+			show: function(node, resources) {
+				return nodeGraphModal.promise.then(function(modal) {
+					modal.scope.show(node, resources);
+				});
+			},
+		};
+	})
+	.factory('NodeResourceModal', function($q, $rootScope, $ionicModal, NodeGraphModal, ResourceService) {
+		console.log('NodeResourceModal: initializing.');		
+		var $scope = $rootScope.$new();
+		var nodeResourceModal = $q.defer();
+
+		$ionicModal.fromTemplateUrl('templates/node-resources.html', {
+			scope: $scope.$new(),
+			animation: 'slide-in-up'
+		}).then(function(modal) {
+			nodeResourceModal.resolve(modal);
+
+			modal.scope.refreshResources = function() {
+				return ResourceService.get(modal.scope.node.id).then(function(resource) {
+					var resources = [],
+						res,
+						i,
+						len = resource.children.length;
+					for (i=0; i < len; i++) {
+						res = {
+							id: resource.children[i].id,
+							label: resource.children[i].label,
+							enabled: true
+						};
+						resources.push(res);
+					}
+					modal.scope.resources = resources;
+				}, function(err) {
+					console.log('ResourceService got error:', err);
+					return err;
+				}).finally(function() {
+					modal.scope.$broadcast('scroll.refreshComplete');
+				});
+			};
+
+			modal.scope.graph = function() {
+				NodeGraphModal.show(modal.scope.node, modal.scope.resources).then(function() {
+					modal.scope.hide();
+				});
+			};
+
+			modal.scope.show = function(node) {
+				modal.scope.node = node;
+				modal.scope.refreshResources().then(function() {
+					modal.show();
+				});
+			};
+
+			modal.scope.hide = function() {
+				delete modal.scope.resources;
+				modal.hide();
+			};
+		});
+
+		$scope.$on('$destroy', function() {
+			nodeResourceModal.promise.then(function(modal) {
+				modal.scope.hide();
+				modal.remove();
+			});
+		});
+
+		return {
+			show: function(node) {
+				return nodeResourceModal.promise.then(function(modal) {
+					modal.scope.show(node);
+				});
+			},
+		};
+	})
+	.factory('NodeModal', function($q, $rootScope, $interval, $ionicModal, $ionicPopup, $cordovaGeolocation, AvailabilityService, EventService, Info, NodeService, OutageService, NodeResourceModal) {
 		console.log('NodeModal: initializing.');
 		var $scope = $rootScope.$new();
 		var nodeModal = $q.defer();
@@ -56,6 +232,10 @@
 				modal.scope.node = node;
 				modal.scope.updateData();
 				modal.show();
+			};
+
+			modal.scope.graphs = function() {
+				NodeResourceModal.show(modal.scope.node);
 			};
 
 			modal.scope.updateData = function() {

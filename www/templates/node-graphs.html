@@ -1,0 +1,21 @@
+<ion-modal-view class="node-graphs">
+	<ion-header-bar>
+		<div class="buttons">
+			<button class="button button-compass button-clear" ng-click="hide()">Close</button>
+		</div>
+		<h1 class="title">Node</h1>
+	</ion-header-bar>
+	<ion-content>
+		<ion-refresher pulling-text="Pull to Refresh..." on-refresh="refreshGraphs()"></ion-refresher>
+		<ion-list>
+			<span ng-repeat="resource in resources">
+				<ion-item class="item item-divider item-compass">
+					{{resource.label}}
+				</ion-item>
+				<ion-item ng-repeat="graph in graphs[resource.id]">
+					<div id="{{resource.id}}-{{graph}}"></div>
+				</ion-item>
+			</span>
+		</ion-list>
+	</ion-content>
+</ion-modal-view>
