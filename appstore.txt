@@ -9,8 +9,6 @@ Features:
 • Node detail shows availability¹, outages, & events
 • Geolocate nodes with the touch of a button¹²
 
-Compatibility:
-
 OpenNMS® Compass is compatible with the following servers:
 
 • OpenNMS® Horizon™, version 1.12 or greater
