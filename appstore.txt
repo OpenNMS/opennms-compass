@@ -1,4 +1,4 @@
-OpenNMS® Compass provides users of the OpenNMS® network management platform with quick access to everything they need to check their network's status while on the go. View outages, alarms, and node information, as well as acknowledge alarms (and their associated notifications) straight from your device.
+OpenNMS® Compass provides users of the OpenNMS® network management platform with quick access to everything they need to check their network's status while on the go. View outages, alarms, and node information, as well as acknowledge alarms and their associated notifications straight from your device.
 
 NOTE: This is a client application for users of OpenNMS®; it requires an OpenNMS® Horizon™ or OpenNMS® Meridian™ server to operate against. OpenNMS® is a powerful, flexible, and 100% open-source network management tool; it is free as in freedom and free as in beer.
 
@@ -19,4 +19,4 @@ About OpenNMS®:
 OpenNMS® is the world's first enterprise grade network management application platform developed under the open source model.
 
 ¹ Availability and geolocation features require OpenNMS Horizon 15.0.2 or OpenNMS Meridian 2015.1.0 or greater.
-² Administrative features like acknowledgement, escalation, clearing, and updating geolocation require logging in to OpenNMS Compass using an administrator account.
+² Administrative features like acknowledgement, escalation, clearing, and updating geolocation require logging in to OpenNMS Compass using an account with administrative privileges.
