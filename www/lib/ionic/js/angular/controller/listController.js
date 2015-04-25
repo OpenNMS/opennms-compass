@@ -1,4 +1,3 @@
-
 /**
  * @ngdoc service
  * @name $ionicListDelegate
@@ -32,8 +31,7 @@
  * }
  * ```
  */
-IonicModule
-.service('$ionicListDelegate', ionic.DelegateService([
+IonicModule.service('$ionicListDelegate', ionic.DelegateService([
   /**
    * @ngdoc method
    * @name $ionicListDelegate#showReorder
@@ -61,7 +59,7 @@ IonicModule
    * @name $ionicListDelegate#closeOptionButtons
    * @description Closes any option buttons on the list that are swiped open.
    */
-  'closeOptionButtons',
+  'closeOptionButtons'
   /**
    * @ngdoc method
    * @name $ionicListDelegate#$getByHandle
