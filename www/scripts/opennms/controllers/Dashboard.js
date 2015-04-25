@@ -274,7 +274,7 @@
 			$scope.errors = Errors.get();
 		});
 		$scope.$on('$ionicView.beforeEnter', function() {
-			ionic.trigger('resize', {target:window});
+			/* ionic.trigger('resize', {target:window}); */
 			$scope.refreshData();
 		});
 	});

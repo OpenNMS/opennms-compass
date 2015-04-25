@@ -13,7 +13,7 @@
 	</ion-header-bar>
 	<ion-content padding="false" scroll="true" class="has-header">
 		<ion-refresher pulling-text="Pull to Refresh..." on-refresh="refreshData()"></ion-refresher>
-		<ion-slide-box on-slide-changed="refreshSlide(index)" delegate-handle="donut-slide-box" ng-if="!landscape">
+		<ion-slide-box on-slide-changed="refreshSlide(index)" show-pager="false" delegate-handle="donut-slide-box" ng-if="!landscape">
 			<ion-slide class="outages">
 				<i id="outage-arrow" class="icon ion-chevron-right right-arrow compass" ng-click="goToSlide(1)" ng-class="donutClass('outages')"></i>
 				<h3 ng-if="e.hasError('outage-chart')" class="title error">Error: Unable to retrieve outages.</h3>
