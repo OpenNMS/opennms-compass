@@ -68,9 +68,7 @@
 			};
 
 			var fetchGraphs = function(id) {
-				//console.log('id='+id);
 				ResourceService.graphs(id).then(function(g) {
-					//console.log(id + ' graphs:',g);
 					modal.scope.graphs[id] = g;
 					var i, len = g.length;
 					for (i=0; i < len; i++) {

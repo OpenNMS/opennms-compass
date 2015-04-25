@@ -10,7 +10,7 @@
 function Resource(resource) {
   'use strict';
 
-  var self = this, i;
+  var self = this, i, prop;
 
   /**
    * @description
@@ -19,7 +19,7 @@ function Resource(resource) {
    * @propertyOf Resource
    * @returns {string} The unique resource ID
    */
-  self.id = resource['_id'];
+  self.id = resource['id'];
 
   /**
    * @description
@@ -28,7 +28,16 @@ function Resource(resource) {
    * @propertyOf Resource
    * @returns {string} a description of the resource
    */
-  self.label = resource['_label'];
+  self.label = resource['label'];
+
+  /**
+   * @description
+   * @ngdoc property
+   * @name Resource#rrdGraphAttributes
+   * @propertyOf Resource
+   * @returns {Object} a set of properties
+   */
+  self.rrdGraphAttributes = resource.rrdGraphAttributes;
 
   /**
    * @description
@@ -37,16 +46,7 @@ function Resource(resource) {
    * @propertyOf Resource
    * @returns {Object} a set of properties
    */
-  self.stringPropertyAttributes = [];
-  if (resource.stringPropertyAttributes && resource.stringPropertyAttributes.entry) {
-    if (angular.isArray(resource.stringPropertyAttributes.entry)) {
-      for (i=0; i < resource.stringPropertyAttributes.entry.length; i++) {
-        self.stringPropertyAttributes.push(resource.stringPropertyAttributes.entry[i].key);
-      }
-    } else {
-        self.stringPropertyAttributes.push(resource.stringPropertyAttributes.entry.key);
-    }
-  }
+  self.stringPropertyAttributes = resource.stringPropertyAttributes;
 
   /**
    * @description
@@ -55,14 +55,21 @@ function Resource(resource) {
    * @propertyOf Resource
    * @returns {Object} a set of properties
    */
-  self.externalValueAttributes = [];
-  if (resource.externalValueAttributes && resource.externalValueAttributes.entry) {
-    if (angular.isArray(resource.externalValueAttributes.entry)) {
-      for (i=0; i < resource.externalValueAttributes.entry.length; i++) {
-        self.externalValueAttributes.push(resource.externalValueAttributes.entry[i].key);
-      }
+  self.externalValueAttributes = resource.externalValueAttributes;
+
+  /**
+   * @description
+   * @ngdoc property
+   * @name Resource#graphNames
+   * @propertyOf Resource
+   * @returns {array} an array of graph names
+   */
+  self.graphNames = [];
+  if (resource.graphNames) {
+    if (angular.isArray(resource.graphNames)) {
+      self.graphNames = resource.graphNames;
     } else {
-        self.externalValueAttributes.push(resource.externalValueAttributes.entry.key);
+      self.graphNames.push(resource.graphNames);
     }
   }
 
@@ -71,7 +78,7 @@ function Resource(resource) {
    * @ngdoc property
    * @name Resource#children
    * @propertyOf Resource
-   * @returns {array} An array of child resources.
+   * @returns {array} an array of child resources
    */
   self.children = [];
   if (resource.children && resource.children.resource) {
