@@ -5,7 +5,7 @@ IonicModule
   '$element',
   '$ionicBind',
   '$timeout',
-  function($scope, $attrs,  $element, $ionicBind, $timeout) {
+  function($scope, $attrs, $element, $ionicBind, $timeout) {
     var self = this,
         isDragging = false,
         isOverscrolling = false,
@@ -51,22 +51,21 @@ IonicModule
         dragOffset = 0;
         isOverscrolling = false;
         setScrollLock(false);
-        return true;
-      }
-      isDragging = false;
-      dragOffset = 0;
-
-      // the user has scroll far enough to trigger a refresh
-      if (lastOverscroll > ptrThreshold) {
-        start();
-        scrollTo(ptrThreshold, scrollTime);
-
-      // the user has overscrolled but not far enough to trigger a refresh
       } else {
-        scrollTo(0, scrollTime, deactivate);
-        isOverscrolling = false;
+        isDragging = false;
+        dragOffset = 0;
+
+        // the user has scroll far enough to trigger a refresh
+        if (lastOverscroll > ptrThreshold) {
+          start();
+          scrollTo(ptrThreshold, scrollTime);
+
+        // the user has overscrolled but not far enough to trigger a refresh
+        } else {
+          scrollTo(0, scrollTime, deactivate);
+          isOverscrolling = false;
+        }
       }
-      return true;
     }
 
     function handleTouchmove(e) {
@@ -77,6 +76,12 @@ IonicModule
       //if this is a new drag, keep track of where we start
       if (startY === null) {
         startY = parseInt(e.touches[0].screenY, 10);
+      }
+
+      // kitkat fix for touchcancel events http://updates.html5rocks.com/2014/05/A-More-Compatible-Smoother-Touch
+      if (ionic.Platform.isAndroid() && ionic.Platform.version() === 4.4 && scrollParent.scrollTop === 0) {
+        isDragging = true;
+        e.preventDefault();
       }
 
       // how far have we dragged so far?
@@ -91,15 +96,14 @@ IonicModule
         }
 
         if (isDragging) {
-          nativescroll(scrollParent,parseInt(deltaY - dragOffset, 10) * -1);
+          nativescroll(scrollParent, parseInt(deltaY - dragOffset, 10) * -1);
         }
 
         // if we're not at overscroll 0 yet, 0 out
         if (lastOverscroll !== 0) {
           overscroll(0);
         }
-
-        return true;
+        return;
 
       } else if (deltaY > 0 && scrollParent.scrollTop === 0 && !isOverscrolling) {
         // starting overscroll, but drag started below scrollTop 0, so we need to offset the position
@@ -297,7 +301,7 @@ IonicModule
       $element[0].classList.remove('invisible');
     }
 
-    function  hide() {
+    function hide() {
       // showCallback
       $element[0].classList.add('invisible');
     }
@@ -310,6 +314,6 @@ IonicModule
     // for testing
     self.__handleTouchmove = handleTouchmove;
     self.__getScrollChild = function() { return scrollChild; };
-    self.__getScrollParent= function() { return scrollParent; };
+    self.__getScrollParent = function() { return scrollParent; };
   }
 ]);
