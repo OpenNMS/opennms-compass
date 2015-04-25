@@ -9,7 +9,7 @@
 		'opennms.services.Rest',
 		'opennms.services.Settings'
 	])
-	.factory('Info', function($q, $rootScope, $http, $timeout, RestService, Settings) {
+	.factory('Info', function($q, $rootScope, $http, $window, $timeout, RestService, Settings) {
 		console.log('Info: Initializing.');
 
 		var defaultInfo = {
@@ -24,6 +24,20 @@
 		var currentInfo = angular.copy(defaultInfo);
 		var info = $q.defer();
 
+		var onSuccess = function(data) {
+			console.log('info success=' + angular.toJson(data));
+			data.numericVersion = parseFloat(data.version.replace('^(\\d+\\.\\d+).*$', '$1'));
+			currentInfo = angular.copy(data);
+			info.resolve(currentInfo);
+			initialized = true;
+		};
+
+		var onFailure = function() {
+			currentInfo = angular.copy(defaultInfo);
+			info.resolve(currentInfo);
+			initialized = true;
+		};
+
 		var updateInfo = function() {
 			if (!Settings.isServerConfigured()) {
 				console.log('Info.updateInfo: skipping update, server is not configured yet.');
@@ -36,21 +50,14 @@
 				info = $q.defer();
 			}
 
-			$http.get(RestService.url('/info'), {
-				headers: {
-					'Accept': 'application/json'
-				},
-				withCredentials: true,
-			}).success(function(results) {
-				results.numericVersion = parseFloat(results.version.replace('^(\\d+\\.\\d+).*$', '$1'));
-				currentInfo = angular.copy(results);
-				info.resolve(currentInfo);
-				initialized = true;
-			}).error(function(data, status, headers, config, statusText) {
-				console.log('Info.updateInfo failed: ' + status + ' ' + statusText, data);
-				currentInfo = angular.copy(defaultInfo);
-				info.resolve(currentInfo);
-				initialized = true;
+			RestService.get('/info', {'limit':0}, {'Accept': 'application/json'}).then(function(response) {
+				if (angular.isString(response)) {
+					response = angular.fromJson(response);
+				}
+				onSuccess(response);
+			}, function(err) {
+				console.log('Info.updateInfo failed: ' + angular.toJson(err));
+				onFailure();
 			});
 		};
 		$timeout(updateInfo);
