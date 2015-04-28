@@ -102,7 +102,9 @@ function($rootScope, $ionicBody, $compile, $timeout, $ionicPlatform, $ionicTempl
      *  - `{string=}` `animation` The animation to show & hide with.
      *    Default: 'slide-in-up'
      *  - `{boolean=}` `focusFirstInput` Whether to autofocus the first input of
-     *    the modal when shown.  Default: false.
+     *    the modal when shown. Will only show the keyboard on iOS, to force the keyboard to show
+     *    on Android, please use the [Ionic keyboard plugin](https://github.com/driftyco/ionic-plugin-keyboard#keyboardshow).
+     *    Default: false.
      *  - `{boolean=}` `backdropClickToClose` Whether to close the modal on clicking the backdrop.
      *    Default: true.
      *  - `{boolean=}` `hardwareBackButtonClose` Whether the modal can be closed using the hardware
@@ -126,6 +128,10 @@ function($rootScope, $ionicBody, $compile, $timeout, $ionicPlatform, $ionicTempl
         $log.error('Cannot call ' + self.viewType + '.show() after remove(). Please create a new ' + self.viewType + ' instance.');
         return $$q.when();
       }
+
+      // on iOS, clicks will sometimes bleed through/ghost click on underlying
+      // elements
+      $ionicClickBlock.show(600);
 
       var modalEl = jqLite(self.modalEl);
 
@@ -154,7 +160,6 @@ function($rootScope, $ionicBody, $compile, $timeout, $ionicPlatform, $ionicTempl
         };
         ionic.on('resize', self._onWindowResize, window);
       }
-
 
       modalEl.addClass('ng-enter active')
              .removeClass('ng-leave ng-leave-active');
