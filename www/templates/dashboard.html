@@ -16,14 +16,14 @@
 		<ion-slide-box on-slide-changed="refreshSlide(index)" show-pager="false" delegate-handle="donut-slide-box" ng-if="!landscape">
 			<ion-slide class="outages">
 				<i id="outage-arrow" class="icon ion-chevron-right right-arrow compass" ng-click="goToSlide(1)" ng-class="donutClass('outages')"></i>
-				<h3 ng-if="e.hasError('outage-chart')" class="title error">Error: Unable to retrieve outages.</h3>
+				<h3 ng-if="e.hasError('outage-chart')" class="item item-text-wrap title error">Error: Unable to retrieve outages.<span ng-if="e.get('outage-chart').permissionDenied()"><br/>Permission denied.</span></h3>
 				<div id="outages-portrait-container" ng-class="donutClass('outages')">
 					<div id="outages-portrait" ng-click="modals.outages()"></div>
 				</div>
 			</ion-slide>
 			<ion-slide class="alarms">
 				<i id="alarm-arrow" class="icon ion-chevron-left left-arrow compass" ng-click="goToSlide(0)" ng-class="donutClass('alarms')"></i>
-				<h3 ng-if="e.hasError('alarm-chart')" class="title error">Error: Unable to retrieve alarm data.</h3>
+				<h3 ng-if="e.hasError('alarm-chart')" class="item item-text-wrap title error">Error: Unable to retrieve alarm data.<span ng-if="e.get('alarm-chart').permissionDenied()"><br/>Permission denied.</span></h3>
 				<div id="alarms-portrait-container" ng-class="donutClass('alarms')">
 					<div id="alarms-portrait" ui-sref="alarms" nav-direction="back"></div>
 				</div>
@@ -31,13 +31,13 @@
 		</ion-slide-box>
 		<div class="row" ng-if="landscape">
 			<div class="outages col col-50">
-				<h3 ng-if="e.hasError('outage-chart')" class="title error">Error: Unable to retrieve outages.</h3>
+				<h3 ng-if="e.hasError('outage-chart')" class="item item-text-wrap title error">Error: Unable to retrieve outages.<span ng-if="e.get('outage-chart').permissionDenied()"><br/>Permission denied.</span></h3>
 				<div id="outages-landscape-container" ng-class="donutClass('outages')">
 					<div id="outages-landscape" ng-click="modals.outages()"></div>
 				</div>
 			</div>
 			<div class="alarms col col-50">
-				<h3 ng-if="e.hasError('alarm-chart')" class="title error">Error: Unable to retrieve alarm data.</h3>
+				<h3 ng-if="e.hasError('alarm-chart')" class="item item-text-wrap title error">Error: Unable to retrieve alarm data.<span ng-if="e.get('alarm-chart').permissionDenied()"><br/>Permission denied.</span></h3>
 				<div id="alarms-landscape-container" ng-class="donutClass('alarms')">
 					<div id="alarms-landscape" ui-sref="alarms" nav-direction="back"></div>
 				</div>

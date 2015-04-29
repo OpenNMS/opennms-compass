@@ -115,10 +115,13 @@
 
 				Errors.clear('alarms');
 
+				delete $scope.error;
 				$scope.$broadcast('scroll.refreshComplete');
 				$ionicLoading.hide();
 			}, function(err) {
 				Errors.set('alarms', err);
+				$scope.error = err;
+				$scope.alarms = [];
 				$scope.$broadcast('scroll.refreshComplete');
 				$ionicLoading.hide();
 			});
@@ -154,7 +157,7 @@
 			e.stopPropagation();
 			if (alarm.ackUser) {
 				AlarmService.unacknowledge(alarm).then(undefined, function(err) {
-					if (err.status === 403) {
+					if (err.permissionDenied()) {
 						$ionicPopup.alert({
 							title: 'Permission Denied',
 							template: '<p>Unable to unacknowledge alarm.</p>\n' +
@@ -165,7 +168,7 @@
 				});
 			} else {
 				AlarmService.acknowledge(alarm).then(undefined, function(err) {
-					if (err.status === 403) {
+					if (err.permissionDenied()) {
 						$ionicPopup.alert({
 							title: 'Permission Denied',
 							template: '<p>Unable to acknowledge alarm.</p>\n' +
@@ -182,7 +185,7 @@
 			e.preventDefault();
 			e.stopPropagation();
 			AlarmService.clear(alarm).then(undefined, function(err) {
-				if (err.status === 403) {
+				if (err.permissionDenied()) {
 					$ionicPopup.alert({
 						title: 'Permission Denied',
 						template: '<p>Unable to clear alarm.</p>\n' +
@@ -198,7 +201,7 @@
 			e.preventDefault();
 			e.stopPropagation();
 			AlarmService.escalate(alarm).then(undefined, function(err) {
-				if (err.status === 403) {
+				if (err.permissionDenied()) {
 					$ionicPopup.alert({
 						title: 'Permission Denied',
 						template: '<p>Unable to escalate alarm.</p>\n' +

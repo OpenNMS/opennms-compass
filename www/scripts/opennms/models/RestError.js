@@ -62,6 +62,11 @@ function RestError(url, data, status, statusText, time) {
 
 }
 
+RestError.prototype.permissionDenied = function() {
+  'use strict';
+  return this.status === 401 || this.status === 403;
+};
+
 RestError.prototype.toString = function() {
   'use strict';
   var self = this, ret = 'Error ';
@@ -74,6 +79,8 @@ RestError.prototype.toString = function() {
   }
   if (self.statusText) {
     ret += ' ' + self.statusText;
+  } else if (self.permissionDenied()) {
+    ret += ' Permission denied.';
   }
   ret += ' [' + self.time.format('lll') + ']';
   return ret;
