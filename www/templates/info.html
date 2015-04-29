@@ -35,9 +35,10 @@
 					</div>
 					<div class="row">
 						<div class="col col-25">Version:</div>
-						<div class="col">{{info.version}}</div>
+						<div class="col">{{info.version === '0.0.0'? 'Unknown':info.version}}</div>
 					</div>
 				</ion-item>
+				<ion-item class="item-text-wrap severity-WARNING" ng-if="info.version === '0.0.0'">Your OpenNMS does not support reporting server version information.</ion-item>
 				<ion-item class="item-text-wrap" ng-if="hasAvailability">Your OpenNMS server supports the Availability API.</ion-item>
 				<ion-item class="item-text-wrap severity-WARNING" ng-if="!hasAvailability">Your OpenNMS server does not support the Availability API. Dashboard availability by category requires Meridian 2015 or Horizon 15.0.2.</ion-item>
 				<ion-item class="item-text-wrap" ng-if="canSetLocation">Your OpenNMS server
