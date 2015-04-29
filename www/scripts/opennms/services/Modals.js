@@ -323,7 +323,7 @@
 			modal.scope.clear = function() {
 				AlarmService.clear(modal.scope.alarm).then(modal.scope.updateAlarmData, function(err) {
 					console.log('err=',err);
-					if (err.status === 403) {
+					if (err.permissionDenied()) {
 						$ionicPopup.alert({
 							title: 'Permission Denied',
 							template: '<p>Unable to clear alarm.</p>\n' +
@@ -337,7 +337,7 @@
 			modal.scope.escalate = function() {
 				AlarmService.escalate(modal.scope.alarm).then(modal.scope.updateAlarmData, function(err) {
 					console.log('err=',err);
-					if (err.status === 403) {
+					if (err.permissionDenied()) {
 						$ionicPopup.alert({
 							title: 'Permission Denied',
 							template: '<p>Unable to escalate alarm.</p>\n' +
@@ -350,7 +350,7 @@
 			};
 			modal.scope.acknowledge = function() {
 				AlarmService.acknowledge(modal.scope.alarm).then(modal.scope.updateAlarmData, function(err) {
-					if (err.status === 403) {
+					if (err.permissionDenied()) {
 						$ionicPopup.alert({
 							title: 'Permission Denied',
 							template: '<p>Unable to acknowledge alarm.</p>\n' +
@@ -363,7 +363,7 @@
 			};
 			modal.scope.unacknowledge = function() {
 				AlarmService.unacknowledge(modal.scope.alarm).then(modal.scope.updateAlarmData, function(err) {
-					if (err.status === 403) {
+					if (err.permissionDenied()) {
 						$ionicPopup.alert({
 							title: 'Permission Denied',
 							template: '<p>Unable to unacknowledge alarm.</p>\n' +
