@@ -19,9 +19,9 @@
 			var params = {
 				'comparator': 'ilike',
 				'match': 'any',
-				'label': search + '%',
-				'ipInterface.ipAddress': search + '%',
-				'ipInterface.ipHostName': search + '%'
+				'label': '%' + search + '%',
+				'ipInterface.ipAddress': '%' + search + '%',
+				'ipInterface.ipHostName': '%' + search + '%'
 			};
 
 			RestService.getXml('/nodes', params).then(function(results) {
