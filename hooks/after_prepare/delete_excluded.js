@@ -6,19 +6,23 @@ var lineReader = require('line-reader');
 
 var rootdir = process.argv[2];
 
-deleteFolderRecursive = function(path) {
+deleteRecursive = function(path) {
 	var files = [];
 	if( fs.existsSync(path) ) {
-		files = fs.readdirSync(path);
-		files.forEach(function(file,index){
-			var curPath = path + "/" + file;
-			if(fs.lstatSync(curPath).isDirectory()) { // recurse
-				deleteFolderRecursive(curPath);
-			} else { // delete file
-				fs.unlinkSync(curPath);
-			}
-		});
-		fs.rmdirSync(path);
+		if ( fs.lstatSync(path).isDirectory() ) {
+			files = fs.readdirSync(path);
+			files.forEach(function(file,index){
+				var curPath = path + "/" + file;
+				if(fs.lstatSync(curPath).isDirectory()) { // recurse
+					deleteRecursive(curPath);
+				} else { // delete file
+					fs.unlinkSync(curPath);
+				}
+			});
+			fs.rmdirSync(path);
+		} else {
+			fs.unlinkSync(path);
+		}
 	}
 };
 
@@ -40,7 +44,7 @@ if (rootdir) {
 		var excludefile = path.join('www', '.cordovaignore');
 		lineReader.eachLine(excludefile, function(line, last) {
 			console.log('excluding: ' + line.trim());
-			deleteFolderRecursive(path.join(wwwpath, line.trim()));
+			deleteRecursive(path.join(wwwpath, line.trim()));
 		});
 	}
 
