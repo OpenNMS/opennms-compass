@@ -5,4 +5,4 @@ BUILD_NUMBER=`node bin/update-build-number.js`
 export ANDROID_VERSION_CODE="$BUILD_NUMBER"
 
 ionic build --release android && bin/sign-android.sh && \
-rsync -avr --progress platforms/android/ant-build/*-signed.apk ranger@opennms.org:~/public_html/misc/opennms-android-signed.apk
+rsync -avr --progress `find platforms/android -name \*-signed.apk | sort -u | head -n 1` ranger@opennms.org:~/public_html/misc/opennms-android-signed.apk

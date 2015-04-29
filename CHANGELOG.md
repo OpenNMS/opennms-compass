@@ -1,3 +1,21 @@
+<a name="2.0.1"</a>
+## 2.0.1 (2015-04-29)
+
+
+#### Bug Fixes
+
+
+* **alarms**  better error reporting for alarm permissions errors ((2ed68cd5))
+* **info**  better reporting of unknown OpenNMS version(s) (COMPASS-43) ((951ef59a))
+* **rest**  use cordova-HTTP for permissive-SSL ReST calls (COMPASS-40) ((c103e8a4))
+
+#### Features
+
+
+* **nodes**  make the search a substring search rather than starts-with (COMPASS-41) ((cf356e09))
+
+
+
 <a name="2.0.0"</a>
 ## 2.0.0 (2015-04-13)
 
