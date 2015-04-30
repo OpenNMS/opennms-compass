@@ -1,5 +1,6 @@
 var gulp = require('gulp');
 var gutil = require('gulp-util');
+var fs = require('fs');
 
 var bower = require('bower');
 var concat = require('gulp-concat');
@@ -49,7 +50,7 @@ gulp.task('watch', function() {
 	gulp.watch([paths.sass, paths.sassIncludes], ['sass']);
 });
 
-gulp.task('prepare', function() {
+var prepareMe = function() {
 	return gulp.src('www/index.html')
 		.pipe(usemin({
 			shim: [uglify(), rev()],
@@ -59,9 +60,28 @@ gulp.task('prepare', function() {
 			charts: [uglify(), rev()],
 			models: [uglify(), rev()],
 			opennms: [ngAnnotate(), uglify(), rev()],
-		}))
-		.pipe(gulp.dest('platforms/android/assets/www'))
-		.pipe(gulp.dest('platforms/ios/www'));
+		}));
+};
+
+gulp.task('prepare', function() {
+	var prep = prepareMe();
+
+	if (fs.existsSync('platforms/android/assets/www')) {
+		prep = prep.pipe(gulp.dest('platforms/android/assets/www'));
+	}
+	if (fs.existsSync('platforms/ios/www')) {
+		prep = prep.pipe(gulp.dest('platforms/ios/www'));
+	}
+
+	return prep;
+});
+
+gulp.task('prepare-android', function() {
+	return prepareMe().pipe(gulp.dest('platforms/android/assets/www'));
+});
+
+gulp.task('prepare-ios', function() {
+	return prepareMe().pipe(gulp.dest('platforms/ios/www'));
 });
 
 gulp.task('install', ['git-check'], function() {
