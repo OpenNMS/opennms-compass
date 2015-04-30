@@ -13,7 +13,9 @@
 		.constant('config.build.admobIdAndroidInterstitial', undefined)
 		.constant('config.build.admobIdOtherBanner', undefined)
 		.constant('config.build.admobIdOtherInterstitial', undefined)
+		.constant('config.build.ionicAppId', undefined)
 		.constant('config.build.ionicPublicKey', undefined)
+		.constant('config.build.ionicGcmId', undefined)
 	;
 
 }());
