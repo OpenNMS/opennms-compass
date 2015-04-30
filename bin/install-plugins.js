@@ -11,24 +11,25 @@ var addList = [
 	//'org.apache.cordova.dialogs',
 	//'org.apache.cordova.file',
 	//'org.apache.cordova.vibration',
-	'org.apache.cordova.console',
-	'org.apache.cordova.geolocation',
-	'org.apache.cordova.inappbrowser',
-	'org.apache.cordova.network-information',
-	'org.apache.cordova.splashscreen',
-	'org.apache.cordova.statusbar',
+	'cordova-plugin-console',
+	'cordova-plugin-geolocation',
+	'cordova-plugin-inappbrowser',
+	'cordova-plugin-network-information',
+	'cordova-plugin-splashscreen',
+	'cordova-plugin-statusbar',
 
 /* 3rd-party plugins */
-	'com.google.cordova.admob',
+	'cordova-plugin-admobpro',
 
 /* android/ios only */
 	'cc.fovea.cordova.purchase',
 	'com.ionic.keyboard',
 	//'com.analytics.google',
-	'https://github.com/RangerRick/cordova-certificate-plugin.git',
+	//'https://github.com/RangerRick/cordova-certificate-plugin.git',
+	'https://github.com/RangerRick/cordova-HTTP.git',
 
 /* ios only */
-	'com.ohh2ahh.plugins.appavailability',
+	'cordova-plugin-appavailability',
 ];
 
 // no need to configure below

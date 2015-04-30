@@ -45,17 +45,17 @@
     "shelljs": "*"
   },
   "cordovaPlugins": [
-    "org.apache.cordova.console",
-    "org.apache.cordova.geolocation",
-    "org.apache.cordova.inappbrowser",
-    "org.apache.cordova.network-information",
-    "org.apache.cordova.splashscreen",
-    "org.apache.cordova.statusbar",
+    "cordova-plugin-console",
+    "cordova-plugin-geolocation",
+    "cordova-plugin-inappbrowser",
+    "cordova-plugin-network-information",
+    "cordova-plugin-splashscreen",
+    "cordova-plugin-statusbar",
     "cc.fovea.cordova.purchase",
-    "com.google.cordova.admob",
+    "cordova-plugin-admobpro",
     "com.google.playservices",
     "com.ionic.keyboard",
-    "com.ohh2ahh.plugins.appavailability",
+    "cordova-plugin-appavailability",
     "com.rjfun.cordova.extension",
     {
       "locator": "https://github.com/RangerRick/cordova-HTTP.git",
@@ -65,12 +65,12 @@
   "cordovaPlatforms": [
     {
       "platform": "android",
-      "version": "3.7.1",
+      "version": "4.0.0",
       "locator": "android"
     },
     {
       "platform": "browser",
-      "version": "3.5.2",
+      "version": "3.6.0",
       "locator": "browser"
     },
     {
