@@ -5,8 +5,8 @@
 		<button class="button button-compass button-clear button-compass" ng-click="save()">Save</button>
 	</ion-header-bar>
 	<ion-content scroll="false">
-		<ion-tabs class="tabs-compass tabs-icon-only" ng-keypress="handleKey($event)">
-			<ion-tab title="Server" icon-on="ion-ios-gear" icon-off="ion-ios-gear-outline" scroll="true">
+		<ion-tabs class="tabs-compass tabs-icon-left" ng-keypress="handleKey($event)">
+			<ion-tab title="Settings" icon-on="ion-ios-gear" icon-off="ion-ios-gear-outline" scroll="true">
 				<ion-view>
 					<ion-content scroll="true">
 						<form class="list">
@@ -29,7 +29,7 @@
 					</ion-content>
 				</ion-view>
 			</ion-tab>
-			<ion-tab title="IAP" icon-on="ion-ios-cart" icon-off="ion-ios-cart-outline" ng-if="products">
+			<ion-tab title="Purchase" icon-on="ion-ios-cart" icon-off="ion-ios-cart-outline" ng-if="products">
 				<ion-view>
 					<ion-content scroll="true">
 						<form class="list">
