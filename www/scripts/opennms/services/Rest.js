@@ -14,11 +14,18 @@
    	.factory('RestService', function($q, $http, $rootScope, $window, cordovaHTTP, Settings) {
 		console.log('RestService: Initializing.');
 
+		var useCordovaHTTP = false;
 		var requestTimeout = 10000;
 		var x2js = new X2JS();
 		/* jshint -W069 */ /* "better written in dot notation" */
 		$http.defaults.headers.common['Accept'] = 'application/xml';
-		cordovaHTTP.acceptAllCerts(true);
+
+		if ($window.cordova && cordovaHTTP && ionic.Platform.isAndroid()) {
+		//if ($window.cordova && cordovaHTTP) {
+			useCordovaHTTP = true;
+			cordovaHTTP.acceptAllCerts(true);
+			cordovaHTTP.setTimeouts(requestTimeout, requestTimeout);
+		}
 
 		var updateAuthorization = function() {
 			var username = Settings.username();
@@ -83,7 +90,7 @@
 			}
 
 			console.log('url=' + url + ', params=' + angular.toJson(myparams) + ', headers=' + angular.toJson(headers));
-			if ($window.cordova) {
+			if (useCordovaHTTP) {
 				if (method === 'GET') {
 					cordovaHTTP.get(url, myparams, headers).then(function(response) {
 						deferred.resolve(response.data);
