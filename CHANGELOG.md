@@ -5,11 +5,12 @@
 #### Bug Fixes
 
 
-* **ads**  back off cordova-android to 3.7.1 to fix ad placement (COMPASS-44) ((d7d3f721))
+* **ads**  back off cordova-android to 3.7.1 to fix ad placement (COMPASS-44) ((89c56834))
 * **alarms**  better error reporting for alarm permissions errors ((2ed68cd5))
 * **info**  better reporting of unknown OpenNMS version(s) (COMPASS-43) ((951ef59a))
+* **outages**  clicking any info in the outage popup takes you to the appropriate node (COMPASS-39) ((fc9cbc30))
 * **rest**  use cordova-HTTP for permissive-SSL ReST calls (COMPASS-40) ((c103e8a4))
-* **settings**  make the tabs a little more obvious ((a55a6f00))
+* **settings**  make the tabs a little more obvious ((f9f72a48))
 
 #### Features
 
