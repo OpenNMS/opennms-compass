@@ -9,7 +9,9 @@
 * **alarms**  better error reporting for alarm permissions errors ((2ed68cd5))
 * **info**  better reporting of unknown OpenNMS version(s) (COMPASS-43) ((951ef59a))
 * **outages**  clicking any info in the outage popup takes you to the appropriate node (COMPASS-39) ((fc9cbc30))
-* **rest**  use cordova-HTTP for permissive-SSL ReST calls (COMPASS-40) ((c103e8a4))
+* **rest**
+  *  only use Cordova HTTP on Android (iOS does not support timeouts) ((39223d07))
+  *  use cordova-HTTP for permissive-SSL ReST calls (COMPASS-40) ((c103e8a4))
 * **settings**  make the tabs a little more obvious ((f9f72a48))
 
 #### Features
