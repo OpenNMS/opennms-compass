@@ -1,13 +1,15 @@
 <a name="2.0.1"</a>
-## 2.0.1 (2015-04-29)
+## 2.0.1 (2015-05-01)
 
 
 #### Bug Fixes
 
 
+* **ads**  back off cordova-android to 3.7.1 to fix ad placement (COMPASS-44) ((d7d3f721))
 * **alarms**  better error reporting for alarm permissions errors ((2ed68cd5))
 * **info**  better reporting of unknown OpenNMS version(s) (COMPASS-43) ((951ef59a))
 * **rest**  use cordova-HTTP for permissive-SSL ReST calls (COMPASS-40) ((c103e8a4))
+* **settings**  make the tabs a little more obvious ((a55a6f00))
 
 #### Features
 
