@@ -4,7 +4,7 @@ IonicModule
   '$attrs',
   '$element',
   '$timeout',
-  function($scope, $attrs,  $element, $timeout) {
+function($scope, $attrs, $element, $timeout) {
   var self = this;
   self.isLoading = false;
 
@@ -44,7 +44,10 @@ IonicModule
     });
     $timeout(function() {
       if (self.jsScrolling) self.scrollView.resize();
-      self.checkBounds();
+      // only check bounds again immediately if the page isn't cached (scroll el has height)
+      if (self.scrollView.__container && self.scrollView.__container.offsetHeight > 0) {
+        self.checkBounds();
+      }
     }, 30, false);
     self.isLoading = false;
   }
@@ -92,7 +95,7 @@ IonicModule
   self.getNativeMaxScroll = function() {
     var maxValues = {
       left: self.scrollEl.scrollWidth,
-      top:  self.scrollEl.scrollHeight
+      top: self.scrollEl.scrollHeight
     };
     var computedStyle = window.getComputedStyle(self.scrollEl) || {};
     return {
@@ -109,11 +112,14 @@ IonicModule
 
   // determine pixel refresh distance based on % or value
   function calculateMaxValue(maximum) {
-    distance = ($attrs.distance || '2.5%').trim();
-    isPercent = distance.indexOf('%') !== -1;
+    var distance = ($attrs.distance || '2.5%').trim();
+    var isPercent = distance.indexOf('%') !== -1;
     return isPercent ?
     maximum * (1 - parseFloat(distance) / 100) :
     maximum - parseFloat(distance);
   }
+
+  //for testing
+  self.__finishInfiniteScroll = finishInfiniteScroll;
 
 }]);

@@ -7,16 +7,25 @@
 
 	angular.module('opennms.services.Rest', [
 		'ng',
+		'cordovaHTTP',
 		'opennms.services.Settings',
 	])
 
-   	.factory('RestService', function($q, $http, $rootScope, $window, Settings) {
+   	.factory('RestService', function($q, $http, $rootScope, $window, cordovaHTTP, Settings) {
 		console.log('RestService: Initializing.');
 
+		var useCordovaHTTP = false;
 		var requestTimeout = 10000;
 		var x2js = new X2JS();
 		/* jshint -W069 */ /* "better written in dot notation" */
 		$http.defaults.headers.common['Accept'] = 'application/xml';
+
+		if ($window.cordova && cordovaHTTP && ionic.Platform.isAndroid()) {
+		//if ($window.cordova && cordovaHTTP) {
+			useCordovaHTTP = true;
+			cordovaHTTP.acceptAllCerts(true);
+			cordovaHTTP.setTimeouts(requestTimeout, requestTimeout);
+		}
 
 		var updateAuthorization = function() {
 			var username = Settings.username();
@@ -26,8 +35,13 @@
 				console.log('RestService.updateAuthorization: username or password not set.');
 				delete $http.defaults.headers.common['Authorization'];
 			} else {
-				console.log('RestService.updateAuthorization: setting basic auth with username "' + username + '".');
+				//console.log('RestService.updateAuthorization: setting basic auth with username "' + username + '".');
 				$http.defaults.headers.common['Authorization'] = 'Basic ' + $window.btoa(username + ':' + password);
+				cordovaHTTP.useBasicAuth(username, password).then(function() {
+					console.log('RestService.updateAuthorization: configured basic auth with username "' + username + '".');
+				}, function(err) {
+					console.log('RestService.updateAuthorization: failed to configure basic auth with username "' + username + '".');
+				});
 			}
 		};
 
@@ -46,6 +60,12 @@
 				restFragment = '/' + restFragment;
 			}
 			return url + restFragment;
+		};
+
+		var encodeData = function(data) {
+			return Object.keys(data).map(function(key) {
+				return [key, data[key]].map(encodeURIComponent).join("=");
+			}).join("&");
 		};
 
 		var doQuery = function(method, restFragment, params, headers) {
@@ -68,19 +88,43 @@
 			if (myparams.limit === 0) {
 				delete myparams.limit;
 			}
-			$http({
-				method: method,
-				url: url,
-				params: myparams,
-				headers: headers,
-				withCredentials: true,
-				timeout: requestTimeout,
-			}).success(function(data) {
-				//console.log('Rest.doQuery:',data);
-				deferred.resolve(data);
-			}).error(function(data, status, headers, config, statusText) {
-				deferred.reject(new RestError(url, data, status, statusText));
-			});
+
+			console.log('url=' + url + ', params=' + angular.toJson(myparams) + ', headers=' + angular.toJson(headers));
+			if (useCordovaHTTP) {
+				if (method === 'GET') {
+					cordovaHTTP.get(url, myparams, headers).then(function(response) {
+						deferred.resolve(response.data);
+					}, function(response) {
+						deferred.reject(new RestError(url, response.data, response.status));
+					});
+				} else if (method === 'PUT') {
+					cordovaHTTP.put(url, myparams, headers).then(function(response) {
+						deferred.resolve(response.data);
+					}, function(response) {
+						deferred.reject(new RestError(url, response.data, response.status));
+					});
+				} else if (method === 'POST') {
+					cordovaHTTP.post(url, myparams, headers).then(function(response) {
+						deferred.resolve(response.data);
+					}, function(response) {
+						deferred.reject(new RestError(url, response.data, response.status));
+					});
+				}
+			} else {
+				$http({
+					method: method,
+					url: url,
+					params: myparams,
+					headers: headers,
+					withCredentials: true,
+					timeout: requestTimeout,
+				}).success(function(data) {
+					//console.log('Rest.doQuery:',data);
+					deferred.resolve(data);
+				}).error(function(data, status, headers, config, statusText) {
+					deferred.reject(new RestError(url, data, status, statusText));
+				});
+			}
 
 			return deferred.promise;
 		};

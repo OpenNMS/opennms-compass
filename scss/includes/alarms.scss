@@ -2,6 +2,11 @@
 	.item-complex .item-content, .item-radio .item-content {
 		background-color: inherit;
 	}
+
+	.error {
+		color: red;
+	}
+
 	.message {
 		height: 42px;
 		overflow-y: hidden !important;

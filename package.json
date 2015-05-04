@@ -40,36 +40,33 @@
     "karma-phantomjs-launcher": "*",
     "karma-safari-launcher": "*",
     "karma-webdriver-launcher": "*",
+    "libxmljs": "^0.14.0",
     "line-reader": "*",
     "shelljs": "*"
   },
   "cordovaPlugins": [
-    "org.apache.cordova.console",
-    "org.apache.cordova.geolocation",
-    "org.apache.cordova.inappbrowser",
-    "org.apache.cordova.network-information",
-    "org.apache.cordova.splashscreen",
-    "org.apache.cordova.statusbar",
-    "com.google.cordova.admob",
+    "cordova-plugin-console",
+    "cordova-plugin-geolocation",
+    "cordova-plugin-inappbrowser",
+    "cordova-plugin-network-information",
+    "cordova-plugin-splashscreen",
+    "cordova-plugin-statusbar",
     "cc.fovea.cordova.purchase",
+    "cordova-plugin-admobpro",
+    "com.google.playservices",
     "com.ionic.keyboard",
+    "cordova-plugin-appavailability",
+    "com.rjfun.cordova.extension",
     {
-      "locator": "https://github.com/RangerRick/cordova-certificate-plugin.git",
-      "id": "com.raccoonfink.cordova.plugins.certificates"
-    },
-    "com.ohh2ahh.plugins.appavailability",
-    "com.google.playservices"
+      "locator": "https://github.com/RangerRick/cordova-HTTP.git",
+      "id": "com.synconset.cordovaHTTP"
+    }
   ],
   "cordovaPlatforms": [
     {
       "platform": "android",
       "version": "3.7.1",
-      "locator": "android"
-    },
-    {
-      "platform": "browser",
-      "version": "3.5.2",
-      "locator": "browser"
+      "locator": "android@3.7.1"
     },
     {
       "platform": "ios",

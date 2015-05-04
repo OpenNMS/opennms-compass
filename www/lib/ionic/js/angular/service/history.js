@@ -75,7 +75,6 @@ function($rootScope, $state, $location, $window, $timeout, $ionicViewSwitcher, $
       }
 
       $location.url(this.url);
-      return;
     }
 
     return null;
@@ -313,8 +312,8 @@ function($rootScope, $state, $location, $window, $timeout, $ionicViewSwitcher, $
               // the forward has a history
               for (x = tmp.stack.length - 1; x >= forwardView.index; x--) {
                 // starting from the end destroy all forwards in this history from this point
-                var stack_x = tmp.stack[x];
-                stack_x && stack_x.destroy && stack_x.destroy();
+                var stackItem = tmp.stack[x];
+                stackItem && stackItem.destroy && stackItem.destroy();
                 tmp.stack.splice(x);
               }
               historyId = forwardView.historyId;
@@ -360,7 +359,8 @@ function($rootScope, $state, $location, $window, $timeout, $ionicViewSwitcher, $
           stateId: currentStateId,
           stateName: this.currentStateName(),
           stateParams: getCurrentStateParams(),
-          url: url
+          url: url,
+          canSwipeBack: canSwipeBack(ele, viewLocals)
         });
 
         // add the new view to this history's stack
@@ -557,9 +557,45 @@ function($rootScope, $state, $location, $window, $timeout, $ionicViewSwitcher, $
     /**
      * @ngdoc method
      * @name $ionicHistory#goBack
+     * @param {number=} backCount Optional negative integer setting how many views to go
+     * back. By default it'll go back one view by using the value `-1`. To go back two
+     * views you would use `-2`. If the number goes farther back than the number of views
+     * in the current history's stack then it'll go to the first view in the current history's
+     * stack. If the number is zero or greater then it'll do nothing. It also does not
+     * cross history stacks, meaning it can only go as far back as the current history.
      * @description Navigates the app to the back view, if a back view exists.
      */
-    goBack: function() {
+    goBack: function(backCount) {
+      if (isDefined(backCount) && backCount !== -1) {
+        if (backCount > -1) return;
+
+        var currentHistory = viewHistory.histories[this.currentHistoryId()];
+        var newCursor = currentHistory.cursor + backCount + 1;
+        if (newCursor < 1) {
+          newCursor = 1;
+        }
+
+        currentHistory.cursor = newCursor;
+        setNavViews(currentHistory.stack[newCursor].viewId);
+
+        var cursor = newCursor - 1;
+        var clearStateIds = [];
+        var fwdView = getViewById(currentHistory.stack[cursor].forwardViewId);
+        while (fwdView) {
+          clearStateIds.push(fwdView.stateId || fwdView.viewId);
+          cursor++;
+          if (cursor >= currentHistory.stack.length) break;
+          fwdView = getViewById(currentHistory.stack[cursor].forwardViewId);
+        }
+
+        var self = this;
+        if (clearStateIds.length) {
+          $timeout(function() {
+            self.clearCache(clearStateIds);
+          }, 600);
+        }
+      }
+
       viewHistory.backView && viewHistory.backView.go();
     },
 
@@ -614,9 +650,11 @@ function($rootScope, $state, $location, $window, $timeout, $ionicViewSwitcher, $
      * @description Removes all cached views within every {@link ionic.directive:ionNavView}.
      * This both removes the view element from the DOM, and destroy it's scope.
      */
-    clearCache: function() {
-      $ionicNavViewDelegate._instances.forEach(function(instance) {
-        instance.clearCache();
+    clearCache: function(stateIds) {
+      $timeout(function() {
+        $ionicNavViewDelegate._instances.forEach(function(instance) {
+          instance.clearCache(stateIds);
+        });
       });
     },
 
@@ -662,7 +700,7 @@ function($rootScope, $state, $location, $window, $timeout, $ionicViewSwitcher, $
     },
 
     isAbstractEle: function(ele, viewLocals) {
-      if (viewLocals && viewLocals.$$state && viewLocals.$$state.self.abstract) {
+      if (viewLocals && viewLocals.$$state && viewLocals.$$state.self['abstract']) {
         return true;
       }
       return !!(ele && (isAbstractTag(ele) || isAbstractTag(ele.children())));
@@ -716,6 +754,16 @@ function($rootScope, $state, $location, $window, $timeout, $ionicViewSwitcher, $
     return ele && ele.length && /ion-side-menus|ion-tabs/i.test(ele[0].tagName);
   }
 
+  function canSwipeBack(ele, viewLocals) {
+    if (viewLocals && viewLocals.$$state && viewLocals.$$state.self.canSwipeBack === false) {
+      return false;
+    }
+    if (ele && ele.attr('can-swipe-back') === 'false') {
+      return false;
+    }
+    return true;
+  }
+
 }])
 
 .run([
@@ -725,7 +773,8 @@ function($rootScope, $state, $location, $window, $timeout, $ionicViewSwitcher, $
   '$document',
   '$ionicPlatform',
   '$ionicHistory',
-function($rootScope, $state, $location, $document, $ionicPlatform, $ionicHistory) {
+  'IONIC_BACK_PRIORITY',
+function($rootScope, $state, $location, $document, $ionicPlatform, $ionicHistory, IONIC_BACK_PRIORITY) {
 
   // always reset the keyboard state when change stage
   $rootScope.$on('$ionicView.beforeEnter', function() {
@@ -733,7 +782,7 @@ function($rootScope, $state, $location, $document, $ionicPlatform, $ionicHistory
   });
 
   $rootScope.$on('$ionicHistory.change', function(e, data) {
-    if (!data) return;
+    if (!data) return null;
 
     var viewHistory = $ionicHistory.viewHistory();
 
@@ -763,8 +812,8 @@ function($rootScope, $state, $location, $document, $ionicPlatform, $ionicHistory
     }
   });
 
-  $rootScope.$ionicGoBack = function() {
-    $ionicHistory.goBack();
+  $rootScope.$ionicGoBack = function(backCount) {
+    $ionicHistory.goBack(backCount);
   };
 
   // Set the document title when a new view is shown
@@ -790,7 +839,7 @@ function($rootScope, $state, $location, $document, $ionicPlatform, $ionicHistory
   }
   $ionicPlatform.registerBackButtonAction(
     onHardwareBackButton,
-    PLATFORM_BACK_BUTTON_PRIORITY_VIEW
+    IONIC_BACK_PRIORITY.view
   );
 
 }]);

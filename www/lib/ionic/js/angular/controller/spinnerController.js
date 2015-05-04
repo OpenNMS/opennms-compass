@@ -228,7 +228,7 @@
                 };
               },
               t: 1
-            },{
+            }, {
               fn: function() {
                 return {
                   an: 'y2',
@@ -238,7 +238,7 @@
                 };
               },
               t: 1
-            },{
+            }, {
               fn: function() {
                 return {
                   an: STROKE_OPACITY,
@@ -278,7 +278,7 @@
                 };
               },
               t: 1
-            },{
+            }, {
               fn: function() {
                 return {
                   an: STROKE_OPACITY,
@@ -394,7 +394,11 @@
     var spinnerName, spinner;
 
     this.init = function() {
-      spinnerName = $attrs.icon || ionic.Platform.platform();
+      var override = null;
+      if (ionic.Platform.platform() === 'windowsphone') {
+        override = 'android';
+      }
+      spinnerName = $attrs.icon || override || ionic.Platform.platform();
       spinner = spinners[spinnerName];
       if (!spinner) {
         spinnerName = 'ios';

@@ -13,8 +13,14 @@
 	<ion-content delegate-handle="alarms-scroll" ng-class="legend.length &gt; 0? 'has-subheader':''">
 		<ion-refresher pulling-text="Pull to Refresh..." on-refresh="refreshAlarms()"></ion-refresher>
 		<ion-list can-swipe="true">
-			<ion-item ng-if="alarms &amp;&amp; alarms.length === 0">
+			<ion-item ng-if="alarms &amp;&amp; alarms.length === 0 &amp;&amp; !error">
 				No {{filter.showAcknowledged? 'matching':'unacknowledged'}} alarms found.
+			</ion-item>
+			<ion-item ng-class="'item-text-wrap error'" ng-if="error">
+				An error occurred retrieving alarm data.
+				<span ng-if="error.permissionDenied()">
+					Permission denied.
+				</span>
 			</ion-item>
 			<ion-item ng-class="'item item-text-wrap item-icon-right severity-' + alarm.severity" ng-repeat="alarm in alarms | severity track by alarm.id"
 				collection-item-height="120" ng-click="openAlarm(alarm)">

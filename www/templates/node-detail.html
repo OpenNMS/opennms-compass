@@ -63,8 +63,8 @@
 					<div ng-if="address &amp;&amp; address.country">{{address.country}}</div>
 					<div ng-if="address.longitude &amp;&amp; address.latitude" style="text-align: center">
 						<br ng-if="hasAddress" />
-						Latitude: {{address.latitude}},
-						Longitude: {{address.longitude}}
+						Lat: {{address.latitude}},
+						Lon: {{address.longitude}}
 					</div>
 					<button class="button button-block button-compass" ng-click="submitCoordinates()" ng-if="canUpdateGeolocation">Set Coordinates to Current Location</button>
 				</ion-item>
