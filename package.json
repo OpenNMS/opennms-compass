@@ -46,6 +46,7 @@
   },
   "cordovaPlugins": [
     "cordova-plugin-console",
+    "cordova-plugin-file",
     "cordova-plugin-geolocation",
     "cordova-plugin-inappbrowser",
     "cordova-plugin-network-information",
@@ -53,13 +54,17 @@
     "cordova-plugin-statusbar",
     "cc.fovea.cordova.purchase",
     "cordova-plugin-admobpro",
-    "com.google.playservices",
+    "cordova-plugin-extension",
+    "cordova-plugin-googleplayservices",
     "com.ionic.keyboard",
     "cordova-plugin-appavailability",
-    "com.rjfun.cordova.extension",
     {
       "locator": "https://github.com/RangerRick/cordova-HTTP.git",
       "id": "com.synconset.cordovaHTTP"
+    },
+    {
+      "locator": "https://github.com/driftyco/ionic-plugins-deploy",
+      "id": "com.ionic.update"
     }
   ],
   "cordovaPlatforms": [

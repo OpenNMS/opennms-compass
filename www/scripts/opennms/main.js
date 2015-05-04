@@ -8,6 +8,7 @@
 
 	angular.module('opennms.Main', [
 		'ionic',
+		'ionic.service.deploy',
 		'ngCordova',
 		'opennms.services.Ads',
 		'opennms.services.BuildConfig',
@@ -55,7 +56,7 @@
 			toolbarposition:'top'
 		});
 	})
-	.run(function($rootScope, $timeout, $window, $ionicPlatform, Ads, IAP, Info, Modals, Settings) {
+	.run(function($rootScope, $timeout, $window, $ionicDeploy, $ionicPlatform, $ionicPopup, Ads, IAP, Info, Modals, Settings) {
 		var updateTheme = function() {
 			Info.get().then(function(info) {
 				if (info.packageName === 'meridian') {
@@ -71,13 +72,38 @@
 			$timeout(updateTheme);
 		});
 
-		$ionicPlatform.ready(function() {
+		var init = function() {
 			console.log('Ionic is ready.');
 			Ads.show();
 			IAP.init();
 			if (!Settings.isServerConfigured()) {
 				Modals.settings();
 			}
+		};
+
+		$ionicPlatform.ready(function() {
+			$ionicDeploy.check().then(function(hasUpdate) {
+				if (hasUpdate) {
+					$ionicPopup.confirm({
+						title: 'Update Available',
+						subTitle: 'An update to OpenNMS Compass is available.  Upgrade now?',
+						okText: 'Yes',
+						okType: 'button-compass',
+						cancelText: 'Not Now',
+					}).then(function(result) {
+						if (result) {
+							$ionicDeploy.update();
+						} else {
+							init();
+						}
+					});
+				} else {
+					init();
+				}
+			}, function(err) {
+				console.log('Warning: an error occurred while checking for updates: ' + angular.toJson(err));
+				init();
+			});
 		});
 	});
 }());
