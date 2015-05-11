@@ -79,6 +79,12 @@
 			});
 		};
 
+		$scope.restorePurchases = function() {
+			IAP.refresh().then(function() {
+				$scope.products = IAP.get();
+			});
+		};
+
 		var hasPurchased = function() {
 			if ($scope.products && Object.keys($scope.products).length > 0) {
 				if ($scope.products.disable_ads && $scope.products.disable_ads.owned) {
