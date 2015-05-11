@@ -1,3 +1,14 @@
+<a name="2.0.2"</a>
+## 2.0.2 (2015-05-11)
+
+
+#### Features
+
+
+* **iap**  add a "restore purchases" button (COMPASS-45) ((1f6c88b5))
+
+
+
 <a name="2.0.1"</a>
 ## 2.0.1 (2015-05-01)
 
