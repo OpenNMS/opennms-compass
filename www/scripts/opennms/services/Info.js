@@ -54,9 +54,17 @@
 				return $injector.get('info');
 			},
 			validateVersion: function(version) {
-				var info = $injector.get('info');
-				return VersionCompare.gte(info.version, version);
+				return VersionCompare.gte($injector.get('info').version, version);
 			},
+			canSetLocation: function() {
+				return VersionCompare.gte($injector.get('info').version, '15.0.2');
+			},
+			isMeridian: function() {
+				return $injector.get('info').packageName === 'meridian';
+			},
+			hasOutageSummaries: function() {
+				return VersionCompare.gte($injector.get('info').version, '14.0.3');
+			}
 		};
 	})
 	;
