@@ -252,7 +252,8 @@
 			};
 
 			modal.scope.refreshOutages = function() {
-				OutageService.summaries().then(function(outages) {
+				var promise = OutageService.summaries();
+				promise.then(function(outages) {
 					var oldOutages = byId(modal.scope.outages);
 					var oldOutage;
 					for (var i=0; i < outages.length; i++) {
@@ -270,6 +271,7 @@
 					modal.scope.outages = [];
 					modal.scope.$broadcast('scroll.refreshComplete');
 				});
+				return promise;
 			};
 
 			var startRefresh = function() {
@@ -285,8 +287,9 @@
 
 			modal.scope.show = function() {
 				modal.scope.outages = [];
-				startRefresh();
-				modal.show();
+				modal.scope.refreshOutages().then(function() {
+					modal.show();
+				});
 			};
 			modal.scope.hide = function() {
 				modal.hide();
