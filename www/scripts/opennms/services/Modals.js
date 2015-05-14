@@ -455,7 +455,7 @@
 			modal.scope.show = function() {
 				modal.scope.errors = Errors.get();
 				modal.scope.info = Info.get();
-				modal.scope.canSetLocation = NodeService.canSetLocation();
+				modal.scope.canSetLocation = Info.canSetLocation();
 				AvailabilityService.supported().then(function(isSupported) {
 					modal.scope.hasAvailability = isSupported;
 				});
