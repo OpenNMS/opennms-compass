@@ -1,3 +1,15 @@
+<a name=""</a>
+##  (2015-05-14)
+
+
+#### Bug Fixes
+
+
+* **outages**  do not pop up outages when not supported (COMPASS-42) ((37220beb))
+* **info**  Fix geolocation warning for OpenNMS 16 (COMPASS-46) ((a4e8d972))
+
+
+
 <a name="2.0.2"</a>
 ## 2.0.2 (2015-05-11)
 
