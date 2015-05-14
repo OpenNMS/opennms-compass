@@ -244,7 +244,7 @@
 					modal.scope.hasAddress = true;
 				}
 
-				modal.scope.canUpdateGeolocation = NodeService.canSetLocation();
+				modal.scope.canUpdateGeolocation = Info.canSetLocation();
 
 				var avail = AvailabilityService.node(modal.scope.node.id).then(function(results) {
 					//console.log('AvailabilityService got results:',results);

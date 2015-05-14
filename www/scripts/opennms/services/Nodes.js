@@ -60,16 +60,6 @@
 			return deferred.promise;
 		};
 
-		var canSetLocation = function() {
-			var info = Info.get();
-			if (info.packageName === 'meridian') {
-				//console.log('NodeModal.updateData: Meridian can update geolocation.');
-				return true;
-			} else {
-				return Info.validateVersion('15.0.2');
-			}
-		};
-
 		var setLocation = function(node, longitude, latitude) {
 			var deferred = $q.defer();
 
@@ -95,7 +85,6 @@
 		return {
 			search: searchNodes,
 			get: getNode,
-			canSetLocation: canSetLocation,
 			setLocation: setLocation,
 		};
 	});
