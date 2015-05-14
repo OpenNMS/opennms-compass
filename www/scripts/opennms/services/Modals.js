@@ -244,9 +244,7 @@
 					modal.scope.hasAddress = true;
 				}
 
-				NodeService.canSetLocation().then(function(isValid) {
-					modal.scope.canUpdateGeolocation = isValid;
-				});
+				modal.scope.canUpdateGeolocation = NodeService.canSetLocation();
 
 				var avail = AvailabilityService.node(modal.scope.node.id).then(function(results) {
 					//console.log('AvailabilityService got results:',results);
@@ -358,7 +356,7 @@
 						break;
 				}
 			});
-			modal.scope.$on('opennms.settings.changed', function(ev, newSettings, oldSettings, changedSettings) {
+			modal.scope.$on('opennms.settings.updated', function(ev, newSettings, oldSettings, changedSettings) {
 				if (timer && changedSettings && changedSettings.refreshInterval) {
 					modal.scope.updateData();
 				}
@@ -443,6 +441,11 @@
 						getOutages(outages[i]);
 					}
 					modal.scope.outages = outages;
+					delete modal.scope.error;
+					modal.scope.$broadcast('scroll.refreshComplete');
+				}, function(err) {
+					modal.scope.error = err;
+					modal.scope.outages = [];
 					modal.scope.$broadcast('scroll.refreshComplete');
 				});
 			};
@@ -466,7 +469,7 @@
 			modal.scope.hide = function() {
 				modal.hide();
 			};
-			modal.scope.$on('opennms.settings.changed', function(ev, newSettings, oldSettings, changedSettings) {
+			modal.scope.$on('opennms.settings.updated', function(ev, newSettings, oldSettings, changedSettings) {
 				if (timer && changedSettings && changedSettings.refreshInterval) {
 					stopRefresh();
 					startRefresh();
@@ -572,7 +575,7 @@
 			modal.scope.hide = function() {
 				modal.hide();
 			};
-			modal.scope.$on('opennms.settings.changed', function(ev, newSettings, oldSettings, changedSettings) {
+			modal.scope.$on('opennms.settings.updated', function(ev, newSettings, oldSettings, changedSettings) {
 				if (timer && changedSettings && changedSettings.refreshInterval) {
 					stopRefresh();
 					startRefresh();
@@ -629,12 +632,8 @@
 			};
 			modal.scope.show = function() {
 				modal.scope.errors = Errors.get();
-				Info.get().then(function(info) {
-					modal.scope.info = info;
-				});
-				NodeService.canSetLocation().then(function(canSet) {
-					modal.scope.canSetLocation = canSet;
-				});
+				modal.scope.info = Info.get();
+				modal.scope.canSetLocation = NodeService.canSetLocation();
 				AvailabilityService.supported().then(function(isSupported) {
 					modal.scope.hasAvailability = isSupported;
 				});

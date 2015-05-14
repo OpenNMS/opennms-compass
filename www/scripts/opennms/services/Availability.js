@@ -27,7 +27,7 @@
 			});
 		};
 		checkAvailability();
-		$rootScope.$on('opennms.settings.changed', function() {
+		$rootScope.$on('opennms.settings.updated', function() {
 			checkAvailability();
 		});
 

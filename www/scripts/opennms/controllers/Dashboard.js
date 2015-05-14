@@ -124,14 +124,15 @@
 			}
 		};
 
-		var updateLogo = function() {
-			Info.get().then(function(info) {
-				if (info.packageName === 'meridian') {
-					$scope.logo = 'images/meridian.svg';
-				} else {
-					$scope.logo = 'images/horizon.svg';
-				}
-			});
+		var updateLogo = function(info) {
+			if (!info) {
+				info = Info.get();
+			}
+			if (info.packageName === 'meridian') {
+				$scope.logo = 'images/meridian.svg';
+			} else {
+				$scope.logo = 'images/horizon.svg';
+			}
 		};
 
 		var refreshing = false;
@@ -142,7 +143,6 @@
 			refreshing = true;
 
 			//console.log('DashboardCtrl.refreshData: refreshing data.');
-			updateLogo();
 
 			// if we have never loaded before, show the loading thingy
 			if (!$scope.loaded) {
@@ -245,10 +245,9 @@
 			$ionicSlideBoxDelegate.$getByHandle('donut-slide-box').slide(slide);
 		};
 
-		$scope.$on('opennms.settings.changed', function(ev, newSettings, oldSettings, changedSettings) {
+		$scope.$on('opennms.settings.updated', function(ev, newSettings, oldSettings, changedSettings) {
 			//console.log('Dashboard: settings changed, refreshing data.');
 			$scope.serverName = Settings.getServerName();
-			updateLogo();
 			$scope.refreshData();
 		});
 
@@ -270,6 +269,9 @@
 		});
 
 		$scope.serverName = Settings.getServerName();
+		$scope.$on('opennms.info.updated', function(ev, info) {
+			updateLogo(info);
+		});
 		$scope.$on('opennms.errors.updated', function(ev, errors) {
 			$scope.errors = Errors.get();
 		});

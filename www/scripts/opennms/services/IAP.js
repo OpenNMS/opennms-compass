@@ -161,7 +161,8 @@
 				});
 			});
 			return deferred.promise;
-		}
+		};
+
 		return {
 			get: function() {
 				return $scope.products;

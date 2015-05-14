@@ -56,19 +56,20 @@
 		});
 	})
 	.run(function($rootScope, $timeout, $window, $ionicPlatform, Ads, IAP, Info, Modals, Settings) {
-		var updateTheme = function() {
-			Info.get().then(function(info) {
-				if (info.packageName === 'meridian') {
-					$rootScope.themeType = 'meridian';
-				} else {
-					$rootScope.themeType = 'horizon';
-				}
-			});
+		var updateTheme = function(info) {
+			if (!info) {
+				info = Info.get();
+			}
+			if (info.packageName === 'meridian') {
+				$rootScope.themeType = 'meridian';
+			} else {
+				$rootScope.themeType = 'horizon';
+			}
 		};
 		updateTheme();
 
-		$rootScope.$on('opennms.settings.changed', function() {
-			$timeout(updateTheme);
+		$rootScope.$on('opennms.info.updated', function(ev, info) {
+			updateTheme(info);
 		});
 
 		$ionicPlatform.ready(function() {

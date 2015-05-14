@@ -61,17 +61,13 @@
 		};
 
 		var canSetLocation = function() {
-			return Info.get().then(function(info) {
-				if (info.packageName === 'meridian') {
-					//console.log('NodeModal.updateData: Meridian can update geolocation.');
-					return true;
-				} else {
-					Info.validateVersion('15.0.2').then(function(isValid) {
-						//console.log('NodeModal.updateData: OpenNMS can update geolocation? ' + (isValid? 'yes':'no'));
-						return isValid;
-					});
-				}
-			});
+			var info = Info.get();
+			if (info.packageName === 'meridian') {
+				//console.log('NodeModal.updateData: Meridian can update geolocation.');
+				return true;
+			} else {
+				return Info.validateVersion('15.0.2');
+			}
 		};
 
 		var setLocation = function(node, longitude, latitude) {
