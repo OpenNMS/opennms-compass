@@ -58,6 +58,10 @@
     "cordova-plugin-appavailability",
     "com.rjfun.cordova.extension",
     {
+      "locator": "https://github.com/RangerRick/cordova-certificate-plugin.git",
+      "id": "com.raccoonfink.cordova.plugins.certificates"
+    },
+    {
       "locator": "https://github.com/RangerRick/cordova-HTTP.git",
       "id": "com.synconset.cordovaHTTP"
     }
