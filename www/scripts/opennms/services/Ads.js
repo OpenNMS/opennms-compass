@@ -21,7 +21,7 @@
 		var show = function() {
 			var showAds = Settings.showAds();
 			if (showAds) {
-				if(Info.get().packageName !== 'meridian'){
+				if(!Info.isMeridian()) {
 					if ($window.AdMob) {
 						var admobid;
 						if (ionic.Platform.isIOS()) {
