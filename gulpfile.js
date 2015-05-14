@@ -111,6 +111,8 @@ var testSource = [
 	'./www/lib/jquery/dist/jquery.min.js',
 	'./www/lib/jquery-visible/jquery.visible.min.js',
 	'./www/lib/async/lib/async.js',
+	'./www/lib/version_compare/version_compare.js',
+	'./www/lib/x2js/xml2json.js',
 	'./www/lib/angular/angular.min.js',
 	'./www/lib/angular-animate/angular-animate.min.js',
 	'./www/lib/angular-cookies/angular-cookies.min.js',
