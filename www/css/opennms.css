@@ -15,7 +15,7 @@
 @font-face {
   font-family: "Ionicons";
   src: url("../lib/ionic/release/fonts/ionicons.eot?v=2.0.1");
-  src: url("../lib/ionic/release/fonts/ionicons.eot?v=2.0.1#iefix") format("embedded-opentype"), url("../lib/ionic/release/fonts/ionicons.ttf?v=2.0.1") format("truetype"), url("../lib/ionic/release/fonts/ionicons.woff?v=2.0.1") format("woff"), url("../lib/ionic/release/fonts/ionicons.svg?v=2.0.1#Ionicons") format("svg");
+  src: url("../lib/ionic/release/fonts/ionicons.eot?v=2.0.1#iefix") format("embedded-opentype"), url("../lib/ionic/release/fonts/ionicons.ttf?v=2.0.1") format("truetype"), url("../lib/ionic/release/fonts/ionicons.woff?v=2.0.1") format("woff"), url("../lib/ionic/release/fonts/ionicons.woff") format("woff"), url("../lib/ionic/release/fonts/ionicons.svg?v=2.0.1#Ionicons") format("svg");
   font-weight: normal;
   font-style: normal; }
 
@@ -2578,7 +2578,7 @@ body.grade-b, body.grade-c {
   width: auto;
   height: auto; }
 
-.scroll-content-false, .menu .scroll-content.scroll-content-false {
+.menu .scroll-content.scroll-content-false {
   z-index: 11; }
 
 .scroll-view {
@@ -8090,6 +8090,8 @@ a.button {
 .node-detail .row {
   font-size: 90%; }
 
+.outage-list .error {
+  color: red; }
 .outage-list .item {
   border-top: 0;
   border-bottom: 0; }

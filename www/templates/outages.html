@@ -8,6 +8,9 @@
 	<ion-content>
 		<ion-refresher pulling-text="Pull to Refresh..." on-refresh="refreshOutages()"></ion-refresher>
 		<ion-list>
+				<ion-item ng-if="error" class="item-text-wrap error">
+					Error: Unable to retrieve outage summaries.
+				</ion-item>
 				<span ng-repeat="outage in outages track by outage.nodeId">
 				<ion-item class="item-divider item-compass" ng-click="showNode(outage.nodeId)">
 					<span class="item-note">{{outage.down.fromNow()}}</span>
