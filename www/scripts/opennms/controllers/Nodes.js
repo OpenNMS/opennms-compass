@@ -83,7 +83,7 @@
 			delayedSearch();
 		});
 
-		$scope.$on('opennms.settings.changed', function(ev, newSettings, oldSettings, changedSettings) {
+		$scope.$on('opennms.settings.updated', function(ev, newSettings, oldSettings, changedSettings) {
 			$scope.refreshData();
 		});
 

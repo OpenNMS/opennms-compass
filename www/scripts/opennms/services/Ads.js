@@ -21,35 +21,33 @@
 		var show = function() {
 			var showAds = Settings.showAds();
 			if (showAds) {
-				Info.get().then(function(info) {
-					if(info.packageName !== 'meridian'){
-						if ($window.AdMob) {
-							var admobid;
-							if (ionic.Platform.isIOS()) {
-								admobid = iosBannerId;
-							} else if (ionic.Platform.isAndroid()) {
-								admobid = androidBannerId;
-							} else if (ionic.Platform.isWindowsPhone()) {
-								admobid = wpBannerId;
-							}
+				if(Info.get().packageName !== 'meridian'){
+					if ($window.AdMob) {
+						var admobid;
+						if (ionic.Platform.isIOS()) {
+							admobid = iosBannerId;
+						} else if (ionic.Platform.isAndroid()) {
+							admobid = androidBannerId;
+						} else if (ionic.Platform.isWindowsPhone()) {
+							admobid = wpBannerId;
+						}
 
-							if (admobid) {
-								console.log('Ads.show: Creating AdMob banner with ID: ' + admobid);
-								$window.AdMob.createBanner({
-									'adId': admobid,
-									'position': AdMob.AD_POSITION.BOTTOM_CENTER,
-									'autoShow': true
-								});
-							} else {
-								console.log('Ads.show: WARNING: Unable to determine platform.');
-							}
+						if (admobid) {
+							console.log('Ads.show: Creating AdMob banner with ID: ' + admobid);
+							$window.AdMob.createBanner({
+								'adId': admobid,
+								'position': AdMob.AD_POSITION.BOTTOM_CENTER,
+								'autoShow': true
+							});
 						} else {
-							console.log('Ads.show: AdMob is not available.');
+							console.log('Ads.show: WARNING: Unable to determine platform.');
 						}
 					} else {
-						console.log('Ads.show: Remote host is meridian.  Skipping ads.');
+						console.log('Ads.show: AdMob is not available.');
 					}
-				});
+				} else {
+					console.log('Ads.show: Remote host is meridian.  Skipping ads.');
+				}
 			} else {
 				console.log('Ads.show: Settings are configured to not show ads.');
 			}
@@ -64,7 +62,7 @@
 			}
 		};
 
-		$rootScope.$on('opennms.settings.changed', function(ev, newSettings, oldSettings, changedSettings) {
+		$rootScope.$on('opennms.settings.updated', function(ev, newSettings, oldSettings, changedSettings) {
 			if (changedSettings.hasOwnProperty('showAds')) {
 				$timeout(function() {
 					if (changedSettings.showAds) {

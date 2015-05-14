@@ -108,7 +108,7 @@
 				console.log('Settings.saveSettings: settings have changed.  Updating.');
 				storage.set('opennms.settings', newSettings);
 				$scope.settings = newSettings;
-				$rootScope.$broadcast('opennms.settings.changed', newSettings, oldSettings, changedSettings);
+				$rootScope.$broadcast('opennms.settings.updated', newSettings, oldSettings, changedSettings);
 			}
 
 			return true;
