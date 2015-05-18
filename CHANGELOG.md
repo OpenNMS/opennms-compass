@@ -1,3 +1,26 @@
+<a name=""</a>
+##  (2015-05-14)
+
+
+#### Bug Fixes
+
+
+* **outages**  do not pop up outages when not supported (COMPASS-42) ((37220beb))
+* **info**  Fix geolocation warning for OpenNMS 16 (COMPASS-46) ((a4e8d972))
+
+
+
+<a name="2.0.2"</a>
+## 2.0.2 (2015-05-11)
+
+
+#### Features
+
+
+* **iap**  add a "restore purchases" button (COMPASS-45) ((1f6c88b5))
+
+
+
 <a name="2.0.1"</a>
 ## 2.0.1 (2015-05-01)
 

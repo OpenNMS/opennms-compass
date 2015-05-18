@@ -30,7 +30,7 @@
 		var updateAuthorization = function() {
 			var username = Settings.username();
 			var password = Settings.password();
-			console.log('username=' + username +', password=' + password);
+			//console.log('username=' + username +', password=' + password);
 			if (username === undefined || password === undefined) {
 				console.log('RestService.updateAuthorization: username or password not set.');
 				delete $http.defaults.headers.common['Authorization'];
@@ -45,7 +45,7 @@
 			}
 		};
 
-		$rootScope.$on('opennms.settings.changed', function() {
+		$rootScope.$on('opennms.settings.updated', function() {
 			updateAuthorization();
 		});
 		updateAuthorization();

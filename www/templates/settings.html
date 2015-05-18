@@ -53,6 +53,15 @@
 										<button class="button button-block button-compass" ng-click="removeAds('disable_ads_free')" ng-disabled="disabled('disable_ads_free')">{{products.disable_ads_free.title}} {{products.disable_ads_free.price}}</button>
 									</ion-item>
 								</span>
+								<span>
+									<ion-item class="item-divider">Restore Purchases</ion-item>
+									<ion-item class="item-text-wrap">
+										<p>If you have already disabled ads on another device
+										or have reinstalled the OpenNMS Compass app, you can
+										restore your in-app purchases.</p>
+										<button class="button button-block button-compass" ng-click="restorePurchases()">Restore Purchases</button>
+									</ion-item>
+								</span>
 							</span>
 						</form>
 					</ion-content>

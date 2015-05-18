@@ -10,7 +10,7 @@
 		'opennms.services.Errors',
 		'opennms.services.Info',
 	])
-	.factory('IAP', function($q, $rootScope, $timeout, $window, $ionicPopup, Errors, Info, Settings) {
+	.factory('IAP', function($q, $rootScope, $timeout, $window, $ionicLoading, $ionicPopup, Errors, Info, Settings) {
 		console.log('IAP: Initializing.');
 
 		var $scope = $rootScope.$new();
@@ -45,6 +45,8 @@
 										visibleMessage = "The store returned an invalid or unknown response."; break;
 									case store.ERR_PAYMENT_EXPIRED:
 										visibleMessage = "Your payment method has expired."; break;
+									case store.ERR_REFRESH:
+										visibleMessage = "An error occurred while attempting to restore purchases."; break;
 								}
 
 								if (err.code === 6777010 && err.message === 'Cannot connect to iTunes Store') {
@@ -55,6 +57,7 @@
 								$rootScope.$broadcast('opennms.product.error', err);
 								if (visibleMessage) {
 									Errors.set('store', err.code + ': ' + visibleMessage);
+									$ionicLoading.hide();
 									$ionicPopup.alert({
 										title: 'Error ' + err.code,
 										template: visibleMessage,
@@ -89,6 +92,7 @@
 							$scope.$evalAsync(function() {
 								console.log('IAP: disable_ads approved.');
 								Settings.disableAds();
+								$ionicLoading.hide();
 								product.finish();
 							});
 						});
@@ -96,6 +100,7 @@
 							$scope.$evalAsync(function() {
 								console.log('IAP: disable_ads_free approved.');
 								Settings.disableAds();
+								$ionicLoading.hide();
 								product.finish();
 							});
 						});
@@ -137,12 +142,34 @@
 			return deferred.promise;
 		};
 
+		var refresh = function() {
+			var deferred = $q.defer();
+			ionic.Platform.ready(function() {
+				$scope.$evalAsync(function() {
+					if ($window.store) {
+						$ionicLoading.show({
+							template: '<ion-spinner class="spinner-compass" style="vertical-align: middle; display: inline-block"></ion-spinner> <span style="padding-left: 10px; line-height: 28px">Restoring Purchases...</span>'
+						});
+						store.refresh();
+						$timeout(function() {
+							$ionicLoading.hide();
+							deferred.resolve(true);
+						}, 10000);
+					} else {
+						deferred.reject();
+					}
+				});
+			});
+			return deferred.promise;
+		};
+
 		return {
 			get: function() {
 				return $scope.products;
 			},
 			init: init,
 			purchase: purchase,
+			refresh: refresh,
 		};
 	});
 
