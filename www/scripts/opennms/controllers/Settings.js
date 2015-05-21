@@ -171,6 +171,7 @@
 			$scope.errors = Errors.get();
 			$scope.$broadcast('scroll.refreshComplete');
 		});
+		util.onInfoUpdated(init);
 
 		$scope.$on('$ionicView.beforeEnter', init);
 	});
