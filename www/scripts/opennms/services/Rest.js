@@ -9,9 +9,10 @@
 		'ng',
 		'cordovaHTTP',
 		'opennms.services.Settings',
+		'opennms.services.Util',
 	])
 
-   	.factory('RestService', function($q, $http, $rootScope, $window, cordovaHTTP, Settings) {
+	.factory('RestService', function($q, $http, $rootScope, $window, cordovaHTTP, Settings, util) {
 		console.log('RestService: Initializing.');
 
 		var useCordovaHTTP = false;
@@ -44,11 +45,6 @@
 				});
 			}
 		};
-
-		$rootScope.$on('opennms.settings.updated', function() {
-			updateAuthorization();
-		});
-		updateAuthorization();
 
 		var getUrl = function(restFragment) {
 			var url = Settings.restURL();
@@ -168,6 +164,9 @@
 
 			return deferred.promise;
 		};
+
+		util.onSettingsUpdated(updateAuthorization);
+		updateAuthorization();
 
 		return {
 			url: getUrl,

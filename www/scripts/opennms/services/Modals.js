@@ -16,7 +16,7 @@
 		'opennms.services.Outages',
 		'opennms.services.Util',
 	])
-	.factory('NodeModal', function($q, $rootScope, $interval, $ionicModal, $ionicPopup, $cordovaGeolocation, AvailabilityService, EventService, Info, NodeService, OutageService) {
+	.factory('NodeModal', function($q, $rootScope, $interval, $ionicModal, $ionicPopup, $cordovaGeolocation, AvailabilityService, EventService, Info, NodeService, OutageService, util) {
 		console.log('NodeModal: initializing.');
 		var $scope = $rootScope.$new();
 		var nodeModal = $q.defer();
@@ -167,19 +167,13 @@
 				modal.hide();
 				resetModel();
 			};
-			modal.scope.$on('opennms.dirty', function(ev, type) {
-				if (!modal.scope.node) {
-					// not yet initialized, ignore it
-					return;
-				}
-				switch(type) {
-					case 'alarms':
-						modal.scope.refreshNode();
-						break;
+			util.onDirty('alarms', function() {
+				if (modal.isShown() && modal.scope.node) {
+					modal.scope.refreshNode();
 				}
 			});
-			modal.scope.$on('opennms.settings.updated', function(ev, newSettings, oldSettings, changedSettings) {
-				if (timer && changedSettings && changedSettings.refreshInterval) {
+			util.onSettingsUpdated(function(newSettings, oldSettings, changedSettings) {
+				if (modal.isShown() && timer && changedSettings && changedSettings.refreshInterval) {
 					modal.scope.updateData();
 				}
 			});
@@ -294,15 +288,13 @@
 			modal.scope.hide = function() {
 				modal.hide();
 			};
-			modal.scope.$on('opennms.settings.updated', function(ev, newSettings, oldSettings, changedSettings) {
-				if (timer && changedSettings && changedSettings.refreshInterval) {
+			util.onSettingsUpdated(function(newSettings, oldSettings, changedSettings) {
+				if (modal.isShown() && timer && changedSettings && changedSettings.refreshInterval) {
 					stopRefresh();
 					startRefresh();
 				}
 			});
-			modal.scope.$on('modal.hidden', function() {
-				stopRefresh();
-			});
+			modal.scope.$on('modal.hidden', stopRefresh);
 		});
 
 		$ionicModal.fromTemplateUrl('templates/alarm-detail.html', {
@@ -400,15 +392,13 @@
 			modal.scope.hide = function() {
 				modal.hide();
 			};
-			modal.scope.$on('opennms.settings.updated', function(ev, newSettings, oldSettings, changedSettings) {
-				if (timer && changedSettings && changedSettings.refreshInterval) {
+			util.onSettingsUpdated(function(newSettings, oldSettings, changedSettings) {
+				if (modal.isShown() && timer && changedSettings && changedSettings.refreshInterval) {
 					stopRefresh();
 					startRefresh();
 				}
 			});
-			modal.scope.$on('modal.hidden', function() {
-				stopRefresh();
-			});
+			modal.scope.$on('modal.hidden', stopRefresh);
 		});
 
 		$ionicModal.fromTemplateUrl('templates/settings.html', {
