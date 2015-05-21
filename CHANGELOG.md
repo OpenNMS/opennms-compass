@@ -1,3 +1,19 @@
+<a name="2.0.5"</a>
+## 2.0.5 (2015-05-21)
+
+
+#### Bug Fixes
+
+
+* **settings**  make sure server info is updated when displaying in "about" (COMPASS-46) ((a5702fc2))
+
+#### Features
+
+
+* **settings**  move "about" info to a settings tab ((26044e04))
+
+
+
 <a name="2.0.4"</a>
 ## 2.0.4 (2015-05-21)
 
