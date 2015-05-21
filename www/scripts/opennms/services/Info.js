@@ -21,7 +21,7 @@
 		console.log('Info: Initializing.');
 
 		var onSuccess = function(data) {
-			console.log('info success=' + angular.toJson(data));
+			//console.log('info success=' + angular.toJson(data));
 			data.numericVersion = parseFloat(data.version.replace('^(\\d+\\.\\d+).*$', '$1'));
 			var info = $injector.get('info');
 			angular.extend(info, data);
