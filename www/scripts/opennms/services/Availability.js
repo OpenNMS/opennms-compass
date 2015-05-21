@@ -9,7 +9,7 @@
 		'ionic',
 		'opennms.services.Rest',
 	])
-	.factory('AvailabilityService', function($q, $rootScope, RestService) {
+	.factory('AvailabilityService', function($q, $rootScope, RestService, util) {
 		console.log('AvailabilityService: Initializing.');
 
 		var hasAvailability;
@@ -26,10 +26,6 @@
 				hasAvailability.resolve(false);
 			});
 		};
-		checkAvailability();
-		$rootScope.$on('opennms.settings.updated', function() {
-			checkAvailability();
-		});
 
 		var isSupported = function() {
 			return hasAvailability.promise;
@@ -134,6 +130,9 @@
 
 			return deferred.promise;
 		};
+
+		util.onSettingsUpdated(checkAvailability);
+		checkAvailability();
 
 		return {
 			supported: isSupported,

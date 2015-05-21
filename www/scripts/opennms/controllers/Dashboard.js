@@ -245,36 +245,29 @@
 			$ionicSlideBoxDelegate.$getByHandle('donut-slide-box').slide(slide);
 		};
 
-		$scope.$on('opennms.settings.updated', function(ev, newSettings, oldSettings, changedSettings) {
-			//console.log('Dashboard: settings changed, refreshing data.');
-			$scope.serverName = Settings.getServerName();
-			$scope.refreshData();
-		});
-
 		$scope.util = util;
 		$scope.modals = Modals;
 		$scope.e = Errors;
 		$scope.errors = [];
 		$scope.currentSlide = 0;
 		$scope.landscape = true;
+		$scope.serverName = Settings.getServerName();
+
 		updateLogo();
 
-		$scope.$on('opennms.dirty', function(ev, type) {
-			switch(type) {
-				case 'alarms':
-				case 'outages':
-					$scope.refreshData();
-					break;
-			}
+		util.onSettingsUpdated(function(newSettings, oldSettings, changedSettings) {
+			//console.log('Dashboard: settings changed, refreshing data.');
+			$scope.serverName = Settings.getServerName();
+			$scope.refreshData();
 		});
 
-		$scope.serverName = Settings.getServerName();
-		$scope.$on('opennms.info.updated', function(ev, info) {
-			updateLogo(info);
+		util.onDirty('alarms', $scope.refreshData);
+		util.onDirty('outages', $scope.refreshData);
+		util.onInfoUpdated(updateLogo);
+		util.onErrorsUpdated(function(errors) {
+			$scope.errors = errors;
 		});
-		$scope.$on('opennms.errors.updated', function(ev, errors) {
-			$scope.errors = Errors.get();
-		});
+
 		$scope.$on('$ionicView.beforeEnter', function() {
 			/* ionic.trigger('resize', {target:window}); */
 			$scope.refreshData();

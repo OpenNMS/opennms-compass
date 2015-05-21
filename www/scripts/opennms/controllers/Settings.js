@@ -21,13 +21,6 @@
 			}
 		};
 
-		$scope.$on('opennms.product.updated', function(p) {
-			$scope.$evalAsync(function() {
-				$scope.products = IAP.get();
-				//console.log('products list updated: ' + angular.toJson($scope.products, true));
-			});
-		});
-
 		ionic.Platform.ready(function() {
 			$scope.$evalAsync(function() {
 				$scope.products = IAP.get();
@@ -121,6 +114,10 @@
 				ev.stopPropagation();
 			}
 		};
+
+		util.onProductUpdated(function() {
+			$scope.products = IAP.get();
+		});
 
 		$scope.$on('$ionicView.beforeEnter', function() {
 			$scope.settings = Settings.get();

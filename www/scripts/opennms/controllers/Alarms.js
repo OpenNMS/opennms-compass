@@ -213,20 +213,10 @@
 			$ionicListDelegate.closeOptionButtons();
 		};
 
-		$scope.$on('opennms.dirty', function(ev, type) {
-			if (type === 'alarms') {
-				$scope.refreshAlarms();
-			}
-		});
+		util.onDirty('alarms', $scope.refreshAlarms);
 
-		$scope.$on('modal.hidden', function() {
-			$scope.refreshAlarms();
-		});
-
-		$scope.$on('$ionicView.beforeEnter', function() {
-			$scope.refreshAlarms();
-		});
-
+		$scope.$on('modal.hidden', $scope.refreshAlarms);
+		$scope.$on('$ionicView.beforeEnter', $scope.refreshAlarms);
 		$scope.$on('$destroy', function() {
 			$scope.modal.remove();
 		});
