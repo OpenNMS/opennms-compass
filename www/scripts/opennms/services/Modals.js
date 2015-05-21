@@ -202,7 +202,6 @@
 		$scope.settings = Settings;
 
 		$scope.alarmModal = $q.defer();
-		$scope.infoModal = $q.defer();
 		$scope.outageModal = $q.defer();
 		$scope.settingsModal = $q.defer();
 
@@ -413,59 +412,9 @@
 				modal.hide();
 			};
 		});
-		$ionicModal.fromTemplateUrl('templates/info.html', {
-			scope: $scope.$new(),
-			animation: 'slide-in-up'
-		}).then(function(modal) {
-			$scope.infoModal.resolve(modal);
-
-			modal.scope.formatType = function(type) {
-				if (type) {
-					var chunks = type.split('-');
-					var ret = "";
-					for (var i=0; i < chunks.length; i++) {
-						ret += chunks[i].capitalize();
-						if ((i+1) !== chunks.length) {
-							ret += " ";
-						}
-					}
-					return ret;
-				}
-				return type;
-			};
-			modal.scope.getErrorMessage = function(error) {
-				if (error.message && error.message.toString) {
-					return error.message.toString();
-				} else {
-					return error.message;
-				}
-			};
-
-			modal.scope.clear = function() {
-				Errors.reset();
-				modal.scope.errors = [];
-			};
-			modal.scope.show = function() {
-				modal.scope.errors = Errors.get();
-				modal.scope.info = Info.get();
-				modal.scope.canSetLocation = Info.canSetLocation();
-				AvailabilityService.supported().then(function(isSupported) {
-					modal.scope.hasAvailability = isSupported;
-				});
-
-				modal.show();
-			};
-			modal.scope.hide = function() {
-				modal.hide();
-			};
-		});
 
 		$scope.$on('$destroy', function() {
 			$scope.alarmModal.promise.then(function(modal) {
-				modal.scope.hide();
-				modal.remove();
-			});
-			$scope.infoModal.promise.then(function(modal) {
 				modal.scope.hide();
 				modal.remove();
 			});
@@ -483,11 +432,6 @@
 			alarm: function(alarm) {
 				$scope.alarmModal.promise.then(function(modal) {
 					modal.scope.show(alarm);
-				});
-			},
-			info: function() {
-				$scope.infoModal.promise.then(function(modal) {
-					modal.scope.show();
 				});
 			},
 			node: function(node) {
