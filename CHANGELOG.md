@@ -1,4 +1,17 @@
-<a name=""</a>
+<a name="2.0.4"</a>
+## 2.0.4 (2015-05-21)
+
+
+#### Bug Fixes
+
+
+* **ads**  fix initialization/update of ads (COMPASS-47) ((d5606eba))
+* **dashboard**  move the donut arrows a few pixels out of the way ((a5778369))
+* **errors**  only broadcast opennms.errors.updated on changes ((3260dcb0))
+
+
+
+<a name="2.0.3"</a>
 ##  (2015-05-14)
 
 
