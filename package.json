@@ -51,6 +51,7 @@
     "cordova-plugin-network-information",
     "cordova-plugin-splashscreen",
     "cordova-plugin-statusbar",
+    "cordova-plugin-whitelist",
     "cc.fovea.cordova.purchase",
     "cordova-plugin-admobpro",
     "com.google.playservices",
@@ -69,8 +70,8 @@
   "cordovaPlatforms": [
     {
       "platform": "android",
-      "version": "3.7.1",
-      "locator": "android@3.7.1"
+      "version": "4.0.2",
+      "locator": "android"
     },
     {
       "platform": "ios",
