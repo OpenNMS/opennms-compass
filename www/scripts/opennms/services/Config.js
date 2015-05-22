@@ -42,14 +42,6 @@
 			$scope.settings.showAds = true;
 		}
 
-		$scope.$on('opennms.product.updated', function(ev, product) {
-			if (product.alias.startsWith('disable_ads') && product.owned) {
-				var settings = getSettings();
-				settings.showAds = false;
-				saveSettings(settings);
-			}
-		});
-
 		var getSettings = function() {
 			return angular.copy($scope.settings);
 		};

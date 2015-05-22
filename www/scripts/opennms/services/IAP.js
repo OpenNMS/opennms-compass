@@ -18,6 +18,7 @@
 
 		var init = function() {
 			var deferred = $q.defer();
+			var rejected = false;
 			ionic.Platform.ready(function() {
 				$scope.$evalAsync(function() {
 					if ($window.store) {
@@ -53,6 +54,10 @@
 									visibleMessage = 'Cannot connect to iTunes Store';
 								}
 
+								if (!rejected) {
+									rejected = true;
+									deferred.reject(err);
+								}
 								console.log('IAP: ERROR ' + err.code + ': ' + err.message);
 								$rootScope.$broadcast('opennms.product.error', err);
 								if (visibleMessage) {
@@ -107,9 +112,14 @@
 						store.ready(function() {
 							console.log('IAP: Store is ready.');
 							Errors.clear('store');
+							if (!Settings.isServerConfigured()) {
+								// assume this is a first-launch and do the refresh
+								// a second time to restore purchases
+								store.refresh();
+							}
+							deferred.resolve(true);
 						});
 						store.refresh();
-						deferred.resolve(true);
 					} else {
 						console.log('IAP: Not available.');
 						deferred.resolve(false);
