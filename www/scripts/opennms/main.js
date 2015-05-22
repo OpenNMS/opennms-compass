@@ -73,8 +73,7 @@
 
 		$ionicPlatform.ready(function() {
 			console.log('Ionic is ready.');
-			Ads.show();
-			IAP.init();
+			IAP.init().then(Ads.init);
 			if (!Settings.isServerConfigured()) {
 				Modals.settings();
 			}
