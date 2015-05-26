@@ -6,7 +6,9 @@
 
 
 * **ads**  another attempted fix at cleaning up initialization ((9b638c26))
-* **launch**  fix a jQuery initialization issue ((ec97318c))
+* **launch**
+  *  move 3rd-party scripts into <head> for faster loading ((741ce8e7))
+  *  fix a jQuery initialization issue ((ec97318c))
 * **settings**  make sure server info is updated when displaying in "about" (COMPASS-46) ((a5702fc2))
 
 #### Features
