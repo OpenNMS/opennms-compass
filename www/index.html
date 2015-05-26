@@ -16,6 +16,28 @@
 <link rel="stylesheet" href="lib/c3/c3.min.css" />
 <link rel="stylesheet" href="css/opennms.min.css" />
 
+<!-- build:shim scripts/shim.js -->
+<script src="lib/modernizr/modernizr.js"></script>
+<script src="lib/classlist/classList.js"></script>
+<script src="lib/es5-shim/es5-shim.js"></script>
+<!-- endbuild -->
+
+<!-- build:thirdparty scripts/3rdparty.js -->
+<script src="lib/jquery/dist/jquery.min.js"></script>
+<script src="lib/jquery-visible/jquery.visible.min.js"></script>
+<script src="lib/async/lib/async.js"></script>
+<script src="lib/momentjs/moment.js"></script>
+<script src="lib/version_compare/version_compare.js"></script>
+<script src="lib/x2js/xml2json.js"></script>
+<!-- endbuild -->
+
+<!-- build:ipv6 scripts/ipv6.js -->
+<script src="lib/ipv6/lib/browser/jsbn.js"></script>
+<script src="lib/ipv6/lib/browser/jsbn2.js"></script>
+<script src="lib/ipv6/lib/browser/sprintf.js"></script>
+<script src="lib/ipv6/ipv6.js"></script>
+<!-- endbuild -->
+
 <style>
 	 [ng\:cloak], [ng-cloak], .ng-cloak {
 		display: none !important;
@@ -31,29 +53,6 @@
 </head>
 <body class="antialiased off-canvas hide-extras" ng-class="themeType + ' ' + (landscape?'landscape':'portrait')" ng-cloak animation="no-animation">
 	<ion-nav-view></ion-nav-view>
-
-	<!-- build:shim scripts/shim.js -->
-	<script src="lib/modernizr/modernizr.js"></script>
-	<script src="lib/classlist/classList.js"></script>
-	<script src="lib/es5-shim/es5-shim.js"></script>
-	<!-- endbuild -->
-
-	<script src="lib/jquery/dist/jquery.min.js"></script>
-	<script src="lib/jquery-visible/jquery.visible.min.js"></script>
-
-	<!-- build:thirdparty scripts/3rdparty.js -->
-	<script src="lib/async/lib/async.js"></script>
-	<script src="lib/momentjs/moment.js"></script>
-	<script src="lib/version_compare/version_compare.js"></script>
-	<script src="lib/x2js/xml2json.js"></script>
-	<!-- endbuild -->
-
-	<!-- build:ipv6 scripts/ipv6.js -->
-	<script src="lib/ipv6/lib/browser/jsbn.js"></script>
-	<script src="lib/ipv6/lib/browser/jsbn2.js"></script>
-	<script src="lib/ipv6/lib/browser/sprintf.js"></script>
-	<script src="lib/ipv6/ipv6.js"></script>
-	<!-- endbuild -->
 
 	<!-- build:angular scripts/angular.js -->
 	<script src="lib/angular/angular.js"></script>
