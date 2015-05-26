@@ -1,11 +1,12 @@
 <a name="2.0.5"</a>
-## 2.0.5 (2015-05-23)
+## 2.0.5 (2015-05-26)
 
 
 #### Bug Fixes
 
 
 * **ads**  another attempted fix at cleaning up initialization ((9b638c26))
+* **launch**  fix a jQuery initialization issue ((ec97318c))
 * **settings**  make sure server info is updated when displaying in "about" (COMPASS-46) ((a5702fc2))
 
 #### Features
