@@ -5,7 +5,9 @@
 
 	angular.module('opennms.services.Modals', [
 		'ionic',
+		'ngCordova',
 		'opennms.services.Alarms',
+		'opennms.services.Analytics',
 		'opennms.services.Availability',
 		'opennms.services.BuildConfig',
 		'opennms.services.Config',
@@ -16,7 +18,7 @@
 		'opennms.services.Outages',
 		'opennms.services.Util',
 	])
-	.factory('NodeModal', function($q, $rootScope, $interval, $ionicModal, $ionicPopup, $cordovaGeolocation, AvailabilityService, EventService, Info, NodeService, OutageService) {
+	.factory('NodeModal', function($q, $rootScope, $interval, $ionicModal, $ionicPopup, $cordovaGeolocation, Analytics, AvailabilityService, EventService, Info, NodeService, OutageService, util) {
 		console.log('NodeModal: initializing.');
 		var $scope = $rootScope.$new();
 		var nodeModal = $q.defer();
@@ -55,6 +57,7 @@
 			var showNode = function(node) {
 				modal.scope.node = node;
 				modal.scope.updateData();
+				Analytics.trackView('nodeDetail');
 				modal.show();
 			};
 
@@ -167,19 +170,13 @@
 				modal.hide();
 				resetModel();
 			};
-			modal.scope.$on('opennms.dirty', function(ev, type) {
-				if (!modal.scope.node) {
-					// not yet initialized, ignore it
-					return;
-				}
-				switch(type) {
-					case 'alarms':
-						modal.scope.refreshNode();
-						break;
+			util.onDirty('alarms', function() {
+				if (modal.isShown() && modal.scope.node) {
+					modal.scope.refreshNode();
 				}
 			});
-			modal.scope.$on('opennms.settings.updated', function(ev, newSettings, oldSettings, changedSettings) {
-				if (timer && changedSettings && changedSettings.refreshInterval) {
+			util.onSettingsUpdated(function(newSettings, oldSettings, changedSettings) {
+				if (modal.isShown() && timer && changedSettings && changedSettings.refreshInterval) {
 					modal.scope.updateData();
 				}
 			});
@@ -200,7 +197,7 @@
 			},
 		};
 	})
-	.factory('Modals', function($q, $rootScope, $interval, $ionicModal, $ionicPopup, AlarmService, AvailabilityService, Errors, EventService, Info, NodeService, OutageService, Settings, util, NodeModal) {
+	.factory('Modals', function($q, $rootScope, $interval, $ionicModal, $ionicPopup, AlarmService, Analytics, AvailabilityService, Errors, EventService, Info, NodeService, OutageService, Settings, util, NodeModal) {
 		console.log('Modals: initializing.');
 
 		var $scope = $rootScope.$new();
@@ -208,7 +205,6 @@
 		$scope.settings = Settings;
 
 		$scope.alarmModal = $q.defer();
-		$scope.infoModal = $q.defer();
 		$scope.outageModal = $q.defer();
 		$scope.settingsModal = $q.defer();
 
@@ -288,21 +284,20 @@
 			modal.scope.show = function() {
 				modal.scope.outages = [];
 				modal.scope.refreshOutages().then(function() {
+					Analytics.trackView('outages');
 					modal.show();
 				});
 			};
 			modal.scope.hide = function() {
 				modal.hide();
 			};
-			modal.scope.$on('opennms.settings.updated', function(ev, newSettings, oldSettings, changedSettings) {
-				if (timer && changedSettings && changedSettings.refreshInterval) {
+			util.onSettingsUpdated(function(newSettings, oldSettings, changedSettings) {
+				if (modal.isShown() && timer && changedSettings && changedSettings.refreshInterval) {
 					stopRefresh();
 					startRefresh();
 				}
 			});
-			modal.scope.$on('modal.hidden', function() {
-				stopRefresh();
-			});
+			modal.scope.$on('modal.hidden', stopRefresh);
 		});
 
 		$ionicModal.fromTemplateUrl('templates/alarm-detail.html', {
@@ -395,20 +390,19 @@
 			modal.scope.show = function(alarm) {
 				modal.scope.alarm = alarm;
 				startRefresh();
+				Analytics.trackView('alarmDetail');
 				modal.show();
 			};
 			modal.scope.hide = function() {
 				modal.hide();
 			};
-			modal.scope.$on('opennms.settings.updated', function(ev, newSettings, oldSettings, changedSettings) {
-				if (timer && changedSettings && changedSettings.refreshInterval) {
+			util.onSettingsUpdated(function(newSettings, oldSettings, changedSettings) {
+				if (modal.isShown() && timer && changedSettings && changedSettings.refreshInterval) {
 					stopRefresh();
 					startRefresh();
 				}
 			});
-			modal.scope.$on('modal.hidden', function() {
-				stopRefresh();
-			});
+			modal.scope.$on('modal.hidden', stopRefresh);
 		});
 
 		$ionicModal.fromTemplateUrl('templates/settings.html', {
@@ -417,52 +411,7 @@
 		}).then(function(modal) {
 			$scope.settingsModal.resolve(modal);
 			modal.scope.show = function() {
-				modal.show();
-			};
-			modal.scope.hide = function() {
-				modal.hide();
-			};
-		});
-		$ionicModal.fromTemplateUrl('templates/info.html', {
-			scope: $scope.$new(),
-			animation: 'slide-in-up'
-		}).then(function(modal) {
-			$scope.infoModal.resolve(modal);
-
-			modal.scope.formatType = function(type) {
-				if (type) {
-					var chunks = type.split('-');
-					var ret = "";
-					for (var i=0; i < chunks.length; i++) {
-						ret += chunks[i].capitalize();
-						if ((i+1) !== chunks.length) {
-							ret += " ";
-						}
-					}
-					return ret;
-				}
-				return type;
-			};
-			modal.scope.getErrorMessage = function(error) {
-				if (error.message && error.message.toString) {
-					return error.message.toString();
-				} else {
-					return error.message;
-				}
-			};
-
-			modal.scope.clear = function() {
-				Errors.reset();
-				modal.scope.errors = [];
-			};
-			modal.scope.show = function() {
-				modal.scope.errors = Errors.get();
-				modal.scope.info = Info.get();
-				modal.scope.canSetLocation = Info.canSetLocation();
-				AvailabilityService.supported().then(function(isSupported) {
-					modal.scope.hasAvailability = isSupported;
-				});
-
+				Analytics.trackView('settings');
 				modal.show();
 			};
 			modal.scope.hide = function() {
@@ -472,10 +421,6 @@
 
 		$scope.$on('$destroy', function() {
 			$scope.alarmModal.promise.then(function(modal) {
-				modal.scope.hide();
-				modal.remove();
-			});
-			$scope.infoModal.promise.then(function(modal) {
 				modal.scope.hide();
 				modal.remove();
 			});
@@ -493,11 +438,6 @@
 			alarm: function(alarm) {
 				$scope.alarmModal.promise.then(function(modal) {
 					modal.scope.show(alarm);
-				});
-			},
-			info: function() {
-				$scope.infoModal.promise.then(function(modal) {
-					modal.scope.show();
 				});
 			},
 			node: function(node) {

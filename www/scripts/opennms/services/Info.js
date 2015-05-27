@@ -7,7 +7,8 @@
 	angular.module('opennms.services.Info', [
 		'ionic',
 		'opennms.services.Rest',
-		'opennms.services.Settings'
+		'opennms.services.Settings',
+		'opennms.services.Util',
 	])
 	.value('info', {
 		version: '0.0.0',
@@ -16,11 +17,11 @@
 		packageName: 'opennms',
 		packageDescription: 'OpenNMS'
 	})
-	.factory('Info', function($q, $rootScope, $http, $injector, $window, $timeout, RestService, Settings) {
+	.factory('Info', function($q, $rootScope, $http, $injector, $window, $timeout, RestService, Settings, util) {
 		console.log('Info: Initializing.');
 
 		var onSuccess = function(data) {
-			console.log('info success=' + angular.toJson(data));
+			//console.log('info success=' + angular.toJson(data));
 			data.numericVersion = parseFloat(data.version.replace('^(\\d+\\.\\d+).*$', '$1'));
 			var info = $injector.get('info');
 			angular.extend(info, data);
@@ -43,11 +44,9 @@
 				console.log('Info.updateInfo: failed: ' + angular.toJson(err));
 			});
 		};
-		$timeout(updateInfo);
 
-		$rootScope.$on('opennms.settings.updated', function() {
-			updateInfo();
-		});
+		util.onSettingsUpdated(updateInfo);
+		$timeout(updateInfo);
 
 		return {
 			get: function() {

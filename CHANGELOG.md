@@ -1,4 +1,37 @@
-<a name=""</a>
+<a name="2.0.5"</a>
+## 2.0.5 (2015-05-26)
+
+
+#### Bug Fixes
+
+
+* **ads**  another attempted fix at cleaning up initialization ((9b638c26))
+* **launch**
+  *  move 3rd-party scripts into <head> for faster loading ((741ce8e7))
+  *  fix a jQuery initialization issue ((ec97318c))
+* **settings**  make sure server info is updated when displaying in "about" (COMPASS-46) ((a5702fc2))
+
+#### Features
+
+
+* **settings**  move "about" info to a settings tab ((26044e04))
+
+
+
+<a name="2.0.4"</a>
+## 2.0.4 (2015-05-21)
+
+
+#### Bug Fixes
+
+
+* **ads**  fix initialization/update of ads (COMPASS-47) ((d5606eba))
+* **dashboard**  move the donut arrows a few pixels out of the way ((a5778369))
+* **errors**  only broadcast opennms.errors.updated on changes ((3260dcb0))
+
+
+
+<a name="2.0.3"</a>
 ##  (2015-05-14)
 
 

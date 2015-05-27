@@ -17,6 +17,7 @@
 		'opennms.services.Modals',
 		'opennms.services.Outages',
 		'opennms.services.Settings',
+		'opennms.services.Util',
 		'opennms.controllers.Alarms',
 		'opennms.controllers.Dashboard',
 		'opennms.controllers.Nodes',
@@ -55,7 +56,7 @@
 			toolbarposition:'top'
 		});
 	})
-	.run(function($rootScope, $timeout, $window, $ionicPlatform, Ads, IAP, Info, Modals, Settings) {
+	.run(function($rootScope, $timeout, $window, $ionicPlatform, Ads, IAP, Info, Modals, Settings, util) {
 		var updateTheme = function(info) {
 			if (!info) {
 				info = Info.get();
@@ -68,14 +69,11 @@
 		};
 		updateTheme();
 
-		$rootScope.$on('opennms.info.updated', function(ev, info) {
-			updateTheme(info);
-		});
+		util.onInfoUpdated(updateTheme);
 
 		$ionicPlatform.ready(function() {
 			console.log('Ionic is ready.');
-			Ads.show();
-			IAP.init();
+			IAP.init().then(Ads.init);
 			if (!Settings.isServerConfigured()) {
 				Modals.settings();
 			}

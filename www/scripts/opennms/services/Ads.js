@@ -6,77 +6,97 @@
 
 	angular.module('opennms.services.Ads', [
 		'ionic',
+		'rt.debounce',
 		'opennms.services.BuildConfig',
 		'opennms.services.Config',
 		'opennms.services.Info',
 		'opennms.services.Rest',
+		'opennms.services.Settings',
+		'opennms.services.Util',
 	])
-	.factory('Ads', ['$q', '$rootScope', '$timeout', '$window', 'Info', 'RestService', 'Settings',
+	.factory('Ads', ['$rootScope', '$window', 'debounce', 'Info', 'Settings', 'util',
 		'config.build.admobIdAndroidBanner', 'config.build.admobIdIosBanner', 'config.build.admobIdOtherBanner',
-		function($q, $rootScope, $timeout, $window, Info, RestService, Settings,
-		androidBannerId, iosBannerId, wpBannerId) {
+		function($rootScope, $window, debounce, Info, Settings, util,
+		androidBannerId, iosBannerId, otherBannerId) {
 
 		console.log('Ads: Initializing.');
 
-		var show = function() {
-			var showAds = Settings.showAds();
-			if (showAds) {
-				if(!Info.isMeridian()) {
-					if ($window.AdMob) {
-						var admobid;
-						if (ionic.Platform.isIOS()) {
-							admobid = iosBannerId;
-						} else if (ionic.Platform.isAndroid()) {
-							admobid = androidBannerId;
-						} else if (ionic.Platform.isWindowsPhone()) {
-							admobid = wpBannerId;
-						}
+		var scope = $rootScope.$new();
 
-						if (admobid) {
-							console.log('Ads.show: Creating AdMob banner with ID: ' + admobid);
-							$window.AdMob.createBanner({
-								'adId': admobid,
-								'position': AdMob.AD_POSITION.BOTTOM_CENTER,
-								'autoShow': true
-							});
-						} else {
-							console.log('Ads.show: WARNING: Unable to determine platform.');
-						}
-					} else {
-						console.log('Ads.show: AdMob is not available.');
-					}
-				} else {
-					console.log('Ads.show: Remote host is meridian.  Skipping ads.');
-				}
-			} else {
-				console.log('Ads.show: Settings are configured to not show ads.');
+		scope.waitTime = 1000;
+
+		scope.created = false;
+		scope.isMeridian = false;
+		scope.showAds = Settings.showAds();
+
+		var updateAds = debounce(scope.waitTime, function() {
+			if (!scope.created) {
+				console.log('Ads.updateAds: skipping, ad not created yet.');
+				return;
 			}
-		};
 
-		var hide = function() {
-			if ($window.AdMob) {
-				console.log('Ads.hide: Hiding AdMob banner.');
-				$window.AdMob.removeBanner();
+			console.log('Ads.updateAds: isMeridian = ' + scope.isMeridian + ', showAds = ' + scope.showAds);
+
+			if (scope.isMeridian) {
+				console.log('Ads.updateAds: hiding ads.');
+				$window.AdMob.hideBanner();
+			} else if (scope.showAds) {
+				console.log('Ads.updateAds: showing ads.');
+				$window.AdMob.showBanner(AdMob.AD_POSITION.BOTTOM_CENTER);
 			} else {
-				console.log('Ads.hide: Admob is not available.');
-			}
-		};
-
-		$rootScope.$on('opennms.settings.updated', function(ev, newSettings, oldSettings, changedSettings) {
-			if (changedSettings.hasOwnProperty('showAds')) {
-				$timeout(function() {
-					if (changedSettings.showAds) {
-						show();
-					} else {
-						hide();
-					}
-				}, 1000);
+				console.log('Ads.updateAds: hiding ads.');
+				$window.AdMob.hideBanner();
 			}
 		});
 
+		var init = function() {
+			if ($window.AdMob) {
+				var admobid;
+				if (ionic.Platform.isIOS()) {
+					admobid = iosBannerId;
+				} else if (ionic.Platform.isAndroid()) {
+					admobid = androidBannerId;
+				} else {
+					admobid = otherBannerId;
+				}
+
+				if (admobid) {
+					console.log('Ads.init: Creating AdMob banner with ID: ' + admobid);
+					$window.AdMob.createBanner({
+						'adId': admobid,
+						'position': AdMob.AD_POSITION.BOTTOM_CENTER,
+						'autoShow': false
+					});
+					scope.created = true;
+				} else {
+					console.log('Ads.init: WARNING: Unable to determine platform.');
+				}
+			} else {
+				console.log('Ads.init: AdMob is not available.');
+			}
+		};
+
+		util.onProductUpdated(function(product) {
+			if (product.alias.startsWith('disable_ads') && product.owned) {
+				Settings.disableAds();
+				scope.showAds = false;
+			}
+		});
+
+		util.onInfoUpdated(function() {
+			scope.isMeridian = Info.isMeridian();
+		});
+
+		util.onSettingsUpdated(function(newSettings, oldSettings, changedSettings) {
+			scope.showAds = newSettings.showAds;
+		});
+
+		scope.$watch('created', updateAds);
+		scope.$watch('isMeridian', updateAds);
+		scope.$watch('showAds', updateAds);
+
 		return {
-			show: show,
-			hide: hide,
+			init: init,
 		};
 	}]);
 

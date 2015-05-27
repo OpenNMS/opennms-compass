@@ -13,42 +13,16 @@
 
 	angular.module('opennms.services.Settings', [
 		'angularLocalStorage',
+		'uuid4',
 		'opennms.services.BuildConfig',
 		'opennms.services.Config',
 	])
-	.factory('Settings', function(storage, $rootScope, $injector) {
+	.factory('Settings', function($rootScope, $injector, storage, uuid4) {
 		var $scope = $rootScope.$new();
 
-		$scope.settings = storage.get('opennms.settings');
-		if (!$scope.settings || $scope.settings === 'undefined') {
-			$scope.settings = {};
-		}
-		if (!$scope.settings.server) {
-			$scope.settings.server = $injector.get('config.app.default-server-url');
-		}
-		if (!$scope.settings.username) {
-			$scope.settings.username = $injector.get('config.app.default-username');
-		}
-		if (!$scope.settings.password) {
-			$scope.settings.password = $injector.get('config.app.default-password');
-		}
-		if (!$scope.settings.restLimit) {
-			$scope.settings.restLimit = $injector.get('config.app.rest.limit');
-		}
-		if (!$scope.settings.refreshInterval || isNaN(parseInt($scope.settings.refreshInterval, 10))) {
-			$scope.settings.refreshInterval = $injector.get('config.app.refresh-interval');
-		}
-		if ($scope.settings.showAds === undefined || $scope.settings.showAds === 'undefined') {
-			$scope.settings.showAds = true;
-		}
+		var serverTypeMatch = new RegExp("^([Hh][Tt][Tt][Pp][Ss]?)\:", "g");
 
-		$scope.$on('opennms.product.updated', function(ev, product) {
-			if (product.alias.startsWith('disable_ads') && product.owned) {
-				var settings = getSettings();
-				settings.showAds = false;
-				saveSettings(settings);
-			}
-		});
+		$scope.settings = storage.get('opennms.settings');
 
 		var getSettings = function() {
 			return angular.copy($scope.settings);
@@ -108,11 +82,45 @@
 				console.log('Settings.saveSettings: settings have changed.  Updating.');
 				storage.set('opennms.settings', newSettings);
 				$scope.settings = newSettings;
+
+				if (changedSettings.server) {
+					var match = serverTypeMatch.match(changedSettings.server);
+					if (match.length > 0) {
+						$rootScope.$broadcast('opennms.analytics.trackEvent', 'settings', 'serverType', 'Server Type', match[0]);
+					}
+				}
 				$rootScope.$broadcast('opennms.settings.updated', newSettings, oldSettings, changedSettings);
 			}
 
 			return true;
 		};
+
+		if (!$scope.settings || $scope.settings === 'undefined') {
+			$scope.settings = {};
+		}
+		if (!$scope.settings.server) {
+			$scope.settings.server = $injector.get('config.app.default-server-url');
+		}
+		if (!$scope.settings.username) {
+			$scope.settings.username = $injector.get('config.app.default-username');
+		}
+		if (!$scope.settings.password) {
+			$scope.settings.password = $injector.get('config.app.default-password');
+		}
+		if (!$scope.settings.uuid) {
+			$scope.settings.uuid = uuid4.generate();
+			// no uuid? save it immediately
+			saveSettings(getSettings());
+		}
+		if (!$scope.settings.restLimit) {
+			$scope.settings.restLimit = $injector.get('config.app.rest.limit');
+		}
+		if (!$scope.settings.refreshInterval || isNaN(parseInt($scope.settings.refreshInterval, 10))) {
+			$scope.settings.refreshInterval = $injector.get('config.app.refresh-interval');
+		}
+		if ($scope.settings.showAds === undefined || $scope.settings.showAds === 'undefined') {
+			$scope.settings.showAds = true;
+		}
 
 		return {
 			get: getSettings,
@@ -156,6 +164,9 @@
 			},
 			password: function() {
 				return getSettings().password;
+			},
+			uuid: function() {
+				return getSettings().uuid;
 			},
 			disableAds: function() {
 				var settings = getSettings();

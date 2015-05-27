@@ -36,6 +36,10 @@ if (rootdir) {
 			fs.writeFileSync(outfile, "(function() {\n\t'use strict';\n\n\tangular.module('opennms.services.BuildConfig', [])\n");
 			for (var prop in buildobj) {
 				if (buildobj.hasOwnProperty(prop)) {
+					// skip signing properties
+					if (prop === 'storeFile' || prop === 'keyAlias' || prop === 'storePassword' || prop === 'keyPassword') {
+						continue;
+					}
 					var value = buildobj[prop];
 					if (typeof value == 'string' || value instanceof String) {
 						fs.appendFileSync(outfile, "\t\t.value('config.build." + prop + "', '" + value + "')\n");
