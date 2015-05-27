@@ -63,7 +63,6 @@
 	<script src="lib/angular-ui-router/release/angular-ui-router.js"></script>
 	<script src="lib/ionic/release/js/ionic.js"></script>
 	<script src="lib/ionic/release/js/ionic-angular.js"></script>
-	<script src="lib/ionic-material/ionic.material.min.js"></script>
 	<script src="lib/angular-debounce/dist/angular-debounce.js"></script>
 	<script src="lib/angularLocalStorage/src/angularLocalStorage.js"></script>
 	<script src="lib/ng-resize/ngresize.js"></script>
@@ -123,6 +122,22 @@
 
 	<script src="lib/ngCordova/dist/ng-cordova.min.js"></script>
 	<script src="cordova.js"></script>
+
+	<script>
+		if (ionic.Platform.isAndroid()) {
+			console.log("We're on Android! Including Ionic Material.");
+			var s = document.createElement('script');
+			s.setAttribute('src', 'lib/ionic-material/ionic.material.min.js');
+
+			var c = document.createElement('link');
+			s.setAttribute('rel', 'stylesheet');
+			s.setAttribute('type', 'text/css');
+			s.setAttribute('href', 'lib/ionic-material/dist/ionic.material.min.css');
+
+			document.getElementsByTagName('head')[0].appendChild(c);
+			document.getElementsByTagName('body')[0].appendChild(s);
+		}
+	</script>
 
 	<script>
 		ionic.Platform.ready(function() {
