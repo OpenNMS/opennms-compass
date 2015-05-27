@@ -5,30 +5,66 @@
 
 	angular.module('opennms.controllers.Settings', [
 		'ionic',
+		'opennms.services.Availability',
+		'opennms.services.Errors',
 		'opennms.services.IAP',
+		'opennms.services.Info',
 		'opennms.services.Settings',
 		'opennms.services.Util',
 	])
-	.controller('SettingsCtrl', ['$scope', '$timeout', '$window', '$filter', '$ionicPopup', 'IAP', 'Settings', 'util', function($scope, $timeout, $window, $filter, $ionicPopup, IAP, Settings, util) {
+	.controller('SettingsCtrl', function($scope, $timeout, $window, $filter, $ionicPlatform, $ionicPopup, AvailabilityService, Errors, IAP, Info, Settings, util) {
 		console.log('Settings initializing.');
 
 		$scope.util = util;
-		$scope.settings = Settings.get();
+
+		var init = function() {
+			$scope.settings = Settings.get();
+			$scope.settingsService = Settings;
+			$scope.errors = Errors.get();
+			$scope.info = Info.get();
+			$scope.canSetLocation = Info.canSetLocation();
+			AvailabilityService.supported().then(function(isSupported) {
+				$scope.hasAvailability = isSupported;
+				$scope.$broadcast('scroll.refreshComplete');
+			});
+			$scope.$broadcast('scroll.refreshComplete');
+		};
+		init();
+
 		$scope.save = function() {
 			Settings.set($scope.settings);
 			if ($scope.hide) {
 				$scope.hide();
 			}
 		};
+		$scope.formatType = function(type) {
+			if (type) {
+				var chunks = type.split('-');
+				var ret = "";
+				for (var i=0; i < chunks.length; i++) {
+					ret += chunks[i].capitalize();
+					if ((i+1) !== chunks.length) {
+						ret += " ";
+					}
+				}
+				return ret;
+			}
+			return type;
+		};
 
-		$scope.$on('opennms.product.updated', function(p) {
-			$scope.$evalAsync(function() {
-				$scope.products = IAP.get();
-				//console.log('products list updated: ' + angular.toJson($scope.products, true));
-			});
-		});
+		$scope.getErrorMessage = function(error) {
+			if (error.message && error.message.toString) {
+				return error.message.toString();
+			} else {
+				return error.message;
+			}
+		};
 
-		ionic.Platform.ready(function() {
+		$scope.clearErrors = function() {
+			Errors.reset();
+		};
+
+		$ionicPlatform.ready(function() {
 			$scope.$evalAsync(function() {
 				$scope.products = IAP.get();
 
@@ -79,6 +115,12 @@
 			});
 		};
 
+		$scope.restorePurchases = function() {
+			IAP.refresh().then(function() {
+				$scope.products = IAP.get();
+			});
+		};
+
 		var hasPurchased = function() {
 			if ($scope.products && Object.keys($scope.products).length > 0) {
 				if ($scope.products.disable_ads && $scope.products.disable_ads.owned) {
@@ -116,9 +158,22 @@
 			}
 		};
 
-		$scope.$on('$ionicView.beforeEnter', function() {
-			$scope.settings = Settings.get();
+		util.onProductUpdated(function() {
+			$scope.products = IAP.get();
+			$scope.$broadcast('scroll.refreshComplete');
 		});
-	}]);
+		util.onInfoUpdated(function() {
+			$scope.info = Info.get();
+			$scope.canSetLocation = Info.canSetLocation();
+			$scope.$broadcast('scroll.refreshComplete');
+		});
+		util.onErrorsUpdated(function() {
+			$scope.errors = Errors.get();
+			$scope.$broadcast('scroll.refreshComplete');
+		});
+		util.onInfoUpdated(init);
+
+		$scope.$on('$ionicView.beforeEnter', init);
+	});
 
 }());

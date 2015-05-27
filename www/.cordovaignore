@@ -58,6 +58,8 @@ lib/async/deps/nodeunit.css
 lib/async/deps/nodeunit.js
 lib/async/nodelint.cfg
 lib/async/package.json
+lib/async/perf/benchmark.js
+lib/async/perf/suites.js
 lib/async/support/sync-package-managers.js
 lib/backshift/.bower.json
 lib/backshift/.gitignore
