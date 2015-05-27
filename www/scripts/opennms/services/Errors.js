@@ -24,12 +24,16 @@
 			return ret;
 		};
 		var setError = function(type, message) {
-			_errors[type] = message;
-			$rootScope.$broadcast('opennms.errors.updated', getErrorsAsArray());
+			if (message !== _errors[type]) {
+				_errors[type] = message;
+				$rootScope.$broadcast('opennms.errors.updated', getErrorsAsArray());
+			}
 		};
 		var clearError = function(type) {
-			delete _errors[type];
-			$rootScope.$broadcast('opennms.errors.updated', getErrorsAsArray());
+			if (_errors[type]) {
+				delete _errors[type];
+				$rootScope.$broadcast('opennms.errors.updated', getErrorsAsArray());
+			}
 		};
 		var resetErrors = function() {
 			var oldErrors = getErrors();

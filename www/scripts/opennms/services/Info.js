@@ -7,35 +7,25 @@
 	angular.module('opennms.services.Info', [
 		'ionic',
 		'opennms.services.Rest',
-		'opennms.services.Settings'
+		'opennms.services.Settings',
+		'opennms.services.Util',
 	])
-	.factory('Info', function($q, $rootScope, $http, $window, $timeout, RestService, Settings) {
+	.value('info', {
+		version: '0.0.0',
+		numericVersion: 0.0,
+		displayVersion: 'Unknown',
+		packageName: 'opennms',
+		packageDescription: 'OpenNMS'
+	})
+	.factory('Info', function($q, $rootScope, $http, $injector, $window, $timeout, RestService, Settings, util) {
 		console.log('Info: Initializing.');
 
-		var defaultInfo = {
-			version: '0.0.0',
-			numericVersion: 0.0,
-			displayVersion: 'Unknown',
-			packageName: 'opennms',
-			packageDescription: 'OpenNMS'
-		};
-
-		var initialized = false;
-		var currentInfo = angular.copy(defaultInfo);
-		var info = $q.defer();
-
 		var onSuccess = function(data) {
-			console.log('info success=' + angular.toJson(data));
+			//console.log('info success=' + angular.toJson(data));
 			data.numericVersion = parseFloat(data.version.replace('^(\\d+\\.\\d+).*$', '$1'));
-			currentInfo = angular.copy(data);
-			info.resolve(currentInfo);
-			initialized = true;
-		};
-
-		var onFailure = function() {
-			currentInfo = angular.copy(defaultInfo);
-			info.resolve(currentInfo);
-			initialized = true;
+			var info = $injector.get('info');
+			angular.extend(info, data);
+			$rootScope.$broadcast('opennms.info.updated', info);
 		};
 
 		var updateInfo = function() {
@@ -43,12 +33,7 @@
 				console.log('Info.updateInfo: skipping update, server is not configured yet.');
 				return;
 			}
-
-			if (initialized) {
-				console.log('updateInfo: replacing promise');
-				info.resolve(currentInfo);
-				info = $q.defer();
-			}
+			console.log('Info.updateInfo: Initializing.');
 
 			RestService.get('/info', {'limit':0}, {'Accept': 'application/json'}).then(function(response) {
 				if (angular.isString(response)) {
@@ -56,26 +41,31 @@
 				}
 				onSuccess(response);
 			}, function(err) {
-				console.log('Info.updateInfo failed: ' + angular.toJson(err));
-				onFailure();
+				console.log('Info.updateInfo: failed: ' + angular.toJson(err));
 			});
 		};
-		$timeout(updateInfo);
 
-		$rootScope.$on('opennms.settings.changed', function() {
-			updateInfo();
-		});
+		util.onSettingsUpdated(updateInfo);
+		$timeout(updateInfo);
 
 		return {
 			get: function() {
-				return info.promise;
+				return $injector.get('info');
 			},
 			validateVersion: function(version) {
-				return info.promise.then(function(info) {
-					return VersionCompare.gte(info.version, version);
-				});
+				return VersionCompare.gte($injector.get('info').version, version);
 			},
+			canSetLocation: function() {
+				return VersionCompare.gte($injector.get('info').version, '15.0.2');
+			},
+			isMeridian: function() {
+				return $injector.get('info').packageName === 'meridian';
+			},
+			hasOutageSummaries: function() {
+				return VersionCompare.gte($injector.get('info').version, '14.0.3');
+			}
 		};
-	});
+	})
+	;
 
 }());

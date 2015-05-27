@@ -1,6 +1,6 @@
 {
   "name": "OpenNMS",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "description": "OpenNMS Compass",
   "repository": {
     "type": "git",
@@ -51,12 +51,18 @@
     "cordova-plugin-network-information",
     "cordova-plugin-splashscreen",
     "cordova-plugin-statusbar",
+    "cordova-plugin-whitelist",
     "cc.fovea.cordova.purchase",
     "cordova-plugin-admobpro",
+    "cordova-plugin-google-analytics",
     "com.google.playservices",
     "com.ionic.keyboard",
     "cordova-plugin-appavailability",
     "com.rjfun.cordova.extension",
+    {
+      "locator": "https://github.com/RangerRick/cordova-certificate-plugin.git",
+      "id": "com.raccoonfink.cordova.plugins.certificates"
+    },
     {
       "locator": "https://github.com/RangerRick/cordova-HTTP.git",
       "id": "com.synconset.cordovaHTTP"
@@ -65,8 +71,8 @@
   "cordovaPlatforms": [
     {
       "platform": "android",
-      "version": "3.7.1",
-      "locator": "android@3.7.1"
+      "version": "4.0.2",
+      "locator": "android"
     },
     {
       "platform": "ios",

@@ -25,6 +25,9 @@
 	.factory('util', function($rootScope, $state, $window, $cordovaInAppBrowser, $ionicHistory, $ionicViewSwitcher, Settings) {
 		console.log('util: Initializing.');
 
+		var eventListeners = {
+		};
+
 		var goToDashboard = function(direction) {
 			$ionicHistory.nextViewOptions({
 				disableBack: true,
@@ -73,10 +76,81 @@
 			$cordovaInAppBrowser.open(Settings.URL(), '_blank');
 		};
 
+		var trackEvent = function(category, event, label, value) {
+			$rootScope.$broadcast('opennms.analytics.trackEvent', category, event, label, value);
+		};
+
 		var markDirty = function(type) {
 			console.log('util.markDirty: ' + type);
 			$rootScope.$broadcast('opennms.dirty', type);
 		};
+
+		var addListener = function(evt, f) {
+			if (!eventListeners[evt]) {
+				eventListeners[evt] = [];
+			}
+			eventListeners[evt].push(f);
+		};
+
+		$rootScope.$on('opennms.dirty', function(ev, type) {
+			if (eventListeners['opennms.dirty'] && eventListeners['opennms.dirty'][type]) {
+				console.log('util.onDirty: ' + type);
+				$rootScope.$evalAsync(function() {
+					var i, len=eventListeners['opennms.dirty'][type].length;
+					for (i=0; i < len; i++) {
+						eventListeners['opennms.dirty'][type][i]();
+					}
+				});
+			}
+		});
+
+		$rootScope.$on('opennms.errors.updated', function(ev, errors) {
+			if (eventListeners['opennms.errors.updated']) {
+				console.log('util.onErrorsUpdated: ' + angular.toJson(errors));
+				$rootScope.$evalAsync(function() {
+					var i, len=eventListeners['opennms.errors.updated'].length;
+					for (i=0; i < len; i++) {
+						eventListeners['opennms.errors.updated'][i](errors);
+					}
+				});
+			}
+		});
+
+		$rootScope.$on('opennms.info.updated', function(ev, info) {
+			if (eventListeners['opennms.info.updated']) {
+				console.log('util.onInfoUpdated: ' + angular.toJson(info));
+				$rootScope.$evalAsync(function() {
+					var i, len=eventListeners['opennms.info.updated'].length;
+					for (i=0; i < len; i++) {
+						eventListeners['opennms.info.updated'][i](info);
+					}
+				});
+			}
+		});
+
+		$rootScope.$on('opennms.product.updated', function(ev, product) {
+			if (eventListeners['opennms.product.updated']) {
+				console.log('util.onProductUpdated: ' + angular.toJson(product));
+				$rootScope.$evalAsync(function() {
+					var i, len=eventListeners['opennms.product.updated'].length;
+					for (i=0; i < len; i++) {
+						eventListeners['opennms.product.updated'][i](product);
+					}
+				});
+			}
+		});
+
+		$rootScope.$on('opennms.settings.updated', function(ev, newSettings, oldSettings, changedSettings) {
+			if (eventListeners['opennms.settings.updated']) {
+				console.log('util.onSettingsUpdated: ' + angular.toJson(changedSettings));
+				$rootScope.$evalAsync(function() {
+					var i, len=eventListeners['opennms.settings.updated'].length;
+					for (i=0; i < len; i++) {
+						eventListeners['opennms.settings.updated'][i](newSettings, oldSettings, changedSettings);
+					}
+				});
+			}
+		});
 
 		return {
 			dashboard: goToDashboard,
@@ -98,7 +172,29 @@
 			showKeyboard: showKeyboard,
 			hideKeyboard: hideKeyboard,
 			openServer: openServer,
+			trackEvent: trackEvent,
 			dirty: markDirty,
+			onDirty: function(type, f) {
+				if (!eventListeners['opennms.dirty']) {
+					eventListeners['opennms.dirty'] = {};
+				}
+				if (!eventListeners['opennms.dirty'][type]) {
+					eventListeners['opennms.dirty'][type] = [];
+				}
+				eventListeners['opennms.dirty'][type].push(f);
+			},
+			onErrorsUpdated: function(f) {
+				addListener('opennms.errors.updated', f);
+			},
+			onInfoUpdated: function(f) {
+				addListener('opennms.info.updated', f);
+			},
+			onProductUpdated: function(f) {
+				addListener('opennms.product.updated', f);
+			},
+			onSettingsUpdated: function(f) {
+				addListener('opennms.settings.updated', f);
+			},
 		};
 	});
 

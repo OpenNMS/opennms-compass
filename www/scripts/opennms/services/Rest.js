@@ -9,9 +9,10 @@
 		'ng',
 		'cordovaHTTP',
 		'opennms.services.Settings',
+		'opennms.services.Util',
 	])
 
-   	.factory('RestService', function($q, $http, $rootScope, $window, cordovaHTTP, Settings) {
+	.factory('RestService', function($q, $http, $rootScope, $window, cordovaHTTP, Settings, util) {
 		console.log('RestService: Initializing.');
 
 		var useCordovaHTTP = false;
@@ -30,7 +31,7 @@
 		var updateAuthorization = function() {
 			var username = Settings.username();
 			var password = Settings.password();
-			console.log('username=' + username +', password=' + password);
+			//console.log('username=' + username +', password=' + password);
 			if (username === undefined || password === undefined) {
 				console.log('RestService.updateAuthorization: username or password not set.');
 				delete $http.defaults.headers.common['Authorization'];
@@ -44,11 +45,6 @@
 				});
 			}
 		};
-
-		$rootScope.$on('opennms.settings.changed', function() {
-			updateAuthorization();
-		});
-		updateAuthorization();
 
 		var getUrl = function(restFragment) {
 			var url = Settings.restURL();
@@ -168,6 +164,9 @@
 
 			return deferred.promise;
 		};
+
+		util.onSettingsUpdated(updateAuthorization);
+		updateAuthorization();
 
 		return {
 			url: getUrl,
