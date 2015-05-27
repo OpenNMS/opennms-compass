@@ -5,7 +5,9 @@
 
 	angular.module('opennms.services.Modals', [
 		'ionic',
+		'ngCordova',
 		'opennms.services.Alarms',
+		'opennms.services.Analytics',
 		'opennms.services.Availability',
 		'opennms.services.BuildConfig',
 		'opennms.services.Config',
@@ -16,7 +18,7 @@
 		'opennms.services.Outages',
 		'opennms.services.Util',
 	])
-	.factory('NodeModal', function($q, $rootScope, $interval, $ionicModal, $ionicPopup, $cordovaGeolocation, AvailabilityService, EventService, Info, NodeService, OutageService, util) {
+	.factory('NodeModal', function($q, $rootScope, $interval, $ionicModal, $ionicPopup, $cordovaGeolocation, Analytics, AvailabilityService, EventService, Info, NodeService, OutageService, util) {
 		console.log('NodeModal: initializing.');
 		var $scope = $rootScope.$new();
 		var nodeModal = $q.defer();
@@ -55,6 +57,7 @@
 			var showNode = function(node) {
 				modal.scope.node = node;
 				modal.scope.updateData();
+				Analytics.trackView('nodeDetail');
 				modal.show();
 			};
 
@@ -194,7 +197,7 @@
 			},
 		};
 	})
-	.factory('Modals', function($q, $rootScope, $interval, $ionicModal, $ionicPopup, AlarmService, AvailabilityService, Errors, EventService, Info, NodeService, OutageService, Settings, util, NodeModal) {
+	.factory('Modals', function($q, $rootScope, $interval, $ionicModal, $ionicPopup, AlarmService, Analytics, AvailabilityService, Errors, EventService, Info, NodeService, OutageService, Settings, util, NodeModal) {
 		console.log('Modals: initializing.');
 
 		var $scope = $rootScope.$new();
@@ -281,6 +284,7 @@
 			modal.scope.show = function() {
 				modal.scope.outages = [];
 				modal.scope.refreshOutages().then(function() {
+					Analytics.trackView('outages');
 					modal.show();
 				});
 			};
@@ -386,6 +390,7 @@
 			modal.scope.show = function(alarm) {
 				modal.scope.alarm = alarm;
 				startRefresh();
+				Analytics.trackView('alarmDetail');
 				modal.show();
 			};
 			modal.scope.hide = function() {
@@ -406,6 +411,7 @@
 		}).then(function(modal) {
 			$scope.settingsModal.resolve(modal);
 			modal.scope.show = function() {
+				Analytics.trackView('settings');
 				modal.show();
 			};
 			modal.scope.hide = function() {

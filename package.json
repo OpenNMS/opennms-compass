@@ -54,6 +54,7 @@
     "cordova-plugin-whitelist",
     "cc.fovea.cordova.purchase",
     "cordova-plugin-admobpro",
+    "cordova-plugin-google-analytics",
     "com.google.playservices",
     "com.ionic.keyboard",
     "cordova-plugin-appavailability",

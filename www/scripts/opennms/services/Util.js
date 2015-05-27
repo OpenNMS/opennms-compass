@@ -76,6 +76,10 @@
 			$cordovaInAppBrowser.open(Settings.URL(), '_blank');
 		};
 
+		var trackEvent = function(category, event, label, value) {
+			$rootScope.$broadcast('opennms.analytics.trackEvent', category, event, label, value);
+		};
+
 		var markDirty = function(type) {
 			console.log('util.markDirty: ' + type);
 			$rootScope.$broadcast('opennms.dirty', type);
@@ -168,6 +172,7 @@
 			showKeyboard: showKeyboard,
 			hideKeyboard: hideKeyboard,
 			openServer: openServer,
+			trackEvent: trackEvent,
 			dirty: markDirty,
 			onDirty: function(type, f) {
 				if (!eventListeners['opennms.dirty']) {
