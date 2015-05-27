@@ -20,7 +20,7 @@
 	.factory('Settings', function($rootScope, $injector, storage, uuid4) {
 		var $scope = $rootScope.$new();
 
-		var serverTypeMatch = new RegExp("^([Hh][Tt][Tt][Pp][Ss]?)\:", "g");
+		var serverTypeMatch = /^([Hh][Tt][Tt][Pp][Ss]?)\:/g;
 
 		$scope.settings = storage.get('opennms.settings');
 
