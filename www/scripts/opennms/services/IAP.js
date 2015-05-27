@@ -12,7 +12,7 @@
 		'opennms.services.Info',
 		'opennms.services.Util',
 	])
-	.factory('IAP', function($q, $rootScope, $timeout, $window, $ionicLoading, $ionicPopup, Errors, Info, Settings, util) {
+	.factory('IAP', function($q, $rootScope, $timeout, $window, $ionicLoading, $ionicPlatform, $ionicPopup, Errors, Info, Settings, util) {
 		console.log('IAP: Initializing.');
 
 		var $scope = $rootScope.$new();
@@ -21,7 +21,7 @@
 		var init = function() {
 			var deferred = $q.defer();
 			var rejected = false;
-			ionic.Platform.ready(function() {
+			$ionicPlatform.ready(function() {
 				$scope.$evalAsync(function() {
 					if ($window.store) {
 						store.verbosity = store.INFO;
@@ -133,7 +133,7 @@
 
 		var purchase = function(alias) {
 			var deferred = $q.defer();
-			ionic.Platform.ready(function() {
+			$ionicPlatform.ready(function() {
 				$scope.$evalAsync(function() {
 					if ($window.store) {
 						var order = store.order(alias);
@@ -159,7 +159,7 @@
 
 		var refresh = function() {
 			var deferred = $q.defer();
-			ionic.Platform.ready(function() {
+			$ionicPlatform.ready(function() {
 				$scope.$evalAsync(function() {
 					if ($window.store) {
 						$ionicLoading.show({

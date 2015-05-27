@@ -12,7 +12,7 @@
 		'opennms.services.Settings',
 		'opennms.services.Util',
 	])
-	.controller('SettingsCtrl', function($scope, $timeout, $window, $filter, $ionicPopup, AvailabilityService, Errors, IAP, Info, Settings, util) {
+	.controller('SettingsCtrl', function($scope, $timeout, $window, $filter, $ionicPlatform, $ionicPopup, AvailabilityService, Errors, IAP, Info, Settings, util) {
 		console.log('Settings initializing.');
 
 		$scope.util = util;
@@ -64,7 +64,7 @@
 			Errors.reset();
 		};
 
-		ionic.Platform.ready(function() {
+		$ionicPlatform.ready(function() {
 			$scope.$evalAsync(function() {
 				$scope.products = IAP.get();
 
