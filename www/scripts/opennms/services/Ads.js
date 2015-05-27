@@ -11,12 +11,13 @@
 		'opennms.services.Config',
 		'opennms.services.Info',
 		'opennms.services.Rest',
+		'opennms.services.Settings',
 		'opennms.services.Util',
 	])
 	.factory('Ads', ['$rootScope', '$window', 'debounce', 'Info', 'Settings', 'util',
 		'config.build.admobIdAndroidBanner', 'config.build.admobIdIosBanner', 'config.build.admobIdOtherBanner',
 		function($rootScope, $window, debounce, Info, Settings, util,
-		androidBannerId, iosBannerId, wpBannerId) {
+		androidBannerId, iosBannerId, otherBannerId) {
 
 		console.log('Ads: Initializing.');
 
@@ -55,8 +56,8 @@
 					admobid = iosBannerId;
 				} else if (ionic.Platform.isAndroid()) {
 					admobid = androidBannerId;
-				} else if (ionic.Platform.isWindowsPhone()) {
-					admobid = wpBannerId;
+				} else {
+					admobid = otherBannerId;
 				}
 
 				if (admobid) {

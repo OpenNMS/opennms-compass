@@ -6,11 +6,13 @@
 
 	angular.module('opennms.services.IAP', [
 		'ionic',
+		'opennms.services.Analytics',
 		'opennms.services.Config',
 		'opennms.services.Errors',
 		'opennms.services.Info',
+		'opennms.services.Util',
 	])
-	.factory('IAP', function($q, $rootScope, $timeout, $window, $ionicLoading, $ionicPopup, Errors, Info, Settings) {
+	.factory('IAP', function($q, $rootScope, $timeout, $window, $ionicLoading, $ionicPopup, Errors, Info, Settings, util) {
 		console.log('IAP: Initializing.');
 
 		var $scope = $rootScope.$new();
@@ -138,10 +140,13 @@
 						order.then(function(p) {
 							console.log('IAP.purchase: order initiated!');
 							console.log('IAP.purchase: ' + angular.toJson(p));
+							util.trackEvent('IAP', 'purchase', 'IAP Purchase', alias);
 							deferred.resolve(p);
 						});
 						order.error(function(err) {
-							console.log('IAP.purchase: Error: ' + err.code + ': ' + err.message);
+							var errorMessage = err.code + ': ' + err.message;
+							console.log('IAP.purchase: Error: ' + errorMessage);
+							util.trackEvent('IAP', 'error', 'IAP Error', errorMessage);
 							deferred.reject(err);
 						});
 					} else {
@@ -160,6 +165,7 @@
 						$ionicLoading.show({
 							template: '<ion-spinner class="spinner-compass" style="vertical-align: middle; display: inline-block"></ion-spinner> <span style="padding-left: 10px; line-height: 28px">Restoring Purchases...</span>'
 						});
+						util.trackEvent('IAP', 'refresh', 'IAP Refresh');
 						store.refresh();
 						$timeout(function() {
 							$ionicLoading.hide();
