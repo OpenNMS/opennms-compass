@@ -2,17 +2,18 @@
 	'use strict';
 
 	angular.module('opennms.services.BuildConfig', [])
-		.value('config.build.version', 'Unknown')
-		.value('config.build.build', 'Unknown')
-		.value('config.build.analyticsIdIos', undefined)
-		.value('config.build.analyticsIdAndroid', undefined)
-		.value('config.build.analyticsIdOther', undefined)
-		.value('config.build.admobIdIosBanner', undefined)
-		.value('config.build.admobIdIosInterstitial', undefined)
-		.value('config.build.admobIdAndroidBanner', undefined)
-		.value('config.build.admobIdAndroidInterstitial', undefined)
-		.value('config.build.admobIdOtherBanner', undefined)
-		.value('config.build.admobIdOtherInterstitial', undefined)
+		.constant('config.build.version', 'Unknown')
+		.constant('config.build.build', 'Unknown')
+		.constant('config.build.analyticsIdIos', undefined)
+		.constant('config.build.analyticsIdAndroid', undefined)
+		.constant('config.build.analyticsIdOther', undefined)
+		.constant('config.build.admobIdIosBanner', undefined)
+		.constant('config.build.admobIdIosInterstitial', undefined)
+		.constant('config.build.admobIdAndroidBanner', undefined)
+		.constant('config.build.admobIdAndroidInterstitial', undefined)
+		.constant('config.build.admobIdOtherBanner', undefined)
+		.constant('config.build.admobIdOtherInterstitial', undefined)
+		.constant('config.build.ionicPublicKey', undefined)
 	;
 
 }());

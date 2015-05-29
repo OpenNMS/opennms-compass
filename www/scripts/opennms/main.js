@@ -8,13 +8,13 @@
 
 	angular.module('opennms.Main', [
 		'ionic',
-		'ionic.service.deploy',
 		'ngCordova',
 		'opennms.services.Ads',
 		'opennms.services.BuildConfig',
 		'opennms.services.Alarms',
 		'opennms.services.IAP',
 		'opennms.services.Info',
+		'opennms.services.Ionic',
 		'opennms.services.Modals',
 		'opennms.services.Outages',
 		'opennms.services.Settings',
@@ -26,6 +26,18 @@
 	])
 	.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider, $cordovaInAppBrowserProvider) {
 		$urlRouterProvider.otherwise('/dashboard');
+
+		$cordovaInAppBrowserProvider.setDefaultOptions({
+			location:'no',
+			enableViewportScale:'yes',
+			transitionstyle:'fliphorizontal',
+			toolbarposition:'top'
+		});
+
+		$ionicConfigProvider.views.maxCache(20);
+		$ionicConfigProvider.views.forwardCache(true);
+		$ionicConfigProvider.views.swipeBackEnabled(false);
+		$ionicConfigProvider.tabs.position('bottom');
 
 		$stateProvider
 		.state('dashboard', {
@@ -44,20 +56,8 @@
 			controller: 'NodesCtrl'
 		})
 		;
-
-		$ionicConfigProvider.views.maxCache(20);
-		$ionicConfigProvider.views.forwardCache(true);
-		$ionicConfigProvider.views.swipeBackEnabled(false);
-		$ionicConfigProvider.tabs.position('bottom');
-
-		$cordovaInAppBrowserProvider.setDefaultOptions({
-			location:'no',
-			enableViewportScale:'yes',
-			transitionstyle:'fliphorizontal',
-			toolbarposition:'top'
-		});
 	})
-	.run(function($rootScope, $timeout, $window, $ionicDeploy, $ionicPlatform, $ionicPopup, Ads, IAP, Info, Modals, Settings, util) {
+	.run(function($rootScope, $timeout, $window, $ionicPlatform, $ionicPopup, Ads, IAP, Info, IonicService, Modals, Settings, util) {
 		var updateTheme = function(info) {
 			if (!info) {
 				info = Info.get();
@@ -81,27 +81,19 @@
 		};
 
 		$ionicPlatform.ready(function() {
-			$ionicDeploy.check().then(function(hasUpdate) {
-				if (hasUpdate) {
-					$ionicPopup.confirm({
-						title: 'Update Available',
-						subTitle: 'An update to OpenNMS Compass is available.  Upgrade now?',
-						okText: 'Yes',
-						okType: 'button-compass',
-						cancelText: 'Not Now',
-					}).then(function(result) {
-						if (result) {
-							$ionicDeploy.update();
-						} else {
-							init();
-						}
+			IonicService.promptForUpdates().then(function(res) {
+				if (res) {
+					IonicService.update().then(undefined, function(err) {
+						$ionicPopup.alert({
+							title: 'Update failed.',
+							template: angular.toJson(err),
+							okType: 'button-compass',
+						});
+						init();
 					});
 				} else {
 					init();
 				}
-			}, function(err) {
-				console.log('Warning: an error occurred while checking for updates: ' + angular.toJson(err));
-				init();
 			});
 		});
 	});
