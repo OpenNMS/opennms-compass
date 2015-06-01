@@ -52,6 +52,11 @@
 		var $scope = $rootScope.$new();
 		$scope.initialized = ionicState.initialized();
 
+		$rootScope.$on('$cordovaPush:tokenReceived', function(ev, data) {
+			console.log('IonicService.init: got device token: ' + angular.toJson(data));
+			$scope.token = data.token;
+		});
+
 		var init = function initialize() {
 			var user = $ionicUser.get();
 			if (!user) {
@@ -76,10 +81,7 @@
 					onNotification: function(notification) {
 						console.log('IonicService.init: received notification: ' + angular.toJson(notification));
 					}
-				}).then(function(token) {
-					$scope.token = token;
-					console.log('IonicService.init: got device token: ' + angular.toJson(token));
-				}, function(err) {
+				}).then(undefined, function(err) {
 					console.log('IonicService.init: failed to get device token: ' + angular.toJson(err));
 				});
 			}, function(err) {
