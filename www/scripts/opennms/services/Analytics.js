@@ -18,11 +18,11 @@
 
 		$ionicPlatform.ready(function() {
 			$cordovaGoogleAnalytics.debugMode();
-			if (ionic.Platform.isIOS()) {
+			if (ionic.Platform.isIOS() && iosAnalyticsId) {
 				$cordovaGoogleAnalytics.startTrackerWithId(iosAnalyticsId);
-			} else if (ionic.Platform.isAndroid()) {
+			} else if (ionic.Platform.isAndroid() && androidAnalyticsId) {
 				$cordovaGoogleAnalytics.startTrackerWithId(androidAnalyticsId);
-			} else {
+			} else if (otherAnalyticsId) {
 				$cordovaGoogleAnalytics.startTrackerWithId(otherAnalyticsId);
 			}
 			$cordovaGoogleAnalytics.setUserId(Settings.uuid());
