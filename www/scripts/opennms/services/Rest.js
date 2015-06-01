@@ -18,8 +18,6 @@
 		var useCordovaHTTP = false;
 		var requestTimeout = 10000;
 		var x2js = new X2JS();
-		/* jshint -W069 */ /* "better written in dot notation" */
-		$http.defaults.headers.common['Accept'] = 'application/xml';
 
 		if ($window.cordova && cordovaHTTP && ionic.Platform.isAndroid()) {
 		//if ($window.cordova && cordovaHTTP) {
@@ -78,6 +76,9 @@
 			}
 			if (!headers) {
 				headers = {};
+			}
+			if (!headers['Accept']) {
+				headers['Accept'] = 'application/xml';
 			}
 
 			var myparams = angular.extend({}, { limit: Settings.restLimit() }, params);

@@ -52,29 +52,46 @@
 		var $scope = $rootScope.$new();
 		$scope.initialized = ionicState.initialized();
 
-		/*
-		var user = $ionicUser.get();
-		if (!user.user_id) {
-			user.user_id = $ionicUser.generateGUID();
-		}
-		angular.extend(user, {
-			server: Settings.URL(),
-			username: Settings.username()
-		});
-		$ionicUser.identify(user).then(function() {
-			$ionicPush.register({
-				canShowAlert: false,
-				onNotification: function(notification) {
-					console.log('Push.init: received notification: ' + angular.toJson(notification));
-				}
-			}).then(function(token) {
-				$scope.token = token;
-				console.log('Push.init: got device token: ' + angular.toJson(token));
+		var init = function initialize() {
+			var user = $ionicUser.get();
+			if (!user) {
+				user = {};
+			}
+			if (!user.user_id) {
+				user.user_id = $ionicUser.generateGUID();
+			}
+			angular.extend(user, {
+				server: Settings.URL(),
+				username: Settings.username()
 			});
-		}, function(err) {
-			console.log('Push.init: Failed to identify user: ' + angular.toJson(err));
-		});
-		*/
+
+			console.log('IonicService.init: identifying user: ' + angular.toJson(user));
+			$ionicUser.identify(user).then(function() {
+				console.log('IonicService.init: user identified.  Registering for notifications.');
+				$ionicPush.register({
+					canShowAlert: true,
+					canSetBadge: true,
+					canPlaySound: true,
+					canRunActionsOnWake: true,
+					onNotification: function(notification) {
+						console.log('IonicService.init: received notification: ' + angular.toJson(notification));
+					}
+				}).then(function(token) {
+					$scope.token = token;
+					console.log('IonicService.init: got device token: ' + angular.toJson(token));
+				}, function(err) {
+					console.log('IonicService.init: failed to get device token: ' + angular.toJson(err));
+				});
+			}, function(err) {
+				console.log('IonicService.init: Failed to identify user: ' + angular.toJson(err));
+			});
+		};
+
+		if ($scope.initialized) {
+			init();
+		} else {
+			console.log('IonicService: Skipping service initialization.');
+		}
 
 		return {
 		};
