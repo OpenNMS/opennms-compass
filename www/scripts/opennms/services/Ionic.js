@@ -32,7 +32,7 @@
 	})
 	.config(['$ionicAppProvider', 'opennmsIonicStateProvider', 'config.build.ionicAppId', 'config.build.ionicPublicKey', 'config.build.ionicGcmId', function($ionicAppProvider, ionicStateProvider, appId, publicKey, gcmId) {
 		if (publicKey) {
-			console.log('Public key set.  Initializing.');
+			console.log('Ionic: Public key set.  Initializing.');
 			$ionicAppProvider.identify({
 				// The App ID (from apps.ionic.io) for the server
 				'app_id': appId,
@@ -43,7 +43,7 @@
 			});
 			ionicStateProvider.setInitialized(true);
 		} else {
-			console.log('Public key not set.  Skipping app initialization.');
+			console.log('Ionic: Public key not set.  Skipping app initialization.');
 		}
 	}])
 	.factory('IonicService', ['$rootScope', '$ionicPush', '$ionicUser', 'opennmsIonicState', 'Settings', function($rootScope, $ionicPush, $ionicUser, ionicState, Settings) {
