@@ -14,5 +14,6 @@
 	"admobIdAndroidBanner": undefined,
 	"admobIdAndroidInterstitial": undefined,
 	"admobIdOtherBanner": undefined,
-	"admobIdOtherInterstitial": undefined
+	"admobIdOtherInterstitial": undefined,
+	"ionicPublicKey": undefined,
 }

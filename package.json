@@ -46,6 +46,7 @@
   },
   "cordovaPlugins": [
     "cordova-plugin-console",
+    "cordova-plugin-file",
     "cordova-plugin-geolocation",
     "cordova-plugin-inappbrowser",
     "cordova-plugin-network-information",
@@ -54,11 +55,11 @@
     "cordova-plugin-whitelist",
     "cc.fovea.cordova.purchase",
     "cordova-plugin-admobpro",
+    "cordova-plugin-extension",
     "cordova-plugin-google-analytics",
-    "com.google.playservices",
+    "cordova-plugin-googleplayservices",
     "com.ionic.keyboard",
     "cordova-plugin-appavailability",
-    "com.rjfun.cordova.extension",
     {
       "locator": "https://github.com/RangerRick/cordova-certificate-plugin.git",
       "id": "com.raccoonfink.cordova.plugins.certificates"

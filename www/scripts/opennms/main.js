@@ -14,6 +14,7 @@
 		'opennms.services.Alarms',
 		'opennms.services.IAP',
 		'opennms.services.Info',
+		'opennms.services.Ionic',
 		'opennms.services.Modals',
 		'opennms.services.Outages',
 		'opennms.services.Settings',
@@ -25,6 +26,18 @@
 	])
 	.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider, $cordovaInAppBrowserProvider) {
 		$urlRouterProvider.otherwise('/dashboard');
+
+		$cordovaInAppBrowserProvider.setDefaultOptions({
+			location:'no',
+			enableViewportScale:'yes',
+			transitionstyle:'fliphorizontal',
+			toolbarposition:'top'
+		});
+
+		$ionicConfigProvider.views.maxCache(20);
+		$ionicConfigProvider.views.forwardCache(true);
+		$ionicConfigProvider.views.swipeBackEnabled(false);
+		$ionicConfigProvider.tabs.position('bottom');
 
 		$stateProvider
 		.state('dashboard', {
@@ -43,20 +56,8 @@
 			controller: 'NodesCtrl'
 		})
 		;
-
-		$ionicConfigProvider.views.maxCache(20);
-		$ionicConfigProvider.views.forwardCache(true);
-		$ionicConfigProvider.views.swipeBackEnabled(false);
-		$ionicConfigProvider.tabs.position('bottom');
-
-		$cordovaInAppBrowserProvider.setDefaultOptions({
-			location:'no',
-			enableViewportScale:'yes',
-			transitionstyle:'fliphorizontal',
-			toolbarposition:'top'
-		});
 	})
-	.run(function($rootScope, $timeout, $window, $ionicPlatform, Ads, IAP, Info, Modals, Settings, util) {
+	.run(function($rootScope, $timeout, $window, $ionicPlatform, $ionicPopup, Ads, IAP, Info, IonicService, Modals, Settings, util) {
 		var updateTheme = function(info) {
 			if (!info) {
 				info = Info.get();
@@ -71,12 +72,16 @@
 
 		util.onInfoUpdated(updateTheme);
 
-		$ionicPlatform.ready(function() {
+		var init = function() {
 			console.log('Ionic is ready.');
 			IAP.init().then(Ads.init);
 			if (!Settings.isServerConfigured()) {
 				Modals.settings();
 			}
+		};
+
+		$ionicPlatform.ready(function() {
+			init();
 		});
 	});
 }());
