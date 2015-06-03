@@ -20,8 +20,6 @@
 	.factory('Settings', function($rootScope, $injector, storage, uuid4) {
 		var $scope = $rootScope.$new();
 
-		var serverTypeMatch = /^([Hh][Tt][Tt][Pp][Ss]?)\:/g;
-
 		$scope.settings = storage.get('opennms.settings');
 
 		var getSettings = function() {
@@ -33,6 +31,7 @@
 				return false;
 			}
 
+			var serverTypeMatch = new RegExp('^([Hh][Tt][Tt][Pp][Ss]?):');
 			var changedSettings = {};
 
 			if (!settings.server || settings.server === 'undefined' || settings.server === '') {
@@ -84,7 +83,7 @@
 				$scope.settings = newSettings;
 
 				if (changedSettings.server) {
-					var match = serverTypeMatch.match(changedSettings.server);
+					var match = serverTypeMatch.exec(changedSettings.server);
 					if (match.length > 0) {
 						$rootScope.$broadcast('opennms.analytics.trackEvent', 'settings', 'serverType', 'Server Type', match[0]);
 					}
