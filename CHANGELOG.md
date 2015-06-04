@@ -1,3 +1,22 @@
+<a name="2.0.6"</a>
+## 2.0.6 (2015-06-04)
+
+
+#### Bug Fixes
+
+
+* **config**  Android does not seem to like "new RegExp" ((efb1d752))
+* **dashboard**  don't show {{serverName}} if server has not been configured ((dfa791d0))
+* **settings**  fix error checking server URL change ((d2fdc3e2))
+* **ssl**  handle some SSL server types better ((4abb84a9))
+
+#### Features
+
+
+* ****  track basic metrics for navigation ((50f99098))
+
+
+
 <a name="2.0.5"</a>
 ## 2.0.5 (2015-05-26)
 
