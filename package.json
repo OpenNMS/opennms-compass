@@ -65,7 +65,7 @@
     },
     {
       "locator": "https://github.com/RangerRick/cordova-HTTP.git",
-      "id": "com.synconset.cordovaHTTP"
+      "id": "com.raccoonfink.cordova.plugins.http"
     }
   ],
   "cordovaPlatforms": [
