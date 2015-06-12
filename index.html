@@ -40,42 +40,42 @@
         <!-- <hr> -->
 
         <section id="main_content">
-          <h3><a id="about-opennms-compass" class="anchor" href="#about-opennms-compass" aria-hidden="true"><span class="octicon octicon-link"></span></a>About OpenNMS<sup class="reg">&reg;</sup> Compass</h3>
+          <h3><a id="about-opennms-compass" class="anchor" name="about-opennms-compass" aria-hidden="true"><span class="octicon octicon-link"></span></a>About OpenNMS<sup class="reg">&reg;</sup> Compass</h3>
 
           <p>OpenNMS Compass is a modern mobile iOS and Android client for OpenNMS&reg; Horizon&trade; and OpenNMS&reg; Meridian&trade; servers.</p>
 
           <p>It provides a simple dashboard for viewing outage and alarm data, node details, and more.</p>
 
-          <h3><a id="features" class="anchor" href="#features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Features</h3>
+          <h3><a id="features" class="anchor" name="features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Features</h3>
 
           <div style="overflow: hidden">
             <a href="images/screenshot-dashboard-alarms.png" class="popup"><img class="screenshot" src="images/screenshot-dashboard-alarms.png" /></a>
             <a href="images/screenshot-dashboard-outages.png" class="popup"><img class="screenshot" src="images/screenshot-dashboard-outages.png" /></a>
-            <h4><a id="features-dashboard" class="anchor" href="#features-dashboard" aria-hidden="true"><span class="octicon octicon-link"></span></a>Outage and Alarm Dashboard</h4>
+            <h4><a id="features-dashboard" class="anchor" name="features-dashboard" aria-hidden="true"><span class="octicon octicon-link"></span></a>Outage and Alarm Dashboard</h4>
 
             <p>At a glance, you can see a summary of any current outages and services with pending problems.  One tap will take you to a more detailed view of outages or alarms.</p>
 
-            <p>On supported systems<sup><a href="#supported-systems">*</a></sup>, surveillance categories are also displayed, giving you quick access to availability just like your OpenNMS&reg; Horizon&trade; or OpenNMS&reg; Meridian&trade; server UI.</p>
+            <p>On supported systems<sup><a name="supported-systems">*</a></sup>, surveillance categories are also displayed, giving you quick access to availability just like your OpenNMS&reg; Horizon&trade; or OpenNMS&reg; Meridian&trade; server UI.</p>
           </div>
 
           <div style="overflow: hidden">
             <a href="images/screenshot-alarms-list.png" class="popup"><img class="screenshot" src="images/screenshot-alarms-list.png" /></a>
             <a href="images/screenshot-alarms-detail.png" class="popup"><img class="screenshot" src="images/screenshot-alarms-detail.png" /></a>
-            <h4><a id="features-alarms" class="anchor" href="#features-alarms" aria-hidden="true"><span class="octicon octicon-link"></span></a>Alarm Details</h4>
+            <h4><a id="features-alarms" class="anchor" name="features-alarms" aria-hidden="true"><span class="octicon octicon-link"></span></a>Alarm Details</h4>
 
             <p>You can view your current alarms, as well as acknowledge, escalate, and clear them &mdash; right from the list, or from the alarm's details.</p>
           </div>
 
           <div style="overflow: hidden">
             <a href="images/screenshot-node-detail.png" class="popup"><img class="screenshot" src="images/screenshot-node-detail.png" /></a>
-            <h4><a id="features-nodes" class="anchor" href="#features-nodes" aria-hidden="true"><span class="octicon octicon-link"></span></a>Node Details</h4>
+            <h4><a id="features-nodes" class="anchor" name="features-nodes" aria-hidden="true"><span class="octicon octicon-link"></span></a>Node Details</h4>
 
             <p>View detailed information on your nodes, including SNMP attributes, address, availability information<sup><a href="#supported-systems">*</a></sup>, and outages.</p>
 
             <p>If you are running the latest OpenNMS&reg; Horizon&trade; or OpenNMS&reg; Meridian&trade; release<sup><a href="#supported-systems">*</a></sup>, you can also update the geolocation of a node with the push of a button.</p>
           </div>
 
-          <h3><a id="requirements" class="anchor" href="#requirements" aria-hidden="true"><span class="octicon octicon-link"></span></a>Requirements</h3>
+          <h3><a id="requirements" class="anchor" name="requirements" aria-hidden="true"><span class="octicon octicon-link"></span></a>Requirements</h3>
 
           <p>OpenNMS Compass runs on iOS 6 or higher, and Android 4.1 or higher.</p>
 
@@ -89,18 +89,18 @@
             <a id="supported-systems" class="anchor" name="supported-systems" aria-hidden="true"><span class="octicon octicon-link"></span></a> <span style="color: #237cb7">*</span> Note: Some features are only available on OpenNMS&reg; Horizon&trade; 15.0.2 or OpenNMS&reg; Meridian&trade; 2015 or higher.
           </div>
 
-          <h3><a id="support" class="anchor" href="#faq" aria-hidden="true"><span class="octicon octicon-link"></span></a>Frequently Asked Questions</h3>
+          <h3><a id="support" class="anchor" name="faq" aria-hidden="true"><span class="octicon octicon-link"></span></a>Frequently Asked Questions</h3>
 
           <dl>
-            <dt>Q: How much does it cost?</dt>
+            <dt><a name="faq-cost" aria-hidden="true"></a>Q: How much does it cost?</dt>
             <dd>A: OpenNMS Compass is free, ad-supported.  You can remove the ads for just $1, or they go away automatically if you connect Compass to a Meridian&trade; server.</dd>
-            <dt>Q: I'm getting 'permission denied' errors, what should I do?</dt>
+            <dt><a name="faq-permissions" aria-hidden="true"></a>Q: I'm getting 'permission denied' errors, what should I do?</dt>
             <dd>A: Some versions of OpenNMS are pickier about access and permissions than others.  If your version of OpenNMS supports the "mobile" role, it is recommended that you add your user to that role in <code>$OPENNMS_HOME/etc/magic-users.properties</code>.</dd>
-            <dt>Q: I already have the old OpenNMS app.  Did I waste my money?</dt>
+            <dt><a name="faq-upgrade" aria-hidden="true"></a>Q: I already have the old OpenNMS app.  Did I waste my money?</dt>
             <dd>A: Nope!  Just keep the old OpenNMS app on your device until you have installed Compass. Go to the in-app-purchases screen in Settings, and there is an option to upgrade if the old OpenNMS app is detected.  Once you have done so, it is safe to uninstall the old OpenNMS app and enjoy an ad-free Compass!</dd>
           </dl>
 
-          <h3><a id="support" class="anchor" href="#support" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Help with OpenNMS Compass</h3>
+          <h3><a id="support" class="anchor" name="support" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Help with OpenNMS Compass</h3>
 
           <p>There are a couple of ways to get help with OpenNMS Compass:</p>
           <ul>
