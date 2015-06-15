@@ -38,11 +38,13 @@
 			} else {
 				//console.log('RestService.updateAuthorization: setting basic auth with username "' + username + '".');
 				$http.defaults.headers.common['Authorization'] = 'Basic ' + $window.btoa(username + ':' + password);
-				cordovaHTTP.useBasicAuth(username, password).then(function() {
-					console.log('RestService.updateAuthorization: configured basic auth with username "' + username + '".');
-				}, function(err) {
-					console.log('RestService.updateAuthorization: failed to configure basic auth with username "' + username + '".');
-				});
+				if (useCordovaHTTP) {
+					cordovaHTTP.useBasicAuth(username, password).then(function() {
+						console.log('RestService.updateAuthorization: configured basic auth with username "' + username + '".');
+					}, function(err) {
+						console.log('RestService.updateAuthorization: failed to configure basic auth with username "' + username + '".');
+					});
+				}
 			}
 		};
 

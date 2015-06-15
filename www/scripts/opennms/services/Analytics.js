@@ -6,7 +6,6 @@
 	angular.module('opennms.services.Analytics', [
 		'ionic',
 		'ngCordova',
-		'opennms.services.Config',
 		'opennms.services.Settings',
 	])
 	.factory('Analytics', ['$rootScope', '$ionicPlatform', '$cordovaGoogleAnalytics', 'Settings',

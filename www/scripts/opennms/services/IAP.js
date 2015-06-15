@@ -7,9 +7,9 @@
 	angular.module('opennms.services.IAP', [
 		'ionic',
 		'opennms.services.Analytics',
-		'opennms.services.Config',
 		'opennms.services.Errors',
 		'opennms.services.Info',
+		'opennms.services.Settings',
 		'opennms.services.Util',
 	])
 	.factory('IAP', function($q, $rootScope, $timeout, $window, $ionicLoading, $ionicPlatform, $ionicPopup, Errors, Info, Settings, util) {

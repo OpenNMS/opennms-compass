@@ -2,6 +2,7 @@
 	'use strict';
 
 	/* global describe: true */
+	/* global xdescribe: true */
 	/* global beforeEach: true */
 	/* global afterEach: true */
 	/* global it: true */
@@ -24,7 +25,7 @@
 		var widget;
 
 		beforeEach(function() {
-			console.log('================================================================================');
+			//console.info('=== DonutWidget ===');
 		});
 
 		afterEach(function() {
