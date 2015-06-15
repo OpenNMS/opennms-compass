@@ -8,7 +8,6 @@
 		'ionic',
 		'rt.debounce',
 		'opennms.services.BuildConfig',
-		'opennms.services.Config',
 		'opennms.services.Info',
 		'opennms.services.Rest',
 		'opennms.services.Settings',

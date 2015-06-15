@@ -22,12 +22,17 @@ describe('opennms.Info', function() {
 		$httpBackend,
 		Info;
 
+	var doNothing = function() {
+		return undefined;
+	};
+
 	beforeEach(function() {
-		console.info('--------------------------------------------------------------------------------');
+		//console.log('=== opennms.Info ===');
 		jasmine.clock().install();
 		angular.module('ngCordova', []);
 		angular.module('cordovaHTTP', []);
 	});
+
 
 	beforeEach(function() {
 		module('opennms.services.Rest');
@@ -41,12 +46,14 @@ describe('opennms.Info', function() {
 		});
 	}));
 
-	beforeEach(inject(function($injector) {
-		$q           = $injector.get('$q');
-		$httpBackend = $injector.get('$httpBackend');
-		$rootScope   = $injector.get('$rootScope');
-		Info         = $injector.get('Info');
-	}));
+	beforeEach(function() {
+		inject(function($injector) {
+			$q           = $injector.get('$q');
+			$httpBackend = $injector.get('$httpBackend');
+			$rootScope   = $injector.get('$rootScope');
+			Info         = $injector.get('Info');
+		});
+	});
 
 	afterEach(function() {
 		$httpBackend.verifyNoOutstandingExpectation();

@@ -46,6 +46,7 @@
   },
   "cordovaPlugins": [
     "cordova-plugin-console",
+    "cordova-plugin-file",
     "cordova-plugin-geolocation",
     "cordova-plugin-inappbrowser",
     "cordova-plugin-network-information",
@@ -60,6 +61,7 @@
     "cordova-plugin-appavailability",
     "com.rjfun.cordova.extension",
     "com.bez4pieci.cookies",
+    "com.crypho.plugins.securestorage",
     {
       "locator": "https://github.com/RangerRick/cordova-certificate-plugin.git",
       "id": "com.raccoonfink.cordova.plugins.certificates"

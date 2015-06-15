@@ -9,16 +9,20 @@
 /*global xit: true */
 /*global xdescribe: true */
 
-describe('opennms.Config', function() {
+describe('opennms.Settings', function() {
 	'use strict';
 
 	var $httpBackend, $rootScope, $timeout;
 
 	beforeEach(function() {
-		console.info('--------------------------------------------------------------------------------');
+		//console.info("=== opennms.Settings ===");
 		jasmine.clock().install();
 		angular.module('ionic', []);
 		angular.module('ngCordova', []);
+	});
+
+	beforeEach(function() {
+		angular.module('uuid4');
 	});
 
 	beforeEach(inject(function($injector) {
