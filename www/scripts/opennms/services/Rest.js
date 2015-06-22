@@ -7,13 +7,19 @@
 
 	angular.module('opennms.services.Rest', [
 		'ng',
-		'cordovaHTTP',
 		'opennms.services.Settings',
 		'opennms.services.Util',
 	])
 
-	.factory('RestService', function($q, $http, $rootScope, $window, cordovaHTTP, Settings, util) {
+	.factory('RestService', function($q, $rootScope, $window, $http, $injector, Settings, util) {
 		console.log('RestService: Initializing.');
+
+		var ready = $q.defer();
+
+		var cordovaHTTP;
+		if ($injector.has('cordovaHTTP')) {
+			cordovaHTTP = $injector.get('cordovaHTTP');
+		}
 
 		var useCordovaHTTP = false;
 		var requestTimeout = 10000;
@@ -28,34 +34,79 @@
 			cordovaHTTP.setTimeouts(requestTimeout, requestTimeout);
 		}
 
-		var updateAuthorization = function() {
-			var username = Settings.username();
-			var password = Settings.password();
-			//console.log('username=' + username +', password=' + password);
-			if (username === undefined || password === undefined) {
-				console.log('RestService.updateAuthorization: username or password not set.');
-				delete $http.defaults.headers.common['Authorization'];
-			} else {
-				//console.log('RestService.updateAuthorization: setting basic auth with username "' + username + '".');
-				$http.defaults.headers.common['Authorization'] = 'Basic ' + $window.btoa(username + ':' + password);
-				cordovaHTTP.useBasicAuth(username, password).then(function() {
-					console.log('RestService.updateAuthorization: configured basic auth with username "' + username + '".');
-				}, function(err) {
-					console.log('RestService.updateAuthorization: failed to configure basic auth with username "' + username + '".');
+		var clearCookies = function() {
+			var deferred = $q.defer();
+			if ($window.cookies && $window.cookies.clear) {
+				$window.cookies.clear(function() {
+					deferred.resolve(true);
+				}, function() {
+					deferred.resolve(false);
 				});
+			} else {
+				deferred.resolve(false);
 			}
+			return deferred.promise;
+		};
+
+		var updateAuthorization = function() {
+			var username, password;
+
+			var oldReady = ready;
+			ready = $q.defer();
+
+			var done = function() {
+				if (oldReady) {
+					oldReady.resolve(true);
+				}
+				ready.resolve(true);
+				return ready.promise;
+			};
+
+			return clearCookies().then(function() {
+				console.log('RestService.updateAuthorization: cleared cookies.');
+				return Settings.username();
+			}).then(function(u) {
+				username = u;
+				return Settings.password();
+			}).then(function(p) {
+				password = p;
+				console.log('username=' + username +', password=' + password);
+				if (username === undefined || password === undefined) {
+					console.log('RestService.updateAuthorization: username or password not set.');
+					delete $http.defaults.headers.common['Authorization'];
+					return done();
+				} else {
+					//console.log('RestService.updateAuthorization: setting basic auth with username "' + username + '".');
+					$http.defaults.headers.common['Authorization'] = 'Basic ' + $window.btoa(username + ':' + password);
+					if (cordovaHTTP) {
+						cordovaHTTP.useBasicAuth(username, password).then(function() {
+							console.log('RestService.updateAuthorization: configured basic auth with username "' + username + '".');
+						}, function(err) {
+							console.log('RestService.updateAuthorization: failed to configure basic auth with username "' + username + '".');
+						}, function() {
+							return done();
+						});
+					} else {
+						return done();
+					}
+				}
+			});
 		};
 
 		var getUrl = function(restFragment) {
-			var url = Settings.restURL();
-			if (url === undefined) {
-				return undefined;
-			}
-			url = url.replace(/\/$/, '');
-			if (!restFragment.startsWith('/')) {
-				restFragment = '/' + restFragment;
-			}
-			return url + restFragment;
+			return ready.promise.then(function() {
+				return Settings.restURL();
+			}).then(function(restURL) {
+				if (restURL) {
+					restURL = restURL.replace(/\/$/, '');
+					if (!restFragment.startsWith('/')) {
+						restFragment = '/' + restFragment;
+					}
+					return restURL + restFragment;
+				} else {
+					return undefined;
+				}
+			});
 		};
 
 		var encodeData = function(data) {
@@ -65,14 +116,6 @@
 		};
 
 		var doQuery = function(method, restFragment, params, headers) {
-			var deferred = $q.defer();
-			var url = getUrl(restFragment);
-
-			if (!Settings.isServerConfigured()) {
-				deferred.reject(new RestError(url, undefined, 0, 'Server information is not complete.'));
-				return deferred.promise;
-			}
-
 			if (!params) {
 				params = {};
 			}
@@ -80,49 +123,65 @@
 				headers = {};
 			}
 
-			var myparams = angular.extend({}, { limit: Settings.restLimit() }, params);
-			if (myparams.limit === 0) {
-				delete myparams.limit;
-			}
-
-			console.log('url=' + url + ', params=' + angular.toJson(myparams) + ', headers=' + angular.toJson(headers));
-			if (useCordovaHTTP) {
-				if (method === 'GET') {
-					cordovaHTTP.get(url, myparams, headers).then(function(response) {
-						deferred.resolve(response.data);
-					}, function(response) {
-						deferred.reject(new RestError(url, response.data, response.status));
-					});
-				} else if (method === 'PUT') {
-					cordovaHTTP.put(url, myparams, headers).then(function(response) {
-						deferred.resolve(response.data);
-					}, function(response) {
-						deferred.reject(new RestError(url, response.data, response.status));
-					});
-				} else if (method === 'POST') {
-					cordovaHTTP.post(url, myparams, headers).then(function(response) {
-						deferred.resolve(response.data);
-					}, function(response) {
-						deferred.reject(new RestError(url, response.data, response.status));
+			var url;
+			return Settings.isServerConfigured().then(function(serverConfigured) {
+				if (serverConfigured) {
+					return getUrl(restFragment);
+				} else {
+					return $q.reject(new RestError(restFragment, undefined, 0, 'Server information is not complete.'));
+				}
+			}).then(function(u) {
+				url = u;
+				return Settings.restLimit();
+			}).then(function(restLimit) {
+				var myparams = angular.extend({}, { limit: restLimit });
+				if (myparams.limit === 0) {
+					delete myparams.limit;
+				}
+				return myparams;
+			}).then(function(myparams) {
+				var deferred = $q.defer();
+				console.log('url=' + url + ', params=' + angular.toJson(myparams) + ', headers=' + angular.toJson(headers));
+				if (useCordovaHTTP) {
+					if (method === 'GET') {
+						cordovaHTTP.get(url, myparams, headers).then(function(response) {
+							deferred.resolve(response.data);
+						}, function(response) {
+							deferred.reject(new RestError(url, response.data, response.status));
+						});
+					} else if (method === 'PUT') {
+						cordovaHTTP.put(url, myparams, headers).then(function(response) {
+							deferred.resolve(response.data);
+						}, function(response) {
+							deferred.reject(new RestError(url, response.data, response.status));
+						});
+					} else if (method === 'POST') {
+						cordovaHTTP.post(url, myparams, headers).then(function(response) {
+							deferred.resolve(response.data);
+						}, function(response) {
+							deferred.reject(new RestError(url, response.data, response.status));
+						});
+					}
+				} else {
+					$http({
+						method: method,
+						url: url,
+						params: myparams,
+						headers: headers,
+						withCredentials: true,
+						timeout: requestTimeout,
+					}).success(function(data) {
+						//console.log('Rest.doQuery:',data);
+						deferred.resolve(data);
+					}).error(function(data, status, headers, config, statusText) {
+						deferred.reject(new RestError(url, data, status, statusText));
 					});
 				}
-			} else {
-				$http({
-					method: method,
-					url: url,
-					params: myparams,
-					headers: headers,
-					withCredentials: true,
-					timeout: requestTimeout,
-				}).success(function(data) {
-					//console.log('Rest.doQuery:',data);
-					deferred.resolve(data);
-				}).error(function(data, status, headers, config, statusText) {
-					deferred.reject(new RestError(url, data, status, statusText));
-				});
-			}
-
-			return deferred.promise;
+				return deferred.promise;
+			}, function(err) {
+				console.log('Rest.doQuery: failed: ' + angular.toJson(err));
+				return $q.reject(err);
+			});
 		};
 
 		var doGet = function(restFragment, params, headers) {
@@ -136,33 +195,35 @@
 		};
 
 		var doPostXml = function(restFragment, data, headers) {
-			var deferred = $q.defer();
-			var url = getUrl(restFragment);
+			return Settings.isServerConfigured().then(function(isConfigured) {
+				if (isConfigured) {
+					return getUrl(restFragment);
+				} else {
+					return $q.reject(new RestError(restFragment, undefined, 0, 'Server information is not complete.'));
+				}
+			}).then(function(url) {
+				var deferred = $q.defer();
+	
+				if (!headers) {
+					headers = {};
+				}
+				if (!headers['Content-Type']) {
+					headers['Content-Type'] = 'application/xml';
+				}
 
-			if (!Settings.isServerConfigured()) {
-				deferred.reject(new RestError(url, undefined, 0, 'Server information is not complete.'));
+				$http.post(url, data, {
+					withCredentials: true,
+					timeout: requestTimeout,
+					headers: headers,
+				}).success(function(data) {
+					//console.log('Rest.doQuery:',data);
+					deferred.resolve(data);
+				}).error(function(data, status, headers, config, statusText) {
+					deferred.reject(new RestError(url, data, status, statusText));
+				});
+
 				return deferred.promise;
-			}
-
-			if (!headers) {
-				headers = {};
-			}
-			if (!headers['Content-Type']) {
-				headers['Content-Type'] = 'application/xml';
-			}
-
-			$http.post(url, data, {
-				withCredentials: true,
-				timeout: requestTimeout,
-				headers: headers,
-			}).success(function(data) {
-				//console.log('Rest.doQuery:',data);
-				deferred.resolve(data);
-			}).error(function(data, status, headers, config, statusText) {
-				deferred.reject(new RestError(url, data, status, statusText));
 			});
-
-			return deferred.promise;
 		};
 
 		util.onSettingsUpdated(updateAuthorization);

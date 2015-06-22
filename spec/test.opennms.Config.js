@@ -17,6 +17,7 @@ describe('opennms.Config', function() {
 	beforeEach(function() {
 		console.info('--------------------------------------------------------------------------------');
 		jasmine.clock().install();
+		angular.module('ionic', []);
 		angular.module('ngCordova', []);
 	});
 

@@ -75,22 +75,22 @@
 							<ion-item class="item-text-wrap">
 								<div class="row">
 									<div class="col col-25">Version:</div>
-									<div class="col">{{settingsService.version()}}</div>
+									<div class="col">{{version}}</div>
 								</div>
 								<div class="row">
 									<div class="col col-25">Build:</div>
-									<div class="col">{{settingsService.build()}}</div>
+									<div class="col">{{build}}</div>
 								</div>
 								<div class="row">
 									<div class="col col-25">Server:</div>
-									<div class="col" ng-click="util.openServer()">{{settingsService.URL()}}</div>
+									<div class="col" ng-click="util.openServer()">{{serverURL}}</div>
 								</div>
 								<div class="row">
 									<div class="col col-25">User:</div>
-									<div class="col">{{settingsService.username()}}</div>
+									<div class="col">{{username}}</div>
 								</div>
 							</ion-item>
-							<span ng-if="settingsService.getServerName() !== undefined">
+							<span ng-if="serverName !== undefined">
 								<ion-item class="item-divider item-compass">
 									OpenNMS Server Information
 								</ion-item>

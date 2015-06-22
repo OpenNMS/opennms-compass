@@ -9,14 +9,14 @@
 		'opennms.services.Config',
 		'opennms.services.Settings',
 	])
-	.factory('Analytics', ['$rootScope', '$ionicPlatform', '$cordovaGoogleAnalytics', 'Settings',
+	.factory('Analytics', ['$rootScope', '$window', '$cordovaGoogleAnalytics', 'Settings',
 		'config.build.analyticsIdAndroid', 'config.build.analyticsIdIos', 'config.build.analyticsIdOther',
-		function($rootScope, $ionicPlatform, $cordovaGoogleAnalytics, Settings,
+		function($rootScope, $window, $cordovaGoogleAnalytics, Settings,
 		androidAnalyticsId, iosAnalyticsId, otherAnalyticsId) {
 
 		console.log('Analytics: Initializing.');
 
-		$ionicPlatform.ready(function() {
+		if ($window.plugins && $window.plugins.analytics) {
 			$cordovaGoogleAnalytics.debugMode();
 			if (ionic.Platform.isIOS() && iosAnalyticsId) {
 				$cordovaGoogleAnalytics.startTrackerWithId(iosAnalyticsId);
@@ -25,8 +25,9 @@
 			} else if (otherAnalyticsId) {
 				$cordovaGoogleAnalytics.startTrackerWithId(otherAnalyticsId);
 			}
-			$cordovaGoogleAnalytics.setUserId(Settings.uuid());
-
+			Settings.uuid().then(function(uuid) {
+				$cordovaGoogleAnalytics.setUserId(uuid);
+			});
 
 			$rootScope.$on('opennms.analytics.trackEvent', function(ev, category, name, label, value) {
 				$cordovaGoogleAnalytics.trackEvent(category, name, label, value);
@@ -35,12 +36,12 @@
 			$rootScope.$on('$ionicView.enter', function(ev, view) {
 				$cordovaGoogleAnalytics.trackView(view.stateName);
 			});
-		});
+		}
 
 		var trackView = function(viewName) {
-			$ionicPlatform.ready(function() {
+			if ($window.plugins && $window.plugins.analytics) {
 				$cordovaGoogleAnalytics.trackView(viewName);
-			});
+			}
 		};
 
 		return {

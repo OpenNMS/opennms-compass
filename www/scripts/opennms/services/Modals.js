@@ -204,6 +204,15 @@
 		$scope.util = util;
 		$scope.settings = Settings;
 
+		Settings.username().then(function(username) {
+			$scope.username = username;
+		});
+		util.onSettingsUpdated(function(newSettings, oldSettings, changedSettings) {
+			if (changedSettings.username) {
+				$scope.username = changedSettings.username;
+			}
+		});
+
 		$scope.alarmModal = $q.defer();
 		$scope.outageModal = $q.defer();
 		$scope.settingsModal = $q.defer();
@@ -328,7 +337,7 @@
 						$ionicPopup.alert({
 							title: 'Permission Denied',
 							template: '<p>Unable to clear alarm.</p>\n' +
-								'User "' + Settings.username() + '" does not have permission to clear alarms.',
+								'User "' + $scope.username + '" does not have permission to clear alarms.',
 							okType: 'button-assertive'
 						});
 					}
@@ -342,7 +351,7 @@
 						$ionicPopup.alert({
 							title: 'Permission Denied',
 							template: '<p>Unable to escalate alarm.</p>\n' +
-								'User "' + Settings.username() + '" does not have permission to escalate alarms.',
+								'User "' + $scope.username + '" does not have permission to escalate alarms.',
 							okType: 'button-assertive'
 						});
 					}
@@ -355,7 +364,7 @@
 						$ionicPopup.alert({
 							title: 'Permission Denied',
 							template: '<p>Unable to acknowledge alarm.</p>\n' +
-								'User "' + Settings.username() + '" does not have permission to acknowledge alarms.',
+								'User "' + $scope.username + '" does not have permission to acknowledge alarms.',
 							okType: 'button-assertive'
 						});
 					}
@@ -368,7 +377,7 @@
 						$ionicPopup.alert({
 							title: 'Permission Denied',
 							template: '<p>Unable to unacknowledge alarm.</p>\n' +
-								'User "' + Settings.username() + '" does not have permission to unacknowledge alarms.',
+								'User "' + $scope.username + '" does not have permission to unacknowledge alarms.',
 							okType: 'button-assertive'
 						});
 					}

@@ -18,8 +18,24 @@
 		$scope.util = util;
 
 		var init = function() {
-			$scope.settings = Settings.get();
-			$scope.settingsService = Settings;
+			Settings.get().then(function(settings) {
+				$scope.settings = settings;
+			});
+			Settings.getServerName().then(function(serverName) {
+				$scope.serverName = serverName;
+			});
+			Settings.URL().then(function(url) {
+				$scope.serverURL = url;
+			});
+			Settings.username().then(function(username) {
+				$scope.username = username;
+			});
+			Settings.version().then(function(version) {
+				$scope.version = version;
+			});
+			Settings.build().then(function(build) {
+				$scope.build = build;
+			});
 			$scope.errors = Errors.get();
 			$scope.info = Info.get();
 			$scope.canSetLocation = Info.canSetLocation();

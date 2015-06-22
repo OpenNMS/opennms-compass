@@ -74,9 +74,11 @@
 		$ionicPlatform.ready(function() {
 			console.log('Ionic is ready.');
 			IAP.init().then(Ads.init);
-			if (!Settings.isServerConfigured()) {
-				Modals.settings();
-			}
+			Settings.isServerConfigured().then(function(isConfigured) {
+				if (!isConfigured) {
+					Modals.settings();
+				}
+			});
 		});
 	});
 }());

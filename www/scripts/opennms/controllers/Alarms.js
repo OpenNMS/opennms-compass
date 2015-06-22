@@ -85,6 +85,10 @@
 		$scope.showAck = false;
 		$scope.severities = severities;
 
+		Settings.username().then(function(username) {
+			$scope.username = username;
+		});
+
 		$scope.toggleSeverity = function(item) {
 			severityStateTracker.toggle(item.severity);
 			//console.log(item.severity + '=' + severityStateTracker.get(item.severity));
@@ -161,7 +165,7 @@
 						$ionicPopup.alert({
 							title: 'Permission Denied',
 							template: '<p>Unable to unacknowledge alarm.</p>\n' +
-								'User "' + Settings.username() + '" does not have permission to unacknowledge alarms.',
+								'User "' + $scope.username + '" does not have permission to unacknowledge alarms.',
 							okType: 'button-assertive'
 						});
 					}
@@ -172,7 +176,7 @@
 						$ionicPopup.alert({
 							title: 'Permission Denied',
 							template: '<p>Unable to acknowledge alarm.</p>\n' +
-								'User "' + Settings.username() + '" does not have permission to acknowledge alarms.',
+								'User "' + $scope.username + '" does not have permission to acknowledge alarms.',
 							okType: 'button-assertive'
 						});
 					}
@@ -189,7 +193,7 @@
 					$ionicPopup.alert({
 						title: 'Permission Denied',
 						template: '<p>Unable to clear alarm.</p>\n' +
-							'User "' + Settings.username() + '" does not have permission to clear alarms.',
+							'User "' + $scope.username + '" does not have permission to clear alarms.',
 						okType: 'button-assertive'
 					});
 				}
@@ -205,7 +209,7 @@
 					$ionicPopup.alert({
 						title: 'Permission Denied',
 						template: '<p>Unable to escalate alarm.</p>\n' +
-							'User "' + Settings.username() + '" does not have permission to escalate alarms.',
+							'User "' + $scope.username + '" does not have permission to escalate alarms.',
 						okType: 'button-assertive'
 					});
 				}
@@ -214,6 +218,11 @@
 		};
 
 		util.onDirty('alarms', $scope.refreshAlarms);
+		util.onSettingsUpdated(function(newSettings, oldSettings, changedSettings) {
+			if (changedSettings.username) {
+				$scope.username = changedSettings.username;
+			}
+		});
 
 		$scope.$on('modal.hidden', $scope.refreshAlarms);
 		$scope.$on('$ionicView.beforeEnter', $scope.refreshAlarms);

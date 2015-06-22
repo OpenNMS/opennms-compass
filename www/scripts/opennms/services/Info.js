@@ -29,19 +29,22 @@
 		};
 
 		var updateInfo = function() {
-			if (!Settings.isServerConfigured()) {
-				console.log('Info.updateInfo: skipping update, server is not configured yet.');
-				return;
-			}
-			console.log('Info.updateInfo: Initializing.');
-
-			RestService.get('/info', {'limit':0}, {'Accept': 'application/json'}).then(function(response) {
-				if (angular.isString(response)) {
-					response = angular.fromJson(response);
+			Settings.isServerConfigured().then(function(isConfigured) {
+				if (!isConfigured) {
+					console.log('Info.updateInfo: skipping update, server is not configured yet.');
+					return;
 				}
-				onSuccess(response);
-			}, function(err) {
-				console.log('Info.updateInfo: failed: ' + angular.toJson(err));
+
+				console.log('Info.updateInfo: Initializing.');
+
+				RestService.get('/info', {'limit':0}, {'Accept': 'application/json'}).then(function(response) {
+					if (angular.isString(response)) {
+						response = angular.fromJson(response);
+					}
+					onSuccess(response);
+				}, function(err) {
+					console.log('Info.updateInfo: failed: ' + angular.toJson(err));
+				});
 			});
 		};
 
