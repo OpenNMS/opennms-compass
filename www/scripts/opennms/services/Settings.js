@@ -255,7 +255,7 @@
 		var getSettings = function() {
 			var deferred = $q.defer();
 
-			secureStore.getKeys(function(keys) {
+			secureStore.keys(function(keys) {
 				var p = [];
 				for (var i=0; i < keys.length; i++) {
 					p.push(secureStore.get(keys[i]));
@@ -437,18 +437,10 @@
 				return secureStore.get('uuid');
 			},
 			disableAds: function() {
-				var deferred = $q.defer();
-				getSettings().then(function(settings) {
+				return getSettings().then(function(settings) {
 					settings.showAds = false;
-					saveSettings(settings).then(function() {
-						deferred.resolve(settings);
-					}, function(err) {
-						deferred.reject(err);
-					});
-				}, function(err) {
-					deferred.reject(err);
+					return saveSettings(settings);
 				});
-				return deferred.promise;
 			},
 			isServerConfigured: function() {
 				return getSettings().then(function(settings) {
