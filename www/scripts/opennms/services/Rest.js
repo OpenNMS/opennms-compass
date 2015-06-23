@@ -134,7 +134,7 @@
 				url = u;
 				return Settings.restLimit();
 			}).then(function(restLimit) {
-				var myparams = angular.extend({}, { limit: restLimit });
+				var myparams = angular.extend({}, { limit: restLimit }, params);
 				if (myparams.limit === 0) {
 					delete myparams.limit;
 				}

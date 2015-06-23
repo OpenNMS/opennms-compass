@@ -1,0 +1,12 @@
+<ion-view class="node-detail">
+	<ion-header-bar>
+		<div class="buttons">
+			<a class="button button-icon button-compass button-clear" nav-direction="back" ui-sref="nodes">Back</a>
+		</div>
+		<h1 class="title">{{node.label}}</h1>
+		<div class="buttons">
+			<button class="button button-compass button-clear" ng-click="graphs()"><i class="icon ion-stats-bars"></i></button>
+		</div>
+	</ion-header-bar>
+	<ng-include src="'templates/node-detail-content.html'"></ng-include>
+</ion-view>

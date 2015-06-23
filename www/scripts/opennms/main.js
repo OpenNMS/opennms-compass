@@ -21,6 +21,7 @@
 		'opennms.controllers.Alarms',
 		'opennms.controllers.Dashboard',
 		'opennms.controllers.Nodes',
+		'opennms.controllers.Node',
 		'opennms.controllers.Settings',
 	])
 	.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider, $cordovaInAppBrowserProvider) {
@@ -41,6 +42,11 @@
 			url: '/nodes',
 			templateUrl: 'templates/nodes.html',
 			controller: 'NodesCtrl'
+		})
+		.state('node-detail', {
+			url: '/nodes/:node',
+			templateUrl: 'templates/node-detail-routed.html',
+			controller: 'NodeCtrl'
 		})
 		;
 

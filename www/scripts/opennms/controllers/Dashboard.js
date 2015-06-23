@@ -146,7 +146,10 @@
 
 			// if we have never loaded before, show the loading thingy
 			if (!$scope.loaded) {
-				$ionicLoading.show();
+				$ionicLoading.show({
+					templateUrl: 'templates/loading.html',
+					hideOnStateChange: true,
+				});
 			}
 
 			var outagePromise = OutageService.get();

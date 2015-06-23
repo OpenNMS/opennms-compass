@@ -59,13 +59,13 @@
 		};
 
 		var showKeyboard = function() {
-			console.log('util.showKeyboard');
+			//console.log('util.showKeyboard');
 			if ($window.cordova && $window.cordova.plugins && $window.cordova.plugins.Keyboard) {
 				cordova.plugins.Keyboard.show();
 			}
 		};
 		var hideKeyboard = function() {
-			console.log('util.hideKeyboard');
+			//console.log('util.hideKeyboard');
 			if ($window.cordova && $window.cordova.plugins && $window.cordova.plugins.Keyboard) {
 				cordova.plugins.Keyboard.close();
 			}
