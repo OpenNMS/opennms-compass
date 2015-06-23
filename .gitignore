@@ -6,6 +6,8 @@
 .index.html
 *.swp
 www.zip
+www/css/opennms.css
+www/css/opennms.min.css
 npm-debug.log
 node_modules/
 platforms/
