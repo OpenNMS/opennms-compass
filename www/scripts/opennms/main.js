@@ -75,6 +75,7 @@
 			console.log('Ionic is ready.');
 			IAP.init().then(Ads.init);
 			Settings.isServerConfigured().then(function(isConfigured) {
+				console.log('isServerConfigured: ' + isConfigured);
 				if (!isConfigured) {
 					Modals.settings();
 				}

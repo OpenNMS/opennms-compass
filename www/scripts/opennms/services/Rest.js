@@ -90,6 +90,13 @@
 						return done();
 					}
 				}
+			}, function(err) {
+				console.log('not ready: ' + angular.toJson(err));
+				if (oldReady) {
+					oldReady.reject(err);
+				}
+				ready.reject(err);
+				return ready.promise;
 			});
 		};
 

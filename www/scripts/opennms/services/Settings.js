@@ -11,6 +11,37 @@
 		'uuid4',
 		'opennms.services.BuildConfig',
 	])
+	.provider('angularLocalStorageStore', function AngularLocalStorageStoreProvider() {
+		var prefix = 'opennms.insecureStore.';
+
+		this.setPrefix = function SetPrefix(p) {
+			prefix = p;
+		};
+
+		this.$get = function angularLocalStorageStoreFactory($q, storage) {
+			var doSet = function(key, value) {
+				storage.set(prefix + key, value);
+				return $q.when(value);
+			};
+			var doGet = function(key) {
+				return $q.when(storage.get(prefix + key));
+			};
+			var doRemove = function(key) {
+				var oldValue = storage.get(prefix + key);
+				storage.remove(prefix + key);
+				return $q.when(oldValue);
+			};
+
+			return {
+				set: doSet,
+				get: doGet,
+				remove: doRemove,
+				isAvailable: function() {
+					return $q.when(true);
+				},
+			};
+		};
+	})
 	.provider('angularSecureStore', function AngularSecureStoreProvider() {
 		var prefix = 'angular-app';
 
@@ -22,36 +53,37 @@
 			var secureStore = $q.defer();
 
 			$ionicPlatform.ready(function() {
-				(function() {
-					if (!ionic.Platform.isWebView() && $window.cordova && $window.cordova.plugins && $window.cordova.plugins.SecureStorage) {
-						console.log('settings.angularSecureStore: Secure store not available.');
-						secureStore.reject('No Cordova!');
-					} else {
-						try {
-							var ss = new $window.cordova.plugins.SecureStorage(function() {
-								$rootScope.$evalAsync(function() {
-									console.log('settings.angularSecureStore: Configured secure store.');
-									secureStore.resolve(ss);
-								});
-							}, function(err) {
-								$rootScope.$evalAsync(function() {
-									console.log('settings.angularSecureStore: Failed to configure secure store.');
-									secureStore.reject(err);
-								});
-							}, prefix);
-						} catch (err) {
+				if (!ionic.Platform.isWebView() && $window.cordova && $window.cordova.plugins && $window.cordova.plugins.SecureStorage) {
+					console.log('settings.angularSecureStore: Secure store not available.');
+					secureStore.reject('No Cordova!');
+				} else {
+					try {
+						var ss = new $window.cordova.plugins.SecureStorage(function(blah) {
+							$rootScope.$evalAsync(function() {
+								console.log('settings.angularSecureStore: Configured secure store.');
+								secureStore.resolve(ss);
+							});
+						}, function(err) {
 							$rootScope.$evalAsync(function() {
 								console.log('settings.angularSecureStore: Failed to configure secure store.');
 								secureStore.reject(err);
 							});
-						}
+						}, prefix);
+					} catch (err) {
+						$rootScope.$evalAsync(function() {
+							console.log('settings.angularSecureStore: Failed to configure secure store.');
+							secureStore.reject(err);
+						});
 					}
-				}());
+				}
 			});
 
 			var doSet = function(key, value) {
 				var deferred = $q.defer();
 
+				if (value === null) {
+					value = undefined;
+				}
 				if (value !== undefined) {
 					value = angular.toJson(value);
 				}
@@ -62,9 +94,10 @@
 				};
 
 				secureStore.promise.then(function(ss) {
+					console.log('ss='+ss);
 					ss.set(function(key) {
 						$rootScope.$evalAsync(function() {
-							deferred.resolve(key);
+							deferred.resolve(value);
 						});
 					}, _reject, key, value);
 				}, _reject);
@@ -84,6 +117,9 @@
 				secureStore.promise.then(function(ss) {
 					ss.get(function(value) {
 						$rootScope.$evalAsync(function() {
+							if (value === null) {
+								value = undefined;
+							}
 							if (value !== undefined) {
 								value = angular.fromJson(value);
 							}
@@ -105,11 +141,13 @@
 				};
 
 				secureStore.promise.then(function(ss) {
-					ss.remove(function(key) {
-						$rootScope.$evalAsync(function() {
-							deferred.resolve(key);
-						});
-					}, _reject, key);
+					doGet(key).then(function(value) {
+						ss.remove(function(key) {
+							$rootScope.$evalAsync(function() {
+								deferred.resolve(value);
+							});
+						}, _reject, key);
+					}, _reject);
 				}, _reject);
 
 				return deferred.promise;
@@ -119,117 +157,109 @@
 				set: doSet,
 				get: doGet,
 				remove: doRemove,
+				isAvailable: function() {
+					return secureStore.promise.then(function() {
+						return true;
+					}, function(err) {
+						return false;
+					});
+				},
 			};
 		};
 	})
 	.config(function(angularSecureStoreProvider) {
 		angularSecureStoreProvider.setPrefix('opennms.secureStore');
 	})
-	.factory('secureStore', function($q, $rootScope, $ionicPlatform, angularSecureStore, storage) {
+	.factory('secureStore', function($q, angularSecureStore, angularLocalStorageStore) {
+		var backend = $q.defer();
 		var keys = [];
 
+		angularSecureStore.isAvailable().then(function(isAvailable) {
+			if (isAvailable) {
+				console.log('Settings.secureStore: angularSecureStore is available, using it.');
+				backend.resolve(angularSecureStore);
+			} else {
+				console.log('Settings.secureStore: angularSecureStore is not available, falling back to local storage.');
+				 backend.resolve(angularLocalStorageStore);
+			}
+		});
+
 		var _saveKeys = function(_keys) {
-			var deferred = $q.defer();
-
-			angularSecureStore.set('___opennms.keys___', _keys).then(function() {
-				deferred.resolve(_keys);
-			}, function(err) {
-				// local storage doesn't need to do anything
-				deferred.resolve(_keys);
+			console.log('secureStore._saveKeys: ' + angular.toJson(_keys));
+			return backend.promise.then(function(store) {
+				return store.set('___opennms.keys___', _keys);
 			});
-
-			return deferred.promise;
 		};
 
 		var _addKey = function(key) {
+			console.log('secureStore._addKey: ' + key);
 			if (keys.indexOf(key) !== -1) {
 				// no-op
-				var deferred = $q.defer();
-				deferred.resolve(keys);
-				return deferred.promise;
+				return $q.when(keys);
 			} else {
 				keys.push(key);
-				return _saveKeys(keys);
+				return backend.promise.then(function(store) {
+					return store._saveKeys(keys);
+				});
 			}
 		};
 
 		var _removeKey = function(key) {
+			console.log('secureStore._removeKey: ' + key);
 			var index = keys.indexOf(key);
 			if (index === -1) {
 				// no-op
-				var deferred = $q.defer();
-				deferred.resolve(keys);
-				return deferred.promise;
+				return $q.when(keys);
 			} else {
 				keys.splice(index, 1);
-				return _saveKeys(keys);
+				return backend.promise.then(function(store) {
+					return store._saveKeys(keys);
+				});
 			}
 		};
 
 		var getValue = function(key) {
-			var deferred = $q.defer();
-			angularSecureStore.get(key).then(function(value) {
-				deferred.resolve(value);
-			}, function(err) {
-				// use local storage if secureStore is not available
-				deferred.resolve(storage.get('opennms.insecureStore.' + key));
+			console.log('secureStore.getValue: ' + key);
+			return backend.promise.then(function(store) {
+				return store.get(key);
 			});
-			return deferred.promise;
 		};
 
 		var setValue = function(key, value) {
-			var deferred = $q.defer();
-			angularSecureStore.set(key, value).then(function() {
-				_addKey(key).then(function() {
-					deferred.resolve(value);
-				}, function(err) {
-					deferred.reject(err);
+			console.log('secureStore.setValue: ' + key + '=' + angular.toJson(value));
+			return backend.promise.then(function(store) {
+				return store.set(key, value).then(function() {
+					return _addKey(key).then(function() {
+						return value;
+					});
 				});
-			}, function(err) {
-				// use local storage if secureStore is not available
-				deferred.resolve(storage.set('opennms.insecureStore.' + key, value));
 			});
-			return deferred.promise;
 		};
 
 		var removeKey = function(key) {
-			var deferred = $q.defer();
-			// get the existing value
-			angularSecureStore.get(key).then(function(value) {
-				// remove it from the store
-				angularSecureStore.remove(key).then(function(k) {
-					// remove the key from the key cache
-					_removeKey(key).then(function() {
-						// return the old value
-						deferred.resolve(value);
-					}, function(err) {
-						deferred.reject(err);
+			console.log('secureStore.removeKey: ' + key);
+			return backend.promise.then(function(store) {
+				return store.remove(key).then(function(value) {
+					return _removeKey(key).then(function() {
+						return value;
 					});
-				}, function(err) {
-					deferred.reject(err);
 				});
-			}, function(err) {
-				// use local storage if secureStore is not available
-				deferred.resolve(storage.remove('opennms.insecureStore.' + key));
 			});
-			return deferred.promise;
 		};
 
 		var getKeys = function() {
-			var deferred = $q.defer();
-			angularSecureStore.get('___opennms.keys___').then(function(keys) {
-				if (keys === undefined) {
-					keys = [];
-				}
-				deferred.resolve(keys);
-			}, function() {
-				var keys = storage.getKeys();
-				if (keys === undefined) {
-					keys = [];
-				}
-				deferred.resolve(keys);
+			console.log('secureStore.getKeys');
+			return backend.promise.then(function(store) {
+				return store.get('___opennms.keys___').then(function(k) {
+					console.log('secureStore.getKeys: keys = ' + angular.toJson(k));
+					if (k === undefined) {
+						k = [];
+					}
+					return k;
+				}, function() {
+					return [];
+				});
 			});
-			return deferred.promise;
 		};
 
 		getKeys().then(function(k) {
@@ -255,7 +285,10 @@
 		var getSettings = function() {
 			var deferred = $q.defer();
 
+			console.log('Settings.getSettings');
 			secureStore.keys(function(keys) {
+				console.log('Settings.getSettings: keys = ' + angular.toJson(keys));
+
 				var p = [];
 				for (var i=0; i < keys.length; i++) {
 					p.push(secureStore.get(keys[i]));
@@ -365,8 +398,8 @@
 					$q.all(promises).then(function() {
 						// finished setting all properties
 						if (changedSettings.server) {
-							var match = serverTypeMatch.match(changedSettings.server);
-							if (match.length > 0) {
+							var match = serverTypeMatch.exec(changedSettings.server);
+							if (match && match.length > 0) {
 								$rootScope.$broadcast('opennms.analytics.trackEvent', 'settings', 'serverType', 'Server Type', match[0]);
 							}
 						}
@@ -380,7 +413,7 @@
 		};
 
 		secureStore.get('uuid').then(function(uuid) {
-			if (!uuid4.validate(uuid)) {
+			if (!uuid || !uuid4.validate(uuid)) {
 				secureStore.set('uuid', uuid4.generate());
 			}
 		}, function() {
@@ -448,10 +481,10 @@
 				});
 			},
 			version: function() {
-				return $injector.get('config.build.version');
+				return $q.when($injector.get('config.build.version'));
 			},
 			build: function() {
-				return $injector.get('config.build.build');
+				return $q.when($injector.get('config.build.build'));
 			}
 		};
 	});

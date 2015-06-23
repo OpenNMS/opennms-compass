@@ -16,14 +16,21 @@
 
 		var checkAvailability = function() {
 			hasAvailability = $q.defer();
-			var url = RestService.url('/availability');
-			console.log('AvailabilityService.checkAvailability: checking if ' + url + ' is valid.');
-			RestService.get('/availability').then(function() {
-				console.log('AvailabilityService.checkAvailability: ' + url + ' works!');
+			return RestService.url('/availability').then(function(url) {
+				if (url) {
+					console.log('AvailabilityService.checkAvailability: checking if URL "' + url + '"" is valid.');
+					return RestService.get('/availability');
+				} else {
+					return $q.reject('Server not configured.');
+				}
+			}).then(function() {
+				console.log('AvailabilityService.checkAvailability: it works!');
 				hasAvailability.resolve(true);
+				return hasAvailability.promise;
 			}, function() {
-				console.log('AvailabilityService.checkAvailability: ' + url + ' does not work. :(');
+				console.log('AvailabilityService.checkAvailability: failed. :(');
 				hasAvailability.resolve(false);
+				return hasAvailability.promise;
 			});
 		};
 

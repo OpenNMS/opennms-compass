@@ -22,10 +22,6 @@ describe('opennms.Info', function() {
 		$httpBackend,
 		Info;
 
-	var doNothing = function() {
-		return undefined;
-	};
-
 	beforeEach(function() {
 		//console.log('=== opennms.Info ===');
 		jasmine.clock().install();
