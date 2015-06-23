@@ -251,14 +251,18 @@
 		$scope.errors = [];
 		$scope.currentSlide = 0;
 		$scope.landscape = true;
-		$scope.serverName = Settings.getServerName();
+		Settings.getServerName().then(function(serverName) {
+			$scope.serverName = serverName;
+		});
 
 		updateLogo();
 
 		util.onSettingsUpdated(function(newSettings, oldSettings, changedSettings) {
 			//console.log('Dashboard: settings changed, refreshing data.');
-			$scope.serverName = Settings.getServerName();
-			$scope.refreshData();
+			Settings.getServerName().then(function(serverName) {
+				$scope.serverName = serverName;
+				$scope.refreshData();
+			});
 		});
 
 		util.onDirty('alarms', $scope.refreshData);

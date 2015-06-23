@@ -27,7 +27,9 @@
 
 		scope.created = false;
 		scope.isMeridian = false;
-		scope.showAds = Settings.showAds();
+		Settings.showAds().then(function(showAds) {
+			scope.showAds = showAds;
+		});
 
 		var updateAds = debounce(scope.waitTime, function() {
 			if (!scope.created) {

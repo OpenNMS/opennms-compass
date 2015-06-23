@@ -72,8 +72,14 @@
 		};
 
 		var openServer = function() {
-			console.log('util.openServer: ' + Settings.URL());
-			$cordovaInAppBrowser.open(Settings.URL(), '_blank');
+			Settings.URL().then(function(url) {
+				console.log('util.openServer: ' + url);
+				$cordovaInAppBrowser.open(url, '_blank');
+			});
+		};
+
+		var trackEvent = function(category, event, label, value) {
+			$rootScope.$broadcast('opennms.analytics.trackEvent', category, event, label, value);
 		};
 
 		var trackEvent = function(category, event, label, value) {

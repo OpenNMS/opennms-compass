@@ -43,7 +43,7 @@ if (rootdir) {
 
 		var excludefile = path.join('www', '.cordovaignore');
 		lineReader.eachLine(excludefile, function(line, last) {
-			console.log('excluding: ' + line.trim());
+			//console.log('excluding: ' + line.trim());
 			deleteRecursive(path.join(wwwpath, line.trim()));
 		});
 	}

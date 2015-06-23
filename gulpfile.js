@@ -121,6 +121,7 @@ var testSource = [
 	'./www/lib/angular-mocks/angular-mocks.js',
 	'./www/lib/ionic/release/js/ionic.min.js',
 	'./www/lib/ionic/release/js/ionic-angular.min.js',
+	'./www/lib/angular-uuid4/angular-uuid4.js',
 	'./www/lib/angularLocalStorage/src/angularLocalStorage.js',
 	'./www/lib/angular-queue/angular-queue.js',
 	'./www/lib/ng-resize/ngresize.min.js',

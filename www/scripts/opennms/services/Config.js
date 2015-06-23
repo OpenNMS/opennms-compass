@@ -17,22 +17,20 @@
 		'opennms.services.BuildConfig',
 		'opennms.services.Config',
 	])
-	.factory('Settings', function($rootScope, $injector, storage, uuid4) {
+	.factory('Settings', function($q, $rootScope, $injector, storage, uuid4) {
 		var $scope = $rootScope.$new();
-
-		var serverTypeMatch = new RegExp("^([Hh][Tt][Tt][Pp][Ss]?)\:", "g");
 
 		$scope.settings = storage.get('opennms.settings');
 
 		var getSettings = function() {
-			return angular.copy($scope.settings);
+			return $q.when(angular.copy($scope.settings));
 		};
 		var saveSettings = function(settings) {
 			if (!settings) {
-				console.log('Settings.saveSettings: ERROR: no settings provided.');
-				return false;
+				return $q.reject('Settings.saveSettings: ERROR: no settings provided.');
 			}
 
+			var serverTypeMatch = new RegExp('^([Hh][Tt][Tt][Pp][Ss]?):');
 			var changedSettings = {};
 
 			if (!settings.server || settings.server === 'undefined' || settings.server === '') {
@@ -84,15 +82,15 @@
 				$scope.settings = newSettings;
 
 				if (changedSettings.server) {
-					var match = serverTypeMatch.match(changedSettings.server);
-					if (match.length > 0) {
+					var match = serverTypeMatch.exec(changedSettings.server);
+					if (match && match.length > 0) {
 						$rootScope.$broadcast('opennms.analytics.trackEvent', 'settings', 'serverType', 'Server Type', match[0]);
 					}
 				}
 				$rootScope.$broadcast('opennms.settings.updated', newSettings, oldSettings, changedSettings);
 			}
 
-			return true;
+			return $q.when($scope.settings);
 		};
 
 		if (!$scope.settings || $scope.settings === 'undefined') {
@@ -122,67 +120,113 @@
 			$scope.settings.showAds = true;
 		}
 
-		return {
-			get: getSettings,
-			set: saveSettings,
-			getServerName: function() {
+		var _getServerName = function() {
+			return getSettings().then(function(settings) {
 				var server = getSettings().server;
 				if (server) {
 					var a = document.createElement('a');
 					a.href = server;
 					return a.hostname;
+				}
+				return undefined;
+			});
+		};
+
+		var _getRestLimit = function() {
+			return getSettings().then(function(settings) {
+				return settings.restLimit;
+			});
+		};
+
+		var _url = function(fragment) {
+			return getSettings().then(function(settings) {
+				var url = settings.server;
+				if (url) {
+					if (!url.endsWith('/')) {
+						url += '/';
+					}
+					if (fragment) {
+						url += fragment;
+					}
+				}
+				return url;
+			});
+		};
+
+		var _restUrl = function() {
+			return _url().then(function(url) {
+				if (url) {
+					if (!url.endsWith('/')) {
+						url += '/';
+					}
+					url += 'rest/';
+					return url;
 				} else {
 					return undefined;
 				}
-			},
-			restLimit: function() {
-				return getSettings().restLimit;
-			},
-			refreshInterval: function() {
-				var interval = parseInt(getSettings().refreshInterval, 10);
-				if (isNaN(interval) || interval === 0) {
-					interval = $injector.get('config.app.refresh-interval');
-				}
-				return interval;
-			},
-			URL: function() {
-				return getSettings().server;
-			},
-			restURL: function() {
-				var settings = getSettings();
-				if (settings && settings.server) {
-					return settings.server + 'rest/';
-				} else {
-					return undefined;
-				}
-			},
-			showAds: function() {
-				return getSettings().showAds;
-			},
-			username: function() {
-				return getSettings().username;
-			},
-			password: function() {
-				return getSettings().password;
-			},
-			uuid: function() {
-				return getSettings().uuid;
-			},
-			disableAds: function() {
-				var settings = getSettings();
+			});
+		};
+
+		var _showAds = function() {
+			return getSettings().then(function(settings) {
+				return settings.showAds;
+			});
+		};
+
+		var _username = function() {
+			return getSettings().then(function(settings) {
+				return settings.username;
+			});
+		};
+
+		var _password = function() {
+			return getSettings().then(function(settings) {
+				return settings.password;
+			});
+		};
+
+		var _uuid = function() {
+			return getSettings().then(function(settings) {
+				return settings.uuid;
+			});
+		};
+
+		var _disableAds = function() {
+			return getSettings().then(function(settings) {
 				settings.showAds = false;
-				saveSettings(settings);
-			},
-			isServerConfigured: function() {
-				var settings = getSettings();
+				return saveSettings(settings);
+			});
+		};
+
+		var _isServerConfigured = function() {
+			return getSettings().then(function(settings) {
 				return (settings.server && settings.username && settings.password);
-			},
-			version: function() {
-				return $injector.get('config.build.version');
-			},
-			build: function() {
-				return $injector.get('config.build.build');
-			}
+			});
+		};
+
+		var _version = function() {
+			return $q.when($injector.get('config.build.version'));
+		};
+
+		var _build = function() {
+			return $q.when($injector.get('config.build.build'));
+		};
+
+		return {
+			get: getSettings,
+			set: saveSettings,
+			getServerName: _getServerName,
+			restLimit: _getRestLimit,
+			URL: _url,
+			restURL: _restUrl,
+			showAds: _showAds,
+			username: _username,
+			password: _password,
+			uuid: _uuid,
+			disableAds: _disableAds,
+			isServerConfigured: _isServerConfigured,
+			version: _version,
+			build: _build,
 		};
 	});
 }());

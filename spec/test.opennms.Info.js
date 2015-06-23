@@ -12,6 +12,10 @@
 describe('opennms.Info', function() {
 	'use strict';
 
+	var doNothing = function() {
+		return undefined;
+	};
+
 	var $q,
 		$rootScope,
 		$timeout,
@@ -31,8 +35,9 @@ describe('opennms.Info', function() {
 	});
 
 	beforeEach(module(function($provide) {
-		$provide.value('cordovaHTTP', function() {
-
+		$provide.value('cordovaHTTP', {});
+		$provide.value('util', {
+			onSettingsUpdated: doNothing
 		});
 	}));
 

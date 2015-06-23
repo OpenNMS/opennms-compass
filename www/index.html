@@ -11,7 +11,7 @@
 <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
 <meta name="format-detection" content="telephone=no" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
-<meta http-equiv="Content-Security-Policy" content="default-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'">
+<meta http-equiv="Content-Security-Policy" content="default-src *; style-src 'self' 'unsafe-inline'; script-src * 'self' 'unsafe-inline' 'unsafe-eval'">
 
 <link rel="stylesheet" href="lib/c3/c3.min.css" />
 <link rel="stylesheet" href="css/opennms.min.css" />
@@ -144,6 +144,7 @@
 
 	<script>
 		ionic.Platform.ready(function() {
+			console.log('--------------------------------------------------------------------------------');
 			console.log('Platform is ready.  Bootstrapping.');
 			angular.bootstrap(document, ['opennms.Main']);
 		});

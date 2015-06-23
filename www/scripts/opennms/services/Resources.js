@@ -28,7 +28,7 @@
 						graphDef: graphDefs[graphName],
 						resourceId: resource.id
 					});
-					var model = rrdGraphConverter.model;
+					model = rrdGraphConverter.model;
 
 					// Update the model to use OpenNMS' ReST Measurements API
 					model.dataProcessor = {};
