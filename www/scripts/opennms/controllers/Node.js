@@ -13,9 +13,10 @@
 		'opennms.services.Info',
 		'opennms.services.Nodes',
 		'opennms.services.Outages',
+		'opennms.services.Resources',
 		'opennms.services.Util',
 	])
-	.controller('NodeCtrl', function($q, $scope, $timeout, $window, $cordovaGeolocation, $ionicLoading, $ionicPopup, storage, util, Analytics, AvailabilityService, Errors, EventService, Info, NodeService, OutageService) {
+	.controller('NodeCtrl', function($q, $scope, $timeout, $window, $cordovaGeolocation, $ionicLoading, $ionicPopup, storage, util, Analytics, AvailabilityService, Errors, EventService, Info, NodeService, OutageService, ResourceService) {
 		console.log('NodeCtrl: initializing.');
 
 		$scope.availabilityColor = function(value) {
@@ -150,7 +151,9 @@
 		};
 
 		$scope.graphs = function() {
-
+			ResourceService.resources($scope.node.id).then(function(res) {
+				console.log('graphs: got res ' + angular.toJson(res));
+			});
 		};
 
 		util.onDirty('alarms', function() {
@@ -194,8 +197,12 @@
 		});
 
 		$scope.$on('$ionicView.beforeLeave', function(ev, info) {
-			console.log('NodeCtrl: leaving node view; cleaning up.');
-			resetModel();
+			if (info.direction === 'forward') {
+				// we're going to the resources, keep the model in memory
+			} else {
+				console.log('NodeCtrl: leaving node view; cleaning up.');
+				resetModel();
+			}
 		});
 	});
 

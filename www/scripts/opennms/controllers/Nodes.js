@@ -7,11 +7,10 @@
 		'ionic',
 		'angularLocalStorage',
 		'opennms.services.Errors',
-		'opennms.services.Modals',
 		'opennms.services.Nodes',
 		'opennms.services.Util',
 	])
-	.controller('NodesCtrl', function($q, $scope, $timeout, $window, $state, $ionicLoading, storage, util, Errors, Modals, NodeService) {
+	.controller('NodesCtrl', function($q, $scope, $timeout, $window, $state, $ionicLoading, storage, util, Errors, NodeService) {
 		console.log('NodesCtrl: initializing.');
 
 		$scope.searching = false;
@@ -66,11 +65,6 @@
 		$scope.viewNode = function(node) {
 			util.hideKeyboard();
 			$state.go('node-detail', {node: node.id});
-			/*
-			$timeout(function() {
-				Modals.node(node);
-			});
-*/
 		};
 
 		$scope.refreshData = function() {

@@ -17,9 +17,8 @@
 		'opennms.services.Nodes',
 		'opennms.services.Outages',
 		'opennms.services.Util',
-		'opennms.services.modals.Node',
 	])
-	.factory('Modals', function($q, $rootScope, $interval, $ionicModal, $ionicPopup, AlarmService, Analytics, AvailabilityService, Errors, EventService, Info, NodeService, OutageService, Settings, util, NodeModal) {
+	.factory('Modals', function($q, $rootScope, $interval, $ionicModal, $ionicPopup, AlarmService, Analytics, AvailabilityService, Errors, EventService, Info, NodeService, OutageService, Settings, util) {
 		console.log('Modals: initializing.');
 
 		var $scope = $rootScope.$new();
@@ -72,10 +71,6 @@
 					ret[outages[i].nodeId] = outages[i];
 				}
 				return ret;
-			};
-
-			modal.scope.showNode = function(id) {
-				NodeModal.show(id);
 			};
 
 			modal.scope.refreshOutages = function() {
@@ -270,9 +265,6 @@
 				$scope.alarmModal.promise.then(function(modal) {
 					modal.scope.show(alarm);
 				});
-			},
-			node: function(node) {
-				NodeModal.show(node);
 			},
 			outages: function() {
 				$scope.outageModal.promise.then(function(modal) {

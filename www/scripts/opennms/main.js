@@ -20,8 +20,9 @@
 		'opennms.services.Util',
 		'opennms.controllers.Alarms',
 		'opennms.controllers.Dashboard',
-		'opennms.controllers.Nodes',
 		'opennms.controllers.Node',
+		'opennms.controllers.NodeResources',
+		'opennms.controllers.Nodes',
 		'opennms.controllers.Settings',
 	])
 	.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider, $cordovaInAppBrowserProvider) {
@@ -31,22 +32,27 @@
 		.state('dashboard', {
 			url: '/dashboard',
 			templateUrl: 'templates/dashboard.html',
-			controller: 'DashboardCtrl'
+			controller: 'DashboardCtrl',
 		})
 		.state('alarms', {
 			url: '/alarms',
 			templateUrl: 'templates/alarms.html',
-			controller: 'AlarmsCtrl'
+			controller: 'AlarmsCtrl',
 		})
 		.state('nodes', {
 			url: '/nodes',
 			templateUrl: 'templates/nodes.html',
-			controller: 'NodesCtrl'
+			controller: 'NodesCtrl',
 		})
 		.state('node-detail', {
 			url: '/nodes/:node',
-			templateUrl: 'templates/node-detail-routed.html',
-			controller: 'NodeCtrl'
+			templateUrl: 'templates/node-detail.html',
+			controller: 'NodeCtrl',
+		})
+		.state('node-resources', {
+			url: '/nodes/:node/resources',
+			templateUrl: 'templates/node-resources.html',
+			controller: 'NodeResourcesCtrl',
 		})
 		;
 

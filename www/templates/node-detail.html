@@ -1,0 +1,138 @@
+<ion-view view-title="{{node.label}}" class="node-detail">
+	<ion-nav-bar class="bar-light" align-title="center">
+		<ion-nav-back-button class="button-compass button-clear"></ion-nav-back-button>
+		<h1 class="title">{{node.label}}</h1>
+		<ion-nav-buttons side="secondary">
+			<button class="button button-compass button-clear" nav-direction="forward" ui-sref="node-resources({node: node.id})"><i class="icon ion-stats-bars"></i></button>
+		</ion-nav-buttons>
+	</ion-nav-bar>
+	<ion-content>
+		<ion-refresher pulling-text="Pull to Refresh..." on-refresh="refreshNode()"></ion-refresher>
+		<ion-list>
+			<ion-item class="item-divider item-compass">
+				Node Details
+			</ion-item>
+			<ion-item class="row">
+				<div class="col col-33">ID:</div>
+				<div class="col">{{node.id}}</div>
+			</ion-item>
+			<ion-item class="row" ng-if="node.foreignSource">
+				<div class="col col-33">Foreign Source:</div>
+				<div class="col">{{node.foreignSource}}</div>
+			</ion-item>
+			<ion-item class="row" ng-if="node.foreignId">
+				<div class="col col-33">Foreign ID:</div>
+				<div class="col">{{node.foreignId}}</div>
+			</ion-item>
+			<span ng-if="hasSnmpAttributes()">
+				<ion-item class="item-divider item-compass">
+					SNMP Attributes
+				</ion-item>
+				<ion-item class="row item-text-wrap" ng-if="node.sysName">
+					<div class="col col-33">Name</div>
+					<div class="col">{{node.sysName}}</div>
+				</ion-item>
+				<ion-item class="row " ng-if="node.sysObjectId">
+					<div class="col col-33">sysObjectID</div>
+					<div class="col">{{node.sysObjectId}}</div>
+				</ion-item>
+				<ion-item class="row item-text-wrap" ng-if="node.sysLocation">
+					<div class="col col-33">Location</div>
+					<div class="col">{{node.sysLocation}}</div>
+				</ion-item>
+				<ion-item class="row item-text-wrap" ng-if="node.sysContact">
+					<div class="col col-33">Contact</div>
+					<div class="col" ng-bind="node.sysContact"></div>
+				</ion-item>
+				<ion-item class="row item-text-wrap" ng-if="node.sysDescription">
+					<div class="col col-33">Description</div>
+					<div class="col">{{node.sysDescription}}</div>
+				</ion-item>
+			</span>
+			<span ng-if="address || canUpdateGeolocation">
+				<ion-item class="item-divider item-compass">
+					Address
+				</ion-item>
+				<ion-item class="item-text-wrap">
+					<div ng-if="address &amp;&amp; address.address1">{{address.address1}}</div>
+					<div ng-if="address &amp;&amp; address.address2">{{address.address2}}</div>
+					<div ng-if="hasAddress">
+						<span ng-if="address.city">{{address.city}},</span>
+						<span ng-if="address.state">{{address.state}}</span>
+						<span ng-if="address.zip">{{address.zip}}</span>
+					</div>
+					<div ng-if="address &amp;&amp; address.country">{{address.country}}</div>
+					<div ng-if="address.longitude &amp;&amp; address.latitude" style="text-align: center">
+						<br ng-if="hasAddress" />
+						Lat: {{address.latitude}},
+						Lon: {{address.longitude}}
+					</div>
+					<button class="button button-block button-compass" ng-click="submitCoordinates()" ng-if="canUpdateGeolocation">Set Coordinates to Current Location</button>
+				</ion-item>
+			</span>
+			<span ng-if="availability &amp;&amp; availability.length > 0" class="availability">
+				<ion-item class="item-divider item-compass">
+					Availability (Last 24 Hours)
+				</ion-item>
+				<ion-item class="item-text-wrap no-top" style="padding: 0">
+					<span class="row no-bottom" ng-class="availabilityColor(availability.availability)">
+						<div class="col col-75">Node Availability</div>
+						<div class="monospace pull-right col">{{availability.availability | number:2}}%</div>
+					</span>
+					<span ng-repeat="iface in availability.ipinterfaces track by iface.id" class="ifaces">
+						<span class="row" ng-class="availabilityColor(iface.availability) + ' ' + ($index === (iface.availability.length-1)? 'no-bottom':'')">
+							<div class="col col-75 shift-1">{{iface.address | ip}}</div>
+							<div class="monospace pull-right col">{{iface.availability | number:2}}%</div>
+						</span>
+						<span class="row" ng-repeat="svc in iface.services track by svc.id" ng-class="availabilityColor(svc.availability) + ' ' + ($index === (iface.services.length-1)? 'no-bottom':'')">
+							<div class="col col-75 shift-2">{{svc.name}}</div>
+							<div class="monospace pull-right col">{{svc.availability | number:2}}%</div>
+						</span>
+					</span>
+				</ion-item>
+			</span>
+			<span ng-if="node.categories &amp;&amp; node.categories.length > 0">
+				<ion-item class="item-divider item-compass">
+					Surveillance Categories
+				</ion-item>
+				<ion-item class="item-text-wrap" ng-repeat="category in node.categories track by category.id">
+					{{category.name}}
+				</ion-item>
+			</span>
+			<span class="events">
+				<ion-item class="item-divider item-compass">
+					Recent Events
+				</ion-item>
+				<ion-item ng-if="events === undefined">
+					<ion-spinner></ion-spinner> Loading...
+				</ion-item>
+				<ion-item ng-if="events &amp;&amp; events.length === 0">
+					No recent events.
+				</ion-item>
+				<ion-item ng-class="'item-text-wrap item-icon-right item-remove-animate severity-' + event.severity" ng-repeat="event in events track by event.id">
+					<span class="item-note">{{event.time.fromNow()}}</span>
+					<h2>{{event.title}}</h2>
+					<span ng-bind-html="event.description"></span>
+					<i ng-class="'icon severity severity-' + event.severity + ' ' + util.icon(event.severity)" title="{{event.severity}}"></i>
+				</ion-item>
+			</span>
+			<span class="outages">
+				<ion-item class="item-divider item-compass">
+					Current Outages
+				</ion-item>
+				<ion-item ng-if="outages === undefined">
+					<ion-spinner></ion-spinner> Loading...
+				</ion-item>
+				<ion-item ng-if="outages &amp;&amp; outages.length === 0">
+					No recent outages.
+				</ion-item>
+				<ion-item ng-class="'item-text-wrap item-icon-right item-remove-animate severity severity-' + outage.serviceLostEvent.severity" ng-repeat="outage in outages track by outage.id">
+					<span class="item-note">{{outage.ifLostService.fromNow()}}</span>
+					<h2>{{outage.monitoredService.serviceName}} on {{outage.ipAddress}}</h2>
+					<span ng-bind-html="outage.serviceLostEvent.description"></span>
+					<i ng-class="'icon severity severity-' + outage.serviceLostEvent.severity + ' ' + util.icon(outage.serviceLostEvent.severity)" title="{{outage.serviceLostEvent.severity}}"></i>
+				</ion-item>
+			</span>
+		</ion-list>
+	</ion-content>
+</ion-view>

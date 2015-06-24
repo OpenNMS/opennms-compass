@@ -1,15 +1,8 @@
-<ion-view view-title="Nodes" class="nodes">
+<ion-view view-title="Node Resources" class="nodes">
 	<ion-nav-bar class="bar-light" align-title="center">
 		<ion-nav-back-button class="button-compass button-clear"></ion-nav-back-button>
-		<!--
-		<ion-nav-buttons side="left">
-			<button class="button button-compass button-clear" ng-click="util.dashboard('back')"><i class="icon ion-ios-arrow-left"> Dashboard</i></button>
-		</ion-nav-buttons>
-		-->
-		<ion-nav-buttons side="right">
-			<button class="button button-compass button-clear" ng-show="searching"><ion-spinner></ion-spinner></button>
-		</ion-nav-buttons>
 	</ion-nav-bar>
+	<!--
 	<ion-header-bar class="bar-subheader item-input-inset">
 		<label class="item-input-wrapper">
 			<i class="icon ion-ios-search placeholder-icon"></i>
@@ -17,7 +10,9 @@
 		</label>
 		<button class="button button-clear" ng-click="searchString = ''">Cancel</button>
 	</ion-header-bar>
-	<ion-content delegate-handle="nodes-scroll">
+	-->
+	<ion-content delegate-handle="node-resources-scroll">
+		<!--
 		<ion-refresher pulling-text="Pull to Refresh..." on-refresh="updateSearch(searchString)"></ion-refresher>
 		<ion-list>
 			<ion-item ng-repeat="node in nodes track by node.id" ui-sref="node-detail({node:node.id})" nav-direction="forward" class="item-text-wrap">
@@ -31,5 +26,6 @@
 				</span>
 			</ion-item>
 		</ion-list>
+		-->
 	</ion-content>
 </ion-view>
