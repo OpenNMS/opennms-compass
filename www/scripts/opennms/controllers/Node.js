@@ -62,6 +62,10 @@
 		};
 
 		$scope.updateData = function() {
+			if (!$scope.node) {
+				return;
+			}
+
 			console.log('NodeCtrl.updateData: getting updated data for node: ' + $scope.node.id);
 
 			$scope.address = $scope.node.getAddress();
@@ -167,25 +171,7 @@
 			}
 		});
 
-		$scope.$on('modal.shown', function() {
-			console.log('NodeCtrl: entering node modal.');
-			if (angular.isNumber($scope.node)) {
-				$scope.node = { id: $scope.node };
-			} else if (angular.isString($scope.node)) {
-				$scope.node = { id: parseInt($scope.node, 10) };
-			} else {
-				console.log('NodeCtrl: unable to determine node from $scope.node: ' + angular.toJson($scope.node));
-			}
-			$scope.refreshNode();
-		});
-
-		$scope.$on('modal.hidden', function() {
-			console.log('NodeCtrl: modal hidden; cleaning up.');
-			resetModel();
-		});
-
 		$scope.$on('$ionicView.beforeEnter', function(ev, info) {
-			Analytics.trackView('nodeDetail');
 			console.log('NodeCtrl: entering node view.');
 			if (info && info.stateParams && info.stateParams.node) {
 				var nodeId = parseInt(info.stateParams.node, 10);

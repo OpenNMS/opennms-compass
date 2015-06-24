@@ -3,14 +3,14 @@
 
 	/* global ionic: true */
 
-	angular.module('opennms.controllers.NodeResources', [
+	angular.module('opennms.controllers.NodeResource', [
 		'ionic',
 		'angularLocalStorage',
 		'opennms.services.Resources',
 	])
-	.controller('NodeResourcesCtrl', function($q, $scope, ResourceService) {
-		console.log('NodeResourcesCtrl: initializing.');
-
+	.controller('NodeResourceCtrl', function($q, $scope, ResourceService) {
+		console.log('NodeResourceCtrl: initializing.');
+		/*
 		var sortFunction = function(a,b) {
 			if (a.typeLabel) {
 				return a.typeLabel.compareLocale(b.typeLabel);
@@ -73,6 +73,7 @@
 				resetModel();
 			}
 		});
+*/
 	});
 
 }());

@@ -21,6 +21,7 @@
 		'opennms.controllers.Alarms',
 		'opennms.controllers.Dashboard',
 		'opennms.controllers.Node',
+		'opennms.controllers.NodeResource',
 		'opennms.controllers.NodeResources',
 		'opennms.controllers.Nodes',
 		'opennms.controllers.Settings',
@@ -53,6 +54,11 @@
 			url: '/nodes/:node/resources',
 			templateUrl: 'templates/node-resources.html',
 			controller: 'NodeResourcesCtrl',
+		})
+		.state('node-resource', {
+			url: '/nodes/:node/resource/:resource',
+			templateUrl: 'templates/node-resource.html',
+			controller: 'NodeResourceCtrl',
 		})
 		;
 

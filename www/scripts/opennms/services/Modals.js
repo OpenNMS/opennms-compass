@@ -216,7 +216,7 @@
 			modal.scope.show = function(alarm) {
 				modal.scope.alarm = alarm;
 				startRefresh();
-				Analytics.trackView('alarmDetail');
+				Analytics.trackView('alarm-detail');
 				modal.show();
 			};
 			modal.scope.hide = function() {

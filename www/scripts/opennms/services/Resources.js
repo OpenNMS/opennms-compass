@@ -12,14 +12,20 @@
 
 		var getResourcesForNode = function(nodeId) {
 			return RestService.get('/resources/fornode/' + nodeId, {}, {'Accept': 'application/json'}).then(function(res) {
+				var ret = {
+					label: res.label,
+					id: parseInt(res.name, 10),
+				};
+
 				if (res.children && res.children.resource) {
 					if (angular.isArray(res.children.resource)) {
-						return res.children.resource;
+						ret.children = res.children.resource;
 					} else {
-						return [res.children.resource];
+						ret.children = [res.children.resource];
 					}
 				}
-				return [];
+
+				return ret;
 			});
 		};
 
