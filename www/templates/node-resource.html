@@ -2,12 +2,10 @@
 	<ion-nav-bar class="bar-light" align-title="center">
 		<ion-nav-back-button class="button-compass button-clear"></ion-nav-back-button>
 	</ion-nav-bar>
-	<ion-header-bar class="bar bar-header bar-subheader">
-		<h3 class="title compass">{{resource.label}}</h3>
-	</ion-header-bar>
 	<ion-content delegate-handle="node-resources-scroll">
 		<ion-refresher pulling-text="Pull to Refresh..." on-refresh="refresh()"></ion-refresher>
 		<ion-list>
+			<ion-item><h3 class="title compass">{{resource.label}}</h3></ion-item>
 			<span ng-if="children &amp;&amp; children.length &gt; 0">
 				<ion-item class="item-divider item-compass">
 					Sub-Resources
@@ -33,7 +31,7 @@
 					<i ng-class="'icon ' + (isFavorite(graph.name)? 'ion-ios-star':'ion-ios-star-outline')" ng-click="toggleFavorite($event, graph)"></i>
 				</ion-item>
 				<ion-item class="item item-accordion item-complex graph" ng-show="shown.name === graph.name">
-					<onms-graph graph-def="graph" resource-id="resource.id" ng-if="shown.name === graph.name"></onms-graph>
+					<onms-graph graph-def="graph" resource-id="resource.id" ng-if="shown.name === graph.name" range="range"></onms-graph>
 				</ion-item>
 			</span>
 		</ion-list>

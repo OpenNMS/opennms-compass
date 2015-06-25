@@ -23,7 +23,11 @@
 		$scope.settings = storage.get('opennms.settings');
 
 		var getSettings = function() {
-			return $q.when(angular.copy($scope.settings));
+			var settings = angular.copy($scope.settings);
+			if (!settings) {
+				settings = {};
+			}
+			return $q.when(settings);
 		};
 
 		var saveSettings = function(settings) {

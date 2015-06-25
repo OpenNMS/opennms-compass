@@ -74,7 +74,8 @@
     {
       "locator": "https://github.com/bez4pieci/Phonegap-Cookies-Plugin",
       "id": "com.bez4pieci.cookies"
-    }
+    },
+    "cordova-plugin-datepicker"
   ],
   "cordovaPlatforms": [
     {

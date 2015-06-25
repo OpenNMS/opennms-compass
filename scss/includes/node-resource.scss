@@ -7,7 +7,23 @@
 	stroke-width: 2px;
 }
 
+.onms-graph {
+	.row {
+		font-size: $font-size-base;
+	}
+	.datetime {
+		font-weight: bolder;
+		border: 1px solid;
+		padding: 5px;
+	}	
+}
+
 .node-resource {
+	h3.title {
+		text-align: center;
+		margin-top: 0;
+		font-size: $font-size-base;
+	}
 	.icon.ion-arrow-down-b, .icon.ion-arrow-right-b {
 		font-size: 20px !important;
 	}

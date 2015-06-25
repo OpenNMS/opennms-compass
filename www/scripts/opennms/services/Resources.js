@@ -56,7 +56,6 @@
 
 		var getGraphNames = function(resourceId) {
 			return RestService.get('/graphs/for/' + encodeURIComponent(resourceId), {}, {'Accept': 'application/json'}).then(function(res) {
-				console.log('res='+angular.toJson(res));
 				if (res.name) {
 					if (angular.isArray(res.name)) {
 						return res.name;

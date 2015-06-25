@@ -1,0 +1,11 @@
+<div class="onms-graph">
+	<div class="row">
+		<div class="col" style="text-align: left" ng-click="editDate('start')">
+			Start: <span class="datetime">{{range.start | date : 'short' }} <i class="icon ion-clock"></i></span>
+		</div>
+		<div class="col" style="text-align: right" ng-click="editDate('end')">
+			End: <span class="datetime">{{range.end | date : 'short' }} <i class="icon ion-clock"></i></span>
+		</div>
+	</div>
+	<div class="graph"></div>
+</div>
