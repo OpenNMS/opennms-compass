@@ -4,6 +4,9 @@
 	/* global ionic: true */
 	/* global datePicker: true */
 	/* global moment: true */
+	/* global Backshift: true */
+
+	var defaultRange = 24 * 60 * 60 * 1000; // 1 day
 
 	angular.module('opennms.controllers.NodeResource', [
 		'ionic',
@@ -38,7 +41,7 @@
 					$scope.range.end = new Date();
 				}
 				if (!$scope.range.start) {
-					$scope.range.start = new Date($scope.range.end.getTime() - (8*60*60*1000)); // 8 hours ago
+					$scope.range.start = new Date($scope.range.end.getTime() - defaultRange); // 8 hours ago
 				}
 
 				$scope.editDate = function(type) {
@@ -68,7 +71,7 @@
 					}
 
 					var graph = new Backshift.Graph.C3({
-						element: $(element).find('.graph')[0],
+						element: angular.element(element).find('.graph')[0],
 						start: $scope.range.start.getTime(),
 						end: $scope.range.end.getTime(),
 						width: $scope.width,
@@ -81,7 +84,7 @@
 						verticalLabel: $scope.graphModel.verticalLabel,
 						exportIconSizeRatio: 0,
 					});
-					if ($scope.graph) {
+					if ($scope.graph && $scope.graph.destroy) {
 						$scope.graph.destroy();
 					}
 					$scope.graph = graph;
@@ -99,15 +102,13 @@
 				};
 
 				$scope.$watch('range', function(newRange, oldRange) {
+					var startDate = moment(newRange.start),
+						endDate = moment(newRange.end);
 					if (oldRange && newRange.start !== oldRange.start) {
-						var startDate = moment(newRange.start);
-						var endDate   = moment(newRange.end);
 						if (startDate.isAfter(endDate)) {
 							$scope.range.end = startDate.add(1, 'hour').toDate();
 						}
 					} else if (oldRange && newRange.end !== oldRange.end) {
-						var startDate = moment(newRange.start);
-						var endDate   = moment(newRange.end);
 						if (endDate.isBefore(startDate)) {
 							$scope.range.start = endDate.subtract(1, 'hour').toDate();
 						}
@@ -143,7 +144,7 @@
 					$scope.createGraph();
 				});
 				element.on('$destroy', function() {
-					console.log('destroying graph: ' + $scope.graphModel.title);
+					//console.log('destroying graph: ' + $scope.graphModel.title);
 					if ($scope.graph) {
 						$scope.graph.destroy();
 						$scope.graph = undefined;
@@ -160,7 +161,7 @@
 		$scope.range = {
 		};
 		$scope.range.end = new Date();
-		$scope.range.start = new Date($scope.range.end.getTime() - (8*60*60*1000)); // 8 hours ago;
+		$scope.range.start = new Date($scope.range.end.getTime() - defaultRange); // 24 hours ago;
 
 		$scope.refresh = function() {
 			console.log('refreshing: ' + $scope.resourceId);

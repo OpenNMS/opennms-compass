@@ -150,8 +150,6 @@ lib/jquery/.bower.json
 lib/jquery/MIT-LICENSE.txt
 lib/jquery/bower.json
 lib/jquery/dist/jquery.js
-lib/jquery/dist/jquery.min.js
-lib/jquery/dist/jquery.min.map
 lib/jquery/src
 lib/modernizr/.bower.json
 lib/modernizr/.editorconfig

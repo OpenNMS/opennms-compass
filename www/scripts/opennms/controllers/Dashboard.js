@@ -24,6 +24,7 @@
 	angular.module('opennms.controllers.Dashboard', [
 		'ionic',
 		'ngResize',
+		'opennms.DonutWidget',
 		'opennms.services.Alarms',
 		'opennms.services.Availability',
 		'opennms.services.Errors',
@@ -33,7 +34,7 @@
 		'opennms.services.Settings',
 		'opennms.services.Util',
 	])
-	.controller('DashboardCtrl', function($q, $rootScope, $scope, $interval, $timeout, $state, $document, $window, $ionicLoading, $ionicPopup, $ionicSlideBoxDelegate, resize, AlarmService, AvailabilityService, Errors, Info, Modals, OutageService, Settings, util) {
+	.controller('DashboardCtrl', function($q, $rootScope, $scope, $interval, $timeout, $state, $document, $window, $ionicLoading, $ionicPopup, $ionicSlideBoxDelegate, resize, AlarmService, AvailabilityService, DonutWidget, Errors, Info, Modals, OutageService, Settings, util) {
 		console.log('DashboardCtrl: Initializing.');
 
 		var updateArrows = function(height) {
