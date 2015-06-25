@@ -1,20 +1,38 @@
+.c3-area {
+	stroke-width: 0;
+	opacity: 0.85;
+}
+
+.c3-line {
+	stroke-width: 2px;
+}
+
 .node-resource {
 	.icon.ion-arrow-down-b, .icon.ion-arrow-right-b {
 		font-size: 20px !important;
 	}
-	.list .item.item-accordion {
-		max-height: 50em;
-		transition: 0.1s all linear;
-		.graph {
-			padding-left: 0;
-			padding-right: 0;
-			margin-left: 0;
-			margin-right: 0;
+	.list {
+		.graphs {
+			.item {
+				margin-top: 0;
+				margin-left: 0;
+				margin-right: 0;
+				margin-bottom: 0;
+				border: 0;
+			}
 		}
-	}
-	.list .item.item-accordion.ng-hide {
-		padding-top: 0;
-		padding-bottom: 0;
-		max-height: 0;
+		.item.graph {
+			margin-left: 5px;
+			margin-right: 5px;
+		}
+		.item.item-accordion {
+			max-height: 50em;
+			transition: 0.1s all linear;
+		}
+		.item.item-accordion.ng-hide {
+			padding-top: 0;
+			padding-bottom: 0;
+			max-height: 0;
+		}
 	}
 }

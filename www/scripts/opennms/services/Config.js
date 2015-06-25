@@ -25,6 +25,7 @@
 		var getSettings = function() {
 			return $q.when(angular.copy($scope.settings));
 		};
+
 		var saveSettings = function(settings) {
 			if (!settings) {
 				return $q.reject('Settings.saveSettings: ERROR: no settings provided.');
@@ -93,32 +94,33 @@
 			return $q.when($scope.settings);
 		};
 
-		if (!$scope.settings || $scope.settings === 'undefined') {
-			$scope.settings = {};
-		}
-		if (!$scope.settings.server) {
-			$scope.settings.server = $injector.get('config.app.default-server-url');
-		}
-		if (!$scope.settings.username) {
-			$scope.settings.username = $injector.get('config.app.default-username');
-		}
-		if (!$scope.settings.password) {
-			$scope.settings.password = $injector.get('config.app.default-password');
-		}
-		if (!$scope.settings.uuid) {
-			$scope.settings.uuid = uuid4.generate();
-			// no uuid? save it immediately
-			saveSettings(getSettings());
-		}
-		if (!$scope.settings.restLimit) {
-			$scope.settings.restLimit = $injector.get('config.app.rest.limit');
-		}
-		if (!$scope.settings.refreshInterval || isNaN(parseInt($scope.settings.refreshInterval, 10))) {
-			$scope.settings.refreshInterval = $injector.get('config.app.refresh-interval');
-		}
-		if ($scope.settings.showAds === undefined || $scope.settings.showAds === 'undefined') {
-			$scope.settings.showAds = true;
-		}
+		getSettings().then(function(settings) {
+			if (!settings || settings === 'undefined') {
+				settings = {};
+			}
+			if (!settings.server) {
+				settings.server = $injector.get('config.app.default-server-url');
+			}
+			if (!settings.username) {
+				settings.username = $injector.get('config.app.default-username');
+			}
+			if (!settings.password) {
+				settings.password = $injector.get('config.app.default-password');
+			}
+			if (!settings.uuid) {
+				settings.uuid = uuid4.generate();
+			}
+			if (!settings.restLimit) {
+				settings.restLimit = $injector.get('config.app.rest.limit');
+			}
+			if (!settings.refreshInterval || isNaN(parseInt(settings.refreshInterval, 10))) {
+				settings.refreshInterval = $injector.get('config.app.refresh-interval');
+			}
+			if (settings.showAds === undefined || settings.showAds === 'undefined') {
+				settings.showAds = true;
+			}
+			saveSettings(settings);
+		});
 
 		var _getServerName = function() {
 			return getSettings().then(function(settings) {

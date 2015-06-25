@@ -26,13 +26,13 @@
 					Graphs
 				</ion-item>
 			</span>
-			<span ng-repeat="graph in graphDefinitions track by graph.name">
-				<ion-item class="item-icon-left item-icon-right item-divider item-compass" ng-click="toggleOpen(graph)">
+			<span class="graphs" ng-repeat="graph in graphDefinitions track by graph.name">
+				<ion-item class="item item-icon-left item-icon-right item-divider item-compass" ng-click="toggleOpen(graph)">
 					<i ng-class="'icon ' + (isOpen(graph.name)? 'ion-arrow-down-b':'ion-arrow-right-b')"></i>
 					{{graph.title}}
 					<i ng-class="'icon ' + (isFavorite(graph.name)? 'ion-ios-star':'ion-ios-star-outline')" ng-click="toggleFavorite($event, graph)"></i>
 				</ion-item>
-				<ion-item class="item-accordion graph" ng-show="shown.name === graph.name">
+				<ion-item class="item item-accordion item-complex graph" ng-show="shown.name === graph.name">
 					<onms-graph graph-def="graph" resource-id="resource.id" ng-if="shown.name === graph.name"></onms-graph>
 				</ion-item>
 			</span>
