@@ -64,6 +64,10 @@
 			var oldSettings = angular.copy($scope.settings);
 			var newSettings = angular.copy(settings);
 
+			if (!oldSettings) {
+				oldSettings = {};
+			}
+
 			for (var prop in newSettings) {
 				if (newSettings.hasOwnProperty(prop) && newSettings[prop] !== oldSettings[prop]) {
 					changedSettings[prop] = newSettings[prop];
