@@ -1,25 +1,39 @@
-<ion-view view-title="{{label}}" class="nodes">
+<ion-view view-title="{{node.label}}" class="node-resource">
 	<ion-nav-bar class="bar-light" align-title="center">
 		<ion-nav-back-button class="button-compass button-clear"></ion-nav-back-button>
 	</ion-nav-bar>
-	<!--
-	<ion-header-bar class="bar-subheader item-input-inset">
-		<label class="item-input-wrapper">
-			<i class="icon ion-ios-search placeholder-icon"></i>
-			<input type="search" placeholder="Search" ng-model="searchString">
-		</label>
-		<button class="button button-clear" ng-click="searchString = ''">Cancel</button>
+	<ion-header-bar class="bar bar-header bar-subheader">
+		<h3 class="title compass">{{resource.label}}</h3>
 	</ion-header-bar>
-	-->
 	<ion-content delegate-handle="node-resources-scroll">
 		<ion-refresher pulling-text="Pull to Refresh..." on-refresh="refresh()"></ion-refresher>
 		<ion-list>
-			<span ng-repeat="resource in resources track by resource.id">
-				<ion-item ng-if="resource.isDivider" class="item-divider item-compass">
-					{{resource.id}}
+			<span ng-if="children &amp;&amp; children.length &gt; 0">
+				<ion-item class="item-divider item-compass">
+					Sub-Resources
 				</ion-item>
-				<ion-item ng-if="!resource.isDivider" class="item-text-wrap" ui-sref="node-resource({node:id, resource:resource.id})">
-					{{resource.label}}
+				<span ng-repeat="resource in children track by resource.id">
+					<ion-item ng-if="resource.isDivider" class="item-divider item-compass">
+						{{resource.id}}
+						divider
+					</ion-item>
+					<ion-item ng-if="!resource.isDivider" class="item-text-wrap" ui-sref="node-resource({node:id, resource:resource.id})">
+						{{resource.label}}
+						{{resource}}
+					</ion-item>
+				</span>
+				<ion-item class="item-divider item-compass">
+					Graphs
+				</ion-item>
+			</span>
+			<span ng-repeat="graph in graphDefinitions track by graph.name">
+				<ion-item class="item-icon-left item-icon-right item-divider item-compass" ng-click="toggleOpen(graph)">
+					<i ng-class="'icon ' + (isOpen(graph.name)? 'ion-arrow-down-b':'ion-arrow-right-b')"></i>
+					{{graph.title}}
+					<i ng-class="'icon ' + (isFavorite(graph.name)? 'ion-ios-star':'ion-ios-star-outline')" ng-click="toggleFavorite($event, graph)"></i>
+				</ion-item>
+				<ion-item class="item-accordion graph" ng-show="shown.name === graph.name">
+					<onms-graph graph-def="graph" resource-id="resource.id" ng-if="shown.name === graph.name"></onms-graph>
 				</ion-item>
 			</span>
 		</ion-list>

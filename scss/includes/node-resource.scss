@@ -1,0 +1,20 @@
+.node-resource {
+	.icon.ion-arrow-down-b, .icon.ion-arrow-right-b {
+		font-size: 20px !important;
+	}
+	.list .item.item-accordion {
+		max-height: 50em;
+		transition: 0.1s all linear;
+		.graph {
+			padding-left: 0;
+			padding-right: 0;
+			margin-left: 0;
+			margin-right: 0;
+		}
+	}
+	.list .item.item-accordion.ng-hide {
+		padding-top: 0;
+		padding-bottom: 0;
+		max-height: 0;
+	}
+}

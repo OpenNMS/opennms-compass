@@ -16,13 +16,12 @@
 
 		var checkAvailability = function() {
 			hasAvailability = $q.defer();
-			var url = RestService.url('/availability');
-			console.log('AvailabilityService.checkAvailability: checking if ' + url + ' is valid.');
+			console.log('AvailabilityService.checkAvailability: checking if availability service is valid.');
 			RestService.get('/availability').then(function() {
-				console.log('AvailabilityService.checkAvailability: ' + url + ' works!');
+				console.log('AvailabilityService.checkAvailability: availability service works!');
 				hasAvailability.resolve(true);
 			}, function() {
-				console.log('AvailabilityService.checkAvailability: ' + url + ' does not work. :(');
+				console.log('AvailabilityService.checkAvailability: availability service does not work. :(');
 				hasAvailability.resolve(false);
 			});
 		};

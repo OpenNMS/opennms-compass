@@ -20,29 +20,12 @@
 		};
 
 		$scope.refresh = function() {
-			console.log('refreshing: ' + $scope.id);
-			if ($scope.id) {
-				ResourceService.resources($scope.id).then(function(ret) {
-					$scope.label = ret.label;
-
-					var lastLabel, resources = [], i, length, child;
-					if (ret.children) {
-						length = ret.children.length;
-						for (i=0; i < length; i++) {
-							child = ret.children[i];
-							if (child.typeLabel !== lastLabel) {
-								resources.push({
-									isDivider: true,
-									id: child.typeLabel,
-								});
-							}
-							resources.push(child);
-							lastLabel = child.typeLabel;
-						}
-					}
-					$scope.resources = resources;
+			console.log('refreshing: ' + $scope.nodeId);
+			if ($scope.nodeId) {
+				ResourceService.resources($scope.nodeId).then(function(ret) {
+					$scope.resourceLabel = ret.label;
+					$scope.resources = ResourceService.withDividers(ret.children);
 				}).finally(function() {
-					console.log('refresh complete');
 					$scope.$broadcast('scroll.refreshComplete');
 				});
 			} else {
@@ -58,7 +41,7 @@
 			console.log('NodeResourcesCtrl: entering node view.');
 			if (info && info.stateParams && info.stateParams.node) {
 				var nodeId = parseInt(info.stateParams.node, 10);
-				$scope.id = nodeId;
+				$scope.nodeId = nodeId;
 			} else {
 				console.log('NodeResourcesCtrl: unable to determine node from view.');
 			}
@@ -67,7 +50,7 @@
 
 		$scope.$on('$ionicView.beforeLeave', function(ev, info) {
 			if (info.direction === 'forward') {
-				// we're going to the resources, keep the model in memory
+				// we're going deeper, keep the model in memory
 			} else {
 				console.log('NodeResourcesCtrl: leaving node view; cleaning up.');
 				resetModel();

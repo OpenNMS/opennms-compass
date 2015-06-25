@@ -66,6 +66,7 @@
 		$ionicConfigProvider.views.forwardCache(true);
 		$ionicConfigProvider.views.swipeBackEnabled(false);
 		$ionicConfigProvider.tabs.position('bottom');
+		$ionicConfigProvider.backButton.previousTitleText(false);
 
 		$cordovaInAppBrowserProvider.setDefaultOptions({
 			location:'no',

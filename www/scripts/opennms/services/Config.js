@@ -145,7 +145,11 @@
 					if (!url.endsWith('/')) {
 						url += '/';
 					}
+
 					if (fragment) {
+						if (fragment.startsWith('/')) {
+							fragment = fragment.slice(1);
+						}
 						url += fragment;
 					}
 				}
@@ -153,17 +157,15 @@
 			});
 		};
 
-		var _restUrl = function() {
-			return _url().then(function(url) {
-				if (url) {
-					if (!url.endsWith('/')) {
-						url += '/';
+		var _restUrl = function(fragment) {
+			return _url('rest/').then(function(url) {
+				if (fragment) {
+					if (fragment.startsWith('/')) {
+						fragment = fragment.slice(1);
 					}
-					url += 'rest/';
-					return url;
-				} else {
-					return undefined;
+					url += fragment;
 				}
+				return url;
 			});
 		};
 
@@ -182,6 +184,18 @@
 		var _password = function() {
 			return getSettings().then(function(settings) {
 				return settings.password;
+			});
+		};
+
+		var _rest = function(fragment) {
+			return _restUrl(fragment).then(function(url) {
+				return getSettings().then(function(settings) {
+					return {
+						url: url,
+						username: settings.username,
+						password: settings.password,
+					};
+				});
 			});
 		};
 
@@ -222,6 +236,7 @@
 			showAds: _showAds,
 			username: _username,
 			password: _password,
+			rest: _rest,
 			uuid: _uuid,
 			disableAds: _disableAds,
 			isServerConfigured: _isServerConfigured,
