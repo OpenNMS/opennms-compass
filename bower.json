@@ -25,7 +25,7 @@
     "async": "~1.2.1",
     "version_compare": "~0.0.2",
     "angular-debounce": "~1.0.3",
-    "backshift": "https://github.com/j-white/backshift.git#1.0.0",
+    "backshift": "https://github.com/j-white/backshift.git#master",
     "c3": "https://github.com/masayuki0812/c3.git#v0.4.11-rc1"
   },
   "devDependencies": {
