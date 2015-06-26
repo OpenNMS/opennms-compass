@@ -1,7 +1,10 @@
 (function() {
 	'use strict';
 
+	/* global Backshift: true */
+	/* global datePicker: true */
 	/* global ionic: true */
+	/* global moment: true */
 
 	angular.module('opennms.services.Resources', [
 		'ionic',
@@ -24,19 +27,13 @@
 			scope: {
 				resourceId: '=',
 				graphDef: '=',
-				range: '=?range',
+				range: '=range',
 			},
 			replace: true,
 			templateUrl: 'templates/onms-graph.html',
 			link: function($scope, element, attrs) {
 				$scope.width = getWidth();
 				$scope.height = getHeight();
-				if (!$scope.range.end) {
-					$scope.range.end = new Date();
-				}
-				if (!$scope.range.start) {
-					$scope.range.start = new Date($scope.range.end.getTime() - defaultRange); // 8 hours ago
-				}
 
 				$scope.editDate = function(type) {
 					var date;
@@ -60,12 +57,29 @@
 				};
 
 				$scope.createGraph = function() {
-					if (!$scope.ds || !$scope.graphModel) {
-						return;
+					if (!$scope.ds)                { return; }
+					if (!$scope.graphModel)        { return; }
+					if (!$scope.graphModel.series) { return; }
+					if (!$scope.graphModel.title)  { return; }
+					if (!$scope.range)             { return; }
+					if (!$scope.range.start)       { return; }
+					if (!$scope.range.end)         { return; }
+
+					if ($scope.graph && $scope.graph._last) {
+						if ($scope.graph._last.ds         === $scope.ds &&
+							$scope.graph._last.graphModel === $scope.graphModel &&
+							$scope.graph._last.range      === $scope.range) {
+							console.log('Graph is unchanged since last render.  Skipping.');
+							return;
+						}
 					}
 
+					var onmsGraphElement = angular.element(element).find('.graph').first();
+					onmsGraphElement.width($scope.width);
+					onmsGraphElement.height($scope.height);
+
 					var graph = new Backshift.Graph.C3({
-						element: angular.element(element).find('.graph')[0],
+						element: onmsGraphElement[0],
 						start: $scope.range.start.getTime(),
 						end: $scope.range.end.getTime(),
 						width: $scope.width,
@@ -78,10 +92,24 @@
 						verticalLabel: $scope.graphModel.verticalLabel,
 						exportIconSizeRatio: 0,
 					});
+
+					graph._last = {
+						ds: $scope.ds,
+						graphModel: $scope.graphModel,
+						range: $scope.range
+					};
+
 					if ($scope.graph && $scope.graph.destroy) {
 						$scope.graph.destroy();
+						delete $scope.graph._last.ds;
+						delete $scope.graph._last.graphModel;
+						delete $scope.graph._last.range;
+						delete $scope.graph._last;
 					}
+
 					$scope.graph = graph;
+
+					console.log('Displaying graph: ' + $scope.resourceId + ' / ' + $scope.graphModel.title);
 					graph.render();
 				};
 
@@ -96,8 +124,8 @@
 				};
 
 				$scope.$watch('range', function(newRange, oldRange) {
-					var startDate = moment(newRange.start),
-						endDate = moment(newRange.end);
+					var startDate = moment(newRange && newRange.start? newRange.start : 0),
+						endDate = moment(newRange && newRange.end? newRange.end : 0);
 					if (oldRange && newRange.start !== oldRange.start) {
 						if (startDate.isAfter(endDate)) {
 							$scope.range.end = startDate.add(1, 'hour').toDate();
@@ -122,33 +150,61 @@
 				};
 				$window.addEventListener('orientationchange', rotationListener, false);
 
-				Settings.rest('measurements').then(function(rest) {
-					$scope.rrdGraphConverter = new Backshift.Utilities.RrdGraphConverter({
-						graphDef: $scope.graphDef,
-						resourceId: $scope.resourceId,
-					});
-					$scope.graphModel = $scope.rrdGraphConverter.model;
-					$scope.ds = new Backshift.DataSource.OpenNMS({
-						url: rest.url,
-						username: rest.username,
-						password: rest.password,
-						metrics: $scope.graphModel.metrics,
-					});
+				$scope.$watch('graphDef', function(graphDef) {
+					if (graphDef && $scope.resourceId) {
+						$scope.rrdGraphConverter = new Backshift.Utilities.RrdGraphConverter({
+							graphDef: graphDef,
+							resourceId: $scope.resourceId,
+						});
+					}
+				});
 
+				$scope.$watch('rrdGraphConverter', function(rrdGraphConverter) {
+					if (rrdGraphConverter && rrdGraphConverter.model) {
+						$scope.graphModel = rrdGraphConverter.model;
+					}
+				});
+
+				$scope.$watch('graphModel', function(graphModel) {
+					if (graphModel && graphModel.metrics) {
+						Settings.rest('measurements').then(function(rest) {
+							$scope.ds = new Backshift.DataSource.OpenNMS({
+								url: rest.url,
+								username: rest.username,
+								password: rest.password,
+								metrics: graphModel.metrics,
+							});
+						});
+					}
+				});
+
+				$scope.$watch('ds', function() {
 					$scope.createGraph();
 				});
-				element.on('$destroy', function() {
-					//console.log('destroying graph: ' + $scope.graphModel.title);
+
+				var cleanUp = function() {
+					var resourceId = $scope.resourceId;
+					var graphTitle = ($scope.graphModel && $scope.graphModel.title)? $scope.graphModel.title : 'N/A';
+					console.log('Destroying graph: ' + resourceId + ' / ' + graphTitle);
 					if ($scope.graph) {
-						$scope.graph.destroy();
+						if ($scope.graph.destroy) {
+							$scope.graph.destroy();
+						}
+						delete $scope.graph._last.ds;
+						delete $scope.graph._last.graphModel;
+						delete $scope.graph._last.range;
+						delete $scope.graph._last;
 						$scope.graph = undefined;
 					}
 					$window.removeEventListener('orientationchange', rotationListener, false);
-				});
+				}
+
+				$scope.$on('$destroy', cleanUp);
+				element.on('$destroy', cleanUp);
 			}
 		};
 	})
-	.factory('ResourceService', function($rootScope, db, RestService, Settings) {
+	.factory('ResourceService', function($q, $rootScope, db, RestService, Settings) {
 		console.log('ResourceService: Initializing.');
 
 		var _graphs = {};
@@ -307,7 +363,7 @@
 			});
 		};
 
-		var addFavorite = function(resourceId, graphName) {
+		var addFavorite = function(resourceId, graphName, nodeId, nodeLabel) {
 			return _getFavoritesPrefix().then(function(prefix) {
 				var docId = prefix + ':' + [resourceId, graphName].join(':');
 
@@ -319,6 +375,8 @@
 					var doc = {
 						_id: docId,
 						isFavorite: true,
+						nodeId: nodeId,
+						nodeLabel: nodeLabel,
 					};
 					return db.put(doc).then(function(response) {
 						doc._rev = response.rev;

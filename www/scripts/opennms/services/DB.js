@@ -21,8 +21,15 @@
 		console.log('DB: Initializing.');
 
 		var db = pouchDB('compass');
-		db.allDocs().then(function(docs) {
+		db.allDocs({
+			include_docs: true
+		}).then(function(docs) {
+			/*
 			console.log('all docs: ' + angular.toJson(docs));
+			for (var i=0; i < docs.rows.length; i++) {
+				db.remove(docs.rows[i].doc);
+			} */
+			return docs;
 		});
 
 		return db;

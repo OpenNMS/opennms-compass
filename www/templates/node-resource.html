@@ -5,7 +5,7 @@
 	<ion-content delegate-handle="node-resources-scroll">
 		<ion-refresher pulling-text="Pull to Refresh..." on-refresh="refresh()"></ion-refresher>
 		<ion-list>
-			<ion-item class="item-text-wrap"><h3 class="title compass">24-Hour {{resource.label}}</h3></ion-item>
+			<ion-item class="item-text-wrap"><h3 class="title compass">{{resource.label? (resource.label + ' (1-Hour)'):''}}</h3></ion-item>
 			<span ng-if="children &amp;&amp; children.length &gt; 0">
 				<ion-item class="item-divider item-compass">
 					Sub-Resources

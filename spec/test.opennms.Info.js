@@ -20,6 +20,7 @@ describe('Info and Capabilities', function() {
 		$rootScope,
 		$timeout,
 		$httpBackend,
+		Capabilities,
 		Info;
 
 	beforeEach(function() {
@@ -46,6 +47,7 @@ describe('Info and Capabilities', function() {
 		$q           = $injector.get('$q');
 		$httpBackend = $injector.get('$httpBackend');
 		$rootScope   = $injector.get('$rootScope');
+		Capabilities = $injector.get('Capabilities');
 		Info         = $injector.get('Info');
 	}));
 

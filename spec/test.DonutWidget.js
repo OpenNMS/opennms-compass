@@ -4,6 +4,7 @@
 	/* global describe: true */
 	/* global beforeEach: true */
 	/* global afterEach: true */
+	/* global inject: true */
 	/* global it: true */
 	/* global xit: true */
 	/* global expect: true */
@@ -21,11 +22,16 @@
 			expect(cancelled).toBe(false);
 		};
 
-		var widget;
+		var widget, DonutWidget;
 
 		beforeEach(function() {
 			console.log('================================================================================');
+			module('opennms.DonutWidget');
 		});
+
+		beforeEach(inject(function($injector) {
+			DonutWidget = $injector.get('DonutWidget');
+		}));
 
 		afterEach(function() {
 			if (widget) {

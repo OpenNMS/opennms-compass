@@ -6,7 +6,7 @@
 	/* global moment: true */
 	/* global Backshift: true */
 
-	var defaultRange = 24 * 60 * 60 * 1000; // 1 day
+	var defaultRange = 1 * 60 * 60 * 1000; // 1 hour
 
 	angular.module('opennms.controllers.NodeResource', [
 		'ionic',
@@ -22,7 +22,7 @@
 		$scope.range = {
 		};
 		$scope.range.end = new Date();
-		$scope.range.start = new Date($scope.range.end.getTime() - defaultRange); // 24 hours ago;
+		$scope.range.start = new Date($scope.range.end.getTime() - defaultRange);
 
 		$scope.refresh = function() {
 			console.log('refreshing: ' + $scope.resourceId);
@@ -84,7 +84,7 @@
 					return fav.isFavorite || false;
 				});
 			} else {
-				ResourceService.favorite($scope.resourceId, graph.name).then(function(fav) {
+				ResourceService.favorite($scope.resourceId, graph.name, $scope.nodeId, $scope.node.label).then(function(fav) {
 					$scope.favorites[graph.name] = fav;
 					return fav.isFavorite || false;
 				});
