@@ -132,7 +132,7 @@
 
 		$rootScope.$on('opennms.product.updated', function(ev, product) {
 			if (eventListeners['opennms.product.updated']) {
-				console.log('util.onProductUpdated: ' + angular.toJson(product));
+				console.log('util.onProductUpdated: ' + product.id);
 				$rootScope.$evalAsync(function() {
 					var i, len=eventListeners['opennms.product.updated'].length;
 					for (i=0; i < len; i++) {
