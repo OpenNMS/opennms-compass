@@ -24,7 +24,7 @@
 					Graphs
 				</ion-item>
 			</span>
-			<span class="graphs" ng-repeat="graph in graphDefinitions track by graph.name">
+			<span class="graphs" ng-repeat="graph in graphDefinitions track by graph.name" id="graph-{{graph.name}}">
 				<ion-item class="item item-icon-left item-icon-right item-divider item-compass" ng-click="toggleOpen(graph)">
 					<i ng-class="'icon ' + (isOpen(graph.name)? 'ion-arrow-down-b':'ion-arrow-right-b')"></i>
 					{{graph.title}}

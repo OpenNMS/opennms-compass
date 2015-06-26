@@ -45,10 +45,12 @@
 		};
 
 		var showLoading = function() {
+			/*
 			$ionicLoading.show({
 				templateUrl: 'templates/loading.html',
 				hideOnStateChange: true,
 			});
+*/
 		};
 
 		var hideLoading = function() {

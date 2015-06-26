@@ -82,9 +82,26 @@
 			return deferred.promise;
 		};
 
+		var getNodes = function(params) {
+			return RestService.getXml('/nodes', params).then(function(results) {
+				var ret = [];
+				if (results && results.nodes && results.nodes.node) {
+					var nodes = results.nodes.node;
+					if (!angular.isArray(nodes)) {
+						nodes = [nodes];
+					}
+					for (var i=0; i < nodes.length; i++) {
+						ret.push(new Node(nodes[i]));
+					}
+				}
+				return ret;
+			});
+		};
+
 		return {
 			search: searchNodes,
 			get: getNode,
+			nodes: getNodes,
 			setLocation: setLocation,
 		};
 	});

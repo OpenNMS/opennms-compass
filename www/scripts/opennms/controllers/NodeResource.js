@@ -15,8 +15,34 @@
 		'opennms.services.Resources',
 		'opennms.services.Settings',
 	])
-	.controller('NodeResourceCtrl', function($q, $scope, NodeService, ResourceService) {
+	.controller('NodeResourceCtrl', function($q, $scope, $timeout, $ionicScrollDelegate, NodeService, ResourceService) {
 		console.log('NodeResourceCtrl: initializing.');
+
+		var findElementById = function(id) {
+				var elm, scrollEl, position = 0;
+				elm = document.getElementById(id);
+				if (elm) {
+						scrollEl = angular.element(elm);
+						while (scrollEl) {
+								if (scrollEl.hasClass('scroll-content')) {
+										break;
+								}
+								var offsetTop = scrollEl[0].offsetTop,
+										scrollTop = scrollEl[0].scrollTop,
+										clientTop = scrollEl[0].clientTop;
+								position += (offsetTop - scrollTop + clientTop);
+								scrollEl = scrollEl.parent();
+						}
+						console.log('offset='+position);
+						if (position < 10) {
+								return 0;
+						}
+						return position;
+				} else {
+						console.log("can't find element " + id);
+						return 0;
+				}
+		};
 
 		$scope.favorites = {};
 		$scope.range = {
@@ -102,6 +128,11 @@
 			} else {
 				//console.log('showing: ' + angular.toJson(graph));
 				$scope.shown = graph;
+				var position = findElementById('graph-' + graph.name);
+				console.log('Found element position: ' + position);
+				$timeout(function() {
+					$ionicScrollDelegate.$getByHandle('node-resources-scroll').scrollTo(0, position);
+				}, 500);
 			}
 		};
 
