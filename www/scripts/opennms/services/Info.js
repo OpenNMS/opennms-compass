@@ -58,15 +58,9 @@
 			validateVersion: function(version) {
 				return VersionCompare.gte($injector.get('info').version, version);
 			},
-			canSetLocation: function() {
-				return VersionCompare.gte($injector.get('info').version, '15.0.2');
-			},
 			isMeridian: function() {
 				return $injector.get('info').packageName === 'meridian';
 			},
-			hasOutageSummaries: function() {
-				return VersionCompare.gte($injector.get('info').version, '14.0.3');
-			}
 		};
 	})
 	;

@@ -8,15 +8,15 @@
 		'angularLocalStorage',
 		'opennms.services.Analytics',
 		'opennms.services.Availability',
+		'opennms.services.Capabilities',
 		'opennms.services.Errors',
 		'opennms.services.Events',
-		'opennms.services.Info',
 		'opennms.services.Nodes',
 		'opennms.services.Outages',
 		'opennms.services.Resources',
 		'opennms.services.Util',
 	])
-	.controller('NodeCtrl', function($q, $scope, $timeout, $window, $cordovaGeolocation, $ionicLoading, $ionicPopup, storage, util, Analytics, AvailabilityService, Errors, EventService, Info, NodeService, OutageService, ResourceService) {
+	.controller('NodeCtrl', function($q, $scope, $timeout, $window, $cordovaGeolocation, $ionicLoading, $ionicPopup, storage, util, Analytics, AvailabilityService, Capabilities, Errors, EventService, NodeService, OutageService, ResourceService) {
 		console.log('NodeCtrl: initializing.');
 
 		$scope.availabilityColor = function(value) {
@@ -73,7 +73,7 @@
 				$scope.hasAddress = true;
 			}
 
-			$scope.canUpdateGeolocation = Info.canSetLocation();
+			$scope.canUpdateGeolocation = Capabilities.setLocation();
 
 			var avail = AvailabilityService.node($scope.node.id).then(function(results) {
 				//console.log('AvailabilityService got results:',results);
@@ -154,6 +154,7 @@
 			}
 		};
 
+		$scope.showGraphButton = Capabilities.graphs();
 		$scope.graphs = function() {
 			ResourceService.resources($scope.node.id).then(function(res) {
 				console.log('graphs: got res ' + angular.toJson(res));
@@ -164,6 +165,10 @@
 			if ($scope.node && $scope.node.id) {
 				$scope.refreshNode();
 			}
+		});
+		util.onInfoUpdated(function(info) {
+			$scope.showGraphButton = Capabilities.graphs();
+			console.log('$scope.showGraphButton = ' + $scope.showGraphButton);
 		});
 		util.onSettingsUpdated(function(newSettings, oldSettings, changedSettings) {
 			if (timer && changedSettings && changedSettings.refreshInterval) {

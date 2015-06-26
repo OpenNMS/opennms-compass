@@ -3,7 +3,7 @@
 		<ion-nav-back-button class="button-compass button-clear"></ion-nav-back-button>
 		<h1 class="title">{{node.label}}</h1>
 		<ion-nav-buttons side="secondary">
-			<button class="button button-compass button-clear" nav-direction="forward" ui-sref="node-resources({node: node.id})"><i class="icon ion-stats-bars"></i></button>
+			<button class="button button-compass button-clear" nav-direction="forward" ui-sref="node-resources({node: node.id})" ng-if="showGraphButton"><i class="icon ion-stats-bars"></i></button>
 		</ion-nav-buttons>
 	</ion-nav-bar>
 	<ion-content>

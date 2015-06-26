@@ -9,7 +9,7 @@
 /*global xit: true */
 /*global xdescribe: true */
 
-describe('opennms.Info', function() {
+describe('Info and Capabilities', function() {
 	'use strict';
 
 	var doNothing = function() {
@@ -30,8 +30,9 @@ describe('opennms.Info', function() {
 	});
 
 	beforeEach(function() {
-		module('opennms.services.Rest');
+		module('opennms.services.Capabilities');
 		module('opennms.services.Info');
+		module('opennms.services.Rest');
 	});
 
 	beforeEach(module(function($provide) {
@@ -63,8 +64,9 @@ describe('opennms.Info', function() {
 		expect(Info.validateVersion('14.0.3')).toBe(false);
 		expect(Info.validateVersion('15.0.0')).toBe(false);
 		expect(Info.validateVersion('15.0.2')).toBe(false);
-		expect(Info.canSetLocation()).toBe(false);
-		expect(Info.hasOutageSummaries()).toBe(false);
+		expect(Capabilities.graphs()).toBe(false);
+		expect(Capabilities.outageSummaries()).toBe(false);
+		expect(Capabilities.setLocation()).toBe(false);
 	});
 
 	it('OpenNMS 14.0.2', function() {
@@ -80,8 +82,9 @@ describe('opennms.Info', function() {
 		expect(Info.validateVersion('14.0.3')).toBe(false);
 		expect(Info.validateVersion('15.0.0')).toBe(false);
 		expect(Info.validateVersion('15.0.2')).toBe(false);
-		expect(Info.canSetLocation()).toBe(false);
-		expect(Info.hasOutageSummaries()).toBe(false);
+		expect(Capabilities.graphs()).toBe(false);
+		expect(Capabilities.outageSummaries()).toBe(false);
+		expect(Capabilities.setLocation()).toBe(false);
 	});
 
 	it('OpenNMS 14.0.3', function() {
@@ -97,8 +100,9 @@ describe('opennms.Info', function() {
 		expect(Info.validateVersion('14.0.3')).toBe(true);
 		expect(Info.validateVersion('15.0.0')).toBe(false);
 		expect(Info.validateVersion('15.0.2')).toBe(false);
-		expect(Info.canSetLocation()).toBe(false);
-		expect(Info.hasOutageSummaries()).toBe(true);
+		expect(Capabilities.graphs()).toBe(false);
+		expect(Capabilities.outageSummaries()).toBe(true);
+		expect(Capabilities.setLocation()).toBe(false);
 	});
 
 	it('OpenNMS 15.0.0', function() {
@@ -114,8 +118,9 @@ describe('opennms.Info', function() {
 		expect(Info.validateVersion('14.0.3')).toBe(true);
 		expect(Info.validateVersion('15.0.0')).toBe(true);
 		expect(Info.validateVersion('15.0.2')).toBe(false);
-		expect(Info.canSetLocation()).toBe(false);
-		expect(Info.hasOutageSummaries()).toBe(true);
+		expect(Capabilities.graphs()).toBe(false);
+		expect(Capabilities.outageSummaries()).toBe(true);
+		expect(Capabilities.setLocation()).toBe(false);
 	});
 
 	it('OpenNMS 15.0.2', function() {
@@ -131,8 +136,9 @@ describe('opennms.Info', function() {
 		expect(Info.validateVersion('14.0.3')).toBe(true);
 		expect(Info.validateVersion('15.0.0')).toBe(true);
 		expect(Info.validateVersion('15.0.2')).toBe(true);
-		expect(Info.canSetLocation()).toBe(true);
-		expect(Info.hasOutageSummaries()).toBe(true);
+		expect(Capabilities.graphs()).toBe(false);
+		expect(Capabilities.outageSummaries()).toBe(true);
+		expect(Capabilities.setLocation()).toBe(true);
 	});
 
 	it('OpenNMS 16.0.0', function() {
@@ -148,8 +154,9 @@ describe('opennms.Info', function() {
 		expect(Info.validateVersion('14.0.3')).toBe(true);
 		expect(Info.validateVersion('15.0.0')).toBe(true);
 		expect(Info.validateVersion('15.0.2')).toBe(true);
-		expect(Info.canSetLocation()).toBe(true);
-		expect(Info.hasOutageSummaries()).toBe(true);
+		expect(Capabilities.graphs()).toBe(true);
+		expect(Capabilities.outageSummaries()).toBe(true);
+		expect(Capabilities.setLocation()).toBe(true);
 	});
 
 	it('should validate for Meridian', function() {
@@ -161,8 +168,9 @@ describe('opennms.Info', function() {
 			packageDescription: 'OpenNMS Meridian'
 		});
 		expect(Info.validateVersion('2015.1.0')).toBe(true);
-		expect(Info.canSetLocation()).toBe(true);
-		expect(Info.hasOutageSummaries()).toBe(true);
+		expect(Capabilities.graphs()).toBe(false);
+		expect(Capabilities.outageSummaries()).toBe(true);
+		expect(Capabilities.setLocation()).toBe(true);
 	});
 
 });

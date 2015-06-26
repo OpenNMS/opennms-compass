@@ -15,145 +15,6 @@
 		'opennms.services.Resources',
 		'opennms.services.Settings',
 	])
-	.directive('onmsGraph', function($timeout, $window, Settings) {
-		var getWidth = function() {
-			return $window.innerWidth;
-		};
-		var getHeight = function() {
-			if ($window.orientation % 180 === 0) {
-				return $window.innerWidth;
-			} else {
-				return $window.innerHeight - 140;
-			}
-		};
-		return {
-			scope: {
-				resourceId: '=',
-				graphDef: '=',
-				range: '=?range',
-			},
-			replace: true,
-			templateUrl: 'templates/onms-graph.html',
-			link: function($scope, element, attrs) {
-				$scope.width = getWidth();
-				$scope.height = getHeight();
-				if (!$scope.range.end) {
-					$scope.range.end = new Date();
-				}
-				if (!$scope.range.start) {
-					$scope.range.start = new Date($scope.range.end.getTime() - defaultRange); // 8 hours ago
-				}
-
-				$scope.editDate = function(type) {
-					var date;
-					if (type === 'start') {
-						date = $scope.range.start;
-					} else {
-						date = $scope.range.end;
-					}
-					datePicker.show({
-						date: date,
-						mode: 'datetime',
-					}, function(newDate) {
-						$scope.$evalAsync(function() {
-							if (type === 'start') {
-								$scope.range.start = newDate;
-							} else {
-								$scope.range.end = newDate;
-							}
-						});
-					});
-				};
-
-				$scope.createGraph = function() {
-					if (!$scope.ds || !$scope.graphModel) {
-						return;
-					}
-
-					var graph = new Backshift.Graph.C3({
-						element: angular.element(element).find('.graph')[0],
-						start: $scope.range.start.getTime(),
-						end: $scope.range.end.getTime(),
-						width: $scope.width,
-						height: $scope.height,
-						interactive: false,
-						dataSource: $scope.ds,
-						series: $scope.graphModel.series,
-						step: true,
-						title: $scope.graphModel.title,
-						verticalLabel: $scope.graphModel.verticalLabel,
-						exportIconSizeRatio: 0,
-					});
-					if ($scope.graph && $scope.graph.destroy) {
-						$scope.graph.destroy();
-					}
-					$scope.graph = graph;
-					graph.render();
-				};
-
-				$scope.redraw = function() {
-					$scope.dirty = true;
-					$timeout(function() {
-						if ($scope.dirty) {
-							$scope.dirty = false;
-							$scope.createGraph();
-						}
-					}, 50);
-				};
-
-				$scope.$watch('range', function(newRange, oldRange) {
-					var startDate = moment(newRange.start),
-						endDate = moment(newRange.end);
-					if (oldRange && newRange.start !== oldRange.start) {
-						if (startDate.isAfter(endDate)) {
-							$scope.range.end = startDate.add(1, 'hour').toDate();
-						}
-					} else if (oldRange && newRange.end !== oldRange.end) {
-						if (endDate.isBefore(startDate)) {
-							$scope.range.start = endDate.subtract(1, 'hour').toDate();
-						}
-					}
-					$scope.redraw();
-				});
-				$scope.$watch('width', $scope.redraw);
-				$scope.$watch('height', $scope.redraw);
-
-				var rotationListener = function(ev) {
-					if ($scope.graph) {
-						$scope.$evalAsync(function() {
-							$scope.width = getWidth();
-							$scope.height = getHeight();
-						});
-					}
-				};
-				$window.addEventListener('orientationchange', rotationListener, false);
-
-				Settings.rest('measurements').then(function(rest) {
-					$scope.rrdGraphConverter = new Backshift.Utilities.RrdGraphConverter({
-						graphDef: $scope.graphDef,
-						resourceId: $scope.resourceId,
-					});
-					$scope.graphModel = $scope.rrdGraphConverter.model;
-					$scope.ds = new Backshift.DataSource.OpenNMS({
-						url: rest.url,
-						username: rest.username,
-						password: rest.password,
-						metrics: $scope.graphModel.metrics,
-					});
-
-					$scope.createGraph();
-				});
-				element.on('$destroy', function() {
-					//console.log('destroying graph: ' + $scope.graphModel.title);
-					if ($scope.graph) {
-						$scope.graph.destroy();
-						$scope.graph = undefined;
-					}
-					$window.removeEventListener('orientationchange', rotationListener, false);
-				});
-			}
-		};
-	})
 	.controller('NodeResourceCtrl', function($q, $scope, NodeService, ResourceService) {
 		console.log('NodeResourceCtrl: initializing.');
 
@@ -171,6 +32,20 @@
 				});
 			}
 			if ($scope.resourceId) {
+				ResourceService.favorites().then(function(favorites) {
+					var i, favorite,
+						scopeFavorites = {},
+						length = favorites.length;
+
+					for (i=0; i < length; i++) {
+						favorite = favorites[i];
+						if (favorite.resourceId === $scope.resourceId) {
+							scopeFavorites[favorite.graphName] = favorite;
+						}
+					}
+					console.log('got favorites: ' + angular.toJson(scopeFavorites));
+					$scope.favorites = scopeFavorites;
+				});
 				ResourceService.graphNames($scope.resourceId).then(function(graphs) {
 					var promises = [], i, length = graphs.length;
 					for (i=0; i < length; i++) {
@@ -204,9 +79,15 @@
 			ev.preventDefault();
 			ev.stopPropagation();
 			if ($scope.isFavorite(graph.name)) {
-				$scope.favorites[graph.name] = false;
+				ResourceService.unfavorite($scope.resourceId, graph.name).then(function(fav) {
+					delete $scope.favorites[graph.name];
+					return fav.isFavorite || false;
+				});
 			} else {
-				$scope.favorites[graph.name] = true;
+				ResourceService.favorite($scope.resourceId, graph.name).then(function(fav) {
+					$scope.favorites[graph.name] = fav;
+					return fav.isFavorite || false;
+				});
 			}
 		};
 

@@ -81,12 +81,12 @@
 			var o = angular.toJson(oldSettings),
 				n = angular.toJson(newSettings);
 
-			console.log('Settings.saveSettings: Old Settings: ' + o);
-			console.log('Settings.saveSettings: New Settings: ' + n);
 			if (o === n) {
-				console.log('Settings.saveSettings: settings are unchanged.');
+				//console.log('Settings.saveSettings: settings are unchanged.');
 			} else {
 				console.log('Settings.saveSettings: settings have changed.  Updating.');
+				console.log('Settings.saveSettings: Old Settings: ' + o);
+				console.log('Settings.saveSettings: New Settings: ' + n);
 				storage.set('opennms.settings', newSettings);
 				$scope.settings = newSettings;
 
@@ -236,6 +236,17 @@
 			return $q.when($injector.get('config.build.build'));
 		};
 
+		var _server = function() {
+			return getSettings().then(function(settings) {
+				return {
+					name: 'default',
+					url: settings.server,
+					username: settings.username,
+					password: settings.password,
+				};
+			});
+		};
+
 		return {
 			get: getSettings,
 			set: saveSettings,
@@ -246,6 +257,7 @@
 			showAds: _showAds,
 			username: _username,
 			password: _password,
+			server: _server,
 			rest: _rest,
 			uuid: _uuid,
 			disableAds: _disableAds,
