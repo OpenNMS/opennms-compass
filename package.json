@@ -45,19 +45,22 @@
     "shelljs": "*"
   },
   "cordovaPlugins": [
+    "com.ionic.keyboard",
+    "cordova-plugin-extension",
+    "cordova-plugin-appavailability",
     "cordova-plugin-console",
+    "cordova-plugin-datepicker",
     "cordova-plugin-geolocation",
+    "https://github.com/RangerRick/google-analytics-plugin",
     "cordova-plugin-inappbrowser",
     "cordova-plugin-network-information",
     "cordova-plugin-splashscreen",
     "cordova-plugin-statusbar",
     "cordova-plugin-whitelist",
-    "cc.fovea.cordova.purchase",
-    "cordova-plugin-admobpro",
-    "cordova-plugin-extension",
-    "cordova-plugin-google-analytics",
-    "com.ionic.keyboard",
-    "cordova-plugin-appavailability",
+    {
+      "locator": "https://github.com/bez4pieci/Phonegap-Cookies-Plugin",
+      "id": "com.bez4pieci.cookies"
+    },
     {
       "locator": "https://github.com/RangerRick/cordova-certificate-plugin.git",
       "id": "com.raccoonfink.cordova.plugins.certificates"
@@ -70,12 +73,8 @@
       "locator": "https://github.com/apache/cordova-plugin-file",
       "id": "org.apache.cordova.file"
     },
-    "cordova-plugin-googleplayservices",
-    {
-      "locator": "https://github.com/bez4pieci/Phonegap-Cookies-Plugin",
-      "id": "com.bez4pieci.cookies"
-    },
-    "cordova-plugin-datepicker"
+    "cordova-plugin-admobpro",
+    "cordova-plugin-purchase"
   ],
   "cordovaPlatforms": [
     {

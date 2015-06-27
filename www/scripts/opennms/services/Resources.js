@@ -197,7 +197,7 @@
 						$scope.graph = undefined;
 					}
 					$window.removeEventListener('orientationchange', rotationListener, false);
-				}
+				};
 
 				$scope.$on('$destroy', cleanUp);
 				element.on('$destroy', cleanUp);

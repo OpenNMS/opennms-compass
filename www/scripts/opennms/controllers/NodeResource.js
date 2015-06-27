@@ -128,10 +128,11 @@
 			} else {
 				//console.log('showing: ' + angular.toJson(graph));
 				$scope.shown = graph;
-				var position = findElementById('graph-' + graph.name);
-				console.log('Found element position: ' + position);
 				$timeout(function() {
-					$ionicScrollDelegate.$getByHandle('node-resources-scroll').scrollTo(0, position);
+					$scope.$broadcast('scroll.refreshComplete');
+					var position = findElementById('graph-' + graph.name);
+					console.log('Found element position: ' + position);
+					$ionicScrollDelegate.$getByHandle('node-resources-scroll').scrollTo(0, position, true);
 				}, 500);
 			}
 		};
