@@ -1,3 +1,14 @@
+<a name="2.1.0"</a>
+## 2.1.0 (2015-06-27)
+
+
+#### Features
+
+
+* **graphs**  add support for showing graphs from 16.0.0 and higher ((487cbc2b))
+
+
+
 <a name="2.0.6"</a>
 ## 2.0.6 (2015-06-04)
 
