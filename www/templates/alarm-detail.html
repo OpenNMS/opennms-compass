@@ -31,12 +31,12 @@
 				<div class="col">{{alarm.count}}</div>
 			</ion-item>
 			<ion-item class="row" ng-if="alarm.nodeLabel">
-				<div class="col col-33" ng-click="modals.node(alarm.nodeId)">Node <i class="icon ion-link"></i></div>
-				<div class="col" ng-click="modals.node(alarm.nodeId)">{{alarm.nodeLabel}}</div>
+				<div class="col col-33" >Node</div>
+				<div class="col">{{alarm.nodeLabel}}</div>
 			</ion-item>
 			<ion-item class="row" ng-if="alarm.ipAddress">
-				<div class="col col-33" ng-click="modals.node(alarm.nodeId)">Interface</div>
-				<div class="col" ng-click="modals.node(alarm.nodeId)">{{alarm.ipAddress}}</div>
+				<div class="col col-33">Interface</div>
+				<div class="col">{{alarm.ipAddress}}</div>
 			</ion-item>
 			<ion-item class="row">
 				<div class="col col-33">First Event</div>

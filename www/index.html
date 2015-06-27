@@ -13,6 +13,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta http-equiv="Content-Security-Policy" content="default-src *; style-src 'self' 'unsafe-inline'; script-src * 'self' 'unsafe-inline' 'unsafe-eval'">
 
+<link rel="stylesheet" href="lib/ionic-datepicker/dist/style.css" />
 <link rel="stylesheet" href="css/opennms.min.css" />
 
 <!-- build:shim scripts/shim.js -->
@@ -21,9 +22,10 @@
 <script src="lib/es5-shim/es5-shim.js"></script>
 <!-- endbuild -->
 
-<!-- build:thirdparty scripts/3rdparty.js -->
 <script src="lib/jquery/dist/jquery.min.js"></script>
-<script src="lib/jquery-visible/jquery.visible.min.js"></script>
+
+<!-- build:thirdparty scripts/3rdparty.js -->
+<script src="lib/jquery-visible/jquery.visible.js"></script>
 <script src="lib/async/lib/async.js"></script>
 <script src="lib/momentjs/moment.js"></script>
 <script src="lib/version_compare/version_compare.js"></script>
@@ -45,13 +47,18 @@
 
 <!-- IE Fix for HTML5 Tags -->
 <!--[if lt IE 9]>
-<script src="lib/html5shiv/dist/html5shiv.js"></script>
+<script src="lib/html5shiv/dist/html5shiv.min.js"></script>
 <![endif]-->
 
 <title>OpenNMS Compass</title>
 </head>
 <body class="antialiased off-canvas hide-extras" ng-class="themeType + ' ' + (landscape?'landscape':'portrait')" ng-cloak animation="no-animation">
 	<ion-nav-view></ion-nav-view>
+
+	<!-- build:db scripts/db.js -->
+	<script src="lib/pouchdb/dist/pouchdb.js"></script>
+	<script src="lib/pouchdb-find/dist/pouchdb.find.js"></script>
+	<!-- endbuild -->
 
 	<!-- build:angular scripts/angular.js -->
 	<script src="lib/angular/angular.js"></script>
@@ -65,11 +72,17 @@
 	<script src="lib/angular-debounce/dist/angular-debounce.js"></script>
 	<script src="lib/angularLocalStorage/src/angularLocalStorage.js"></script>
 	<script src="lib/ng-resize/ngresize.js"></script>
+	<script src="lib/ionic-datepicker/dist/templates.js"></script>
+	<script src="lib/ionic-datepicker/dist/ionic-datepicker.js"></script>
+	<script src="lib/angular-pouchdb/angular-pouchdb.js"></script>
 	<!-- endbuild -->
 
     <!-- build:charts scripts/charts.js -->
 	<script src="lib/d3/d3.js"></script>
 	<script src="lib/d3pie/d3pie/d3pie.js"></script>
+	<script src="lib/c3/c3.js"></script>
+	<script src="lib/backshift/dist/backshift.js"></script>
+	<script src="lib/backshift/dist/backshift.onms.js"></script>
     <!-- endbuild -->
 
 	<!-- build:models scripts/models.js -->
@@ -101,13 +114,18 @@
 	<script src="scripts/opennms/main.js"></script>
 	<script src="scripts/opennms/controllers/Alarms.js"></script>
 	<script src="scripts/opennms/controllers/Dashboard.js"></script>
+	<script src="scripts/opennms/controllers/Node.js"></script>
+	<script src="scripts/opennms/controllers/NodeResource.js"></script>
+	<script src="scripts/opennms/controllers/NodeResources.js"></script>
 	<script src="scripts/opennms/controllers/Nodes.js"></script>
 	<script src="scripts/opennms/controllers/Settings.js"></script>
 	<script src="scripts/opennms/services/Ads.js"></script>
 	<script src="scripts/opennms/services/Alarms.js"></script>
 	<script src="scripts/opennms/services/Analytics.js"></script>
 	<script src="scripts/opennms/services/Availability.js"></script>
+	<script src="scripts/opennms/services/Capabilities.js"></script>
 	<script src="scripts/opennms/services/Config.js"></script>
+	<script src="scripts/opennms/services/DB.js"></script>
 	<script src="scripts/opennms/services/Errors.js"></script>
 	<script src="scripts/opennms/services/Events.js"></script>
 	<script src="scripts/opennms/services/IAP.js"></script>
@@ -115,6 +133,7 @@
 	<script src="scripts/opennms/services/Modals.js"></script>
 	<script src="scripts/opennms/services/Nodes.js"></script>
 	<script src="scripts/opennms/services/Outages.js"></script>
+	<script src="scripts/opennms/services/Resources.js"></script>
 	<script src="scripts/opennms/services/Rest.js"></script>
 	<script src="scripts/opennms/services/Util.js"></script>
 	<!-- endbuild -->

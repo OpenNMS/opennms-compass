@@ -20,6 +20,9 @@
 		'opennms.services.Util',
 		'opennms.controllers.Alarms',
 		'opennms.controllers.Dashboard',
+		'opennms.controllers.Node',
+		'opennms.controllers.NodeResource',
+		'opennms.controllers.NodeResources',
 		'opennms.controllers.Nodes',
 		'opennms.controllers.Settings',
 	])
@@ -30,17 +33,32 @@
 		.state('dashboard', {
 			url: '/dashboard',
 			templateUrl: 'templates/dashboard.html',
-			controller: 'DashboardCtrl'
+			controller: 'DashboardCtrl',
 		})
 		.state('alarms', {
 			url: '/alarms',
 			templateUrl: 'templates/alarms.html',
-			controller: 'AlarmsCtrl'
+			controller: 'AlarmsCtrl',
 		})
 		.state('nodes', {
 			url: '/nodes',
 			templateUrl: 'templates/nodes.html',
-			controller: 'NodesCtrl'
+			controller: 'NodesCtrl',
+		})
+		.state('node-detail', {
+			url: '/nodes/:node',
+			templateUrl: 'templates/node-detail.html',
+			controller: 'NodeCtrl',
+		})
+		.state('node-resources', {
+			url: '/nodes/:node/resources',
+			templateUrl: 'templates/node-resources.html',
+			controller: 'NodeResourcesCtrl',
+		})
+		.state('node-resource', {
+			url: '/nodes/:node/resource/:resource',
+			templateUrl: 'templates/node-resource.html',
+			controller: 'NodeResourceCtrl',
 		})
 		;
 
@@ -48,6 +66,7 @@
 		$ionicConfigProvider.views.forwardCache(true);
 		$ionicConfigProvider.views.swipeBackEnabled(false);
 		$ionicConfigProvider.tabs.position('bottom');
+		$ionicConfigProvider.backButton.previousTitleText(false);
 
 		$cordovaInAppBrowserProvider.setDefaultOptions({
 			location:'no',

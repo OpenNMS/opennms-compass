@@ -24,16 +24,18 @@
 	angular.module('opennms.controllers.Dashboard', [
 		'ionic',
 		'ngResize',
+		'opennms.DonutWidget',
 		'opennms.services.Alarms',
 		'opennms.services.Availability',
 		'opennms.services.Errors',
 		'opennms.services.Info',
 		'opennms.services.Modals',
 		'opennms.services.Outages',
+		'opennms.services.Resources',
 		'opennms.services.Settings',
 		'opennms.services.Util',
 	])
-	.controller('DashboardCtrl', function($q, $rootScope, $scope, $interval, $timeout, $state, $document, $window, $ionicLoading, $ionicPopup, $ionicSlideBoxDelegate, resize, AlarmService, AvailabilityService, Errors, Info, Modals, OutageService, Settings, util) {
+	.controller('DashboardCtrl', function($q, $rootScope, $scope, $interval, $timeout, $state, $document, $window, $ionicLoading, $ionicPopup, $ionicSlideBoxDelegate, resize, AlarmService, AvailabilityService, DonutWidget, Errors, Info, Modals, OutageService, ResourceService, Settings, util) {
 		console.log('DashboardCtrl: Initializing.');
 
 		var updateArrows = function(height) {
@@ -90,14 +92,14 @@
 		outageDonut.onRedraw = onWidget;
 		alarmDonut.onRedraw = onWidget;
 
-		$scope.refreshSlide = function(index) {
-			$scope.currentSlide = index;
+		$scope.refreshDonutSlide = function(index) {
+			$scope.currentDonutSlide = index;
 			if (index === 0) {
 				outageDonut.refresh();
 			} else if (index === 1) {
 				alarmDonut.refresh();
 			} else {
-				console.log('WTF?  slide=' + index);
+				console.log('WTF?  DonutSlide=' + index);
 			}
 		};
 
@@ -135,6 +137,39 @@
 			}
 		};
 
+		var refreshFavorites = function() {
+			console.log('refreshing favorites');
+			$scope.graphs = {};
+			$scope.favoriteGraphs = [];
+			return ResourceService.favorites().then(function(favs) {
+				var i, favorite,
+					length = favs.length,
+					graphPromises = [];
+
+				for (i=0; i < length; i++) {
+					favorite = favs[i];
+					graphPromises.push(ResourceService.graph(favorite.graphName));
+				}
+
+				$q.all(graphPromises).then(function(gds) {
+					var graphDefs = {}, def;
+					length = gds.length;
+					for (i=0; i < length; i++) {
+						def = gds[i];
+						graphDefs[def.name] = def;
+					}
+
+					$scope.currentGraphSlide = 0;
+					$scope.graphs = graphDefs;
+					$scope.favoriteGraphs = favs;
+
+					var delegate = $ionicSlideBoxDelegate.$getByHandle('donut-slide-box');
+					delegate.slide($scope.currentGraphSlide);
+					delegate.update();
+				});
+			});
+		};
+
 		var refreshing = false;
 		$scope.refreshData = function() {
 			if (refreshing) {
@@ -146,14 +181,18 @@
 
 			// if we have never loaded before, show the loading thingy
 			if (!$scope.loaded) {
-				$ionicLoading.show();
+				$ionicLoading.show({
+					templateUrl: 'templates/loading.html',
+					hideOnStateChange: true,
+				});
 			}
 
 			var outagePromise = OutageService.get();
 			var availabilityPromise = AvailabilityService.availability();
 			var alarmPromise = AlarmService.severities();
+			var favoritesPromise = refreshFavorites();
 
-			$q.all([outagePromise, alarmPromise, availabilityPromise])['finally'](function() {
+			$q.all([outagePromise, alarmPromise, availabilityPromise, favoritesPromise])['finally'](function() {
 				$timeout(function() {
 					refreshing = false;
 					$ionicLoading.hide();
@@ -241,7 +280,33 @@
 			});
 		};
 
-		$scope.goToSlide = function(slide) {
+		$scope.unfavorite = function(favorite) {
+			var graphTitle = ($scope.graphs && $scope.graphs[favorite.graphName])? $scope.graphs[favorite.graphName].title : 'graph';
+			return $ionicPopup.confirm({
+				title: 'Remove Favorite',
+				template: 'Remove ' + graphTitle + ' from favorites?',
+				okType: 'button-compass',
+			}).then(function(confirmed) {
+				if (confirmed) {
+					return ResourceService.unfavorite(favorite.resourceId, favorite.graphName).then(function() {
+						return refreshFavorites();
+					});
+				} else {
+					return $q.reject('Canceled favorite removal.');
+				}
+			});
+		};
+
+		$scope.refreshGraphSlide = function(index) {
+			$scope.currentGraphSlide = index;
+		};
+
+		$scope.shouldRenderGraph = function(index) {
+			//return $scope.currentGraphSlide === index;
+			return ($scope.currentGraphSlide >= (index - 1) && $scope.currentGraphSlide <= (index + 1));
+		};
+
+		$scope.goToDonutSlide = function(slide) {
 			$ionicSlideBoxDelegate.$getByHandle('donut-slide-box').slide(slide);
 		};
 
@@ -249,11 +314,17 @@
 		$scope.modals = Modals;
 		$scope.e = Errors;
 		$scope.errors = [];
-		$scope.currentSlide = 0;
+		$scope.currentDonutSlide = 0;
+		$scope.currentGraphSlide = 0;
 		$scope.landscape = true;
 		Settings.getServerName().then(function(serverName) {
 			$scope.serverName = serverName;
 		});
+
+		$scope.range = {
+			end: new Date()
+		};
+		$scope.range.start = new Date($scope.range.end.getTime() - (1*60*60*1000)); // 1 hour
 
 		updateLogo();
 

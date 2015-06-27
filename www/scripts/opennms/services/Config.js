@@ -23,8 +23,13 @@
 		$scope.settings = storage.get('opennms.settings');
 
 		var getSettings = function() {
-			return $q.when(angular.copy($scope.settings));
+			var settings = angular.copy($scope.settings);
+			if (!settings) {
+				settings = {};
+			}
+			return $q.when(settings);
 		};
+
 		var saveSettings = function(settings) {
 			if (!settings) {
 				return $q.reject('Settings.saveSettings: ERROR: no settings provided.');
@@ -63,6 +68,10 @@
 			var oldSettings = angular.copy($scope.settings);
 			var newSettings = angular.copy(settings);
 
+			if (!oldSettings) {
+				oldSettings = {};
+			}
+
 			for (var prop in newSettings) {
 				if (newSettings.hasOwnProperty(prop) && newSettings[prop] !== oldSettings[prop]) {
 					changedSettings[prop] = newSettings[prop];
@@ -72,12 +81,12 @@
 			var o = angular.toJson(oldSettings),
 				n = angular.toJson(newSettings);
 
-			console.log('Settings.saveSettings: Old Settings: ' + o);
-			console.log('Settings.saveSettings: New Settings: ' + n);
 			if (o === n) {
-				console.log('Settings.saveSettings: settings are unchanged.');
+				//console.log('Settings.saveSettings: settings are unchanged.');
 			} else {
 				console.log('Settings.saveSettings: settings have changed.  Updating.');
+				console.log('Settings.saveSettings: Old Settings: ' + o);
+				console.log('Settings.saveSettings: New Settings: ' + n);
 				storage.set('opennms.settings', newSettings);
 				$scope.settings = newSettings;
 
@@ -93,32 +102,33 @@
 			return $q.when($scope.settings);
 		};
 
-		if (!$scope.settings || $scope.settings === 'undefined') {
-			$scope.settings = {};
-		}
-		if (!$scope.settings.server) {
-			$scope.settings.server = $injector.get('config.app.default-server-url');
-		}
-		if (!$scope.settings.username) {
-			$scope.settings.username = $injector.get('config.app.default-username');
-		}
-		if (!$scope.settings.password) {
-			$scope.settings.password = $injector.get('config.app.default-password');
-		}
-		if (!$scope.settings.uuid) {
-			$scope.settings.uuid = uuid4.generate();
-			// no uuid? save it immediately
-			saveSettings(getSettings());
-		}
-		if (!$scope.settings.restLimit) {
-			$scope.settings.restLimit = $injector.get('config.app.rest.limit');
-		}
-		if (!$scope.settings.refreshInterval || isNaN(parseInt($scope.settings.refreshInterval, 10))) {
-			$scope.settings.refreshInterval = $injector.get('config.app.refresh-interval');
-		}
-		if ($scope.settings.showAds === undefined || $scope.settings.showAds === 'undefined') {
-			$scope.settings.showAds = true;
-		}
+		getSettings().then(function(settings) {
+			if (!settings || settings === 'undefined') {
+				settings = {};
+			}
+			if (!settings.server) {
+				settings.server = $injector.get('config.app.default-server-url');
+			}
+			if (!settings.username) {
+				settings.username = $injector.get('config.app.default-username');
+			}
+			if (!settings.password) {
+				settings.password = $injector.get('config.app.default-password');
+			}
+			if (!settings.uuid) {
+				settings.uuid = uuid4.generate();
+			}
+			if (!settings.restLimit) {
+				settings.restLimit = $injector.get('config.app.rest.limit');
+			}
+			if (!settings.refreshInterval || isNaN(parseInt(settings.refreshInterval, 10))) {
+				settings.refreshInterval = $injector.get('config.app.refresh-interval');
+			}
+			if (settings.showAds === undefined || settings.showAds === 'undefined') {
+				settings.showAds = true;
+			}
+			saveSettings(settings);
+		});
 
 		var _getServerName = function() {
 			return getSettings().then(function(settings) {
@@ -145,7 +155,11 @@
 					if (!url.endsWith('/')) {
 						url += '/';
 					}
+
 					if (fragment) {
+						if (fragment.startsWith('/')) {
+							fragment = fragment.slice(1);
+						}
 						url += fragment;
 					}
 				}
@@ -153,17 +167,15 @@
 			});
 		};
 
-		var _restUrl = function() {
-			return _url().then(function(url) {
-				if (url) {
-					if (!url.endsWith('/')) {
-						url += '/';
+		var _restUrl = function(fragment) {
+			return _url('rest/').then(function(url) {
+				if (fragment) {
+					if (fragment.startsWith('/')) {
+						fragment = fragment.slice(1);
 					}
-					url += 'rest/';
-					return url;
-				} else {
-					return undefined;
+					url += fragment;
 				}
+				return url;
 			});
 		};
 
@@ -182,6 +194,18 @@
 		var _password = function() {
 			return getSettings().then(function(settings) {
 				return settings.password;
+			});
+		};
+
+		var _rest = function(fragment) {
+			return _restUrl(fragment).then(function(url) {
+				return getSettings().then(function(settings) {
+					return {
+						url: url,
+						username: settings.username,
+						password: settings.password,
+					};
+				});
 			});
 		};
 
@@ -212,6 +236,17 @@
 			return $q.when($injector.get('config.build.build'));
 		};
 
+		var _server = function() {
+			return getSettings().then(function(settings) {
+				return {
+					name: 'default',
+					url: settings.server,
+					username: settings.username,
+					password: settings.password,
+				};
+			});
+		};
+
 		return {
 			get: getSettings,
 			set: saveSettings,
@@ -222,6 +257,8 @@
 			showAds: _showAds,
 			username: _username,
 			password: _password,
+			server: _server,
+			rest: _rest,
 			uuid: _uuid,
 			disableAds: _disableAds,
 			isServerConfigured: _isServerConfigured,

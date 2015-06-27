@@ -13,7 +13,7 @@
 	</ion-header-bar>
 	<ion-content padding="false" scroll="true" class="has-header">
 		<ion-refresher pulling-text="Pull to Refresh..." on-refresh="refreshData()"></ion-refresher>
-		<ion-slide-box on-slide-changed="refreshSlide(index)" show-pager="false" delegate-handle="donut-slide-box" ng-if="!landscape">
+		<ion-slide-box on-slide-changed="refreshDonutSlide(index)" show-pager="false" delegate-handle="donut-slide-box" ng-if="!landscape">
 			<ion-slide class="outages">
 				<i id="outage-arrow" class="icon ion-chevron-right right-arrow compass" ng-click="goToSlide(1)" ng-class="donutClass('outages')"></i>
 				<h3 ng-if="e.hasError('outage-chart')" class="item item-text-wrap title error">Error: Unable to retrieve outages.<span ng-if="e.get('outage-chart').permissionDenied()"><br/>Permission denied.</span></h3>
@@ -43,11 +43,19 @@
 				</div>
 			</div>
 		</div>
+		<span ng-if="favoriteGraphs &amp;&amp; favoriteGraphs.length > 0" class="graphs">
+			<div class="spacer"></div>
+			<div class="header compass-bg"><h3>Favorited Graphs</h3></div>
+			<ion-slide-box on-slide-changed="refreshGraphSlide(index)" delegate-handle="graph-slide-box" show-pager="false">
+				<ion-slide ng-repeat="favorite in favoriteGraphs track by favorite._id">
+					<h4 class="label">{{favorite.nodeLabel}} <button class="button button-clear button-small button-compass" ng-click="unfavorite(favorite)"><i class="icon ion-ios-star"></i></button></h4>
+						<onms-graph graph-def="graphs[favorite.graphName]" resource-id="favorite.resourceId" range="range" ng-if="shouldRenderGraph($index)"></onms-graph>
+				</ion-slide>
+			</ion-slide-box>
+		</span>
+
 		<div class="spacer"></div>
 		<span ng-if="availability &amp;&amp; availability.length > 0" class="availability">
-			<!--<div class="item item-divider header">
-				Availability (Last 24 Hours)
-			</div>-->
 			<span ng-repeat="section in availability track by section.name">
 				<div class="item item-compass item-divider row" style="font-size: 90%">
 					<div class="col col-50">{{section.name}}</div>

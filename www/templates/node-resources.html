@@ -1,0 +1,18 @@
+<ion-view view-title="{{resourceLabel}}" class="node-resources">
+	<ion-nav-bar class="bar-light" align-title="center">
+		<ion-nav-back-button class="button-compass button-clear"></ion-nav-back-button>
+	</ion-nav-bar>
+	<ion-content delegate-handle="node-resources-scroll">
+		<ion-refresher pulling-text="Pull to Refresh..." on-refresh="refresh()"></ion-refresher>
+		<ion-list>
+			<span ng-repeat="resource in resources track by resource.id">
+				<ion-item ng-if="resource.isDivider" class="item-divider item-compass">
+					{{resource.id}}
+				</ion-item>
+				<ion-item ng-if="!resource.isDivider" class="item-text-wrap" ui-sref="node-resource({node:nodeId, resource:resource.id})">
+					{{resource.label}}
+				</ion-item>
+			</span>
+		</ion-list>
+	</ion-content>
+</ion-view>

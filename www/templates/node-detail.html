@@ -1,10 +1,11 @@
-<ion-modal-view class="node-detail">
-	<ion-header-bar>
-		<div class="buttons">
-			<button class="button button-compass button-clear" ng-click="hide()">Close</button>
-		</div>
+<ion-view view-title="{{node.label}}" class="node-detail">
+	<ion-nav-bar class="bar-light" align-title="center">
+		<ion-nav-back-button class="button-compass button-clear"></ion-nav-back-button>
 		<h1 class="title">{{node.label}}</h1>
-	</ion-header-bar>
+		<ion-nav-buttons side="secondary">
+			<button class="button button-compass button-clear" nav-direction="forward" ui-sref="node-resources({node: node.id})" ng-if="showGraphButton"><i class="icon ion-stats-bars"></i></button>
+		</ion-nav-buttons>
+	</ion-nav-bar>
 	<ion-content>
 		<ion-refresher pulling-text="Pull to Refresh..." on-refresh="refreshNode()"></ion-refresher>
 		<ion-list>
@@ -134,4 +135,4 @@
 			</span>
 		</ion-list>
 	</ion-content>
-</ion-modal-view>
+</ion-view>

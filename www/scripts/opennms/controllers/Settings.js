@@ -6,13 +6,14 @@
 	angular.module('opennms.controllers.Settings', [
 		'ionic',
 		'opennms.services.Availability',
+		'opennms.services.Capabilities',
 		'opennms.services.Errors',
 		'opennms.services.IAP',
 		'opennms.services.Info',
 		'opennms.services.Settings',
 		'opennms.services.Util',
 	])
-	.controller('SettingsCtrl', function($scope, $timeout, $window, $filter, $ionicPlatform, $ionicPopup, AvailabilityService, Errors, IAP, Info, Settings, util) {
+	.controller('SettingsCtrl', function($scope, $timeout, $window, $filter, $ionicPlatform, $ionicPopup, AvailabilityService, Capabilities, Errors, IAP, Info, Settings, util) {
 		console.log('Settings initializing.');
 
 		$scope.util = util;
@@ -38,7 +39,7 @@
 			});
 			$scope.errors = Errors.get();
 			$scope.info = Info.get();
-			$scope.canSetLocation = Info.canSetLocation();
+			$scope.canSetLocation = Capabilities.setLocation();
 			AvailabilityService.supported().then(function(isSupported) {
 				$scope.hasAvailability = isSupported;
 				$scope.$broadcast('scroll.refreshComplete');
@@ -180,8 +181,11 @@
 		});
 		util.onInfoUpdated(function() {
 			$scope.info = Info.get();
-			$scope.canSetLocation = Info.canSetLocation();
+			$scope.canSetLocation = Capabilities.setLocation();
 			$scope.$broadcast('scroll.refreshComplete');
+		});
+		util.onSettingsUpdated(function() {
+			init();
 		});
 		util.onErrorsUpdated(function() {
 			$scope.errors = Errors.get();

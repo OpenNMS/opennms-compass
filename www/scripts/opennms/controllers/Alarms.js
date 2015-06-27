@@ -6,6 +6,7 @@
 
 	angular.module('opennms.controllers.Alarms', [
 		'ionic',
+		'angularLocalStorage',
 		'opennms.services.Alarms',
 		'opennms.services.Errors',
 		'opennms.services.Modals',
@@ -74,17 +75,23 @@
 		//severity.$stateful = true;
 		return severity;
 	})
-	.controller('AlarmsCtrl', function($q, $scope, $timeout, $ionicListDelegate, $ionicLoading, $ionicModal, $ionicPopup, $ionicScrollDelegate, $ionicViewSwitcher, util, AlarmService, Errors, Modals, Settings, severityStateTracker, severities) {
+	.controller('AlarmsCtrl', function($q, $scope, $timeout, $ionicListDelegate, $ionicLoading, $ionicModal, $ionicPopup, $ionicScrollDelegate, $ionicViewSwitcher, storage, util, AlarmService, Errors, Modals, Settings, severityStateTracker, severities) {
 		console.log('AlarmsCtrl initializing.');
+
+		var filterParams = storage.get('opennms.alarms.filterParams');
+		if (!filterParams) {
+			filterParams = {limit:100};
+		}
 
 		$scope.modals = Modals;
 		$scope.util  = util;
 		$scope.alarms = undefined;
 		$scope.legend = [];
-		$scope.filter = new AlarmFilter({limit:100});
+		$scope.filter = new AlarmFilter(filterParams).reset();
 		$scope.showAck = false;
 		$scope.severities = severities;
 
+		console.log('alarm filter: ' + angular.toJson($scope.filter));
 		Settings.username().then(function(username) {
 			$scope.username = username;
 		});
@@ -99,6 +106,9 @@
 			animation: 'slide-in-up'
 		}).then(function(modal) {
 			$scope.modal = modal;
+			modal.scope.$on('modal.hidden', function() {
+				storage.set('opennms.alarms.filterParams', $scope.filter);
+			});
 		});
 
 		var sortAlarms = function(a, b) {
@@ -107,7 +117,8 @@
 
 		$scope.getAlarms = function() {
 			$ionicLoading.show({
-				noBackdrop: true
+				templateUrl: 'templates/loading.html',
+				hideOnStateChange: true,
 			});
 
 			AlarmService.get($scope.filter).then(function(alarms) {

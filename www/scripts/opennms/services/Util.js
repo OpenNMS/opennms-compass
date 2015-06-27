@@ -59,13 +59,13 @@
 		};
 
 		var showKeyboard = function() {
-			console.log('util.showKeyboard');
+			//console.log('util.showKeyboard');
 			if ($window.cordova && $window.cordova.plugins && $window.cordova.plugins.Keyboard) {
 				cordova.plugins.Keyboard.show();
 			}
 		};
 		var hideKeyboard = function() {
-			console.log('util.hideKeyboard');
+			//console.log('util.hideKeyboard');
 			if ($window.cordova && $window.cordova.plugins && $window.cordova.plugins.Keyboard) {
 				cordova.plugins.Keyboard.close();
 			}
@@ -132,7 +132,7 @@
 
 		$rootScope.$on('opennms.product.updated', function(ev, product) {
 			if (eventListeners['opennms.product.updated']) {
-				console.log('util.onProductUpdated: ' + angular.toJson(product));
+				console.log('util.onProductUpdated: ' + product.id);
 				$rootScope.$evalAsync(function() {
 					var i, len=eventListeners['opennms.product.updated'].length;
 					for (i=0; i < len; i++) {
