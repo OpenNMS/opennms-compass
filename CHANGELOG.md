@@ -1,5 +1,9 @@
-<a name="2.1.0"</a>
-## 2.1.0 (2015-06-27)
+## 2.1.0 (2015-07-02)
+
+
+#### Bug Fixes
+
+* missing dependency on SSL/HTTP framework ([a70cf6da](https://github.com/nicksrandall/kotojs/commit/a70cf6da64f187c825bcbe682cbd92088eab0649))
 
 
 #### Features
