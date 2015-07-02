@@ -7,6 +7,7 @@
 
 	angular.module('opennms.services.Rest', [
 		'ng',
+		'cordovaHTTP',
 		'opennms.services.Settings',
 		'opennms.services.Util',
 	])
