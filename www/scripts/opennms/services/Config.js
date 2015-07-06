@@ -224,7 +224,13 @@
 
 		var _isServerConfigured = function() {
 			return getSettings().then(function(settings) {
-				return (settings.server && settings.username && settings.password);
+				if (settings.server && settings.username && settings.password) {
+					return true;
+				} else {
+					return false;
+				}
+			}, function(err) {
+				return false;
 			});
 		};
 
