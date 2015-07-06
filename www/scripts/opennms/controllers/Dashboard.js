@@ -182,12 +182,14 @@
 			//console.log('DashboardCtrl.refreshData: refreshing data.');
 
 			// if we have never loaded before, show the loading thingy
+			/*
 			if (!$scope.loaded) {
 				$ionicLoading.show({
 					templateUrl: 'templates/loading.html',
 					hideOnStateChange: true,
 				});
 			}
+			*/
 
 			var availabilityPromise = AvailabilityService.availability().then(function(results) {
 				Errors.clear('availability');
@@ -276,6 +278,7 @@
 			var favoritesPromise = refreshFavorites();
 
 			$q.all([outagePromise, alarmPromise, availabilityPromise, favoritesPromise])['finally'](function() {
+				util.hideSplashscreen();
 				$timeout(function() {
 					refreshing = false;
 					$ionicLoading.hide();

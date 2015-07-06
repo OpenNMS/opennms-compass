@@ -71,6 +71,12 @@
 			}
 		};
 
+		var hideSplashscreen = function() {
+			if (navigator.splashscreen) {
+				navigator.splashscreen.hide();
+			}
+		};
+
 		var openServer = function() {
 			Settings.URL().then(function(url) {
 				console.log('util.openServer: ' + url);
@@ -173,6 +179,7 @@
 			},
 			showKeyboard: showKeyboard,
 			hideKeyboard: hideKeyboard,
+			hideSplashscreen: hideSplashscreen,
 			openServer: openServer,
 			trackEvent: trackEvent,
 			dirty: markDirty,
