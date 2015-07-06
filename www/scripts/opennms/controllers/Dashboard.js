@@ -138,7 +138,7 @@
 		};
 
 		var refreshFavorites = function() {
-			console.log('refreshing favorites');
+			//console.log('refreshing favorites');
 			$scope.graphs = {};
 			$scope.favoriteGraphs = [];
 			return ResourceService.favorites().then(function(favs) {
@@ -151,7 +151,7 @@
 					graphPromises.push(ResourceService.graph(favorite.graphName));
 				}
 
-				$q.all(graphPromises).then(function(gds) {
+				return $q.all(graphPromises).then(function(gds) {
 					var graphDefs = {}, def;
 					length = gds.length;
 					for (i=0; i < length; i++) {
@@ -167,6 +167,8 @@
 					delegate.slide($scope.currentGraphSlide);
 					delegate.update();
 				});
+			}).finally(function() {
+				$scope.$broadcast('scroll.refreshComplete');
 			});
 		};
 
@@ -187,29 +189,17 @@
 				});
 			}
 
-			var outagePromise = OutageService.get();
-			var availabilityPromise = AvailabilityService.availability();
-			var alarmPromise = AlarmService.severities();
-			var favoritesPromise = refreshFavorites();
-
-			$q.all([outagePromise, alarmPromise, availabilityPromise, favoritesPromise])['finally'](function() {
-				$timeout(function() {
-					refreshing = false;
-					$ionicLoading.hide();
-					$scope.loaded = true;
-				}, 50);
-				$scope.$broadcast('scroll.refreshComplete');
-			});
-
-			availabilityPromise.then(function(results) {
+			var availabilityPromise = AvailabilityService.availability().then(function(results) {
 				Errors.clear('availability');
 				$scope.availability = results;
+				return results;
 			}, function(err) {
 				Errors.set('availability', err);
 				$scope.availability = undefined;
+				return $q.reject(err);
 			});
 
-			outagePromise.then(function(results) {
+			var outagePromise = OutageService.get().then(function(results) {
 				var data = {}, outages = [], outage, service, total = 0, i;
 
 				for (i=0; i < results.length; i++) {
@@ -247,15 +237,17 @@
 				hideDonut('outages', false);
 				outageDonut.setData(outages);
 				outageDonut.setTitle(total);
+				return outages;
 			}, function(err) {
 				Errors.set('outage-chart', err);
 				hideDonut('outages', true);
 				outageDonut.setData([]);
 				outageDonut.setTitle(0);
+				return $q.reject(err);
 			});
 
 
-			alarmPromise.then(function(results) {
+			var alarmPromise = AlarmService.severities().then(function(results) {
 				var severities = [], severity, total = 0;
 
 				for (var i=0; i < results.length; i++) {
@@ -272,11 +264,24 @@
 				hideDonut('alarms', false);
 				alarmDonut.setData(severities);
 				alarmDonut.setTitle(total);
+				return severities;
 			}, function(err) {
 				Errors.set('alarm-chart', err);
 				hideDonut('alarms', true);
 				alarmDonut.setData([]);
 				alarmDonut.setTitle(0);
+				return $q.reject(err);
+			});
+
+			var favoritesPromise = refreshFavorites();
+
+			$q.all([outagePromise, alarmPromise, availabilityPromise, favoritesPromise])['finally'](function() {
+				$timeout(function() {
+					refreshing = false;
+					$ionicLoading.hide();
+					$scope.loaded = true;
+					$scope.$broadcast('scroll.refreshComplete');
+				}, 50);
 			});
 		};
 

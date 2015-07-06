@@ -42,8 +42,10 @@
 						response = angular.fromJson(response);
 					}
 					onSuccess(response);
+					return response;
 				}, function(err) {
 					console.log('Info.updateInfo: failed: ' + angular.toJson(err));
+					return $q.reject(err);
 				});
 			});
 		};
