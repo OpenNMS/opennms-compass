@@ -1,8 +1,9 @@
-## 2.1.0 (2015-07-02)
+## 2.1.0 (2015-07-06)
 
 
 #### Bug Fixes
 
+* **config:** fix settings-check (fixes initialization against Meridian) ([1d789935](https://github.com/nicksrandall/kotojs/commit/1d7899359e934b0ca80e180af46bd4059af8aaba))
 * missing dependency on SSL/HTTP framework ([a70cf6da](https://github.com/nicksrandall/kotojs/commit/a70cf6da64f187c825bcbe682cbd92088eab0649))
 
 
