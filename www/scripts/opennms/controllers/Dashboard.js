@@ -39,7 +39,6 @@
 		console.log('DashboardCtrl: Initializing.');
 
 		var updateArrows = function(height) {
-			//console.log('updateArrows(' + height +')');
 			var arrowOffset = (Math.round(height * 0.5) - 50);
 
 			var outageArrow = document.getElementById('outage-arrow');
@@ -337,7 +336,7 @@
 		updateLogo();
 
 		util.onSettingsUpdated(function(newSettings, oldSettings, changedSettings) {
-			//console.log('Dashboard: settings changed, refreshing data.');
+			console.log('Dashboard: settings changed, refreshing data.');
 			Settings.getServerName().then(function(serverName) {
 				$scope.serverName = serverName;
 				$scope.refreshData();

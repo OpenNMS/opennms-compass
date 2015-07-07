@@ -96,12 +96,12 @@
 					console.log('SettingsCtrl: checking for availability of onms://');
 					$window.appAvailability.check('onms://',
 						function() {
-							console.log('SettingsCtrl: OpenNMS is available!');
+							console.log('SettingsCtrl: OpenNMS.app is available!');
 							$scope.$evalAsync(function() {
 								$scope.hasOpenNMS = true;
 							});
 						}, function() {
-							console.log('SettingsCtrl: OpenNMS is not available.  :(');
+							console.log('SettingsCtrl: OpenNMS.app is not available.  :(');
 							$scope.$evalAsync(function() {
 								$scope.hasOpenNMS = false;
 							});

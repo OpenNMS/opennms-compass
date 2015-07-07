@@ -55,11 +55,19 @@
 			var oldReady = ready;
 			ready = $q.defer();
 
-			var done = function() {
+			var done = function(reject) {
 				if (oldReady) {
-					oldReady.resolve(true);
+					if (reject) {
+						oldReady.reject(false);
+					} else {
+						oldReady.resolve(true);
+					}
 				}
-				ready.resolve(true);
+				if (reject) {
+					ready.reject(false);
+				} else {
+					ready.resolve(true);
+				}
 				return ready.promise;
 			};
 
@@ -80,17 +88,20 @@
 					//console.log('RestService.updateAuthorization: setting basic auth with username "' + username + '".');
 					$http.defaults.headers.common['Authorization'] = 'Basic ' + $window.btoa(username + ':' + password);
 					if (useCordovaHTTP) {
-						cordovaHTTP.useBasicAuth(username, password).then(function() {
+						return cordovaHTTP.useBasicAuth(username, password).then(function() {
 							console.log('RestService.updateAuthorization: configured basic auth with username "' + username + '".');
+							return done();
 						}, function(err) {
 							console.log('RestService.updateAuthorization: failed to configure basic auth with username "' + username + '".');
-						}, function() {
 							return done();
 						});
 					} else {
 						return done();
 					}
 				}
+			}, function(err) {
+				console.log('RestService.updateAuthorization: failed: ' + angular.toJson(err));
+				return done(true);
 			});
 		};
 
