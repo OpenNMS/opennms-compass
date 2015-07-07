@@ -42,7 +42,9 @@
     "karma-webdriver-launcher": "*",
     "libxmljs": "^0.14.0",
     "line-reader": "*",
-    "shelljs": "*"
+    "shelljs": "*",
+    "xmldom": "^0.1.19",
+    "xpath": "0.0.9"
   },
   "cordovaPlugins": [
     "com.ionic.keyboard",
