@@ -6,8 +6,9 @@
 .index.html
 *.swp
 www.zip
-www/css/opennms.css
-www/css/opennms.min.css
+www
+bower_components
+!www/.htaccess
 npm-debug.log
 node_modules/
 platforms/

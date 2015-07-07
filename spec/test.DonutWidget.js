@@ -26,7 +26,7 @@
 
 		beforeEach(function() {
 			console.log('================================================================================');
-			module('opennms.DonutWidget');
+			module('opennms.services.DonutWidget');
 		});
 
 		beforeEach(inject(function($injector) {
