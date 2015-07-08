@@ -189,7 +189,7 @@
 			$scope.refreshNode();
 		});
 
-		$scope.$on('$ionicView.beforeLeave', function(ev, info) {
+		$scope.$on('$ionicView.afterLeave', function(ev, info) {
 			if (info.direction === 'forward') {
 				// we're going to the resources, keep the model in memory
 			} else {
