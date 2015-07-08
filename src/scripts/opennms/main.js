@@ -108,6 +108,7 @@
 			IAP.init().then(Ads.init);
 		};
 
+		/*
 		IonicService.promptForUpdates().then(function(res) {
 			if (res) {
 				IonicService.update().then(function() {
@@ -125,6 +126,7 @@
 				init();
 			}
 		});
+		*/
 
 		Settings.isServerConfigured().then(function(isConfigured) {
 			if (!isConfigured) {
