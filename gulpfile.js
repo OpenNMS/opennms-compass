@@ -1,9 +1,12 @@
 var gulp = require('gulp');
 var gutil = require('gulp-util');
 var fs = require('fs');
+var path = require('path');
+var sh = require('shelljs');
 
 var bower = require('bower');
 var concat = require('gulp-concat');
+var ignore = require('gulp-ignore');
 var jasmine = require('gulp-jasmine');
 var jshint = require('gulp-jshint');
 var karma = require('gulp-karma');
@@ -12,20 +15,45 @@ var ngAnnotate = require('gulp-ng-annotate');
 var rename = require('gulp-rename');
 var rev = require('gulp-rev');
 var sass = require('gulp-sass');
-var sh = require('shelljs');
 var uglify = require('gulp-uglify');
 var usemin = require('gulp-usemin');
 
 require('gulp-changelog-release')(gulp);
 
 var paths = {
+	bower: './bower_components/**/*',
+	src: './src/**/*',
 	sass: './scss/*.scss',
 	sassIncludes: './scss/includes/*.scss',
-	opennms: './www/scripts/opennms/**/*.js',
-	spec: './spec/*.js'
+	opennms: './src/scripts/opennms/**/*.js',
+	spec: './spec/*.js',
+	excludes: [],
 };
 
-gulp.task('default', ['sass', 'lint', 'test']);
+var cordovaIgnore = fs.readFileSync('.cordovaignore', 'utf8').split(/\r?\n/);
+for (var i=0; i < cordovaIgnore.length; i++) {
+	var line = cordovaIgnore[i];
+	if (line !== '') {
+		line = path.resolve('./bower_components/' + line);
+		//console.log('line = ' + line);
+		paths.excludes.push(line);
+	}
+}
+
+gulp.task('default', ['process-src', 'sass', 'lint', 'test']);
+
+gulp.task('process-bower', function(done) {
+	gulp.src([paths.bower])
+		.pipe(ignore.exclude(paths.excludes))
+		.pipe(gulp.dest('./www/lib/'))
+		.on('end', done);
+});
+
+gulp.task('process-src', ['process-bower'], function(done) {
+	gulp.src([paths.src])
+		.pipe(gulp.dest('./www/'))
+		.on('end', done);
+});
 
 gulp.task('sass', function(done) {
 	gulp.src([paths.sass])
@@ -47,6 +75,7 @@ gulp.task('lint', function() {
 });
 
 gulp.task('watch', function() {
+	gulp.watch([paths.src], ['process-src']);
 	gulp.watch([paths.sass, paths.sassIncludes], ['sass']);
 });
 
@@ -63,7 +92,7 @@ var prepareMe = function() {
 		}));
 };
 
-gulp.task('prepare', function() {
+gulp.task('prepare', ['process-src'], function() {
 	var prep = prepareMe();
 
 	if (fs.existsSync('platforms/android/assets/www')) {
@@ -76,11 +105,11 @@ gulp.task('prepare', function() {
 	return prep;
 });
 
-gulp.task('prepare-android', function() {
+gulp.task('prepare-android', ['process-src'], function() {
 	return prepareMe().pipe(gulp.dest('platforms/android/assets/www'));
 });
 
-gulp.task('prepare-ios', function() {
+gulp.task('prepare-ios', ['process-src'], function() {
 	return prepareMe().pipe(gulp.dest('platforms/ios/www'));
 });
 
@@ -105,27 +134,28 @@ gulp.task('git-check', function(done) {
 });
 
 var testSource = [
-	'./www/lib/modernizr/modernizr.js',
-	'./www/lib/es5-shim/es5-shim.js',
-	'./www/lib/blob-util/dist/blob-util.min.js',
-	'./www/lib/jquery/dist/jquery.min.js',
-	'./www/lib/jquery-visible/jquery.visible.min.js',
-	'./www/lib/async/lib/async.js',
-	'./www/lib/version_compare/version_compare.js',
-	'./www/lib/x2js/xml2json.js',
-	'./www/lib/angular/angular.min.js',
-	'./www/lib/angular-animate/angular-animate.min.js',
-	'./www/lib/angular-cookies/angular-cookies.min.js',
-	'./www/lib/angular-sanitize/angular-sanitize.min.js',
-	'./www/lib/angular-ui-router/release/angular-ui-router.min.js',
-	'./www/lib/angular-mocks/angular-mocks.js',
-	'./www/lib/ionic/release/js/ionic.min.js',
-	'./www/lib/ionic/release/js/ionic-angular.min.js',
-	'./www/lib/angularLocalStorage/src/angularLocalStorage.js',
-	'./www/lib/angular-queue/angular-queue.js',
-	'./www/lib/ng-resize/ngresize.min.js',
-	'./www/lib/ngCordova/dist/ng-cordova-mocks.js',
-	'./www/lib/momentjs/moment.js',
+	'./bower_components/modernizr/modernizr.js',
+	'./bower_components/es5-shim/es5-shim.js',
+	'./bower_components/blob-util/dist/blob-util.min.js',
+	'./bower_components/jquery/dist/jquery.min.js',
+	'./bower_components/jquery-visible/jquery.visible.min.js',
+	'./bower_components/async/lib/async.js',
+	'./bower_components/version_compare/version_compare.js',
+	'./bower_components/x2js/xml2json.js',
+	'./bower_components/angular/angular.min.js',
+	'./bower_components/angular-animate/angular-animate.min.js',
+	'./bower_components/angular-cookies/angular-cookies.min.js',
+	'./bower_components/angular-sanitize/angular-sanitize.min.js',
+	'./bower_components/angular-ui-router/release/angular-ui-router.min.js',
+	'./bower_components/angular-mocks/angular-mocks.js',
+	'./bower_components/ionic/release/js/ionic.min.js',
+	'./bower_components/ionic/release/js/ionic-angular.min.js',
+	'./bower_components/angular-uuid4/angular-uuid4.js',
+	'./bower_components/angularLocalStorage/src/angularLocalStorage.js',
+	'./bower_components/angular-queue/angular-queue.js',
+	'./bower_components/ng-resize/ngresize.min.js',
+	'./bower_components/ngCordova/dist/ng-cordova-mocks.js',
+	'./bower_components/momentjs/moment.js',
 	paths.opennms,
 	paths.spec
 ];

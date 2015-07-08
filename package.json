@@ -22,6 +22,7 @@
     "grunt-conventional-changelog": "^1.2.1",
     "gulp-changelog-release": "0.0.11",
     "gulp-grunt": "^0.5.2",
+    "gulp-ignore": "^1.2.1",
     "gulp-jasmine": "*",
     "gulp-jshint": "*",
     "gulp-karma": "*",
@@ -41,32 +42,40 @@
     "karma-safari-launcher": "*",
     "karma-webdriver-launcher": "*",
     "libxmljs": "^0.14.0",
-    "line-reader": "*",
-    "shelljs": "*"
+    "shelljs": "*",
+    "xmldom": "^0.1.19",
+    "xpath": "0.0.9"
   },
   "cordovaPlugins": [
+    "com.ionic.keyboard",
+    "cordova-plugin-extension",
+    "cordova-plugin-admobpro",
+    "cordova-plugin-appavailability",
     "cordova-plugin-console",
-    "cordova-plugin-file",
+    "cordova-plugin-datepicker",
     "cordova-plugin-geolocation",
+    "https://github.com/RangerRick/google-analytics-plugin",
     "cordova-plugin-inappbrowser",
     "cordova-plugin-network-information",
+    "cordova-plugin-purchase",
     "cordova-plugin-splashscreen",
     "cordova-plugin-statusbar",
     "cordova-plugin-whitelist",
-    "cc.fovea.cordova.purchase",
-    "cordova-plugin-admobpro",
-    "cordova-plugin-extension",
-    "cordova-plugin-google-analytics",
-    "cordova-plugin-googleplayservices",
-    "com.ionic.keyboard",
-    "cordova-plugin-appavailability",
+    {
+      "locator": "https://github.com/bez4pieci/Phonegap-Cookies-Plugin",
+      "id": "com.bez4pieci.cookies"
+    },
     {
       "locator": "https://github.com/RangerRick/cordova-certificate-plugin.git",
       "id": "com.raccoonfink.cordova.plugins.certificates"
     },
     {
       "locator": "https://github.com/RangerRick/cordova-HTTP.git",
-      "id": "com.synconset.cordovaHTTP"
+      "id": "com.raccoonfink.cordova.plugins.http"
+    },
+    {
+      "locator": "https://github.com/apache/cordova-plugin-file",
+      "id": "org.apache.cordova.file"
     },
     {
       "locator": "https://github.com/driftyco/ionic-plugins-deploy",

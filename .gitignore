@@ -6,6 +6,9 @@
 .index.html
 *.swp
 www.zip
+www
+bower_components
+!www/.htaccess
 npm-debug.log
 node_modules/
 platforms/

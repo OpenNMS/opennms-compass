@@ -1,0 +1,100 @@
+<ion-modal-view class="alarm-detail">
+	<ion-header-bar>
+		<div class="buttons">
+			<button class="button button-compass button-clear" ng-click="hide()">Close</button>
+		</div>
+		<h1 class="title">{{alarm.title}}</h1>
+	</ion-header-bar>
+	<ion-content ng-class="'severity severity-' + alarm.severity">
+		<ion-refresher pulling-text="Pull to Refresh..." on-refresh="updateAlarmData()"></ion-refresher>
+		<ion-list>
+			<ion-item ng-class="'item-divider item-compass item-icon-right severity severity-' + alarm.severity">
+				Alarm Details
+				<i ng-class="'icon severity severity-' + alarm.severity + ' ' + util.icon(alarm.severity)" title="{{alarm.severity.capitalize()}}"></i>
+			</ion-item>
+			<ion-item class="row">
+				<div class="col col-33">ID</div>
+				<div class="col">{{alarm.id}}</div>
+			</ion-item>
+			<ion-item class="row item-text-wrap">
+				<div class="col col-33">UEI</div>
+				<div class="col">{{alarm.uei}}</div>
+			</ion-item>
+			<ion-item class="row">
+				<div class="col col-33" style="vertical-align: middle">Severity</div>
+				<div class="col" style="vertical-align: middle">{{alarm.severity.capitalize()}}</div>
+				<div class="col col-10 pull-right"><button class="button button-small" ng-click="clear()"><i class="icon ion-happy-outline"></i></button></div>
+				<div class="col col-10 pull-right"><button class="button button-small" ng-click="escalate()"><i class="icon ion-arrow-up-a"></i></button></div>
+			</ion-item>
+			<ion-item class="row">
+				<div class="col col-33">Count</div>
+				<div class="col">{{alarm.count}}</div>
+			</ion-item>
+			<ion-item class="row" ng-if="alarm.nodeLabel">
+				<div class="col col-33" >Node</div>
+				<div class="col">{{alarm.nodeLabel}}</div>
+			</ion-item>
+			<ion-item class="row" ng-if="alarm.ipAddress">
+				<div class="col col-33">Interface</div>
+				<div class="col">{{alarm.ipAddress}}</div>
+			</ion-item>
+			<ion-item class="row">
+				<div class="col col-33">First Event</div>
+				<div class="col">{{alarm.firstEventTime.format('lll')}}</div>
+			</ion-item>
+			<ion-item class="row">
+				<div class="col col-33">Last Event</div>
+				<div class="col">{{alarm.lastEventTime.format('lll')}}</div>
+			</ion-item>
+			<ion-item class="row" ng-if="alarm.troubleTicketId">
+				<div class="col col-33">Ticket State</div>
+				<div class="col">{{alarm.troubleTicketState}} ({{alarm.troubleTicketId}})</div>
+			</ion-item>
+			<ion-item class="item-divider item-compass">
+				Log Message
+			</ion-item>
+			<ion-item class="item-text-wrap message"><p ng-bind-html="alarm.logMessage"></p></ion-item>
+			<ion-item class="item-divider item-compass">
+				Description
+			</ion-item>
+			<ion-item ng-bind-html="alarm.description" class="item-text-wrap message"></ion-item>
+			<ion-item class="item-divider item-compass">
+				Acknowledgements
+			</ion-item>
+			<span ng-if="alarm.ackUser">
+				<ion-item class="row" ng-if="alarm.ackUser">
+					<div class="col col-33">User</div>
+					<div class="col">{{alarm.ackUser}}</div>
+				</ion-item>
+				<ion-item class="row" ng-if="alarm.ackUser">
+					<div class="col col-33">Time</div>
+					<div class="col">{{alarm.ackTime.format('lll')}}</div>
+				</ion-item>
+				<ion-item ng-if="alarm.ackUser">
+					<button class="button button-block button-compass" ng-click="unacknowledge()">Unacknowledge This Alarm</button>
+				</ion-item>
+			</span>
+			<ion-item ng-if="!alarm.ackUser">
+				<button class="button button-block button-compass" ng-click="acknowledge()">Acknowledge This Alarm</button>
+			</ion-item>
+			<span ng-if="alarm.stickyMemo">
+				<ion-item class="item-divider item-compass">
+					Sticky Memo
+				</ion-item>
+				<ion-item ng-if="alarm.stickyMemo">
+					<p>Last Updated at {{alarm.stickyMemo.updated.format('lll')}} by {{alarm.stickyMemo.author}}</p>
+					<p ng-bind-html="alarm.stickyMemo.body"></p>
+				</ion-item>
+			</span>
+			<span ng-if="alarm.journalMemo">
+				<ion-item class="item-divider item-compass">
+					Journal Memo
+				</ion-item>
+				<ion-item ng-if="alarm.journalMemo">
+					<p>Last Updated at {{alarm.journalMemo.updated.format('lll')}} by {{alarm.journalMemo.author}}</p>
+					<p ng-bind-html="alarm.journalMemo.body"></p>
+				</ion-item>
+			</span>
+		</ion-list>
+	</ion-content>
+</ion-modal-view>

@@ -11,13 +11,16 @@
   <preference name="UIWebViewBounce" value="false"/>
   <preference name="DisallowOverscroll" value="true"/>
   <preference name="BackupWebStorage" value="none"/>
-  <preference name="AutoHideSplashScreen" value="true"/>
-  <preference name="SplashScreen" value="screen"/>
   <preference name="StatusBarOverlaysWebView" value="true"/>
   <preference name="StatusBarStyle" value="default"/>
   <preference name="AndroidPersistentFileLocation" value="Internal"/>
-  <preference name="SplashScreenDelay" value="3000"/>
   <preference name="Orientation" value="default"/>
+  <preference name="SplashScreen" value="screen"/>
+  <preference name="SplashScreenDelay" value="20000"/>
+  <preference name="FadeSplashScreen" value="true"/>
+  <preference name="FadeSplashScreenDuration" value="4"/>
+  <preference name="ShowSplashScreenSpinner" value="true"/>
+  <preference name="AutoHideSplashScreen" value="false"/>
   <feature name="Console">
     <param name="ios-package" value="CDVLogger" onload="true"/>
   </feature>

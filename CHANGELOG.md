@@ -1,3 +1,40 @@
+## 2.1.0 (2015-07-07)
+
+
+#### Bug Fixes
+
+* **config:** fix settings-check (fixes initialization against Meridian) ([1d789935](https://github.com/nicksrandall/kotojs/commit/1d7899359e934b0ca80e180af46bd4059af8aaba))
+* **dashboard:** handle rejection better ([dd151945](https://github.com/nicksrandall/kotojs/commit/dd1519458432b2362a25290718b02e6b1c3bea5b))
+* missing dependency on SSL/HTTP framework ([a70cf6da](https://github.com/nicksrandall/kotojs/commit/a70cf6da64f187c825bcbe682cbd92088eab0649))
+
+
+#### Features
+
+
+* **graphs**  add support for showing graphs from 16.0.0 and higher ((487cbc2b))
+* **startup:** fancier splash screen initialization ([aa22467b](https://github.com/nicksrandall/kotojs/commit/aa22467b16a7168be380853cf5d83986addaf4aa))
+
+
+
+<a name="2.0.6"</a>
+## 2.0.6 (2015-06-04)
+
+
+#### Bug Fixes
+
+
+* **config**  Android does not seem to like "new RegExp" ((efb1d752))
+* **dashboard**  don't show {{serverName}} if server has not been configured ((dfa791d0))
+* **settings**  fix error checking server URL change ((d2fdc3e2))
+* **ssl**  handle some SSL server types better ((4abb84a9))
+
+#### Features
+
+
+* ****  track basic metrics for navigation ((50f99098))
+
+
+
 <a name="2.0.5"</a>
 ## 2.0.5 (2015-05-26)
 
