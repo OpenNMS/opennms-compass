@@ -32,12 +32,13 @@ if (fs.existsSync(manifestFile)) {
 	var contents = fs.readFileSync(manifestFile, 'utf8');
 	var doc = new dom().parseFromString(contents);
 	var manifest = doc.documentElement;
+	var i;
 
 	var changed = false;
 
 	var found_billing = false;
 	var permissions = xpath.select('//uses-permission', doc);
-	for (var i=0; i < permissions.length; i++) {
+	for (i=0; i < permissions.length; i++) {
 		var perm = permissions[i].getAttribute('android:name');
 		if (perm === 'com.android.vending.BILLING') {
 			//console.log('found billing');
@@ -53,6 +54,17 @@ if (fs.existsSync(manifestFile)) {
 		billing.setAttributeNode(attr);
 		manifest.appendChild(billing);
 		changed = true;
+	}
+
+	var usesSdk = xpath.select('//uses-sdk', doc);
+	for (i=0; i < usesSdk.length; i++) {
+		if (usesSdk[i].hasAttribute('android:minSdkVersion')) {
+			var minSdkVersion = parseInt(usesSdk[i].getAttribute('android:minSdkVersion'), 10);
+			if (minSdkVersion !== configobj.minSdk) {
+				usesSdk[i].setAttribute('android:minSdkVersion', configobj.minSdk);
+				changed = true;
+			}
+		}
 	}
 
 	var versionCode = parseInt(manifest.getAttribute('android:versionCode'), 10);
