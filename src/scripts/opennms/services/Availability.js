@@ -17,7 +17,7 @@
 		var checkAvailability = function() {
 			hasAvailability = $q.defer();
 			console.log('AvailabilityService.checkAvailability: checking if availability service is valid.');
-			RestService.get('/availability').then(function() {
+			RestService.getXml('/availability').then(function() {
 				console.log('AvailabilityService.checkAvailability: availability service works!');
 				hasAvailability.resolve(true);
 			}, function() {
