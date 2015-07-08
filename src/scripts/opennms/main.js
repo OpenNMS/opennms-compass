@@ -110,7 +110,10 @@
 
 		IonicService.promptForUpdates().then(function(res) {
 			if (res) {
-				IonicService.update().then(undefined, function(err) {
+				IonicService.update().then(function() {
+					var args = Array.prototype.slice.call(arguments);
+					console.log('Update complete: ' + angular.toJson(args));
+				}, function(err) {
 					$ionicPopup.alert({
 						title: 'Update failed.',
 						template: angular.toJson(err),

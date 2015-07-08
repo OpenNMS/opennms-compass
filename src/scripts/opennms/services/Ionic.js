@@ -28,6 +28,8 @@
 		var rejected = $q.defer();
 		rejected.reject(false);
 
+		$ionicDeploy.setChannel('Dev');
+
 		var checkForUpdates = function() {
 			var deferred = $q.defer();
 
