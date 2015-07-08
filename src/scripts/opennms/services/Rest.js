@@ -188,11 +188,11 @@
 						headers: headers,
 						withCredentials: true,
 						timeout: requestTimeout,
-					}).success(function(data) {
-						//console.log('Rest.doQuery:',data);
-						return data;
-					}).error(function(data, status, headers, config, statusText) {
-						var err = new RestError(url, data, status, statusText);
+					}).then(function(response) {
+						//console.log('Rest.doQuery:',response.data);
+						return response.data;
+					}, function(response) {
+						var err = new RestError(url, response.data, response.status, response.statusText);
 						//console.log('Rest.doQuery failed: ' + err.toString());
 						return $q.reject(err);
 					});
@@ -221,8 +221,6 @@
 					return $q.reject(new RestError(restFragment, undefined, 0, 'Server information is not complete.'));
 				}
 			}).then(function(url) {
-				var deferred = $q.defer();
-	
 				if (!headers) {
 					headers = {};
 				}
@@ -230,18 +228,16 @@
 					headers['Content-Type'] = 'application/xml';
 				}
 
-				$http.post(url, data, {
+				return $http.post(url, data, {
 					withCredentials: true,
 					timeout: requestTimeout,
 					headers: headers,
 				}).success(function(data) {
 					//console.log('Rest.doQuery:',data);
-					deferred.resolve(data);
+					return data;
 				}).error(function(data, status, headers, config, statusText) {
-					deferred.reject(new RestError(url, data, status, statusText));
+					return $q.reject(new RestError(url, data, status, statusText));
 				});
-
-				return deferred.promise;
 			});
 		};
 
@@ -252,16 +248,20 @@
 			url: getUrl,
 			get: function(restFragment, params, headers) {
 				return doGet(restFragment, params, headers).then(function(data) {
-					var json;
-					if (data && angular.isString(data)) {
-						try {
-							json = angular.fromJson(data);
-						} catch (error) {
-							console.log('Rest.get: failed to parse "' + data + "' as JSON: " + error);
+					if (useCordovaHTTP) {
+						var json;
+						if (data && angular.isString(data)) {
+							try {
+								json = angular.fromJson(data);
+							} catch (error) {
+								console.log('Rest.get: failed to parse "' + data + "' as JSON: " + error);
+							}
 						}
-					}
-					if (json !== undefined) {
-						return json;
+						if (json !== undefined) {
+							return json;
+						} else {
+							return data;
+						}
 					} else {
 						return data;
 					}
