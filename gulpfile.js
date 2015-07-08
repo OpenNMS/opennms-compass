@@ -25,7 +25,7 @@ var paths = {
 	src: './src/**/*',
 	sass: './scss/*.scss',
 	sassIncludes: './scss/includes/*.scss',
-	opennms: './www/scripts/opennms/**/*.js',
+	opennms: './src/scripts/opennms/**/*.js',
 	spec: './spec/*.js',
 	excludes: [],
 };

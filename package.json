@@ -49,6 +49,7 @@
   "cordovaPlugins": [
     "com.ionic.keyboard",
     "cordova-plugin-extension",
+    "cordova-plugin-admobpro",
     "cordova-plugin-appavailability",
     "cordova-plugin-console",
     "cordova-plugin-datepicker",
@@ -56,6 +57,7 @@
     "https://github.com/RangerRick/google-analytics-plugin",
     "cordova-plugin-inappbrowser",
     "cordova-plugin-network-information",
+    "cordova-plugin-purchase",
     "cordova-plugin-splashscreen",
     "cordova-plugin-statusbar",
     "cordova-plugin-whitelist",
@@ -75,8 +77,10 @@
       "locator": "https://github.com/apache/cordova-plugin-file",
       "id": "org.apache.cordova.file"
     },
-    "cordova-plugin-admobpro",
-    "cordova-plugin-purchase"
+    {
+      "locator": "https://github.com/driftyco/ionic-plugins-deploy",
+      "id": "com.ionic.deploy"
+    }
   ],
   "cordovaPlatforms": [
     {

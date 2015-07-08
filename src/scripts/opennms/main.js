@@ -14,6 +14,7 @@
 		'opennms.services.Alarms',
 		'opennms.services.IAP',
 		'opennms.services.Info',
+		'opennms.services.Ionic',
 		'opennms.services.Modals',
 		'opennms.services.Outages',
 		'opennms.services.Settings',
@@ -28,6 +29,18 @@
 	])
 	.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider, $cordovaInAppBrowserProvider) {
 		$urlRouterProvider.otherwise('/dashboard');
+
+		$cordovaInAppBrowserProvider.setDefaultOptions({
+			location:'no',
+			enableViewportScale:'yes',
+			transitionstyle:'fliphorizontal',
+			toolbarposition:'top'
+		});
+
+		$ionicConfigProvider.views.maxCache(20);
+		$ionicConfigProvider.views.forwardCache(true);
+		$ionicConfigProvider.views.swipeBackEnabled(false);
+		$ionicConfigProvider.tabs.position('bottom');
 
 		$stateProvider
 		.state('dashboard', {
@@ -75,7 +88,7 @@
 			toolbarposition:'top'
 		});
 	})
-	.run(function($rootScope, $timeout, $window, $ionicPlatform, Ads, IAP, Info, Modals, Settings, util) {
+	.run(function($rootScope, $timeout, $window, $ionicPlatform, $ionicPopup, Ads, IAP, Info, IonicService, Modals, Settings, util) {
 		var updateTheme = function(info) {
 			if (!info) {
 				info = Info.get();
@@ -90,14 +103,33 @@
 
 		util.onInfoUpdated(updateTheme);
 
-		$ionicPlatform.ready(function() {
+		var init = function() {
 			console.log('Ionic is ready.');
 			IAP.init().then(Ads.init);
-			Settings.isServerConfigured().then(function(isConfigured) {
-				if (!isConfigured) {
-					Modals.settings();
-				}
-			});
+		};
+
+		IonicService.promptForUpdates().then(function(res) {
+			if (res) {
+				IonicService.update().then(function() {
+					var args = Array.prototype.slice.call(arguments);
+					console.log('Update complete: ' + angular.toJson(args));
+				}, function(err) {
+					$ionicPopup.alert({
+						title: 'Update failed.',
+						template: angular.toJson(err),
+						okType: 'button-compass',
+					});
+					init();
+				});
+			} else {
+				init();
+			}
+		});
+
+		Settings.isServerConfigured().then(function(isConfigured) {
+			if (!isConfigured) {
+				Modals.settings();
+			}
 		});
 	});
 }());

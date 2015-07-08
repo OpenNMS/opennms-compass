@@ -41,9 +41,9 @@ if (rootdir) {
 					}
 					var value = buildobj[prop];
 					if (typeof value == 'string' || value instanceof String) {
-						fs.appendFileSync(outfile, "\t\t.value('config.build." + prop + "', '" + value + "')\n");
+						fs.appendFileSync(outfile, "\t\t.constant('config.build." + prop + "', '" + value + "')\n");
 					} else {
-						fs.appendFileSync(outfile, "\t\t.value('config.build." + prop + "', " + value + ")\n");
+						fs.appendFileSync(outfile, "\t\t.constant('config.build." + prop + "', " + value + ")\n");
 					}
 				}
 			}
