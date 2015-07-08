@@ -13,7 +13,7 @@
 	.factory('NodeService', function($q, Info, RestService) {
 		console.log('NodeService: Initializing.');
 
-		var searchNodes = function(search) {
+		var searchNodes = function(search, limit) {
 			var deferred = $q.defer();
 
 			var params = {
@@ -21,8 +21,12 @@
 				'match': 'any',
 				'label': '%' + search + '%',
 				'ipInterface.ipAddress': '%' + search + '%',
-				'ipInterface.ipHostName': '%' + search + '%'
+				'ipInterface.ipHostName': '%' + search + '%',
 			};
+
+			if (limit) {
+				params.limit = limit;
+			}
 
 			RestService.getXml('/nodes', params).then(function(results) {
 				/* jshint -W069 */ /* "better written in dot notation" */

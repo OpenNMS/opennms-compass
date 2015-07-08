@@ -17,36 +17,32 @@
 		$scope.util  = util;
 		$scope.searchString = storage.get('opennms.nodes.search-string') || '';
 		$scope.nodes = [];
-		var emptyPromise = $q.defer();
-		emptyPromise.resolve([]);
-		var lastSearch = emptyPromise.promise;
+		var emptyPromise = $q.when();
+		var lastSearch = emptyPromise;
 
 		$scope.updateSearch = function(searchFor) {
-			if (searchFor === undefined || searchFor.trim() === '') {
-				$scope.nodes = [];
+			$scope.searching = true;
+			var searchPromise = NodeService.search(searchFor);
+			searchPromise['finally'](function() {
+				$ionicLoading.hide();
+				$scope.searching = false;
 				$scope.$broadcast('scroll.refreshComplete');
-			} else {
-				$scope.searching = true;
-				var searchPromise = NodeService.search(searchFor);
-				searchPromise['finally'](function() {
-					$ionicLoading.hide();
-					$scope.searching = false;
-					$scope.$broadcast('scroll.refreshComplete');
-				});
+			});
 
-				searchPromise.then(function(nodes) {
-					Errors.clear('nodes');
-					//console.log('Got nodes:',nodes);
-					$scope.searching = false;
-					$scope.nodes = nodes;
-				}, function(err) {
-					Errors.set('nodes', err);
-					$scope.nodes = [];
-				});
+			searchPromise.then(function(nodes) {
+				Errors.clear('nodes');
+				//console.log('Got nodes:',nodes);
+				$scope.searching = false;
+				$scope.nodes = nodes;
+				if (nodes.length === 20 && searchFor === undefined || searchFor.trim() === '') {
+					$scope.nodes.push({id:'more'});
+				}
+			}, function(err) {
+				Errors.set('nodes', err);
+				$scope.nodes = [];
+			});
 
-				return searchPromise;
-			}
-			return emptyPromise.promise;
+			return searchPromise;
 		};
 
 		var _delayedSearchTimeout;
