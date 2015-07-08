@@ -86,13 +86,16 @@ var prepareMe = function() {
 			thirdparty: [uglify(), rev()],
 			ipv6: [uglify(), rev()],
 			angular: [ngAnnotate(), uglify(), rev()],
+			backshift: [uglify({mangle:false}), rev()],
 			charts: [uglify(), rev()],
 			models: [uglify(), rev()],
 			opennms: [ngAnnotate(), uglify(), rev()],
 		}));
 };
 
-gulp.task('prepare', ['process-src'], function() {
+gulp.task('prepare-base', ['process-src', 'sass']);
+
+gulp.task('prepare', ['prepare-base'], function() {
 	var prep = prepareMe();
 
 	if (fs.existsSync('platforms/android/assets/www')) {
@@ -105,11 +108,11 @@ gulp.task('prepare', ['process-src'], function() {
 	return prep;
 });
 
-gulp.task('prepare-android', ['process-src'], function() {
+gulp.task('prepare-android', ['prepare-base'], function() {
 	return prepareMe().pipe(gulp.dest('platforms/android/assets/www'));
 });
 
-gulp.task('prepare-ios', ['process-src'], function() {
+gulp.task('prepare-ios', ['prepare-base'], function() {
 	return prepareMe().pipe(gulp.dest('platforms/ios/www'));
 });
 
