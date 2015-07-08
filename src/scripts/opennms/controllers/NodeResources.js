@@ -20,15 +20,19 @@
 		};
 
 		$scope.refresh = function() {
-			console.log('refreshing: ' + $scope.nodeId);
+			console.log('NodeResources.refresh: refreshing: ' + $scope.nodeId);
 			if ($scope.nodeId) {
 				ResourceService.resources($scope.nodeId).then(function(ret) {
 					$scope.resourceLabel = ret.label;
 					$scope.resources = ResourceService.withDividers(ret.children);
+				}, function(err) {
+					console.log('NodeResources.refresh: failed: ' + angular.toJson(err));
+					return $q.reject(err);
 				}).finally(function() {
 					$scope.$broadcast('scroll.refreshComplete');
 				});
 			} else {
+				console.log('NodeResources.refresh: no nodeId set.');
 				$scope.$broadcast('scroll.refreshComplete');
 			}
 		};

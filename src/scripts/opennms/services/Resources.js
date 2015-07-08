@@ -218,6 +218,7 @@
 		};
 		var getResourcesForNode = function(nodeId) {
 			return RestService.get('/resources/fornode/' + nodeId, {}, {'Accept': 'application/json'}).then(function(res) {
+				//console.log('ResourceService.getResourcesForNode: res=' + angular.toJson(res));
 				var ret = {
 					label: res.label,
 					id: parseInt(res.name, 10),

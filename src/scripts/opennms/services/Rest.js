@@ -29,7 +29,6 @@
 		$http.defaults.headers.common['Accept'] = 'application/xml';
 
 		if ($window.cordova && cordovaHTTP && ionic.Platform.isAndroid()) {
-		//if ($window.cordova && cordovaHTTP) {
 			useCordovaHTTP = true;
 			cordovaHTTP.acceptAllCerts(true);
 			cordovaHTTP.setTimeouts(requestTimeout, requestTimeout);
@@ -160,30 +159,29 @@
 				return myparams;
 			}).then(function(myparams) {
 				var deferred = $q.defer();
-				//console.log('url=' + url + ', params=' + angular.toJson(myparams) + ', headers=' + angular.toJson(headers));
+				//console.log('Rest.doQuery: url=' + url + ', params=' + angular.toJson(myparams) + ', headers=' + angular.toJson(headers));
+
 				if (useCordovaHTTP) {
+					var handleSuccess = function(response) {
+						//console.log('Rest.doQuery: got: ' + angular.toJson(response.data));
+						return response.data;
+					};
+					var handleError = function(err) {
+						var error = new RestError(url, err.data, err.status);
+						console.log('Rest.doQuery: failed: ' + error.toString());
+						return $q.reject(error);
+					};
+
 					if (method === 'GET') {
-						cordovaHTTP.get(url, myparams, headers).then(function(response) {
-							deferred.resolve(response.data);
-						}, function(response) {
-							deferred.reject(new RestError(url, response.data, response.status));
-						});
+						return cordovaHTTP.get(url, myparams, headers).then(handleSuccess, handleError);
 					} else if (method === 'PUT') {
-						cordovaHTTP.put(url, myparams, headers).then(function(response) {
-							deferred.resolve(response.data);
-						}, function(response) {
-							deferred.reject(new RestError(url, response.data, response.status));
-						});
+						return cordovaHTTP.put(url, myparams, headers).then(handleSuccess, handleError);
 					} else if (method === 'POST') {
-						cordovaHTTP.post(url, myparams, headers).then(function(response) {
-							deferred.resolve(response.data);
-						}, function(response) {
-							deferred.reject(new RestError(url, response.data, response.status));
-						});
+						return cordovaHTTP.post(url, myparams, headers).then(handleSuccess, handleError);
 					}
 				} else {
 					//console.log('Rest.doQuery: starting');
-					$http({
+					return $http({
 						method: method,
 						url: url,
 						params: myparams,
@@ -192,14 +190,13 @@
 						timeout: requestTimeout,
 					}).success(function(data) {
 						//console.log('Rest.doQuery:',data);
-						deferred.resolve(data);
+						return data;
 					}).error(function(data, status, headers, config, statusText) {
 						var err = new RestError(url, data, status, statusText);
 						//console.log('Rest.doQuery failed: ' + err.toString());
-						deferred.reject(err);
+						return $q.reject(err);
 					});
 				}
-				return deferred.promise;
 			}, function(err) {
 				//console.log('Rest.doQuery: failed: ' + angular.toJson(err));
 				return $q.reject(err);
@@ -253,17 +250,29 @@
 
 		return {
 			url: getUrl,
-			get: doGet,
+			get: function(restFragment, params, headers) {
+				return doGet(restFragment, params, headers).then(function(data) {
+					var json;
+					if (data && angular.isString(data)) {
+						try {
+							json = angular.fromJson(data);
+						} catch (error) {
+							console.log('Rest.get: failed to parse "' + data + "' as JSON: " + error);
+						}
+					}
+					if (json !== undefined) {
+						return json;
+					} else {
+						return data;
+					}
+				});
+			},
 			getXml: function(restFragment, params, headers) {
-				var deferred = $q.defer();
-				doGet(restFragment, params, headers).then(function(data) {
+				return doGet(restFragment, params, headers).then(function(data) {
 					var json = x2js.xml_str2json(data);
 					//console.log('Rest.getXml:',json);
-					deferred.resolve(json);
-				}, function(err) {
-					deferred.reject(err);
+					return json;
 				});
-				return deferred.promise;
 			},
 			put: doPut,
 			postXml: doPostXml,
