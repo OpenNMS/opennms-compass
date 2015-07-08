@@ -79,7 +79,7 @@ gulp.task('watch', function() {
 	gulp.watch([paths.sass, paths.sassIncludes], ['sass']);
 });
 
-var prepareMe = function() {
+var minifyMe = function() {
 	return gulp.src('www/index.html')
 		.pipe(usemin({
 			shim: [uglify(), rev()],
@@ -93,9 +93,9 @@ var prepareMe = function() {
 		}));
 };
 
-gulp.task('prepare-base', ['process-src', 'sass']);
+gulp.task('prepare', ['process-src', 'sass']);
 
-gulp.task('prepare', ['prepare-base'], function() {
+gulp.task('minify', ['prepare'], function() {
 	var prep = prepareMe();
 
 	if (fs.existsSync('platforms/android/assets/www')) {
@@ -108,12 +108,12 @@ gulp.task('prepare', ['prepare-base'], function() {
 	return prep;
 });
 
-gulp.task('prepare-android', ['prepare-base'], function() {
-	return prepareMe().pipe(gulp.dest('platforms/android/assets/www'));
+gulp.task('minify-android', ['minify'], function() {
+	return minifyMe().pipe(gulp.dest('platforms/android/assets/www'));
 });
 
-gulp.task('prepare-ios', ['prepare-base'], function() {
-	return prepareMe().pipe(gulp.dest('platforms/ios/www'));
+gulp.task('minify-ios', ['minify'], function() {
+	return minifyMe().pipe(gulp.dest('platforms/ios/www'));
 });
 
 gulp.task('install', ['git-check'], function() {

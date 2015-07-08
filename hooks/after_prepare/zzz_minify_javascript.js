@@ -12,16 +12,23 @@ for (var thing in process.env) {
 }
 */
 
+var target = 'release';
+if (process.env.TARGET) {
+	target = process.env.TARGET;
+}
+
 var platforms = (process.env.CORDOVA_PLATFORMS ? process.env.CORDOVA_PLATFORMS.toLowerCase().split(',') : []);
-//console.log('platforms=',platforms);
-if (rootdir) {
+if (rootdir && target === 'release') {
 	if (platforms.indexOf('android') >= 0 && platforms.indexOf('ios') >= 0) {
-		console.log('* preparing all platforms');
-		exec('gulp prepare');
+		console.log('* minifying all platforms');
+		exec('gulp minify');
 	} else {
 		for (var i=0; i < platforms.length; i++) {
-			console.log('* preparing ' + platforms[i]);
-			exec('gulp prepare-' + platforms[i]);
+			console.log('* minifying ' + platforms[i]);
+			exec('gulp minify-' + platforms[i]);
 		}
 	}
+} else {
+	console.log('* skipping minification');
+	exec('gulp prepare');
 }
