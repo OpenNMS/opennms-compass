@@ -1,19 +1,26 @@
-## 2.1.0 (2015-07-07)
+<a name="2.1.0"</a>
+## 2.1.0 (2015-07-09)
 
 
 #### Bug Fixes
 
+* **availability:** checkAvailability expects XML, not JSON ([9c36fff8](https://github.com/nicksrandall/kotojs/commit/9c36fff86f0ec943a1611f48ad4514b4457873f4))
 * **config:** fix settings-check (fixes initialization against Meridian) ([1d789935](https://github.com/nicksrandall/kotojs/commit/1d7899359e934b0ca80e180af46bd4059af8aaba))
 * **dashboard:** handle rejection better ([dd151945](https://github.com/nicksrandall/kotojs/commit/dd1519458432b2362a25290718b02e6b1c3bea5b))
-* missing dependency on SSL/HTTP framework ([a70cf6da](https://github.com/nicksrandall/kotojs/commit/a70cf6da64f187c825bcbe682cbd92088eab0649))
+* **graphs:** fix minify mangling of backshift lib that could cause failures ([f2464629](https://github.com/nicksrandall/kotojs/commit/f2464629dbc253ff770f5a6f987c9e1ffb9ff407))
+* **nodes:** don't clean up view data until they are not visible ([8da8ad92](https://github.com/nicksrandall/kotojs/commit/8da8ad921387e66b446db17737ea866c36ee8c58))
+* **rest:**
+  * fix iOS ReST breakage introduced by cordovaHTTP refactor ([51c75b99](https://github.com/nicksrandall/kotojs/commit/51c75b993ab0e5aa121f4ccfc07f231037e08551))
+  * handle unusual payloads better ([b8847ff1](https://github.com/nicksrandall/kotojs/commit/b8847ff1e4b6689555cfbb6d8aaee2003a0744ad))
+  * missing dependency on SSL/HTTP framework ([a70cf6da](https://github.com/nicksrandall/kotojs/commit/a70cf6da64f187c825bcbe682cbd92088eab0649))
 
 
 #### Features
 
-
+* **core:** add support for Ionic Deploy ([e8a16754](https://github.com/nicksrandall/kotojs/commit/e8a1675481cc711aab0c93b58dd896fe0ddf10dd))
 * **graphs**  add support for showing graphs from 16.0.0 and higher ((487cbc2b))
+* **nodes:** query the first 20 if no search is present ([51649e51](https://github.com/nicksrandall/kotojs/commit/51649e517b08fc64ecbd89d836c5ac6caa910b60))
 * **startup:** fancier splash screen initialization ([aa22467b](https://github.com/nicksrandall/kotojs/commit/aa22467b16a7168be380853cf5d83986addaf4aa))
-
 
 
 <a name="2.0.6"</a>
