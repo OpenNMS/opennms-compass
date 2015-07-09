@@ -1,0 +1,9 @@
+{
+	"compilerOptions": {
+		"target": "ES5",
+		"module": "commonjs",
+		"declarationFiles": false,
+		"noExternalResolve": true,
+		"sortOutput": true
+	}
+}

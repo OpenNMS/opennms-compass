@@ -1,6 +1,7 @@
 var gulp = require('gulp');
 var gutil = require('gulp-util');
 var fs = require('fs');
+var merge = require('merge2');
 var path = require('path');
 var sh = require('shelljs');
 
@@ -15,6 +16,9 @@ var ngAnnotate = require('gulp-ng-annotate');
 var rename = require('gulp-rename');
 var rev = require('gulp-rev');
 var sass = require('gulp-sass');
+var sourcemaps = require('gulp-sourcemaps');
+var ts = require('gulp-typescript');
+var tslint = require('gulp-tslint');
 var uglify = require('gulp-uglify');
 var usemin = require('gulp-usemin');
 
@@ -23,6 +27,8 @@ require('gulp-changelog-release')(gulp);
 var paths = {
 	bower: './bower_components/**/*',
 	src: './src/**/*',
+	typings: './src/scripts/typings/**/*.d.ts',
+	typescript: './src/scripts/opennms/**/*.ts',
 	sass: './scss/*.scss',
 	sassIncludes: './scss/includes/*.scss',
 	opennms: './src/scripts/opennms/**/*.js',
@@ -40,6 +46,8 @@ for (var i=0; i < cordovaIgnore.length; i++) {
 	}
 }
 
+var tsProject = ts.createProject('tsconfig.json');
+
 gulp.task('default', ['process-src', 'sass', 'lint', 'test']);
 
 gulp.task('process-bower', function(done) {
@@ -49,11 +57,48 @@ gulp.task('process-bower', function(done) {
 		.on('end', done);
 });
 
-gulp.task('process-src', ['process-bower'], function(done) {
+gulp.task('process-src', function(done) {
 	gulp.src([paths.src])
+		.pipe(ignore.exclude('./src/**/*.ts'))
 		.pipe(gulp.dest('./www/'))
 		.on('end', done);
 });
+
+gulp.task('process-ts-refs', function() {
+	var target = 'scripts/typings/opennms.d.ts';
+	var sources = gulp.src(['./src/**/*.ts'], {read:false});
+	return target.pipe(inject(sources, {
+		starttag: '//{',
+		endtag: '//}',
+		transform: function(filepath) {
+			return '/// <reference path="../../../' + filepath + '" />';
+		}
+	})).pipe(gulp.dest('tmp/'));
+});
+
+gulp.task('lint-ts', function() {
+	return gulp.src('./src/**/*.ts')
+		.pipe(tslint())
+		.pipe(tslint.report('prose'));
+});
+
+gulp.task('process-ts', function() {
+	var sourceTsFiles = [paths.typings, paths.typescript];
+
+	var tsResult = gulp.src(sourceTsFiles)
+		.pipe(sourcemaps.init())
+		.pipe(ts(tsProject));
+
+	return merge([
+		tsResult.dts
+			.pipe(gulp.dest('www/scripts/opennms/')),
+		tsResult.js
+			.pipe(sourcemaps.write('.'))
+			.pipe(gulp.dest('www/scripts/opennms/'))
+	]);
+});
+
+gulp.task('process', ['process-bower', 'process-src' /*, 'process-ts' */]);
 
 gulp.task('sass', function(done) {
 	gulp.src([paths.sass])
@@ -75,7 +120,9 @@ gulp.task('lint', function() {
 });
 
 gulp.task('watch', function() {
+	gulp.watch([paths.bower], ['process-bower']);
 	gulp.watch([paths.src], ['process-src']);
+	//gulp.watch([paths.typings, paths.typescript], ['process-ts']);
 	gulp.watch([paths.sass, paths.sassIncludes], ['sass']);
 });
 
@@ -93,7 +140,7 @@ var minifyMe = function() {
 		}));
 };
 
-gulp.task('prepare', ['process-src', 'sass']);
+gulp.task('prepare', ['process', 'sass']);
 
 gulp.task('minify', ['prepare'], function() {
 	var prep = prepareMe();
