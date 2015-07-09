@@ -16,18 +16,39 @@
 		'uuid4',
 		'opennms.services.BuildConfig',
 		'opennms.services.Config',
+		'opennms.services.Storage',
 	])
-	.factory('Settings', function($q, $rootScope, $injector, storage, uuid4) {
+	.factory('Settings', function($q, $rootScope, $injector, storage, uuid4, StorageService) {
 		var $scope = $rootScope.$new();
 
-		$scope.settings = storage.get('opennms.settings');
+		var storeSettings = function(settings) {
+			storage.set('opennms.settings', settings);
+			return StorageService.save('settings.json', settings).then(function() {
+				return settings;
+			})
+		};
 
-		var getSettings = function() {
-			var settings = angular.copy($scope.settings);
-			if (!settings) {
+		var upgradeSettings = function() {
+			console.log('Settings.upgradeSettings: WARNING: attempting to upgrade settings from old location.');
+			var settings = storage.get('opennms.settings');
+			if (settings === undefined || settings === '' || settings === 'undefined') {
 				settings = {};
 			}
-			return $q.when(settings);
+			return storeSettings(settings).then(function() {
+				return settings;
+			});
+		};
+
+		var getSettings = function() {
+			return StorageService.load('settings.json').then(function(settings) {
+				if (settings === undefined || settings === '' || settings === 'undefined') {
+					return upgradeSettings();
+				} else {
+					return settings;
+				}
+			}, function(err) {
+				return upgradeSettings();
+			});
 		};
 
 		var saveSettings = function(settings) {
@@ -65,41 +86,42 @@
 				}
 			}
 
-			var oldSettings = angular.copy($scope.settings);
-			var newSettings = angular.copy(settings);
+			return getSettings().then(function(oldSettings) {
+				var newSettings = angular.copy(settings);
 
-			if (!oldSettings) {
-				oldSettings = {};
-			}
-
-			for (var prop in newSettings) {
-				if (newSettings.hasOwnProperty(prop) && newSettings[prop] !== oldSettings[prop]) {
-					changedSettings[prop] = newSettings[prop];
+				if (!oldSettings) {
+					oldSettings = {};
 				}
-			}
 
-			var o = angular.toJson(oldSettings),
-				n = angular.toJson(newSettings);
-
-			if (o === n) {
-				//console.log('Settings.saveSettings: settings are unchanged.');
-			} else {
-				console.log('Settings.saveSettings: settings have changed.  Updating.');
-				console.log('Settings.saveSettings: Old Settings: ' + o);
-				console.log('Settings.saveSettings: New Settings: ' + n);
-				storage.set('opennms.settings', newSettings);
-				$scope.settings = newSettings;
-
-				if (changedSettings.server) {
-					var match = serverTypeMatch.exec(changedSettings.server);
-					if (match && match.length > 0) {
-						$rootScope.$broadcast('opennms.analytics.trackEvent', 'settings', 'serverType', 'Server Type', match[0]);
+				for (var prop in newSettings) {
+					if (newSettings.hasOwnProperty(prop) && newSettings[prop] !== oldSettings[prop]) {
+						changedSettings[prop] = newSettings[prop];
 					}
 				}
-				$rootScope.$broadcast('opennms.settings.updated', newSettings, oldSettings, changedSettings);
-			}
 
-			return $q.when($scope.settings);
+				var o = angular.toJson(oldSettings),
+					n = angular.toJson(newSettings);
+
+				if (o === n) {
+					//console.log('Settings.saveSettings: settings are unchanged.');
+					return oldSettings;
+				} else {
+					console.log('Settings.saveSettings: settings have changed.  Updating.');
+					console.log('Settings.saveSettings: Old Settings: ' + o);
+					console.log('Settings.saveSettings: New Settings: ' + n);
+
+					return storeSettings(newSettings).then(function(stored) {
+						if (changedSettings.server) {
+							var match = serverTypeMatch.exec(changedSettings.server);
+							if (match && match.length > 0) {
+								$rootScope.$broadcast('opennms.analytics.trackEvent', 'settings', 'serverType', 'Server Type', match[0]);
+							}
+						}
+						$rootScope.$broadcast('opennms.settings.updated', newSettings, oldSettings, changedSettings);
+						return stored;
+					});
+				}
+			});
 		};
 
 		getSettings().then(function(settings) {
