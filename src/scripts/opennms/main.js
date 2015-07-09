@@ -108,6 +108,7 @@
 			IAP.init().then(Ads.init);
 		};
 
+		init();
 		/*
 		IonicService.promptForUpdates().then(function(res) {
 			if (res) {

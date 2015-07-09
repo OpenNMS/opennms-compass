@@ -56,6 +56,7 @@
     "cordova-plugin-appavailability",
     "cordova-plugin-console",
     "cordova-plugin-datepicker",
+    "cordova-plugin-file",
     "cordova-plugin-geolocation",
     "https://github.com/RangerRick/google-analytics-plugin",
     "cordova-plugin-inappbrowser",
@@ -75,10 +76,6 @@
     {
       "locator": "https://github.com/RangerRick/cordova-HTTP.git",
       "id": "com.raccoonfink.cordova.plugins.http"
-    },
-    {
-      "locator": "https://github.com/apache/cordova-plugin-file",
-      "id": "org.apache.cordova.file"
     },
     {
       "locator": "https://github.com/driftyco/ionic-plugins-deploy",
