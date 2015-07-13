@@ -10,12 +10,12 @@
 		'opennms.services.Analytics',
 		'opennms.services.Availability',
 		'opennms.services.BuildConfig',
-		'opennms.services.Config',
 		'opennms.services.Errors',
 		'opennms.services.Events',
 		'opennms.services.Info',
 		'opennms.services.Nodes',
 		'opennms.services.Outages',
+		'opennms.services.Settings',
 		'opennms.services.Util',
 	])
 	.factory('Modals', function($q, $rootScope, $interval, $ionicModal, $ionicPopup, AlarmService, Analytics, AvailabilityService, Errors, EventService, Info, NodeService, OutageService, Settings, util) {

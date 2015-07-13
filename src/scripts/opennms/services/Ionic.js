@@ -10,7 +10,6 @@
 		'ionic.service.deploy',
 		'ngCordova',
 		'opennms.services.BuildConfig',
-		'opennms.services.Config',
 		'opennms.services.Settings',
 	])
 	.config(['$ionicAppProvider', 'config.build.ionicPublicKey', function($ionicAppProvider, ionicPublicKey) {

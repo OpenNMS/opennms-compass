@@ -3,14 +3,6 @@
 
 	/* global moment: true */
 
-	angular.module('opennms.services.Config', [])
-		.value('config.app.default-server-url', undefined)
-		.value('config.app.default-username', undefined)
-		.value('config.app.default-password', undefined)
-		.value('config.app.rest.limit', 100)
-		.value('config.app.refresh-interval', 30000)
-	;
-
 	angular.module('opennms.services.Settings', [
 		'angularLocalStorage',
 		'uuid4',
@@ -20,6 +12,9 @@
 	])
 	.factory('Settings', function($q, $rootScope, $injector, storage, uuid4, StorageService) {
 		var $scope = $rootScope.$new();
+
+		var defaultRestLimit = 100;
+		var defaultRefreshInterval = 30000;
 
 		var storeSettings = function(settings) {
 			storage.set('opennms.settings', settings);
@@ -82,7 +77,7 @@
 			} else {
 				settings.refreshInterval =  parseInt(settings.refreshInterval, 10);
 				if (isNaN(settings.refreshInterval)) {
-					settings.refreshInterval = $injector.get('config.app.refresh-interval');
+					settings.refreshInterval = defaultRefreshInterval;
 				}
 			}
 
@@ -129,22 +124,22 @@
 				settings = {};
 			}
 			if (!settings.server) {
-				settings.server = $injector.get('config.app.default-server-url');
+				settings.server = undefined;
 			}
 			if (!settings.username) {
-				settings.username = $injector.get('config.app.default-username');
+				settings.username = undefined;
 			}
 			if (!settings.password) {
-				settings.password = $injector.get('config.app.default-password');
+				settings.password = undefined;
 			}
 			if (!settings.uuid) {
 				settings.uuid = uuid4.generate();
 			}
 			if (!settings.restLimit) {
-				settings.restLimit = $injector.get('config.app.rest.limit');
+				settings.restLimit = defaultRestLimit;
 			}
 			if (!settings.refreshInterval || isNaN(parseInt(settings.refreshInterval, 10))) {
-				settings.refreshInterval = $injector.get('config.app.refresh-interval');
+				settings.refreshInterval = defaultRefreshInterval;
 			}
 			if (settings.showAds === undefined || settings.showAds === 'undefined') {
 				settings.showAds = true;
