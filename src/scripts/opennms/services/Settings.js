@@ -7,7 +7,6 @@
 		'angularLocalStorage',
 		'uuid4',
 		'opennms.services.BuildConfig',
-		'opennms.services.Config',
 		'opennms.services.Storage',
 	])
 	.factory('Settings', function($q, $rootScope, $injector, storage, uuid4, StorageService) {
@@ -20,7 +19,7 @@
 			storage.set('opennms.settings', settings);
 			return StorageService.save('settings.json', settings).then(function() {
 				return settings;
-			})
+			});
 		};
 
 		var upgradeSettings = function() {
@@ -149,7 +148,7 @@
 
 		var _getServerName = function() {
 			return getSettings().then(function(settings) {
-				var server = getSettings().server;
+				var server = settings.server;
 				if (server) {
 					var a = document.createElement('a');
 					a.href = server;

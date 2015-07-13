@@ -17,6 +17,7 @@
 		'opennms.services.Ionic',
 		'opennms.services.Modals',
 		'opennms.services.Outages',
+		'opennms.services.Servers',
 		'opennms.services.Settings',
 		'opennms.services.Util',
 		'opennms.controllers.Alarms',
@@ -88,7 +89,7 @@
 			toolbarposition:'top'
 		});
 	})
-	.run(function($rootScope, $timeout, $window, $ionicPlatform, $ionicPopup, Ads, IAP, Info, IonicService, Modals, Settings, util) {
+	.run(function($rootScope, $timeout, $window, $ionicPlatform, $ionicPopup, Ads, IAP, Info, IonicService, Modals, Servers, Settings, util) {
 		var updateTheme = function(info) {
 			if (!info) {
 				info = Info.get();
@@ -128,6 +129,13 @@
 			}
 		});
 		*/
+
+		Servers.get('demo.opennms.org').then(function(server) {
+			console.log('server=' + angular.toJson(server));
+			console.log('demo URL: ' + server.getUrl());
+			console.log('demo ReST: ' + server.restUrl());
+			console.log('demo nodes ReST: ' + server.restUrl('nodes/'));
+		});
 
 		Settings.isServerConfigured().then(function(isConfigured) {
 			if (!isConfigured) {
