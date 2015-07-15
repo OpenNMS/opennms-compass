@@ -130,15 +130,8 @@
 		});
 		*/
 
-		Servers.get('demo.opennms.org').then(function(server) {
-			console.log('server=' + angular.toJson(server));
-			console.log('demo URL: ' + server.getUrl());
-			console.log('demo ReST: ' + server.restUrl());
-			console.log('demo nodes ReST: ' + server.restUrl('nodes/'));
-		});
-
-		Settings.isServerConfigured().then(function(isConfigured) {
-			if (!isConfigured) {
+		Servers.getDefault().then(function(server) {
+			if (!server) {
 				Modals.settings();
 			}
 		});

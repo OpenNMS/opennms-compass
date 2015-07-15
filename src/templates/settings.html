@@ -1,31 +1,32 @@
 <ion-modal-view class="settings" ng-controller="SettingsCtrl">
 	<ion-header-bar class="bar-light">
-		<button class="button button-compass button-clear button-compass" ng-click="hide()">Cancel</button>
+		<div class="buttons">
+			<button class="button button-compass button-clear" ng-click="hide()">Close</button>
+		</div>
 		<h1 class="title">Settings</h1>
-		<button class="button button-compass button-clear button-compass" ng-click="save()">Save</button>
+		<div class="buttons">
+			<button class="button button-compass button-clear" ng-click="addServer()">Add</button>
+		</div>
 	</ion-header-bar>
 	<ion-content scroll="false">
 		<ion-tabs class="tabs-compass tabs-icon-left" ng-keypress="handleKey($event)">
 			<ion-tab title="Settings" icon-on="ion-ios-gear" icon-off="ion-ios-gear-outline" scroll="true">
 				<ion-view>
 					<ion-content scroll="true">
-						<form class="list">
-							<ion-item class="item-divider">
-								Server Settings
-							</ion-item>
-							<label class="item item-input item-stacked-label">
-								<span class="input-label">Server URL</span>
-								<input type="url" placeholder="e.g., http://demo.opennms.org/opennms/" ng-model="settings.server" autocapitalize="off" required>
+						<ion-list show-delete="showDelete" show-reorder="false" can-swipe="true" delegate-handle="server-list">
+							<ion-item class="item item-divider">Servers</ion-item>
+							<ion-item ng-repeat="server in servers track by server.name" class="item item-icon-right compass" ng-click="selectServer(server)">
+								<h2>{{server.name}}</h2>
+								<p>{{server.url}}</p>
+								<i ng-class="'icon ' + ($index === defaultServer? 'ion-checkmark':'')"></i>
+								<ion-option-button class="button-compass" ng-click="editServer(server)">
+									<i class="icon ion-edit"></i>
+								</ion-option-button>
+								<ion-option-button class="button-assertive" ng-click="deleteServer(server)">
+									<i class="icon ion-trash-a"></i>
+								</ion-option-button>
 							</label>
-							<label class="item item-input item-floating-label">
-								<span class="input-label">Username</span>
-								<input type="text" placeholder="Username" ng-model="settings.username" autocapitalize="off" autocorrect="off" required>
-							</label>
-							<label class="item item-input item-floating-label">
-								<span class="input-label">Password</span>
-								<input type="password" placeholder="Password" ng-model="settings.password" autocapitalize="off" required>
-							</label>
-						</form>
+						</ion-list>
 					</ion-content>
 				</ion-view>
 			</ion-tab>

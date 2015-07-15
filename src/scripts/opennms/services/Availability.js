@@ -131,6 +131,7 @@
 		};
 
 		util.onSettingsUpdated(checkAvailability);
+		util.onServersUpdated(checkAvailability);
 		checkAvailability();
 
 		return {

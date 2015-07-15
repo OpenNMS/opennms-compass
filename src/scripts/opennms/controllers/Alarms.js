@@ -11,6 +11,7 @@
 		'opennms.services.Errors',
 		'opennms.services.Modals',
 		'opennms.services.Util',
+		'opennms.services.Servers',
 		'opennms.services.Settings',
 	])
 	.value('severities', {})
@@ -75,7 +76,7 @@
 		//severity.$stateful = true;
 		return severity;
 	})
-	.controller('AlarmsCtrl', function($q, $scope, $timeout, $ionicListDelegate, $ionicLoading, $ionicModal, $ionicPopup, $ionicScrollDelegate, $ionicViewSwitcher, storage, util, AlarmService, Errors, Modals, Settings, severityStateTracker, severities) {
+	.controller('AlarmsCtrl', function($q, $scope, $timeout, $ionicListDelegate, $ionicLoading, $ionicModal, $ionicPopup, $ionicScrollDelegate, $ionicViewSwitcher, storage, util, AlarmService, Errors, Modals, Servers, Settings, severityStateTracker, severities) {
 		console.log('AlarmsCtrl initializing.');
 
 		var filterParams = storage.get('opennms.alarms.filterParams');
@@ -92,8 +93,10 @@
 		$scope.severities = severities;
 
 		console.log('alarm filter: ' + angular.toJson($scope.filter));
-		Settings.username().then(function(username) {
-			$scope.username = username;
+		Servers.getDefault().then(function(server) {
+			if (server && server.username) {
+				$scope.username = server.username;
+			}
 		});
 
 		$scope.toggleSeverity = function(item) {
@@ -229,9 +232,9 @@
 		};
 
 		util.onDirty('alarms', $scope.refreshAlarms);
-		util.onSettingsUpdated(function(newSettings, oldSettings, changedSettings) {
-			if (changedSettings.username) {
-				$scope.username = changedSettings.username;
+		util.onServersUpdated(function(newServers, oldServers, defaultServer) {
+			if (defaultServer && defaultServer.username) {
+				$scope.username = defaultServer.username;
 			}
 		});
 

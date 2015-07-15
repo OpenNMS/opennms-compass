@@ -53,19 +53,30 @@
 			var serverTypeMatch = new RegExp('^([Hh][Tt][Tt][Pp][Ss]?):');
 			var changedSettings = {};
 
-			if (!settings.server || settings.server === 'undefined' || settings.server === '') {
-				settings.server = undefined;
-			}
-			if (settings.server && !settings.server.endsWith('/')) {
-				settings.server += '/';
+			if (!settings.defaultServerName || settings.defaultServerName === 'undefined' || settings.defaultServerName === '') {
+				settings.defaultServerName = undefined;
 			}
 
-			if (!settings.username || settings.username === 'undefined' || settings.username === '') {
-				settings.username = undefined;
-			}
+			if (settings.defaultServerName) {
+				delete settings.server;
+				delete settings.username;
+				delete settings.password;
+			} else {
+				// obsolete
+				if (!settings.server || settings.server === 'undefined' || settings.server === '') {
+					settings.server = undefined;
+				}
+				if (settings.server && !settings.server.endsWith('/')) {
+					settings.server += '/';
+				}
 
-			if (!settings.password || settings.password === 'undefined' || settings.password === '') {
-				settings.password = undefined;
+				if (!settings.username || settings.username === 'undefined' || settings.username === '') {
+					settings.username = undefined;
+				}
+
+				if (!settings.password || settings.password === 'undefined' || settings.password === '') {
+					settings.password = undefined;
+				}
 			}
 
 			if (settings.showAds === undefined || settings.showAds === 'undefined') {
@@ -122,15 +133,28 @@
 			if (!settings || settings === 'undefined') {
 				settings = {};
 			}
-			if (!settings.server) {
-				settings.server = undefined;
+
+			if (!settings.defaultServerName) {
+				settings.defaultServerName = undefined;
 			}
-			if (!settings.username) {
-				settings.username = undefined;
+
+			if (settings.defaultServerName) {
+				delete settings.server;
+				delete settings.username;
+				delete settings.password;
+			} else {
+				// obsolete
+				if (!settings.server) {
+					settings.server = undefined;
+				}
+				if (!settings.username) {
+					settings.username = undefined;
+				}
+				if (!settings.password) {
+					settings.password = undefined;
+				}
 			}
-			if (!settings.password) {
-				settings.password = undefined;
-			}
+
 			if (!settings.uuid) {
 				settings.uuid = uuid4.generate();
 			}
@@ -146,15 +170,26 @@
 			saveSettings(settings);
 		});
 
-		var _getServerName = function() {
+		var _getDefaultServerName = function() {
 			return getSettings().then(function(settings) {
-				var server = settings.server;
-				if (server) {
-					var a = document.createElement('a');
-					a.href = server;
-					return a.hostname;
+				if (settings.defaultServerName) {
+					return settings.defaultServerName;
+				} else {
+					var server = settings.server;
+					if (server) {
+						var a = document.createElement('a');
+						a.href = server;
+						return a.hostname;
+					}
+					return undefined;
 				}
-				return undefined;
+			});
+		};
+
+		var _setDefaultServerName = function(name) {
+			return getSettings().then(function(settings) {
+				settings.defaultServerName = name;
+				return saveSettings(settings);
 			});
 		};
 
@@ -272,15 +307,19 @@
 		return {
 			get: getSettings,
 			set: saveSettings,
-			getServerName: _getServerName,
+			getDefaultServerName: _getDefaultServerName,
+			setDefaultServerName: _setDefaultServerName,
 			restLimit: _getRestLimit,
-			URL: _url,
+			/*
 			restURL: _restUrl,
+			*/
 			showAds: _showAds,
+			/*
 			username: _username,
 			password: _password,
 			server: _server,
 			rest: _rest,
+			*/
 			uuid: _uuid,
 			disableAds: _disableAds,
 			isServerConfigured: _isServerConfigured,

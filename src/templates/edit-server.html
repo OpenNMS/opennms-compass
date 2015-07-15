@@ -1,0 +1,33 @@
+<ion-modal-view class="settings" ng-controller="SettingsCtrl">
+	<form name="editServer" novalidate>
+		<ion-header-bar class="bar-light">
+			<div class="buttons">
+				<button class="button button-compass button-clear" ng-click="closeModal()">Cancel</button>
+			</div>
+			<h1 class="title">{{adding? 'Add':'Edit'}} Server</h1>
+			<div class="buttons">
+				<button class="button button-compass button-clear" ng-click="saveServer()" ng-disabled="editServer.$invalid">Save</button>
+			</div>
+		</ion-header-bar>
+		<ion-content scroll="true">
+			<ion-list>
+				<label class="item item-input item-stacked-label">
+					<span class="input-label">Name</span>
+					<input name="name" type="text" placeholder="displayable name for server ('default', 'home', etc.)" ng-model="server.name" ng-model-options="{debounce:200}" required>
+				</label>
+				<label class="item item-input item-stacked-label">
+					<span class="input-label">Server URL <span ng-show="editServer.url.$error.url" class="error">please enter a valid URL</span></span>
+					<input name="url" type="url" placeholder="e.g., http://demo.opennms.org/opennms/" ng-model="server.url" ng-model-options="{debounce:200}" autocapitalize="off" required>
+				</label>
+				<label class="item item-input item-floating-label">
+					<span class="input-label">Username</span>
+					<input name="username" type="text" placeholder="Username" ng-model="server.username" ng-model-options="{debounce:200}" autocapitalize="off" autocorrect="off" required>
+				</label>
+				<label class="item item-input item-floating-label">
+					<span class="input-label">Password</span>
+					<input name="password" type="password" placeholder="Password" ng-model="server.password" ng-model-options="{debounce:200}" autocapitalize="off" required>
+				</label>
+			</ion-list>
+		</ion-content>
+	</form>
+</ion-modal-view>

@@ -1,0 +1,14 @@
+.settings {
+	.bar-header {
+		border-bottom: 1px solid $bar-border-subtle;
+	}
+	.error {
+		color: #ff0000;
+		font-size: 75%;
+	}
+	ion-option-button {
+		.button-clear {
+			max-height: none;
+		}
+	}
+}

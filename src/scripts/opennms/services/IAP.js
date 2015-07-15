@@ -9,10 +9,11 @@
 		'opennms.services.Analytics',
 		'opennms.services.Errors',
 		'opennms.services.Info',
+		'opennms.services.Servers',
 		'opennms.services.Settings',
 		'opennms.services.Util',
 	])
-	.factory('IAP', function($q, $rootScope, $timeout, $window, $ionicLoading, $ionicPopup, Errors, Info, Settings, util) {
+	.factory('IAP', function($q, $rootScope, $timeout, $window, $ionicLoading, $ionicPopup, Errors, Info, Servers, Settings, util) {
 		console.log('IAP: Initializing.');
 
 		var $scope = $rootScope.$new();
@@ -112,8 +113,8 @@
 				store.ready(function() {
 					console.log('IAP: Store is ready.');
 					Errors.clear('store');
-					Settings.isServerConfigured().then(function(isConfigured) {
-						if (!isConfigured) {
+					Servers.getDefault().then(function(server) {
+						if (!server) {
 							// assume this is a first-launch and do the refresh
 							// a second time to restore purchases
 							store.refresh();

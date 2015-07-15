@@ -24,6 +24,7 @@
 	angular.module('opennms.controllers.Dashboard', [
 		'ionic',
 		'ngResize',
+		'rt.debounce',
 		'opennms.services.Alarms',
 		'opennms.services.Availability',
 		'opennms.services.DonutWidget',
@@ -35,7 +36,7 @@
 		'opennms.services.Settings',
 		'opennms.services.Util',
 	])
-	.controller('DashboardCtrl', function($q, $rootScope, $scope, $interval, $timeout, $state, $document, $window, $ionicLoading, $ionicPopup, $ionicSlideBoxDelegate, resize, AlarmService, AvailabilityService, DonutWidget, Errors, Info, Modals, OutageService, ResourceService, Settings, util) {
+	.controller('DashboardCtrl', function($q, $rootScope, $scope, $interval, $timeout, $state, $document, $window, $ionicLoading, $ionicPopup, $ionicSlideBoxDelegate, debounce, resize, AlarmService, AvailabilityService, DonutWidget, Errors, Info, Modals, OutageService, ResourceService, Settings, util) {
 		console.log('DashboardCtrl: Initializing.');
 
 		var updateArrows = function(height) {
@@ -158,11 +159,14 @@
 						graphDefs[def.name] = def;
 					}
 
-					$scope.currentGraphSlide = 0;
+					if ($scope.currentGraphSlide >= favs.length) {
+						// "current" graph is now higher than the number of graphs we have
+						$scope.currentGraphSlide = 0;
+					}
 					$scope.graphs = graphDefs;
 					$scope.favoriteGraphs = favs;
 
-					var delegate = $ionicSlideBoxDelegate.$getByHandle('donut-slide-box');
+					var delegate = $ionicSlideBoxDelegate.$getByHandle('graph-slide-box');
 					delegate.slide($scope.currentGraphSlide);
 					delegate.update();
 				});
@@ -171,26 +175,8 @@
 			});
 		};
 
-		var refreshing = false;
-		$scope.refreshData = function() {
-			if (refreshing) {
-				return;
-			}
-			refreshing = true;
-
-			//console.log('DashboardCtrl.refreshData: refreshing data.');
-
-			// if we have never loaded before, show the loading thingy
-			/*
-			if (!$scope.loaded) {
-				$ionicLoading.show({
-					templateUrl: 'templates/loading.html',
-					hideOnStateChange: true,
-				});
-			}
-			*/
-
-			var availabilityPromise = AvailabilityService.availability().then(function(results) {
+		var refreshAvailability = function() {
+			return AvailabilityService.availability().then(function(results) {
 				Errors.clear('availability');
 				$scope.availability = results;
 				return results;
@@ -200,7 +186,10 @@
 				return $q.reject(err);
 			});
 
-			var outagePromise = OutageService.get().then(function(results) {
+		};
+
+		var refreshOutages = function() {
+			return OutageService.get().then(function(results) {
 				var data = {}, outages = [], outage, service, total = 0, i;
 
 				for (i=0; i < results.length; i++) {
@@ -247,8 +236,10 @@
 				return $q.reject(err);
 			});
 
+		};
 
-			var alarmPromise = AlarmService.severities().then(function(results) {
+		var refreshAlarms = function() {
+			return AlarmService.severities().then(function(results) {
 				var severities = [], severity, total = 0;
 
 				for (var i=0; i < results.length; i++) {
@@ -274,18 +265,43 @@
 				return $q.reject(err);
 			});
 
-			var favoritesPromise = refreshFavorites();
+		};
 
-			$q.all([outagePromise, alarmPromise, availabilityPromise, favoritesPromise])['finally'](function() {
+		var refreshing = false;
+		$scope.refreshData = debounce(200, function() {
+			if (refreshing) {
+				return;
+			}
+			refreshing = true;
+
+			//console.log('DashboardCtrl.refreshData: refreshing data.');
+
+			var finished = function(type) {
+				console.log('DashboardCtrl.refreshData: finished: ' + type);
 				util.hideSplashscreen();
 				$timeout(function() {
 					refreshing = false;
 					$ionicLoading.hide();
-					$scope.loaded = true;
 					$scope.$broadcast('scroll.refreshComplete');
 				}, 50);
+			};
+
+			refreshAvailability().finally(function() {
+				finished('availability');
 			});
-		};
+
+			refreshOutages().finally(function() {
+				finished('outages');
+			});
+
+			refreshAlarms().finally(function() {
+				finished('alarms');
+			});
+
+			refreshFavorites().finally(function() {
+				finished('favorites');
+			});
+		});
 
 		$scope.unfavorite = function(favorite) {
 			var graphTitle = ($scope.graphs && $scope.graphs[favorite.graphName])? $scope.graphs[favorite.graphName].title : 'graph';
@@ -324,7 +340,7 @@
 		$scope.currentDonutSlide = 0;
 		$scope.currentGraphSlide = 0;
 		$scope.landscape = true;
-		Settings.getServerName().then(function(serverName) {
+		Settings.getDefaultServerName().then(function(serverName) {
 			$scope.serverName = serverName;
 		});
 
@@ -337,10 +353,10 @@
 
 		util.onSettingsUpdated(function(newSettings, oldSettings, changedSettings) {
 			console.log('Dashboard: settings changed, refreshing data.');
-			Settings.getServerName().then(function(serverName) {
-				$scope.serverName = serverName;
+			if (changedSettings.defaultServerName) {
+				$scope.serverName = changedSettings.defaultServerName;
 				$scope.refreshData();
-			});
+			}
 		});
 
 		util.onDirty('alarms', $scope.refreshData);
