@@ -363,7 +363,7 @@
 		}).then(function(popover) {
 			$scope.serverPopover = popover;
 			popover.scope.selectServer = function(server) {
-				$ionicLoading.show({templateUrl: 'templates/loading.html'});
+				$ionicLoading.show({templateUrl: 'templates/loading.html', duration: 5000});
 				popover.hide();
 				Settings.setDefaultServerName(server.name);
 			};
