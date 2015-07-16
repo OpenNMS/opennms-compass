@@ -19,6 +19,15 @@ function Server(server) {
   /**
    * @description
    * @ngdoc property
+   * @name Server#id
+   * @propertyOf Server
+   * @returns {string} Unique Identifier
+   */
+  self.id = server.id;
+
+  /**
+   * @description
+   * @ngdoc property
    * @name Server#name
    * @propertyOf Server
    * @returns {string} Server Name

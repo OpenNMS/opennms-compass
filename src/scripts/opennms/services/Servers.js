@@ -10,10 +10,11 @@
 	angular.module('opennms.services.Servers', [
 		'ionic',
 		'ngCordova',
+		'uuid4',
 		'opennms.services.Settings',
 		'opennms.services.Storage',
 		'opennms.services.Util',
-	]).factory('Servers', function($q, $rootScope, Settings, StorageService, UtilEventBroadcaster, UtilEventHandler) {
+	]).factory('Servers', function($q, $rootScope, uuid4, Settings, StorageService, UtilEventBroadcaster, UtilEventHandler) {
 		console.log('Servers: Initializing.');
 
 		var ready = $q.defer();
@@ -61,6 +62,9 @@
 		};
 
 		var saveServer = function(server) {
+			if (!server.id) {
+				server.id = uuid4.generate();
+			}
 			return StorageService.save(fsPrefix + '/' + encodeURIComponent(server.name) + '.json', server).then(function() {
 				checkServersUpdated();
 				return server;
@@ -106,6 +110,9 @@
 		var getServer = function(serverName) {
 			return ready.promise.then(function() {
 				return StorageService.load(fsPrefix + '/' + encodeURIComponent(serverName) + '.json').then(function(data) {
+					if (!data.id) {
+						data.id = uuid4.generate();
+					}
 					return new Server(data);
 				}, function(err) {
 					console.log('Servers.getServer: failed to get ' + serverName + ' from the filesystem: ' + angular.toJson(err));

@@ -8,9 +8,9 @@
 
 	angular.module('opennms.services.Resources', [
 		'ionic',
-		'opennms.services.DB',
 		'opennms.services.Rest',
 		'opennms.services.Servers',
+		'opennms.services.Storage',
 	])
 	.directive('onmsGraph', function($timeout, $window, Servers) {
 		var getWidth = function() {
@@ -206,7 +206,7 @@
 			}
 		};
 	})
-	.factory('ResourceService', function($q, $rootScope, db, RestService, Servers) {
+	.factory('ResourceService', function($q, $rootScope, RestService, Servers, StorageService) {
 		console.log('ResourceService: Initializing.');
 
 		var _graphs = {};
@@ -314,89 +314,68 @@
 
 		var _getFavoritesPrefix = function() {
 			return Servers.getDefault().then(function(server) {
-				if (server && angular.isDefined(server.name) && angular.isDefined(server.username)) {
-					return ['favorite', server.name, server.username].join(':');
+				if (server && angular.isDefined(server.id) && angular.isDefined(server.username)) {
+					return ['favorite', server.id, encodeURIComponent(server.username)].join('_');
 				} else {
 					return $q.reject('Server unconfigured.');
 				}
 			});
 		};
 
+		var _getFavoritesFilename = function(resourceId, graphName) {
+			return _getFavoritesPrefix().then(function(prefix) {
+				return prefix + '_' + [encodeURIComponent(resourceId), encodeURIComponent(graphName)].join('_') + '.json';
+			});
+		};
+
 		var getFavorites = function() {
 			return _getFavoritesPrefix().then(function(prefix) {
-				return db.find({
-					selector: {
-						$and: [
-							{ _id: {'$gt': prefix+':'} },
-							{ _id: {'$lt': prefix+':\uffff'} },
-						]
-					}
-				}).then(function(found) {
-					if (found && found.docs) {
-						var i, favorite, id, chunks,
-							ret = [],
-							length = found.docs.length;
-						for (i=0; i < length; i++) {
-							favorite = found.docs[i];
-							if (!favorite.resourceId) {
-								var info = _getResourceInfo(prefix, favorite._id);
-								angular.extend(favorite, info);
-							}
-							ret.push(favorite);
+				return StorageService.list('favorites').then(function(files) {
+					var favorites = [], i, len = files.length, file;
+					for (i=0; i < len; i++) {
+						file = files[i];
+						if (file && file.isFile && file.name.startsWith(prefix)) {
+							console.log('ResourceService.getFavorites: matched file ' + file.name);
+							favorites.push(StorageService.load('favorites/' + file.name));
+						} else {
+							console.log('ResourceService.getFavorites: ' + prefix + ' did not match file ' + file.name);
 						}
-						return ret;
-					} else {
-						return $q.reject('Docs missing.');
 					}
+					return $q.all(favorites);
 				});
+			}).then(function(favorites) {
+				console.log('ResourceService.getFavorites: found: ' + angular.toJson(favorites));
+				return favorites;
+				//return $q.reject('nope');
 			});
 		};
 
 		var getFavorite = function(resourceId, graphName) {
-			return _getFavoritesPrefix().then(function(prefix) {
-				var docId = prefix + ':' + [resourceId, graphName].join(':');
-				return db.get(docId);
-			}).then(function(doc) {
-				doc.resourceId = resourceId;
-				doc.graphName = graphName;
-				return doc;
+			return _getFavoritesFilename(resourceId, graphName).then(function(filename) {
+				return StorageService.load('favorites/' + filename);
+			}).then(function(fav) {
+				return fav;
 			}, function() {
-				// if it's not in the database, don't error, just return undefined
+				// if it's not there, don't error, just return undefined
 				return undefined;
 			});
 		};
 
 		var addFavorite = function(resourceId, graphName, nodeId, nodeLabel) {
-			return _getFavoritesPrefix().then(function(prefix) {
-				var docId = prefix + ':' + [resourceId, graphName].join(':');
-
-				return db.get(docId).then(function(doc) {
-					console.log('ResourceService.addFavorite: got existing favorite: ' + angular.toJson(doc));
-					return doc;
-				}, function() {
-					console.log('ResourceService.addFavorite: favorite does not exist');
-					var doc = {
-						_id: docId,
-						isFavorite: true,
-						nodeId: nodeId,
-						nodeLabel: nodeLabel,
-					};
-					return db.put(doc).then(function(response) {
-						doc._rev = response.rev;
-						return doc;
-					});
-				});
+			return _getFavoritesFilename(resourceId, graphName).then(function(filename) {
+				var fav = {
+					resourceId: resourceId,
+					graphName: graphName,
+					nodeId: nodeId,
+					nodeLabel: nodeLabel,
+				};
+				return StorageService.save('favorites/' + filename, fav);
 			});
 		};
 
 		var removeFavorite = function(resourceId, graphName) {
-			return _getFavoritesPrefix().then(function(prefix) {
-				var docId = prefix + ':' + [resourceId, graphName].join(':');
-				return db.get(docId);
-			}).then(function(doc) {
-				return db.remove(doc).then(function(err) {
-					return doc;
-				});
+			return _getFavoritesFilename().then(function(filename) {
+				return StorageService.remove('favorites/' + filename);
 			});
 		};
 
