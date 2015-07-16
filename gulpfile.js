@@ -120,10 +120,10 @@ gulp.task('lint', function() {
 });
 
 gulp.task('watch', function() {
-	gulp.watch([paths.bower], ['process-bower']);
-	gulp.watch([paths.src], ['process-src']);
-	//gulp.watch([paths.typings, paths.typescript], ['process-ts']);
-	gulp.watch([paths.sass, paths.sassIncludes], ['sass']);
+	gulp.watch([
+		paths.src,
+		paths.opennms,
+	], ['process-src']);
 });
 
 var minifyMe = function() {

@@ -20,7 +20,7 @@ function Event(event) {
    * @propertyOf Event
    * @returns {number} Unique identifier for the event
    */
-  self.id = Number(event['_id']);
+  self.id = parseInt(event['_id'], 10);
 
   /**
    * @description

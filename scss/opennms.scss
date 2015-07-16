@@ -33,6 +33,8 @@ $modal-inset-mode-min-height:     240px;
 
 /* OPENNMS GLOBAL COLORS */
 
+$bar-border-subtle: $item-light-border;
+
 $severity-alarm-critical-text: black;
 $severity-alarm-critical-bg: #f5cdcd;
 $severity-alarm-critical-border: #cc0000;
@@ -71,6 +73,7 @@ $severity-alarm-cleared-border: #999;
 	"includes/node-detail",
 	"includes/node-resource",
 	"includes/outage-list",
+	"includes/settings",
 	"includes/severity"
 ;
 
@@ -117,3 +120,12 @@ $severity-alarm-cleared-border: #999;
 	bottom: 0;
 }
 
+ion-popover-view.fit {
+	height: auto !important;
+	ion-content {
+		position: relative !important;
+	}
+}
+.platform-android ion-popover-view.fit {
+	margin-top: 10px !important;
+}

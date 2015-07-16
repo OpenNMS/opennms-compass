@@ -2,17 +2,19 @@
 	'use strict';
 
 	/* global ionic: true */
-	/* global X2JS: true */
 	/* global RestError: true */
+	/* global URI: true */
+	/* global X2JS: true */
 
 	angular.module('opennms.services.Rest', [
 		'ng',
 		'cordovaHTTP',
+		'opennms.services.Servers',
 		'opennms.services.Settings',
 		'opennms.services.Util',
 	])
 
-	.factory('RestService', function($q, $rootScope, $window, $http, $injector, Settings, util) {
+	.factory('RestService', function($q, $rootScope, $window, $http, $injector, Servers, Settings, util) {
 		console.log('RestService: Initializing.');
 
 		var ready = $q.defer();
@@ -72,26 +74,23 @@
 
 			return clearCookies().then(function() {
 				console.log('RestService.updateAuthorization: cleared cookies.');
-				return Settings.username();
-			}).then(function(u) {
-				username = u;
-				return Settings.password();
-			}).then(function(p) {
-				password = p;
-				//console.log('username=' + username +', password=' + password);
-				if (username === undefined || password === undefined) {
+				return Servers.getDefault();
+			}).then(function(server) {
+				console.log('update authorization: default server = ' + angular.toJson(server));
+				//console.log('username=' + server.username +', password=' + server.password);
+				if (!server || angular.isUndefined(server.username) || angular.isUndefined(server.password)) {
 					console.log('RestService.updateAuthorization: username or password not set.');
 					delete $http.defaults.headers.common['Authorization'];
 					return done();
 				} else {
-					//console.log('RestService.updateAuthorization: setting basic auth with username "' + username + '".');
-					$http.defaults.headers.common['Authorization'] = 'Basic ' + $window.btoa(username + ':' + password);
+					//console.log('RestService.updateAuthorization: setting basic auth with username "' + server.username + '".');
+					$http.defaults.headers.common['Authorization'] = 'Basic ' + $window.btoa(server.username + ':' + server.password);
 					if (useCordovaHTTP) {
-						return cordovaHTTP.useBasicAuth(username, password).then(function() {
-							console.log('RestService.updateAuthorization: configured basic auth with username "' + username + '".');
+						return cordovaHTTP.useBasicAuth(server.username, server.password).then(function() {
+							console.log('RestService.updateAuthorization: configured basic auth with username "' + server.username + '".');
 							return done();
 						}, function(err) {
-							console.log('RestService.updateAuthorization: failed to configure basic auth with username "' + username + '".');
+							console.log('RestService.updateAuthorization: failed to configure basic auth with username "' + server.username + '".');
 							return done();
 						});
 					} else {
@@ -108,16 +107,18 @@
 			//console.log('RestService.getUrl: restFragment='+restFragment);
 			return ready.promise.then(function() {
 				//console.log('RestService.getUrl: ready');
-				return Settings.restURL();
-			}).then(function(restURL) {
+				return Servers.getDefault();
+			}).then(function(server) {
+				var restURL = server? server.restUrl() : undefined;
 				//console.log('RestService.getUrl: restURL=' + restURL);
 				if (restURL) {
-					restURL = restURL.replace(/\/$/, '');
-					if (!restFragment.startsWith('/')) {
-						restFragment = '/' + restFragment;
+					var uri = URI(restURL);
+					if (restFragment.startsWith('/')) {
+						restFragment = restFragment.slice(1);
 					}
-					//console.log('RestService.getUrl: returning=' + restURL + restFragment);
-					return restURL + restFragment;
+					uri.segment(restFragment);
+					//console.log('RestService.getUrl: returning=' + uri.toString());
+					return uri.toString();
 				} else {
 					//console.log('RestService.getUrl: returning=undefined');
 					return undefined;
@@ -140,9 +141,9 @@
 			}
 
 			var url;
-			return Settings.isServerConfigured().then(function(serverConfigured) {
+			return Servers.getDefault().then(function(server) {
 				//console.log('Rest.doQuery: ' + method + ' ' + restFragment + ': isServerConfigured=' + serverConfigured);
-				if (serverConfigured) {
+				if (server) {
 					return getUrl(restFragment);
 				} else {
 					return $q.reject(new RestError(restFragment, undefined, 0, 'Server information is not complete.'));
@@ -214,8 +215,8 @@
 		};
 
 		var doPostXml = function(restFragment, data, headers) {
-			return Settings.isServerConfigured().then(function(isConfigured) {
-				if (isConfigured) {
+			return Servers.getDefault().then(function(server) {
+				if (server) {
 					return getUrl(restFragment);
 				} else {
 					return $q.reject(new RestError(restFragment, undefined, 0, 'Server information is not complete.'));
@@ -241,7 +242,7 @@
 			});
 		};
 
-		util.onSettingsUpdated(updateAuthorization);
+		util.onServersUpdated(updateAuthorization);
 		updateAuthorization();
 
 		return {

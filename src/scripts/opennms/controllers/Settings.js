@@ -2,6 +2,7 @@
 	'use strict';
 
 	/* global ionic: true */
+	/* global Server: true */
 
 	angular.module('opennms.controllers.Settings', [
 		'ionic',
@@ -10,26 +11,132 @@
 		'opennms.services.Errors',
 		'opennms.services.IAP',
 		'opennms.services.Info',
+		'opennms.services.Servers',
 		'opennms.services.Settings',
 		'opennms.services.Util',
 	])
-	.controller('SettingsCtrl', function($scope, $timeout, $window, $filter, $ionicPlatform, $ionicPopup, AvailabilityService, Capabilities, Errors, IAP, Info, Settings, util) {
+	.factory('ServerModal', function($q, $rootScope, $ionicModal, Servers) {
+		var $scope = $rootScope.$new();
+
+		$scope.openModal = function(server) {
+			if (server) {
+				$scope.adding = false;
+				$scope.server = angular.copy(server);
+			} else {
+				$scope.adding = true;
+				$scope.server = {};
+			}
+
+			return $ionicModal.fromTemplateUrl('templates/edit-server.html', {
+				scope: $scope,
+				animation: 'slide-in-up',
+			}).then(function(modal) {
+				$scope.modal = modal;
+				modal.show();
+				return modal;
+			}, function(err) {
+				console.log('ServerModal.open: failed: ' + angular.toJson(err));
+				return $q.reject(err);
+			});
+		};
+
+		$scope.closeModal = function() {
+			if ($scope.server) {
+				$scope.server = undefined;
+			}
+			if ($scope.modal) {
+				$scope.modal.hide();
+				$scope.modal.remove();
+				$scope.modal = undefined;
+			}
+		};
+
+		$scope.saveServer = function() {
+			console.log('ServerModal.save: Saving server: ' + angular.toJson($scope.server));
+			Servers.put(new Server($scope.server)).then(function() {
+				$scope.closeModal();
+			});
+		};
+
+		return {
+			open: $scope.openModal,
+			close: $scope.closeModal,
+		};
+	})
+	.controller('SettingsCtrl', function($scope, $timeout, $window, $filter, $ionicListDelegate, $ionicPlatform, $ionicPopup, ServerModal, AvailabilityService, Capabilities, Errors, IAP, Info, Servers, Settings, util) {
 		console.log('Settings initializing.');
 
 		$scope.util = util;
 
+		$scope.addServer = function() {
+			ServerModal.open().then(function() {
+				$ionicListDelegate.$getByHandle('server-list').closeOptionButtons();
+			});
+		};
+
+		$scope.editServer = function(server) {
+			ServerModal.open(server).then(function() {
+				$ionicListDelegate.$getByHandle('server-list').closeOptionButtons();
+			});
+		};
+
+		$scope.deleteServer = function(server) {
+			var remove = function(s) {
+				return Servers.remove(s).then(function() {
+					return s;
+				});
+			};
+
+			Settings.getDefaultServerName().then(function(defaultServerName) {
+				if (server.name === defaultServerName) {
+					return Servers.all().then(function(servers) {
+						var s = [], i, len = servers.length;
+						for (i=0; i < len; i++) {
+							if (servers[i].name !== server.name) {
+								s.push(servers[i]);
+							}
+						}
+
+						if (s.length === 0) {
+							// no other servers to set as default
+							return remove(server);
+						} else {
+							// set the first remaining server as default
+							return Settings.setDefaultServerName(s[0].name).then(function() {
+								return remove(server);
+							});
+						}
+					});
+				} else {
+					return remove(server);
+				}
+			});
+		};
+
+		$scope.selectServer = function(server) {
+			$ionicListDelegate.$getByHandle('server-list').closeOptionButtons();
+			Servers.setDefault(server);
+		};
+
+		var initDefaultServer = function() {
+			var i, len = $scope.servers.length;
+			for (i=0; i < len; i++) {
+				if ($scope.servers[i].isDefault) {
+					$scope.defaultServer = i;
+					//console.log('default server: ' + $scope.servers[i].name);
+				} else {
+					//console.log('not default server: ' + $scope.servers[i].name);
+				}
+			}
+		};
+
 		var init = function() {
+			Servers.all().then(function(servers) {
+				$scope.servers = servers;
+				initDefaultServer();
+			});
 			Settings.get().then(function(settings) {
 				$scope.settings = settings;
-			});
-			Settings.getServerName().then(function(serverName) {
-				$scope.serverName = serverName;
-			});
-			Settings.URL().then(function(url) {
-				$scope.serverURL = url;
-			});
-			Settings.username().then(function(username) {
-				$scope.username = username;
 			});
 			Settings.version().then(function(version) {
 				$scope.version = version;
@@ -42,9 +149,9 @@
 			$scope.canSetLocation = Capabilities.setLocation();
 			AvailabilityService.supported().then(function(isSupported) {
 				$scope.hasAvailability = isSupported;
+			}).finally(function() {
 				$scope.$broadcast('scroll.refreshComplete');
 			});
-			$scope.$broadcast('scroll.refreshComplete');
 		};
 		init();
 
@@ -186,6 +293,11 @@
 		});
 		util.onSettingsUpdated(function() {
 			init();
+		});
+		util.onServersUpdated(function(newServers) {
+			$scope.servers = newServers;
+			initDefaultServer();
+			$scope.$broadcast('scroll.refreshComplete');
 		});
 		util.onErrorsUpdated(function() {
 			$scope.errors = Errors.get();

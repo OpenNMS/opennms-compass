@@ -9,20 +9,20 @@
 		</ion-nav-buttons>
 	</ion-nav-bar>
 	<ion-header-bar class="bar bar-header bar-subheader">
-		<h3 class="title compass" ng-click="util.openServer()"><span ng-if="serverName">{{serverName}}</span></h3>
+		<h3 class="title compass" ng-click="showSelectServer($event)"><span ng-if="serverName">{{serverName}}</span></h3>
 	</ion-header-bar>
 	<ion-content padding="false" scroll="true" class="has-header">
 		<ion-refresher pulling-text="Pull to Refresh..." on-refresh="refreshData()"></ion-refresher>
 		<ion-slide-box on-slide-changed="refreshDonutSlide(index)" show-pager="false" delegate-handle="donut-slide-box" ng-if="!landscape">
 			<ion-slide class="outages">
-				<i id="outage-arrow" class="icon ion-chevron-right right-arrow compass" ng-click="goToSlide(1)" ng-class="donutClass('outages')"></i>
+				<i id="outage-arrow" class="icon ion-chevron-right right-arrow compass" ng-click="goToDonutSlide(1)" ng-class="donutClass('outages')"></i>
 				<h3 ng-if="e.hasError('outage-chart')" class="item item-text-wrap title error">Error: Unable to retrieve outages.<span ng-if="e.get('outage-chart').permissionDenied()"><br/>Permission denied.</span></h3>
 				<div id="outages-portrait-container" ng-class="donutClass('outages')">
 					<div id="outages-portrait" ng-click="modals.outages()"></div>
 				</div>
 			</ion-slide>
 			<ion-slide class="alarms">
-				<i id="alarm-arrow" class="icon ion-chevron-left left-arrow compass" ng-click="goToSlide(0)" ng-class="donutClass('alarms')"></i>
+				<i id="alarm-arrow" class="icon ion-chevron-left left-arrow compass" ng-click="goToDonutSlide(0)" ng-class="donutClass('alarms')"></i>
 				<h3 ng-if="e.hasError('alarm-chart')" class="item item-text-wrap title error">Error: Unable to retrieve alarm data.<span ng-if="e.get('alarm-chart').permissionDenied()"><br/>Permission denied.</span></h3>
 				<div id="alarms-portrait-container" ng-class="donutClass('alarms')">
 					<div id="alarms-portrait" ui-sref="alarms" nav-direction="back"></div>

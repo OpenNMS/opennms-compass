@@ -10,7 +10,7 @@ $arrow-edge-padding: 6px;
 		margin: 4px;
 	}
 	.bar-subheader {
-		border-bottom: 1px solid #eee;
+		border-bottom: 1px solid $bar-border-subtle;
 	}
 	h3.title {
 		text-align: center;

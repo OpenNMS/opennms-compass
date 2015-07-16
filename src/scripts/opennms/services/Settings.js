@@ -7,7 +7,6 @@
 		'angularLocalStorage',
 		'uuid4',
 		'opennms.services.BuildConfig',
-		'opennms.services.Config',
 		'opennms.services.Storage',
 	])
 	.factory('Settings', function($q, $rootScope, $injector, storage, uuid4, StorageService) {
@@ -16,17 +15,21 @@
 		var defaultRestLimit = 100;
 		var defaultRefreshInterval = 30000;
 
+		var isEmpty = function(v) {
+			return !!(angular.isUndefined(v) || v === '' || v === 'undefined');
+		};
+
 		var storeSettings = function(settings) {
 			storage.set('opennms.settings', settings);
 			return StorageService.save('settings.json', settings).then(function() {
 				return settings;
-			})
+			});
 		};
 
 		var upgradeSettings = function() {
 			console.log('Settings.upgradeSettings: WARNING: attempting to upgrade settings from old location.');
 			var settings = storage.get('opennms.settings');
-			if (settings === undefined || settings === '' || settings === 'undefined') {
+			if (isEmpty(settings)) {
 				settings = {};
 			}
 			return storeSettings(settings).then(function() {
@@ -36,7 +39,7 @@
 
 		var getSettings = function() {
 			return StorageService.load('settings.json').then(function(settings) {
-				if (settings === undefined || settings === '' || settings === 'undefined') {
+				if (isEmpty(settings)) {
 					return upgradeSettings();
 				} else {
 					return settings;
@@ -54,25 +57,36 @@
 			var serverTypeMatch = new RegExp('^([Hh][Tt][Tt][Pp][Ss]?):');
 			var changedSettings = {};
 
-			if (!settings.server || settings.server === 'undefined' || settings.server === '') {
-				settings.server = undefined;
-			}
-			if (settings.server && !settings.server.endsWith('/')) {
-				settings.server += '/';
+			if (!settings.defaultServerName || settings.defaultServerName === 'undefined' || settings.defaultServerName === '') {
+				settings.defaultServerName = undefined;
 			}
 
-			if (!settings.username || settings.username === 'undefined' || settings.username === '') {
-				settings.username = undefined;
+			if (settings.defaultServerName) {
+				delete settings.server;
+				delete settings.username;
+				delete settings.password;
+			} else {
+				// obsolete
+				if (isEmpty(settings.server)) {
+					settings.server = undefined;
+				}
+				if (settings.server && !settings.server.endsWith('/')) {
+					settings.server += '/';
+				}
+
+				if (isEmpty(settings.username)) {
+					settings.username = undefined;
+				}
+
+				if (isEmpty(settings.password)) {
+					settings.password = undefined;
+				}
 			}
 
-			if (!settings.password || settings.password === 'undefined' || settings.password === '') {
-				settings.password = undefined;
-			}
-
-			if (settings.showAds === undefined || settings.showAds === 'undefined') {
+			if (angular.isUndefined(settings.showAds) || settings.showAds === 'undefined') {
 				settings.showAds = true;
 			}
-			if (settings.refreshInterval === undefined || settings.refreshInterval === 'undefined') {
+			if (angular.isUndefined(settings.refreshInterval) || settings.refreshInterval === 'undefined') {
 				settings.refreshInterval = undefined;
 			} else {
 				settings.refreshInterval =  parseInt(settings.refreshInterval, 10);
@@ -123,15 +137,28 @@
 			if (!settings || settings === 'undefined') {
 				settings = {};
 			}
-			if (!settings.server) {
-				settings.server = undefined;
+
+			if (!settings.defaultServerName) {
+				settings.defaultServerName = undefined;
 			}
-			if (!settings.username) {
-				settings.username = undefined;
+
+			if (settings.defaultServerName) {
+				delete settings.server;
+				delete settings.username;
+				delete settings.password;
+			} else {
+				// obsolete
+				if (!settings.server) {
+					settings.server = undefined;
+				}
+				if (!settings.username) {
+					settings.username = undefined;
+				}
+				if (!settings.password) {
+					settings.password = undefined;
+				}
 			}
-			if (!settings.password) {
-				settings.password = undefined;
-			}
+
 			if (!settings.uuid) {
 				settings.uuid = uuid4.generate();
 			}
@@ -141,21 +168,32 @@
 			if (!settings.refreshInterval || isNaN(parseInt(settings.refreshInterval, 10))) {
 				settings.refreshInterval = defaultRefreshInterval;
 			}
-			if (settings.showAds === undefined || settings.showAds === 'undefined') {
+			if (angular.isUndefined(settings.showAds) || settings.showAds === 'undefined') {
 				settings.showAds = true;
 			}
 			saveSettings(settings);
 		});
 
-		var _getServerName = function() {
+		var _getDefaultServerName = function() {
 			return getSettings().then(function(settings) {
-				var server = getSettings().server;
-				if (server) {
-					var a = document.createElement('a');
-					a.href = server;
-					return a.hostname;
+				if (settings.defaultServerName) {
+					return settings.defaultServerName;
+				} else {
+					var server = settings.server;
+					if (server) {
+						var a = document.createElement('a');
+						a.href = server;
+						return a.hostname;
+					}
+					return undefined;
 				}
-				return undefined;
+			});
+		};
+
+		var _setDefaultServerName = function(name) {
+			return getSettings().then(function(settings) {
+				settings.defaultServerName = name;
+				return saveSettings(settings);
 			});
 		};
 
@@ -273,15 +311,19 @@
 		return {
 			get: getSettings,
 			set: saveSettings,
-			getServerName: _getServerName,
+			getDefaultServerName: _getDefaultServerName,
+			setDefaultServerName: _setDefaultServerName,
 			restLimit: _getRestLimit,
-			URL: _url,
+			/*
 			restURL: _restUrl,
+			*/
 			showAds: _showAds,
+			/*
 			username: _username,
 			password: _password,
 			server: _server,
 			rest: _rest,
+			*/
 			uuid: _uuid,
 			disableAds: _disableAds,
 			isServerConfigured: _isServerConfigured,

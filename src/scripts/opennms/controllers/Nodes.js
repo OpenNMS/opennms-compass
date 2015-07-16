@@ -34,7 +34,7 @@
 				//console.log('Got nodes:',nodes);
 				$scope.searching = false;
 				$scope.nodes = nodes;
-				if (nodes.length === 20 && searchFor === undefined || searchFor.trim() === '') {
+				if (nodes.length === 20 && angular.isUndefined(searchFor) || searchFor.trim() === '') {
 					$scope.nodes.push({id:'more'});
 				}
 			}, function(err) {

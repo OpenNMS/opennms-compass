@@ -1,0 +1,9 @@
+<ion-popover-view class="fit">
+	<ion-content>
+		<ion-list>
+			<ion-item ng-repeat="server in servers track by server.name" ng-click="selectServer(server)">
+				<h2>{{server.name}}</h2>
+			</ion-item>
+		</ion-list>
+	</ion-content>
+</ion-popover-view>

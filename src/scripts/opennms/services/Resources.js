@@ -10,9 +10,9 @@
 		'ionic',
 		'opennms.services.DB',
 		'opennms.services.Rest',
-		'opennms.services.Settings',
+		'opennms.services.Servers',
 	])
-	.directive('onmsGraph', function($timeout, $window, Settings) {
+	.directive('onmsGraph', function($timeout, $window, Servers) {
 		var getWidth = function() {
 			return $window.innerWidth;
 		};
@@ -167,13 +167,15 @@
 
 				$scope.$watch('graphModel', function(graphModel) {
 					if (graphModel && graphModel.metrics) {
-						Settings.rest('measurements').then(function(rest) {
-							$scope.ds = new Backshift.DataSource.OpenNMS({
-								url: rest.url,
-								username: rest.username,
-								password: rest.password,
-								metrics: graphModel.metrics,
-							});
+						Servers.getDefault().then(function(server) {
+							if (server) {
+								$scope.ds = new Backshift.DataSource.OpenNMS({
+									url: server.restUrl('measurements'),
+									username: server.username,
+									password: server.password,
+									metrics: graphModel.metrics,
+								});
+							}
 						});
 					}
 				});
@@ -204,7 +206,7 @@
 			}
 		};
 	})
-	.factory('ResourceService', function($q, $rootScope, db, RestService, Settings) {
+	.factory('ResourceService', function($q, $rootScope, db, RestService, Servers) {
 		console.log('ResourceService: Initializing.');
 
 		var _graphs = {};
@@ -311,7 +313,7 @@
 		};
 
 		var _getFavoritesPrefix = function() {
-			return Settings.server().then(function(server) {
+			return Servers.getDefault().then(function(server) {
 				if (server.name && server.username) {
 					return ['favorite', server.name, server.username].join(':');
 				} else {

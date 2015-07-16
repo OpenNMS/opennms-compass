@@ -7,6 +7,7 @@
 	angular.module('opennms.services.Info', [
 		'ionic',
 		'opennms.services.Rest',
+		'opennms.services.Servers',
 		'opennms.services.Settings',
 		'opennms.services.Util',
 	])
@@ -17,7 +18,7 @@
 		packageName: 'opennms',
 		packageDescription: 'OpenNMS'
 	})
-	.factory('Info', function($q, $rootScope, $http, $injector, $window, $timeout, RestService, Settings, util) {
+	.factory('Info', function($q, $rootScope, $http, $injector, $window, $timeout, RestService, Servers, Settings, util) {
 		console.log('Info: Initializing.');
 
 		var onSuccess = function(data) {
@@ -29,8 +30,8 @@
 		};
 
 		var updateInfo = function() {
-			Settings.isServerConfigured().then(function(isConfigured) {
-				if (!isConfigured) {
+			Servers.getDefault().then(function(server) {
+				if (!server) {
 					console.log('Info.updateInfo: skipping update, server is not configured yet.');
 					return;
 				}
@@ -51,6 +52,7 @@
 		};
 
 		util.onSettingsUpdated(updateInfo);
+		util.onServersUpdated(updateInfo);
 		$timeout(updateInfo);
 
 		return {

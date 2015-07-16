@@ -192,7 +192,7 @@
 				options.size.canvasWidth = width;
 				options.size.canvasHeight = height;
 
-				if (!options.data.content || options.data.content === undefined) {
+				if (angular.isUndefined(options.data.content) || !options.data.content) {
 					console.log(self.getLogMessage('redraw', 'Data not initialized.  Skipping redraw.'));
 					return;
 				}

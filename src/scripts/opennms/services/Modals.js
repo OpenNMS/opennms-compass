@@ -15,22 +15,25 @@
 		'opennms.services.Info',
 		'opennms.services.Nodes',
 		'opennms.services.Outages',
+		'opennms.services.Servers',
 		'opennms.services.Settings',
 		'opennms.services.Util',
 	])
-	.factory('Modals', function($q, $rootScope, $interval, $ionicModal, $ionicPopup, AlarmService, Analytics, AvailabilityService, Errors, EventService, Info, NodeService, OutageService, Settings, util) {
+	.factory('Modals', function($q, $rootScope, $interval, $ionicModal, $ionicPopup, AlarmService, Analytics, AvailabilityService, Errors, EventService, Info, NodeService, OutageService, Servers, Settings, util) {
 		console.log('Modals: initializing.');
 
 		var $scope = $rootScope.$new();
 		$scope.util = util;
 		$scope.settings = Settings;
 
-		Settings.username().then(function(username) {
-			$scope.username = username;
+		Servers.getDefault().then(function(server) {
+			if (server && server.username) {
+				$scope.username = server.username;
+			}
 		});
-		util.onSettingsUpdated(function(newSettings, oldSettings, changedSettings) {
-			if (changedSettings.username) {
-				$scope.username = changedSettings.username;
+		util.onServersUpdated(function(newServers, oldServers, defaultServer) {
+			if (defaultServer && defaultServer.username) {
+				$scope.username = defaultServer.username;
 			}
 		});
 
