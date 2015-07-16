@@ -16,7 +16,7 @@
 					<span class="item-note">{{outage.down.fromNow()}}</span>
 					<h2>{{outage.getNodeName()}}</h2>
 				</ion-item>
-				<ion-item class="no-top no-bottom" ng-if="outage.nodeOutages === undefined">
+				<ion-item class="no-top no-bottom" ng-if="angular.isUndefined(outage.nodeOutages)">
 					<ion-spinner></ion-spinner> Loading...
 				</ion-item>
 				<ion-item ng-repeat="nodeOutage in outage.nodeOutages track by nodeOutage.id" ng-class="'severity ' + nodeOutage.getSeverityClass()" class="no-top no-bottom" ng-click="showNode(outage.nodeId)" ng-click="showNode(outage.nodeId)">

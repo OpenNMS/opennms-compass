@@ -78,7 +78,7 @@
 			}).then(function(server) {
 				console.log('update authorization: default server = ' + angular.toJson(server));
 				//console.log('username=' + server.username +', password=' + server.password);
-				if (!server || server.username === undefined || server.password === undefined) {
+				if (!server || angular.isUndefined(server.username) || angular.isUndefined(server.password)) {
 					console.log('RestService.updateAuthorization: username or password not set.');
 					delete $http.defaults.headers.common['Authorization'];
 					return done();

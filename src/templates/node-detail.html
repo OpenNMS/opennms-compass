@@ -103,7 +103,7 @@
 				<ion-item class="item-divider item-compass">
 					Recent Events
 				</ion-item>
-				<ion-item ng-if="events === undefined">
+				<ion-item ng-if="angular.isUndefined(events)">
 					<ion-spinner></ion-spinner> Loading...
 				</ion-item>
 				<ion-item ng-if="events &amp;&amp; events.length === 0">
@@ -120,7 +120,7 @@
 				<ion-item class="item-divider item-compass">
 					Current Outages
 				</ion-item>
-				<ion-item ng-if="outages === undefined">
+				<ion-item ng-if="angular.isUndefined(outages)">
 					<ion-spinner></ion-spinner> Loading...
 				</ion-item>
 				<ion-item ng-if="outages &amp;&amp; outages.length === 0">

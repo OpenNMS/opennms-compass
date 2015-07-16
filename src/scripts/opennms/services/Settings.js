@@ -15,6 +15,10 @@
 		var defaultRestLimit = 100;
 		var defaultRefreshInterval = 30000;
 
+		var isEmpty = function(v) {
+			return !!(angular.isUndefined(v) || v === '' || v === 'undefined');
+		};
+
 		var storeSettings = function(settings) {
 			storage.set('opennms.settings', settings);
 			return StorageService.save('settings.json', settings).then(function() {
@@ -25,7 +29,7 @@
 		var upgradeSettings = function() {
 			console.log('Settings.upgradeSettings: WARNING: attempting to upgrade settings from old location.');
 			var settings = storage.get('opennms.settings');
-			if (settings === undefined || settings === '' || settings === 'undefined') {
+			if (isEmpty(settings)) {
 				settings = {};
 			}
 			return storeSettings(settings).then(function() {
@@ -35,7 +39,7 @@
 
 		var getSettings = function() {
 			return StorageService.load('settings.json').then(function(settings) {
-				if (settings === undefined || settings === '' || settings === 'undefined') {
+				if (isEmpty(settings)) {
 					return upgradeSettings();
 				} else {
 					return settings;
@@ -63,26 +67,26 @@
 				delete settings.password;
 			} else {
 				// obsolete
-				if (!settings.server || settings.server === 'undefined' || settings.server === '') {
+				if (isEmpty(settings.server)) {
 					settings.server = undefined;
 				}
 				if (settings.server && !settings.server.endsWith('/')) {
 					settings.server += '/';
 				}
 
-				if (!settings.username || settings.username === 'undefined' || settings.username === '') {
+				if (isEmpty(settings.username)) {
 					settings.username = undefined;
 				}
 
-				if (!settings.password || settings.password === 'undefined' || settings.password === '') {
+				if (isEmpty(settings.password)) {
 					settings.password = undefined;
 				}
 			}
 
-			if (settings.showAds === undefined || settings.showAds === 'undefined') {
+			if (angular.isUndefined(settings.showAds) || settings.showAds === 'undefined') {
 				settings.showAds = true;
 			}
-			if (settings.refreshInterval === undefined || settings.refreshInterval === 'undefined') {
+			if (angular.isUndefined(settings.refreshInterval) || settings.refreshInterval === 'undefined') {
 				settings.refreshInterval = undefined;
 			} else {
 				settings.refreshInterval =  parseInt(settings.refreshInterval, 10);
@@ -164,7 +168,7 @@
 			if (!settings.refreshInterval || isNaN(parseInt(settings.refreshInterval, 10))) {
 				settings.refreshInterval = defaultRefreshInterval;
 			}
-			if (settings.showAds === undefined || settings.showAds === 'undefined') {
+			if (angular.isUndefined(settings.showAds) || settings.showAds === 'undefined') {
 				settings.showAds = true;
 			}
 			saveSettings(settings);
