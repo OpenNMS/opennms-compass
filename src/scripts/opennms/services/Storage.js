@@ -38,6 +38,8 @@
 		$ionicPlatform.ready(function() {
 			$timeout(function() {
 				if ($window.cordova && $window.cordova.file) {
+					storagePath.resolve($window.cordova.file.dataDirectory);
+					/*
 					if (ionic.Platform.isIOS()) {
 						storagePath.resolve($window.cordova.file.syncedDataDirectory);
 					} else if (ionic.Platform.isAndroid()) {
@@ -46,6 +48,7 @@
 						console.log('StorageService: unknown platform');
 						storagePath.reject();
 					}
+					*/
 				} else {
 					console.log('StorageService: $window.cordova.file not found');
 					storagePath.reject();
