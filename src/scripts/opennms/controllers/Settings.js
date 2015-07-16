@@ -15,7 +15,7 @@
 		'opennms.services.Settings',
 		'opennms.services.Util',
 	])
-	.factory('ServerModal', function($q, $rootScope, $ionicModal, Servers) {
+	.factory('ServerModal', function($q, $rootScope, $ionicModal, Servers, Settings) {
 		var $scope = $rootScope.$new();
 
 		$scope.openModal = function(server) {
@@ -52,10 +52,27 @@
 		};
 
 		$scope.saveServer = function() {
-			console.log('ServerModal.save: Saving server: ' + angular.toJson($scope.server));
-			Servers.put(new Server($scope.server)).then(function() {
-				$scope.closeModal();
-			});
+			var server = $scope.server;
+			console.log('ServerModal.save: Saving server: ' + angular.toJson(server));
+			if (server.name !== server.originalName) {
+				// They have renamed the server, we have to special-case it.
+				Settings.getDefaultServerName().then(function(defaultServerName) {
+				var operations = [];
+					operations.push(Servers.remove(server.originalName));
+					operations.push(Servers.put(new Server(server)));
+					if (defaultServerName === server.originalName) {
+						// The renamed server was the default, also set default to the new name
+						operations.push(Settings.setDefaultServerName(server.name));
+					}
+					$q.all(operations).finally(function() {
+						$scope.closeModal();
+					});
+				});
+			} else {
+				Servers.put(new Server(server)).finally(function() {
+					$scope.closeModal();
+				});
+			}
 		};
 
 		return {
@@ -75,6 +92,7 @@
 		};
 
 		$scope.editServer = function(server) {
+			server.originalName = server.name;
 			ServerModal.open(server).then(function() {
 				$ionicListDelegate.$getByHandle('server-list').closeOptionButtons();
 			});
