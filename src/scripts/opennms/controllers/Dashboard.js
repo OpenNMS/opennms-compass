@@ -88,6 +88,7 @@
 
 			updateArrows(info.height);
 		};
+
 		outageDonut.onDirty = onWidget;
 		alarmDonut.onDirty = onWidget;
 		outageDonut.onRedraw = onWidget;
@@ -273,7 +274,7 @@
 		};
 
 		var refreshing = false;
-		$scope.refreshData = debounce(200, function() {
+		$scope.refreshData = debounce(1000, function() {
 			if (refreshing) {
 				return;
 			}
@@ -298,23 +299,6 @@
 			]).finally(function() {
 				finished();
 			});
-			/*
-			refreshAvailability().finally(function() {
-				finished('availability');
-			});
-
-			refreshOutages().finally(function() {
-				finished('outages');
-			});
-
-			refreshAlarms().finally(function() {
-				finished('alarms');
-			});
-
-			refreshFavorites().finally(function() {
-				finished('favorites');
-			});
-*/
 		});
 
 		$scope.unfavorite = function(favorite) {
