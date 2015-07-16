@@ -59,22 +59,28 @@
 			console.log('StorageService: unable to determine appropriate storage path');
 		});
 
-		var assertDirectoryExists = function(dir) {
+		var assertParentExists = function(filename) {
+			var dir = dirname(filename);
+			//console.log('StorageService.doLoadFile: dirname = ' + dir);
+			if (!dir) {
+				return $q.when(true);
+			}
+
 			return storagePath.promise.then(function(path) {
 				return $cordovaFile.checkDir(path, dir).then(function(result) {
 					if (result.isDirectory) {
 						return true;
 					} else {
-						console.log('StorageService.assertDirectoryExists: unknown result: ' + angular.toJson(result));
+						console.log('StorageService.assertParentExists: unknown result: ' + angular.toJson(result));
 						return $q.reject(result);
 					}
 				}, function(err) {
 					if (err.code === 1) {
 						// does not exist, create it
-						console.log('StorageService.assertDirectoryExists: ' + dir + ' does not exist.  Creating.');
+						console.log('StorageService.assertParentExists: ' + dir + ' does not exist.  Creating.');
 						return $cordovaFile.createDir(path, dir);
 					} else {
-						console.log('StorageService.assertDirectoryExists: unknown error: ' + angular.toJson(err));
+						console.log('StorageService.assertParentExists: unknown error: ' + angular.toJson(err));
 						return $q.reject(err);
 					}
 				});
@@ -111,25 +117,21 @@
 				return $q.reject('No filename specified!');
 			}
 
-			var dir = dirname(filename);
-			//console.log('StorageService.doLoadFile: dirname = ' + dir);
-			if (dir) {
-				assertDirectoryExists(dir);
-			}
-
-			return storagePath.promise.then(function(path) {
-				return $cordovaFile.readAsText(path, filename);
-			}).then(function(text) {
-				//console.log('StorageService.doLoadFile: contents of ' + filename + ': ' + text);
-				//console.log('--- doLoadFile: end ---');
-				if (angular.isString(text)) {
-					return angular.fromJson(text);
-				} else {
-					return text;
-				}
-			}, function(err) {
-				//console.log('StorageService.doLoadFile: failed: ' + angular.toJson(err));
-				return $q.reject(err);
+			return assertParentExists(filename).then(function() {
+				return storagePath.promise.then(function(path) {
+					return $cordovaFile.readAsText(path, filename);
+				}).then(function(text) {
+					//console.log('StorageService.doLoadFile: contents of ' + filename + ': ' + text);
+					//console.log('--- doLoadFile: end ---');
+					if (angular.isString(text)) {
+						return angular.fromJson(text);
+					} else {
+						return text;
+					}
+				}, function(err) {
+					//console.log('StorageService.doLoadFile: failed: ' + angular.toJson(err));
+					return $q.reject(err);
+				});
 			});
 		};
 
@@ -164,10 +166,15 @@
 			}
 
 			console.log('StorageService.doSaveFile: saving contents: ' + contents);
-			return storagePath.promise.then(function(path) {
-				return $cordovaFile.writeFile(path, filename, contents, true).then(function(results) {
-					console.log('StorageService.doSaveFile: wrote ' + filename + ' to ' + angular.toJson(path));
-					return data;
+			return assertParentExists(filename).then(function() {
+				return storagePath.promise.then(function(path) {
+					return $cordovaFile.writeFile(path, filename, contents, true).then(function(results) {
+						console.log('StorageService.doSaveFile: wrote ' + filename + ' to ' + angular.toJson(path));
+						return data;
+					}, function(err) {
+						console.log('StorageService.doSaveFile: failed to write to ' + filename + ': ' + angular.toJson(err));
+						return $q.reject(err);
+					});
 				});
 			});
 		};

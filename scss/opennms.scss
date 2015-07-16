@@ -120,3 +120,12 @@ $severity-alarm-cleared-border: #999;
 	bottom: 0;
 }
 
+ion-popover-view.fit {
+	height: auto !important;
+	ion-content {
+		position: relative !important;
+	}
+}
+.platform-android ion-popover-view.fit {
+	margin-top: 10px !important;
+}

@@ -15,14 +15,22 @@
 		var hasAvailability;
 
 		var checkAvailability = function() {
+			var oldAvailability = hasAvailability;
+			var done = function(value) {
+				if (oldAvailability) {
+					oldAvailability.resolve(value);
+				}
+				hasAvailability.resolve(value);
+			};
+
 			hasAvailability = $q.defer();
 			console.log('AvailabilityService.checkAvailability: checking if availability service is valid.');
 			RestService.getXml('/availability').then(function() {
 				console.log('AvailabilityService.checkAvailability: availability service works!');
-				hasAvailability.resolve(true);
+				done(true);
 			}, function() {
 				console.log('AvailabilityService.checkAvailability: availability service does not work. :(');
-				hasAvailability.resolve(false);
+				done(false);
 			});
 		};
 
@@ -31,11 +39,9 @@
 		};
 
 		var getAvailability = function() {
-			var deferred = $q.defer();
-
-			hasAvailability.promise.then(function(canDo) {
+			return isSupported().then(function(canDo) {
 				if (canDo) {
-					RestService.getXml('/availability').then(function(results) {
+					return RestService.getXml('/availability').then(function(results) {
 						/* jshint -W069 */ /* "better written in dot notation" */
 						var ret = [];
 
@@ -49,85 +55,67 @@
 							}
 						}
 
-						deferred.resolve(ret);
-					}, function(err) {
-						err.caller = 'AvailabilityService.getAvailability';
-						deferred.reject(err);
+						return ret;
 					});
 				} else {
-					deferred.resolve([]);
+					return [];
 				}
+			}, function(err) {
+				err.caller = 'AvailabilityService.getAvailability';
+				return $q.reject(err);
 			});
-
-			return deferred.promise;
 		};
 
 		var getCategory = function(category) {
-			var deferred = $q.defer();
-
-			hasAvailability.promise.then(function(canDo) {
+			return isSupported().then(function(canDo) {
 				if (canDo) {
 					var url = '/availability/' + encodeURIComponent(category);
-					RestService.getXml(url).then(function(results) {
-						deferred.resolve(results);
-					}, function(err) {
-						err.caller = 'AvailabilityService.getCategory';
-						deferred.reject(err);
-					});
+					return RestService.getXml(url);
 				} else {
-					deferred.resolve([]);
+					return [];
 				}
+			}, function(err) {
+				err.caller = 'AvailabilityService.getCategory';
+				return $q.reject(err);
 			});
-
-			return deferred.promise;
 		};
 
 		var getNodes = function(category) {
-			var deferred = $q.defer();
-
-			hasAvailability.promise.then(function(canDo) {
+			return isSupported().then(function(canDo) {
 				if (canDo) {
 					var url = '/availability/' + encodeURIComponent(category) + '/nodes';
-					RestService.getXml(url).then(function(results) {
-						deferred.resolve(results);
-					}, function(err) {
-						err.caller = 'AvailabilityService.getNodes';
-						deferred.reject(err);
-					});
+					return RestService.getXml(url);
 				} else {
-					deferred.resolve([]);
+					return [];
 				}
+			}, function(err) {
+				err.caller = 'AvailabilityService.getNodes';
+				return $q.reject(err);
 			});
-
-			return deferred.promise;
 		};
 
 		var getNode = function(node) {
-			var deferred = $q.defer();
-
-			hasAvailability.promise.then(function(canDo) {
+			return isSupported().then(function(canDo) {
 				if (canDo) {
 					var nodeId = node;
 					if (!angular.isNumber(node)) {
 						nodeId = node.id;
 					}
 					var url = '/availability/nodes/' + nodeId;
-					RestService.getXml(url).then(function(results) {
+					return RestService.getXml(url).then(function(results) {
 						if (results && results.node) {
-							deferred.resolve(new AvailabilityNode(results.node));
+							return new AvailabilityNode(results.node);
 						} else {
-							deferred.resolve();
+							return undefined;
 						}
-					}, function(err) {
-						err.caller = 'AvailabilityService.getNode';
-						deferred.reject(err);
 					});
 				} else {
-					deferred.resolve([]);
+					return undefined;
 				}
+			}, function(err) {
+				err.caller = 'AvailabilityService.getNode';
+				return $q.reject(err);
 			});
-
-			return deferred.promise;
 		};
 
 		util.onSettingsUpdated(checkAvailability);

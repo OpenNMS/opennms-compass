@@ -54,6 +54,9 @@
 				}
 				ret.sort();
 				return ret;
+			}, function(err) {
+				console.log('Servers.fetchServerNames: WARNING: StorageService.list failed: ' + angular.toJson(err));
+				return [];
 			});
 		};
 
@@ -91,6 +94,7 @@
 				}
 				return ready.promise;
 			}, function(err) {
+				console.log('Servers.init: failed initialization: ' + angular.toJson(err));
 				ready.resolve(true);
 				return ready.promise;
 			});

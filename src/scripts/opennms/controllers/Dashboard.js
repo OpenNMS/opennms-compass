@@ -33,10 +33,11 @@
 		'opennms.services.Modals',
 		'opennms.services.Outages',
 		'opennms.services.Resources',
+		'opennms.services.Servers',
 		'opennms.services.Settings',
 		'opennms.services.Util',
 	])
-	.controller('DashboardCtrl', function($q, $rootScope, $scope, $interval, $timeout, $state, $document, $window, $ionicLoading, $ionicPopup, $ionicSlideBoxDelegate, debounce, resize, AlarmService, AvailabilityService, DonutWidget, Errors, Info, Modals, OutageService, ResourceService, Settings, util) {
+	.controller('DashboardCtrl', function($q, $rootScope, $scope, $interval, $timeout, $state, $document, $window, $ionicLoading, $ionicPopup, $ionicPopover, $ionicSlideBoxDelegate, debounce, resize, AlarmService, AvailabilityService, DonutWidget, Errors, Info, Modals, OutageService, ResourceService, Servers, Settings, util) {
 		console.log('DashboardCtrl: Initializing.');
 
 		var updateArrows = function(height) {
@@ -234,6 +235,8 @@
 				outageDonut.setData([]);
 				outageDonut.setTitle(0);
 				return $q.reject(err);
+			}).finally(function() {
+				$scope.$broadcast('scroll.refreshComplete');
 			});
 
 		};
@@ -263,6 +266,8 @@
 				alarmDonut.setData([]);
 				alarmDonut.setTitle(0);
 				return $q.reject(err);
+			}).finally(function() {
+				$scope.$broadcast('scroll.refreshComplete');
 			});
 
 		};
@@ -274,10 +279,9 @@
 			}
 			refreshing = true;
 
-			//console.log('DashboardCtrl.refreshData: refreshing data.');
+			console.log('DashboardCtrl.refreshData: refreshing data.');
 
 			var finished = function(type) {
-				console.log('DashboardCtrl.refreshData: finished: ' + type);
 				util.hideSplashscreen();
 				$timeout(function() {
 					refreshing = false;
@@ -286,6 +290,15 @@
 				}, 50);
 			};
 
+			$q.all([
+				refreshAvailability(),
+				refreshOutages(),
+				refreshAlarms(),
+				refreshFavorites(),
+			]).finally(function() {
+				finished();
+			});
+			/*
 			refreshAvailability().finally(function() {
 				finished('availability');
 			});
@@ -301,6 +314,7 @@
 			refreshFavorites().finally(function() {
 				finished('favorites');
 			});
+*/
 		});
 
 		$scope.unfavorite = function(favorite) {
@@ -333,6 +347,28 @@
 			$ionicSlideBoxDelegate.$getByHandle('donut-slide-box').slide(slide);
 		};
 
+		$scope.showSelectServer = function($event) {
+			Servers.all().then(function(servers) {
+				$scope.serverPopover.scope.servers = servers;
+				return $scope.serverPopover.show($event);
+			});
+		};
+
+		$scope.hideSelectServer = function() {
+			$scope.serverPopover.hide();
+		};
+
+		$ionicPopover.fromTemplateUrl('templates/server-popover.html', {
+			scope: $scope
+		}).then(function(popover) {
+			$scope.serverPopover = popover;
+			popover.scope.selectServer = function(server) {
+				$ionicLoading.show({templateUrl: 'templates/loading.html'});
+				popover.hide();
+				Settings.setDefaultServerName(server.name);
+			};
+		});
+
 		$scope.util = util;
 		$scope.modals = Modals;
 		$scope.e = Errors;
@@ -364,6 +400,15 @@
 		util.onInfoUpdated(updateLogo);
 		util.onErrorsUpdated(function(errors) {
 			$scope.errors = errors;
+		});
+
+		$scope.$on('$destroy', function() {
+			outageDonut.destroy();
+			outageDonut = undefined;
+			alarmDonut.destroy();
+			alarmDonut = undefined;
+			$scope.serverPopover.remove();
+			delete $scope.serverPopover;
 		});
 
 		$scope.$on('$ionicView.beforeEnter', function() {
