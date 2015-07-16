@@ -364,6 +364,7 @@
 		var addFavorite = function(resourceId, graphName, nodeId, nodeLabel) {
 			return _getFavoritesFilename(resourceId, graphName).then(function(filename) {
 				var fav = {
+					_id: filename,
 					resourceId: resourceId,
 					graphName: graphName,
 					nodeId: nodeId,
@@ -374,8 +375,11 @@
 		};
 
 		var removeFavorite = function(resourceId, graphName) {
-			return _getFavoritesFilename().then(function(filename) {
+			return _getFavoritesFilename(resourceId, graphName).then(function(filename) {
 				return StorageService.remove('favorites/' + filename);
+			}, function(err) {
+				console.log('ResourceService.removeFavorite: failed: ' + angular.toJson(err));
+				return $q.reject(err);
 			});
 		};
 
