@@ -274,8 +274,9 @@
 					modal.scope.show();
 				});
 			},
-			settings: function() {
+			settings: function(launchAdd) {
 				$scope.settingsModal.promise.then(function(modal) {
+					modal.scope.launchAdd = !!launchAdd;
 					modal.scope.show();
 				});
 			},

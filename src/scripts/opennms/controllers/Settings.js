@@ -128,12 +128,19 @@
 					//console.log('not default server: ' + $scope.servers[i].name);
 				}
 			}
+			if (angular.isUndefined($scope.defaultServer) && len > 0) {
+				Settings.setDefaultServerName($scope.servers[0].name);
+			}
 		};
 
 		var init = function() {
 			Servers.all().then(function(servers) {
 				$scope.servers = servers;
 				initDefaultServer();
+				if ($scope.launchAdd) {
+					$scope.launchAdd = false;
+					$scope.addServer();
+				}
 			});
 			Settings.get().then(function(settings) {
 				$scope.settings = settings;

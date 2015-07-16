@@ -64,6 +64,9 @@
 			return StorageService.save(fsPrefix + '/' + encodeURIComponent(server.name) + '.json', server).then(function() {
 				checkServersUpdated();
 				return server;
+			}, function(err) {
+				console.log('Servers.saveServer: WARNING: StorageService.save failed: ' + angular.toJson(err));
+				return undefined;
 			});
 		};
 
@@ -81,7 +84,6 @@
 							});
 							console.log('Servers.init: saving default server: ' + angular.toJson(server, true));
 							return saveServer(server).then(function() {
-								ready.resolve(true);
 								return server;
 							});
 						} else {
@@ -89,13 +91,14 @@
 						}
 					});
 				} else {
-					ready.resolve(true);
 					return names;
 				}
+			}).then(function() {
+				ready.resolve(true);
 				return ready.promise;
 			}, function(err) {
 				console.log('Servers.init: failed initialization: ' + angular.toJson(err));
-				ready.resolve(true);
+				ready.resolve(false);
 				return ready.promise;
 			});
 		};
@@ -104,7 +107,13 @@
 			return ready.promise.then(function() {
 				return StorageService.load(fsPrefix + '/' + encodeURIComponent(serverName) + '.json').then(function(data) {
 					return new Server(data);
+				}, function(err) {
+					console.log('Servers.getServer: failed to get ' + serverName + ' from the filesystem: ' + angular.toJson(err));
+					return $q.reject(err);
 				});
+			}, function(err) {
+				console.log('Servers.getServer: failed to get ' + serverName + ': ' + angular.toJson(err));
+				return $q.reject(err);
 			});
 		};
 
@@ -123,6 +132,9 @@
 					}
 					return servers;
 				});
+			}, function(err) {
+				console.log('Servers.getServers: failed: ' + angular.toJson(err));
+				return [];
 			});
 		};
 
@@ -136,19 +148,20 @@
 			return ready.promise.then(function() {
 				return Settings.getDefaultServerName().then(function(serverName) {
 					//console.log('Servers.getDefaultServer: ' + serverName);
-					return getServer(serverName);
+					if (serverName) {
+						return getServer(serverName);
+					} else {
+						return undefined;
+					}
 				});
+			}, function(err) {
+				console.log('Servers.getDefaultServer: failed: ' + angular.toJson(err));
+				return undefined;
 			});
 		};
 
 		var setDefaultServer = function(server) {
-			var serverName;
-			if (angular.isString(server)) {
-				serverName = server;
-			} else if (server && server.name) {
-				serverName = server.name;
-			}
-
+			var serverName = server.name? server.name:server;
 			if (serverName) {
 				return Settings.setDefaultServerName(serverName).then(function() {
 					return checkServersUpdated();

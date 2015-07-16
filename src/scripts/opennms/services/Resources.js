@@ -314,7 +314,7 @@
 
 		var _getFavoritesPrefix = function() {
 			return Servers.getDefault().then(function(server) {
-				if (server.name && server.username) {
+				if (server && angular.isDefined(server.name) && angular.isDefined(server.username)) {
 					return ['favorite', server.name, server.username].join(':');
 				} else {
 					return $q.reject('Server unconfigured.');

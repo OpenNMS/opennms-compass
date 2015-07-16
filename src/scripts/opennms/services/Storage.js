@@ -94,8 +94,8 @@
 			$rootScope.$evalAsync(function() {
 				//console.log('calling next task in queue with arguments: ' + angular.toJson(task.args));
 				callback(task.fn.apply(null, task.args));
-			}, 1);
-		});
+			});
+		}, 1);
 
 		var loadFile = function(filename) {
 			var deferred = $q.defer();
@@ -127,7 +127,12 @@
 					//console.log('StorageService.doLoadFile: contents of ' + filename + ': ' + text);
 					//console.log('--- doLoadFile: end ---');
 					if (angular.isString(text)) {
-						return angular.fromJson(text);
+						try {
+							return angular.fromJson(text);
+						} catch (err) {
+							console.log('Storage.doLoadFile: failed to load ' + filename + ': ' + angular.toJson(err));
+							return $q.reject(err);
+						}
 					} else {
 						return text;
 					}
@@ -160,15 +165,17 @@
 				return $q.reject('No filename specified!');
 			}
 
+			//console.log('--- doSaveFile START ---');
 			var contents = data;
 			if (!angular.isString(data)) {
 				contents = angular.toJson(data, true);
 			}
 			if (!data) {
 				console.log('StorageService.doSaveFile: WARNING: overwriting ' + filename + ' with nothing!');
+				data = undefined;
 			}
 
-			console.log('StorageService.doSaveFile: saving contents: ' + contents);
+			//console.log('StorageService.doSaveFile: saving contents: ' + contents);
 			return assertParentExists(filename).then(function() {
 				return storagePath.promise.then(function(path) {
 					return $cordovaFile.writeFile(path, filename, contents, true).then(function(results) {
@@ -179,6 +186,8 @@
 						return $q.reject(err);
 					});
 				});
+			//}).finally(function() {
+			//	console.log('--- doSaveFile END ---');
 			});
 		};
 

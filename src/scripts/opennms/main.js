@@ -101,8 +101,16 @@
 			}
 		};
 		updateTheme();
-
 		util.onInfoUpdated(updateTheme);
+
+		Servers.getDefault().then(function(server) {
+			console.log('main: getDefault: ' + angular.toJson(server));
+			if (!server) {
+				Modals.settings(true);
+			}
+		}, function(err) {
+			console.log('main: error: ' + angular.toJson(err));
+		});
 
 		var init = function() {
 			console.log('Ionic is ready.');
@@ -129,11 +137,5 @@
 			}
 		});
 		*/
-
-		Servers.getDefault().then(function(server) {
-			if (!server) {
-				Modals.settings();
-			}
-		});
 	});
 }());
