@@ -21,6 +21,7 @@
 * **servers:**
   * handle renames gracefully ([cba27594](https://github.com/nicksrandall/kotojs/commit/cba2759443a17936166563071aa8bb6b5d7ac119))
   * fix an initialization issue on clean install ([fa47035b](https://github.com/nicksrandall/kotojs/commit/fa47035b90f567c4b929a3da69fb748668d1ad52))
+  * only refresh when default server changes ([00a5f004](https://github.com/nicksrandall/kotojs/commit/00a5f00442d3decb18fd6ffad9fe33892b1329e0))
 
 
 #### Features
