@@ -103,13 +103,16 @@
 		updateTheme();
 		util.onInfoUpdated(updateTheme);
 
-		Servers.getDefault().then(function(server) {
-			console.log('main: getDefault: ' + angular.toJson(server));
-			if (!server) {
+		Servers.configured().then(function(isConfigured) {
+			if (!isConfigured) {
+				console.log('main: server not configured');
+				util.hideSplashscreen();
 				Modals.settings(true);
+			} else {
+				Servers.getDefault().then(function(server) {
+					console.log('main: default server is ' + server.name);
+				});
 			}
-		}, function(err) {
-			console.log('main: error: ' + angular.toJson(err));
 		});
 
 		var init = function() {

@@ -54,7 +54,7 @@
 		$scope.saveServer = function() {
 			var server = $scope.server;
 			console.log('ServerModal.save: Saving server: ' + angular.toJson(server));
-			if (server.name !== server.originalName) {
+			if (server.originalName && server.name !== server.originalName) {
 				// They have renamed the server, we have to special-case it.
 				Settings.getDefaultServerName().then(function(defaultServerName) {
 				var operations = [];
@@ -147,6 +147,7 @@
 				}
 			}
 			if (angular.isUndefined($scope.defaultServer) && len > 0) {
+				console.log('Settings.initDefaultServer: no default server defined.');
 				Settings.setDefaultServerName($scope.servers[0].name);
 			}
 		};

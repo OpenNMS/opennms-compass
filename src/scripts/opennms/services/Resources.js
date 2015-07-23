@@ -11,6 +11,7 @@
 		'opennms.services.Rest',
 		'opennms.services.Servers',
 		'opennms.services.Storage',
+		'opennms.services.Util',
 	])
 	.directive('onmsGraph', function($timeout, $window, Servers) {
 		var getWidth = function() {
@@ -206,7 +207,7 @@
 			}
 		};
 	})
-	.factory('ResourceService', function($q, $rootScope, RestService, Servers, StorageService) {
+	.factory('ResourceService', function($q, $rootScope, RestService, Servers, StorageService, util) {
 		console.log('ResourceService: Initializing.');
 
 		var _graphs = {};
@@ -312,13 +313,17 @@
 			}
 		};
 
+		var _getFavoritesPrefixForServer = function(server) {
+			if (server && angular.isDefined(server.id) && angular.isDefined(server.username)) {
+				return ['favorite', server.id, encodeURIComponent(server.username)].join('_');
+			} else {
+				return $q.reject('Server unconfigured.');
+			}
+		};
+
 		var _getFavoritesPrefix = function() {
 			return Servers.getDefault().then(function(server) {
-				if (server && angular.isDefined(server.id) && angular.isDefined(server.username)) {
-					return ['favorite', server.id, encodeURIComponent(server.username)].join('_');
-				} else {
-					return $q.reject('Server unconfigured.');
-				}
+				return _getFavoritesPrefixForServer(server);
 			});
 		};
 
@@ -334,11 +339,11 @@
 					var favorites = [], i, len = files.length, file;
 					for (i=0; i < len; i++) {
 						file = files[i];
-						if (file && file.isFile && file.name.startsWith(prefix)) {
-							console.log('ResourceService.getFavorites: matched file ' + file.name);
-							favorites.push(StorageService.load('favorites/' + file.name));
+						if (file.startsWith(prefix)) {
+							console.log('ResourceService.getFavorites: matched file ' + file);
+							favorites.push(StorageService.load('favorites/' + file));
 						} else {
-							console.log('ResourceService.getFavorites: ' + prefix + ' did not match file ' + file.name);
+							console.log('ResourceService.getFavorites: ' + prefix + ' did not match file ' + file);
 						}
 					}
 					return $q.all(favorites);
@@ -382,6 +387,27 @@
 				return $q.reject(err);
 			});
 		};
+
+		util.onServerRemoved(function(server) {
+			console.log('ResourceService.onServerRemoved: cleaning up favorites for server ' + server.name);
+			return StorageService.list('favorites').then(function(files) {
+				var i, len = files.length, file, prefix = _getFavoritesPrefixForServer(server), operations = [];
+				for (i=0; i < len; i++) {
+					file = files[i];
+					if (file.startsWith(prefix)) {
+						console.log('ResourceService.onServerRemoved: * ' + file);
+						operations.push(StorageService.remove('favorites/' + file));
+					}
+				}
+				return $q.all(operations).then(function(result) {
+					console.log('ResourceService.onServerRemoved: finished cleaning up favorites for server ' + server.name);
+					return result;
+				}, function(err) {
+					console.log('ResourceService.onServerRemoved: failed: ' + angular.toJson(err));
+					return $q.reject(err);
+				});
+			});
+		});
 
 		return {
 			graphNames: getGraphNames,

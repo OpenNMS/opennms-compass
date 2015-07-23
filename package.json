@@ -80,6 +80,10 @@
     {
       "locator": "https://github.com/driftyco/ionic-plugins-deploy",
       "id": "com.ionic.deploy"
+    },
+    {
+      "locator": "https://github.com/OpenNMS/cordova-plugin-storage.git",
+      "id": "org.opennms.cordova.storage"
     }
   ],
   "cordovaPlatforms": [

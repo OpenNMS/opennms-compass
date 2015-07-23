@@ -21,6 +21,16 @@
 
 		var ready = $q.defer();
 
+		var isReady = function() {
+			var deferred = $q.defer();
+			ready.promise.then(function(r) {
+				deferred.resolve(r);
+			}, function(err) {
+				deferred.resolve(false);
+			});
+			return deferred.promise;
+		};
+
 		var storeSettings = function(settings) {
 			storage.set('opennms.settings', settings);
 			return StorageService.save('settings.json', settings).then(function() {
@@ -38,27 +48,30 @@
 		};
 
 		var getSettings = function() {
-			return ready.promise.then(function() {
-				return StorageService.load('settings.json').then(function(settings) {
-					if (isEmpty(settings)) {
-						return $q.reject('No settings found.');
-					} else {
-						return settings;
-					}
-				});
-			}, function(err) {
-				return {};
-			});
-		};
-
-		var init = function() {
-			return StorageService.load('settings.json').then(function(settings) {
+			return isReady().then(function() {
+				return StorageService.load('settings.json');
+			}).then(function(settings) {
 				if (isEmpty(settings)) {
 					return $q.reject('No settings found.');
 				} else {
 					return settings;
 				}
 			}, function(err) {
+				return {};
+			});
+		};
+
+		var init = function() {
+			console.log('Settings.init: Initializing.');
+			return StorageService.load('settings.json').then(function(settings) {
+				//console.log('Settings.init: loaded settings.json');
+				if (isEmpty(settings)) {
+					return $q.reject('No settings found.');
+				} else {
+					return settings;
+				}
+			}, function(err) {
+				console.log('Settings.init: Converting old settings.');
 				return convertOldSettings();
 			}).then(function(settings) {
 				if (!settings || settings === 'undefined') {
@@ -97,7 +110,9 @@
 					settings.showAds = true;
 				}
 
+				//console.log('Settings.init: storing final settings: ' + angular.toJson(settings, true));
 				return storeSettings(settings).then(function() {
+					//console.log('Settings.init: finished storing final settings.');
 					ready.resolve(true);
 					return settings;
 				}, function(err) {
@@ -155,22 +170,28 @@
 			}
 
 			return getSettings().then(function(oldSettings) {
-				var newSettings = angular.copy(settings);
+				var newSettings = angular.copy(settings), prop;
 
 				if (!oldSettings) {
 					oldSettings = {};
 				}
 
-				for (var prop in newSettings) {
+				for (prop in newSettings) {
 					if (newSettings.hasOwnProperty(prop) && newSettings[prop] !== oldSettings[prop]) {
 						changedSettings[prop] = newSettings[prop];
 					}
 				}
+				for (prop in oldSettings) {
+					if (oldSettings.hasOwnProperty(prop) && !newSettings.hasOwnProperty(prop)) {
+						changedSettings[prop] = undefined;
+					}
+				}
 
 				var o = angular.toJson(oldSettings),
-					n = angular.toJson(newSettings);
+					n = angular.toJson(newSettings),
+					c = angular.toJson(changedSettings);
 
-				if (o === n) {
+				if (c === "{}") {
 					//console.log('Settings.saveSettings: settings are unchanged.');
 					return oldSettings;
 				} else {
@@ -243,18 +264,6 @@
 			});
 		};
 
-		var _isServerConfigured = function() {
-			return getSettings().then(function(settings) {
-				if (settings.server && settings.username && settings.password) {
-					return true;
-				} else {
-					return false;
-				}
-			}, function(err) {
-				return false;
-			});
-		};
-
 		var _version = function() {
 			return $q.when($injector.get('config.build.version'));
 		};
@@ -272,7 +281,6 @@
 			showAds: _showAds,
 			uuid: _uuid,
 			disableAds: _disableAds,
-			isServerConfigured: _isServerConfigured,
 			version: _version,
 			build: _build,
 		};

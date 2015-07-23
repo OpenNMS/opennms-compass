@@ -76,12 +76,22 @@
 				console.log('RestService.updateAuthorization: cleared cookies.');
 				return Servers.getDefault();
 			}).then(function(server) {
-				console.log('update authorization: default server = ' + angular.toJson(server));
+				console.log('update authorization: default server = ' + ((server && server.name)? server.name:'unknown'));
 				//console.log('username=' + server.username +', password=' + server.password);
 				if (!server || angular.isUndefined(server.username) || angular.isUndefined(server.password)) {
 					console.log('RestService.updateAuthorization: username or password not set.');
 					delete $http.defaults.headers.common['Authorization'];
-					return done();
+					if (useCordovaHTTP) {
+						return cordovaHTTP.useBasicAuth(undefined, undefined).then(function() {
+							console.log('RestService.updateAuthorization: unconfigured basic auth.');
+							return done();
+						}, function(err) {
+							console.log('RestService.updateAuthorization: failed to unconfigure basic auth.');
+							return done();
+						});
+					} else {
+						return done();
+					}
 				} else {
 					//console.log('RestService.updateAuthorization: setting basic auth with username "' + server.username + '".');
 					$http.defaults.headers.common['Authorization'] = 'Basic ' + $window.btoa(server.username + ':' + server.password);

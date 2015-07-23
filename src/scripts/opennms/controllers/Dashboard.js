@@ -177,6 +177,11 @@
 			});
 		};
 
+		var resetFavorites = function() {
+			$scope.graphs = [];
+			$scope.favoriteGraphs = [];
+		};
+
 		var refreshAvailability = function() {
 			return AvailabilityService.availability().then(function(results) {
 				Errors.clear('availability');
@@ -188,6 +193,10 @@
 				return $q.reject(err);
 			});
 
+		};
+
+		var resetAvailability = function() {
+			$scope.availability = undefined;
 		};
 
 		var refreshOutages = function() {
@@ -232,14 +241,18 @@
 				return outages;
 			}, function(err) {
 				Errors.set('outage-chart', err);
-				hideDonut('outages', true);
-				outageDonut.setData([]);
-				outageDonut.setTitle(0);
+				resetOutages();
 				return $q.reject(err);
 			}).finally(function() {
 				$scope.$broadcast('scroll.refreshComplete');
 			});
 
+		};
+
+		var resetOutages = function() {
+			hideDonut('outages', true);
+			outageDonut.setData([]);
+			outageDonut.setTitle(0);
 		};
 
 		var refreshAlarms = function() {
@@ -263,14 +276,18 @@
 				return severities;
 			}, function(err) {
 				Errors.set('alarm-chart', err);
-				hideDonut('alarms', true);
-				alarmDonut.setData([]);
-				alarmDonut.setTitle(0);
+				resetAlarms();
 				return $q.reject(err);
 			}).finally(function() {
 				$scope.$broadcast('scroll.refreshComplete');
 			});
 
+		};
+
+		var resetAlarms = function() {
+			hideDonut('alarms', true);
+			alarmDonut.setData([]);
+			alarmDonut.setTitle(0);
 		};
 
 		var refreshing = false;
@@ -291,15 +308,30 @@
 				}, 50);
 			};
 
-			$q.all([
-				refreshAvailability(),
-				refreshOutages(),
-				refreshAlarms(),
-				refreshFavorites(),
-			]).finally(function() {
+			Servers.getDefault().then(function(server) {
+				if (server) {
+					return $q.all([
+						refreshAvailability(),
+						refreshOutages(),
+						refreshAlarms(),
+						refreshFavorites(),
+					]);
+				} else {
+					return $q.reject('No server configured.');
+				}
+			}).finally(function() {
 				finished();
 			});
 		});
+
+		$scope.resetData = function() {
+			console.log('Resetting Data.');
+			$scope.serverName = undefined;
+			resetAvailability();
+			resetOutages();
+			resetAlarms();
+			resetFavorites();
+		};
 
 		$scope.unfavorite = function(favorite) {
 			var graphTitle = ($scope.graphs && $scope.graphs[favorite.graphName])? $scope.graphs[favorite.graphName].title : 'graph';
@@ -373,9 +405,20 @@
 
 		util.onSettingsUpdated(function(newSettings, oldSettings, changedSettings) {
 			console.log('Dashboard: settings changed, refreshing data.');
+			console.log(angular.toJson(changedSettings, true));
 			if (changedSettings.defaultServerName) {
 				$scope.serverName = changedSettings.defaultServerName;
 				$scope.refreshData();
+			} else if (!newSettings.defaultServerName) {
+				$scope.resetData();
+			}
+		});
+		util.onServersUpdated(function(newServers, oldServers, defaultServer) {
+			if (defaultServer && angular.isDefined(defaultServer.name)) {
+				$scope.serverName = defaultServer.name;
+				$scope.refreshData();
+			} else {
+				$scope.resetData();
 			}
 		});
 
