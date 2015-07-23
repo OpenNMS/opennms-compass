@@ -291,7 +291,7 @@
 		};
 
 		var refreshing = false;
-		$scope.refreshData = debounce(2000, function() {
+		$scope.refreshData = debounce(500, function() {
 			if (refreshing) {
 				return;
 			}
@@ -403,6 +403,16 @@
 
 		updateLogo();
 
+		util.onDefaultServerUpdated(function(defaultServer) {
+			if (defaultServer && angular.isDefined(defaultServer.name)) {
+				$scope.serverName = defaultServer.name;
+				$scope.refreshData();
+			} else {
+				$scope.resetData();
+			}
+		});
+
+		/*
 		util.onSettingsUpdated(function(newSettings, oldSettings, changedSettings) {
 			console.log('Dashboard: settings changed, refreshing data.');
 			console.log(angular.toJson(changedSettings, true));
@@ -413,14 +423,7 @@
 				$scope.resetData();
 			}
 		});
-		util.onServersUpdated(function(newServers, oldServers, defaultServer) {
-			if (defaultServer && angular.isDefined(defaultServer.name)) {
-				$scope.serverName = defaultServer.name;
-				$scope.refreshData();
-			} else {
-				$scope.resetData();
-			}
-		});
+*/
 
 		util.onDirty('alarms', $scope.refreshData);
 		util.onDirty('outages', $scope.refreshData);

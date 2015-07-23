@@ -37,9 +37,14 @@
 			$rootScope.$broadcast('opennms.dirty', type);
 		};
 
-		var serversUpdated = function(newServers, oldServers, defaultServer) {
+		var defaultServerUpdated = function(server) {
+			console.log('util.defaultServerUpdated: ' + angular.toJson(server));
+			$rootScope.$broadcast('opennms.servers.defaultUpdated', server);
+		};
+
+		var serversUpdated = function(newServers, oldServers) {
 			console.log('util.serversUpdated: ' + angular.toJson(newServers));
-			$rootScope.$broadcast('opennms.servers.updated', newServers, oldServers, defaultServer);
+			$rootScope.$broadcast('opennms.servers.updated', newServers, oldServers);
 		};
 
 		var serverRemoved = function(server) {
@@ -50,6 +55,7 @@
 		return {
 			dirty: markDirty,
 			serversUpdated: serversUpdated,
+			defaultServerUpdated: defaultServerUpdated,
 			serverRemoved: serverRemoved,
 		};
 	})
@@ -129,13 +135,25 @@
 			}
 		});
 
-		$rootScope.$on('opennms.servers.updated', function(ev, newServers, oldServers, defaultServer) {
+		$rootScope.$on('opennms.servers.defaultUpdated', function(ev, server) {
+			if (eventListeners['opennms.servers.defaultUpdated']) {
+				console.log('util.onDefaultServerUpdated: ' + angular.toJson(server));
+				$rootScope.$evalAsync(function() {
+					var i, len=eventListeners['opennms.servers.defaultUpdated'].length;
+					for (i=0; i < len; i++) {
+						eventListeners['opennms.servers.defaultUpdated'][i](server);
+					}
+				});
+			}
+		});
+
+		$rootScope.$on('opennms.servers.updated', function(ev, newServers, oldServers) {
 			if (eventListeners['opennms.servers.updated']) {
 				console.log('util.onServersUpdated: ' + angular.toJson(newServers));
 				$rootScope.$evalAsync(function() {
 					var i, len=eventListeners['opennms.servers.updated'].length;
 					for (i=0; i < len; i++) {
-						eventListeners['opennms.servers.updated'][i](newServers, oldServers, defaultServer);
+						eventListeners['opennms.servers.updated'][i](newServers, oldServers);
 					}
 				});
 			}
@@ -186,6 +204,9 @@
 			},
 			onServersUpdated: function(f) {
 				addListener('opennms.servers.updated', f);
+			},
+			onDefaultServerUpdated: function(f) {
+				addListener('opennms.servers.defaultUpdated', f);
 			},
 			onServerRemoved: function(f) {
 				addListener('opennms.servers.removed', f);
@@ -293,6 +314,7 @@
 			onInfoUpdated: UtilEventHandler.onInfoUpdated,
 			onProductUpdated: UtilEventHandler.onProductUpdated,
 			onServersUpdated: UtilEventHandler.onServersUpdated,
+			onDefaultServerUpdated: UtilEventHandler.onDefaultServerUpdated,
 			onServerRemoved: UtilEventHandler.onServerRemoved,
 			onSettingsUpdated: UtilEventHandler.onSettingsUpdated,
 		};

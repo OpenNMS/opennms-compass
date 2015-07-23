@@ -14,38 +14,51 @@
 		'opennms.services.Settings',
 		'opennms.services.Storage',
 		'opennms.services.Util',
-	]).factory('Servers', function($q, $rootScope, uuid4, Settings, StorageService, UtilEventBroadcaster, UtilEventHandler) {
+	]).factory('Servers', function($q, $rootScope, $timeout, uuid4, Settings, StorageService, UtilEventBroadcaster, UtilEventHandler) {
 		console.log('Servers: Initializing.');
 
 		var ready = $q.defer();
 		var fsPrefix = 'servers';
 		var servers = [];
+		var defaultServer = undefined;
+
+		var isReady = function() {
+			var deferred = $q.defer();
+			ready.promise.then(function(r) {
+				deferred.resolve(r);
+			}, function(err) {
+				deferred.resolve(false);
+			});
+			return deferred.promise;
+		};
 
 		var checkServersUpdated = function(force) {
 			var oldServers = angular.copy(servers);
 			return getServers().then(function(newServers) {
 				servers = newServers;
 				if (force || (angular.toJson(oldServers) !== angular.toJson(newServers))) {
-					var i, len=newServers.length, defaultServer;
-					for (i=0; i < len; i++) {
-						if (newServers[i].isDefault) {
-							defaultServer = newServers[i];
-							break;
-						}
-					}
-
 					console.log('Servers.checkServersUpdated: server list has changed.');
-
-					UtilEventBroadcaster.dirty('all');
-					UtilEventBroadcaster.serversUpdated(newServers, oldServers, defaultServer);
+					UtilEventBroadcaster.serversUpdated(newServers, oldServers);
+					$timeout(checkDefaultServerUpdated);
 				}
 				return newServers;
 			});
 		};
 
+		var checkDefaultServerUpdated = function() {
+			var oldDefaultServer = defaultServer;
+			getDefaultServer().then(function(newDefaultServer) {
+				defaultServer = newDefaultServer;
+				if (angular.toJson(oldDefaultServer) !== angular.toJson(newDefaultServer)) {
+					UtilEventBroadcaster.defaultServerUpdated(newDefaultServer);
+					UtilEventBroadcaster.dirty('all');
+				}
+			});
+		};
+
 		UtilEventHandler.onSettingsUpdated(function(newSettings, oldSettings, changedSettings) {
 			if (changedSettings && changedSettings.defaultServerName) {
-				checkServersUpdated(true);
+				$timeout(checkServersUpdated);
 			}
 		});
 
@@ -119,7 +132,7 @@
 
 		var getServer = function(serverName) {
 			var deferred = $q.defer();
-			ready.promise.then(function() {
+			isReady().then(function() {
 				return StorageService.load(fsPrefix + '/' + encodeURIComponent(serverName) + '.json').then(function(data) {
 					if (!data.id) {
 						data.id = uuid4.generate();
@@ -147,7 +160,7 @@
 					var defaultServerName = servers.shift(), ret = [];
 					len = servers.length;
 					for (i=0; i < len; i++) {
-						console.log('servers['+i+']='+angular.toJson(servers[i]));
+						//console.log('servers['+i+']='+angular.toJson(servers[i]));
 						if (servers[i] === null || servers[i] === undefined) {
 							continue;
 						}
@@ -163,13 +176,13 @@
 		};
 
 		var getServerNames = function() {
-			return ready.promise.then(function() {
+			return isReady().then(function() {
 				return fetchServerNames();
 			});
 		};
 
 		var getDefaultServer = function() {
-			return ready.promise.then(function() {
+			return isReady().then(function() {
 				return Settings.getDefaultServerName().then(function(serverName) {
 					//console.log('Servers.getDefaultServer: ' + serverName);
 					if (serverName) {
@@ -198,7 +211,7 @@
 		};
 
 		var putServer = function(server) {
-			return ready.promise.then(function() {
+			return isReady().then(function() {
 				return saveServer(server);
 			});
 		};
@@ -216,7 +229,7 @@
 
 		var removeServer = function(s) {
 			var serverName = s.name? s.name:s;
-			return ready.promise.then(function() {
+			return isReady().then(function() {
 				return getServer(serverName);
 			}).then(function(server) {
 				return Settings.getDefaultServerName().then(function(defaultServerName) {

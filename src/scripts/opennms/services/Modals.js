@@ -31,9 +31,11 @@
 				$scope.username = server.username;
 			}
 		});
-		util.onServersUpdated(function(newServers, oldServers, defaultServer) {
-			if (defaultServer && defaultServer.username) {
-				$scope.username = defaultServer.username;
+		util.onDefaultServerUpdated(function(server) {
+			if (server && server.username) {
+				$scope.username = server.username;
+			} else {
+				$scope.username = undefined;
 			}
 		});
 

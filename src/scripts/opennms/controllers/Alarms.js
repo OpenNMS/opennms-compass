@@ -232,9 +232,11 @@
 		};
 
 		util.onDirty('alarms', $scope.refreshAlarms);
-		util.onServersUpdated(function(newServers, oldServers, defaultServer) {
+		util.onDefaultServerUpdated(function(defaultServer) {
 			if (defaultServer && defaultServer.username) {
 				$scope.username = defaultServer.username;
+			} else {
+				$scope.username = undefined;
 			}
 		});
 
