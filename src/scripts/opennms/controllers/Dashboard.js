@@ -291,7 +291,7 @@
 		};
 
 		var refreshing = false;
-		$scope.refreshData = debounce(1000, function() {
+		$scope.refreshData = debounce(2000, function() {
 			if (refreshing) {
 				return;
 			}

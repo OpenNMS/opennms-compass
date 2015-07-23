@@ -13,7 +13,7 @@
 			<ion-list>
 				<label class="item item-input item-stacked-label">
 					<span class="input-label">Name</span>
-					<input name="name" type="text" placeholder="displayable name for server ('default', 'home', etc.)" ng-model="server.name" ng-model-options="{debounce:200}" required>
+					<input name="name" type="text" placeholder="displayable name for server ('default', 'home', etc.)" ng-model="server.name" ng-model-options="{debounce:200}" required autofocus>
 				</label>
 				<label class="item item-input item-stacked-label">
 					<span class="input-label">Server URL <span ng-show="editServer.url.$error.url" class="error">please enter a valid URL</span></span>

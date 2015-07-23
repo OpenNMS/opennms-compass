@@ -13,7 +13,7 @@ $arrow-edge-padding: 6px;
 		border-bottom: 1px solid $bar-border-subtle;
 	}
 	h3.title {
-		text-align: center;
+		text-align: center !important;
 		margin-top: 0;
 		font-size: $font-size-base;
 	}

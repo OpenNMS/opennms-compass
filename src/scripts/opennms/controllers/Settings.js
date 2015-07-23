@@ -30,6 +30,7 @@
 			return $ionicModal.fromTemplateUrl('templates/edit-server.html', {
 				scope: $scope,
 				animation: 'slide-in-up',
+				focusFirstInput: false,
 			}).then(function(modal) {
 				$scope.modal = modal;
 				modal.show();

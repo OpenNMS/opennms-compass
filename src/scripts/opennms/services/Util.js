@@ -24,10 +24,12 @@
 		};
 	})
 	.config(function() {
-		if (cordova && cordova.plugins && cordova.plugins.Keyboard) {
-			console.log('Util: disabling native keyboard scroll.');
-			cordova.plugins.Keyboard.disableScroll(true);
-		}
+		ionic.Platform.ready(function() {
+			if (cordova && cordova.plugins && cordova.plugins.Keyboard) {
+				console.log('Util: disabling native keyboard scroll.');
+				cordova.plugins.Keyboard.disableScroll(true);
+			}
+		});
 	})
 	.factory('UtilEventBroadcaster', function($rootScope) {
 		var markDirty = function(type) {
