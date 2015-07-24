@@ -13,22 +13,28 @@
 	]).factory('StorageService', function($q, $rootScope, $timeout, $window, $ionicPlatform, $cordovaFile, CloudStorage) {
 		console.log('StorageService: Initializing.');
 
-		CloudStorage.setBackend('local');
+		//CloudStorage.setBackend('local');
 
-		var loadFile = function(filename) {
-			return CloudStorage.readFile(filename).then(function(results) {
+		var backendArg = function(local) {
+			return local? 'local':undefined;
+		};
+
+		var loadFile = function(filename, local) {
+			return CloudStorage.readFile(filename, backendArg(local)).then(function(results) {
 				return results.contents;
 			}).then(function(results) {
 				//console.log('StorageService.loadFile('+filename+'): results: ' + angular.toJson(results));
 				return results;
 			}, function(err) {
-				console.log('StorageService.loadfile('+filename+'): error: ' + angular.toJson(err));
+				if (err && err.error && !err.error.contains('does not exist')) { 
+					console.log('StorageService.loadfile('+filename+'): error: ' + angular.toJson(err));
+				}
 				return $q.reject(err);
 			});
 		};
 
-		var saveFile = function(filename, data) {
-			return CloudStorage.writeFile(filename, data).then(function() {
+		var saveFile = function(filename, data, local) {
+			return CloudStorage.writeFile(filename, data, backendArg(local)).then(function() {
 				return data;
 			}).then(function(results) {
 				//console.log('StorageService.saveFile('+filename+'): results: ' + angular.toJson(results));
@@ -39,8 +45,8 @@
 			});
 		};
 
-		var listFiles = function(dir) {
-			return CloudStorage.listFiles(dir).then(function(results) {
+		var listFiles = function(dir, local) {
+			return CloudStorage.listFiles(dir, backendArg(local)).then(function(results) {
 				return results.contents;
 			}).then(function(results) {
 				//console.log('StorageService.listFiles('+dir+'): results: ' + angular.toJson(results));
@@ -50,13 +56,15 @@
 					return [];
 				}
 			}, function(err) {
-				console.log('StorageService.listFiles('+dir+'): error: ' + angular.toJson(err));
+				if (err && err.error && !err.error.contains('does not exist')) { 
+					console.log('StorageService.listFiles('+dir+'): error: ' + angular.toJson(err));
+				}
 				return [];
 			});
 		};
 
-		var removeFile = function(filename) {
-			return CloudStorage.removeFile(filename).then(function(results) {
+		var removeFile = function(filename, local) {
+			return CloudStorage.removeFile(filename, backendArg(local)).then(function(results) {
 				//console.log('StorageService.removeFile('+filename+'): results: ' + angular.toJson(results));
 				return results;
 			}, function(err) {
