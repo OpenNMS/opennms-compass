@@ -13,7 +13,7 @@
 		var $scope = $rootScope.$new();
 
 		var defaultRestLimit = 100;
-		var defaultRefreshInterval = 30000;
+		var defaultRefreshInterval = 10000;
 
 		var isEmpty = function(v) {
 			return !!(angular.isUndefined(v) || v === '' || v === 'undefined' || v === null);
@@ -33,8 +33,18 @@
 
 		var storeSettings = function(settings) {
 			storage.set('opennms.settings', settings);
-			return StorageService.save('settings.json', settings).then(function() {
-				return settings;
+			return StorageService.save('default-server.json', {defaultServerName:settings.defaultServerName}, true).then(function() {
+				// if we successfully saved the default server to a separate file, don't include it in settings
+				var savedSettings = angular.copy(settings);
+				delete savedSettings.defaultServerName;
+				return StorageService.save('settings.json', savedSettings).then(function() {
+					return settings;
+				});
+			}, function(err) {
+				// otherwise, just fall back to the default behavior
+				return StorageService.save('settings.json', settings).then(function() {
+					return settings;
+				});
 			});
 		};
 
@@ -49,7 +59,18 @@
 
 		var getSettings = function() {
 			return isReady().then(function() {
-				return StorageService.load('settings.json');
+				return StorageService.load('settings.json').then(function(settings) {
+					return StorageService.load('default-server.json', true).then(function(result) {
+						if (result && result.defaultServerName) {
+							settings.defaultServerName = result.defaultServerName;
+						} else {
+							delete settings.defaultServerName;
+						}
+						return settings;
+					}, function(err) {
+						return settings;
+					});
+				});
 			}).then(function(settings) {
 				if (isEmpty(settings)) {
 					return $q.reject('No settings found.');
@@ -272,11 +293,18 @@
 			return $q.when($injector.get('config.build.build'));
 		};
 
+		var _refreshInterval = function() {
+			return getSettings().then(function(settings) {
+				return settings.refreshInterval;
+			});
+		};
+
 		return {
 			get: getSettings,
 			set: saveSettings,
 			getDefaultServerName: _getDefaultServerName,
 			setDefaultServerName: _setDefaultServerName,
+			refreshInterval: _refreshInterval,
 			restLimit: _getRestLimit,
 			showAds: _showAds,
 			uuid: _uuid,

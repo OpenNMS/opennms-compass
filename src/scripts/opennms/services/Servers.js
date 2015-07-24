@@ -14,13 +14,13 @@
 		'opennms.services.Settings',
 		'opennms.services.Storage',
 		'opennms.services.Util',
-	]).factory('Servers', function($q, $rootScope, $timeout, uuid4, Settings, StorageService, UtilEventBroadcaster, UtilEventHandler) {
+	]).factory('Servers', function($q, $rootScope, $interval, $timeout, uuid4, Settings, StorageService, UtilEventBroadcaster, UtilEventHandler) {
 		console.log('Servers: Initializing.');
 
 		var ready = $q.defer();
 		var fsPrefix = 'servers';
 		var servers = [];
-		var defaultServer = undefined;
+		var defaultServer;
 
 		var isReady = function() {
 			var deferred = $q.defer();
@@ -61,6 +61,16 @@
 				$timeout(checkServersUpdated);
 			}
 		});
+
+		var refreshPromise;
+		var startRefresh = function() {
+			if (refreshPromise) {
+				$interval.cancel(refreshPromise);
+			}
+			Settings.getRefreshInterval().then(function(refreshInterval) {
+				refreshPromise = $interval(checkServersUpdated, refreshInterval);
+			});
+		};
 
 		var fetchServerNames = function() {
 			return StorageService.list(fsPrefix).then(function(entries) {
@@ -122,6 +132,7 @@
 				}
 			}).then(function() {
 				ready.resolve(true);
+				startRefresh();
 				return ready.promise;
 			}, function(err) {
 				console.log('Servers.init: failed initialization: ' + angular.toJson(err));
