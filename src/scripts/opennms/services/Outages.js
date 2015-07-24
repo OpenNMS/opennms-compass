@@ -70,7 +70,7 @@
 
 		var getOutageSummaries = function() {
 			var deferred = $q.defer();
-			var url = '/outages/summaries?limit=50';
+			var url = '/outages/summaries';
 			RestService.getXml(url).then(function(results) {
 				var ret = [];
 				if (results && results['outage-summaries'] && results['outage-summaries']['outage-summary']) {
