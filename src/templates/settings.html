@@ -5,12 +5,12 @@
 		</div>
 		<h1 class="title">Settings</h1>
 		<div class="buttons">
-			<button class="button button-compass button-clear" ng-click="addServer()">Add</button>
+			<button class="button button-compass button-clear" ng-click="addServer()" ng-if="!hideAddButton">Add</button>
 		</div>
 	</ion-header-bar>
 	<ion-content scroll="false">
 		<ion-tabs class="tabs-compass tabs-icon-left" ng-keypress="handleKey($event)">
-			<ion-tab title="Settings" icon-on="ion-ios-gear" icon-off="ion-ios-gear-outline" scroll="true">
+			<ion-tab title="Settings" icon-on="ion-ios-gear" icon-off="ion-ios-gear-outline" scroll="true" on-select="hideAddButton = false" on-deselect="hideAddButton = true">
 				<ion-view>
 					<ion-content scroll="true">
 						<ion-list show-delete="showDelete" show-reorder="false" can-swipe="true" delegate-handle="server-list">
