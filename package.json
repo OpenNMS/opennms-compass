@@ -38,6 +38,7 @@
     "jshint-stylish": "*",
     "karma": "*",
     "karma-chrome-launcher": "*",
+    "karma-cordova-launcher": "0.0.8",
     "karma-firefox-launcher": "*",
     "karma-jasmine": "*",
     "karma-phantomjs-launcher": "*",

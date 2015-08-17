@@ -6,8 +6,6 @@
 	/* global moment: true */
 	/* global Backshift: true */
 
-	var defaultRange = 1 * 60 * 60 * 1000; // 1 hour
-
 	angular.module('opennms.controllers.NodeResource', [
 		'ionic',
 		'angularLocalStorage',
@@ -15,8 +13,10 @@
 		'opennms.services.Resources',
 		'opennms.services.Settings',
 	])
-	.controller('NodeResourceCtrl', function($q, $scope, $timeout, $ionicScrollDelegate, NodeService, ResourceService) {
+	.controller('NodeResourceCtrl', function($q, $scope, $injector, $timeout, $ionicScrollDelegate, NodeService, ResourceService) {
 		console.log('NodeResourceCtrl: initializing.');
+
+		var defaultRange = $injector.get('default-graph-range');
 
 		var findElementById = function(id) {
 				var elm, scrollEl, position = 0;

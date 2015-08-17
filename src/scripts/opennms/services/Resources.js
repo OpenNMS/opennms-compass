@@ -69,7 +69,7 @@
 					if ($scope.graph && $scope.graph._last) {
 						if ($scope.graph._last.ds         === $scope.ds &&
 							$scope.graph._last.graphModel === $scope.graphModel &&
-							$scope.graph._last.range      === $scope.range) {
+							angular.equals($scope.graph._last.range, $scope.range)) {
 							console.log('Graph is unchanged since last render.  Skipping.');
 							return;
 						}
@@ -79,7 +79,7 @@
 					onmsGraphElement.width($scope.width);
 					onmsGraphElement.height($scope.height);
 
-					var graph = new Backshift.Graph.C3({
+					var graph = new Backshift.Graph.DC({
 						element: onmsGraphElement[0],
 						start: $scope.range.start.getTime(),
 						end: $scope.range.end.getTime(),
@@ -92,12 +92,13 @@
 						title: $scope.graphModel.title,
 						verticalLabel: $scope.graphModel.verticalLabel,
 						exportIconSizeRatio: 0,
+						replaceDiv: false,
 					});
 
 					graph._last = {
 						ds: $scope.ds,
 						graphModel: $scope.graphModel,
-						range: $scope.range
+						range: angular.copy($scope.range)
 					};
 
 					if ($scope.graph && $scope.graph.destroy) {
@@ -111,7 +112,9 @@
 					$scope.graph = graph;
 
 					console.log('Displaying graph: ' + $scope.resourceId + ' / ' + $scope.graphModel.title);
-					graph.render();
+					$timeout(function() {
+						graph.render();
+					});
 				};
 
 				$scope.redraw = function() {
@@ -137,7 +140,7 @@
 						}
 					}
 					$scope.redraw();
-				});
+				}, true);
 				$scope.$watch('width', $scope.redraw);
 				$scope.$watch('height', $scope.redraw);
 
@@ -343,13 +346,13 @@
 							console.log('ResourceService.getFavorites: matched file ' + file);
 							favorites.push(StorageService.load('favorites/' + file));
 						} else {
-							console.log('ResourceService.getFavorites: ' + prefix + ' did not match file ' + file);
+							//console.log('ResourceService.getFavorites: ' + prefix + ' did not match file ' + file);
 						}
 					}
 					return $q.all(favorites);
 				});
 			}).then(function(favorites) {
-				console.log('ResourceService.getFavorites: found: ' + angular.toJson(favorites));
+				//console.log('ResourceService.getFavorites: found: ' + angular.toJson(favorites));
 				return favorites;
 				//return $q.reject('nope');
 			});

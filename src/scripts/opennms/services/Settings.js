@@ -9,6 +9,7 @@
 		'opennms.services.BuildConfig',
 		'opennms.services.Storage',
 	])
+	.value('default-graph-range', 24 * 60 * 60 * 1000) // 1 day
 	.factory('Settings', function($q, $rootScope, $injector, storage, uuid4, StorageService) {
 		var $scope = $rootScope.$new();
 

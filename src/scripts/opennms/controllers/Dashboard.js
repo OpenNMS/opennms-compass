@@ -37,7 +37,7 @@
 		'opennms.services.Settings',
 		'opennms.services.Util',
 	])
-	.controller('DashboardCtrl', function($q, $rootScope, $scope, $interval, $timeout, $state, $document, $window, $ionicLoading, $ionicPopup, $ionicPopover, $ionicSlideBoxDelegate, debounce, resize, AlarmService, AvailabilityService, DonutWidget, Errors, Info, Modals, OutageService, ResourceService, Servers, Settings, util) {
+	.controller('DashboardCtrl', function($q, $rootScope, $scope, $injector, $interval, $timeout, $state, $document, $window, $ionicLoading, $ionicPopup, $ionicPopover, $ionicSlideBoxDelegate, debounce, resize, AlarmService, AvailabilityService, DonutWidget, Errors, Info, Modals, OutageService, ResourceService, Servers, Settings, util) {
 		console.log('DashboardCtrl: Initializing.');
 
 		var updateArrows = function(height) {
@@ -168,9 +168,11 @@
 					$scope.graphs = graphDefs;
 					$scope.favoriteGraphs = favs;
 
-					var delegate = $ionicSlideBoxDelegate.$getByHandle('graph-slide-box');
-					delegate.slide($scope.currentGraphSlide);
-					delegate.update();
+					$timeout(function() {
+						var delegate = $ionicSlideBoxDelegate.$getByHandle('graph-slide-box');
+						delegate.slide($scope.currentGraphSlide);
+						delegate.update();
+					});
 				});
 			}).finally(function() {
 				$scope.$broadcast('scroll.refreshComplete');
@@ -399,7 +401,9 @@
 		$scope.range = {
 			end: new Date()
 		};
-		$scope.range.start = new Date($scope.range.end.getTime() - (1*60*60*1000)); // 1 hour
+
+		var defaultRange = $injector.get('default-graph-range');
+		$scope.range.start = new Date($scope.range.end.getTime() - defaultRange);
 
 		updateLogo();
 

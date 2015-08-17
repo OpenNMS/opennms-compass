@@ -103,6 +103,35 @@
 		updateTheme();
 		util.onInfoUpdated(updateTheme);
 
+		Servers.all().then(function(servers) {
+			console.log('main: servers=' + angular.toJson(servers));
+			var defaultServer = servers.filter(function(s) {
+				return s.isDefault;
+			});
+			if (defaultServer.length === 0) {
+				console.log('main: server found, but not set to default.');
+				return Servers.setDefault(servers[0]).then(function() {
+					util.hideSplashscreen();
+					return true;
+				}, function(err) {
+					console.log('main: something went wrong setting the default server: ' + angular.toJson(err));
+					Modals.settings(true);
+					$timeout(function() {
+						util.hideSplashscreen();
+					}, 500);
+					return false;
+				});
+			} else {
+				console.log('main: no default server');
+				Modals.settings(true);
+				$timeout(function() {
+					util.hideSplashscreen();
+				}, 500);
+				return false;
+			}
+		});
+
+		/*
 		Servers.configured().then(function(isConfigured) {
 			if (!isConfigured) {
 				console.log('main: server not configured');
@@ -114,6 +143,7 @@
 				});
 			}
 		});
+		*/
 
 		var init = function() {
 			console.log('Ionic is ready.');

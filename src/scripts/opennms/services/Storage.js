@@ -13,7 +13,7 @@
 	]).factory('StorageService', function($q, $rootScope, $timeout, $window, $ionicPlatform, $cordovaFile, CloudStorage) {
 		console.log('StorageService: Initializing.');
 
-		CloudStorage.setBackend('local');
+		CloudStorage.setDefaultBackend('local');
 
 		var backendArg = function(local) {
 			return local? 'local':undefined;
