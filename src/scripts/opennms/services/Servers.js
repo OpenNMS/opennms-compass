@@ -67,7 +67,7 @@
 			if (refreshPromise) {
 				$interval.cancel(refreshPromise);
 			}
-			Settings.getRefreshInterval().then(function(refreshInterval) {
+			Settings.refreshInterval().then(function(refreshInterval) {
 				refreshPromise = $interval(checkServersUpdated, refreshInterval);
 			});
 		};
