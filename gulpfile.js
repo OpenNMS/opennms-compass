@@ -121,9 +121,11 @@ gulp.task('lint', function() {
 
 gulp.task('watch', function() {
 	gulp.watch([
+		paths.bower,
+		paths.sass,
 		paths.src,
 		paths.opennms,
-	], ['process-src']);
+	], ['sass', 'process-bower', 'process-src']);
 });
 
 var minifyMe = function() {
