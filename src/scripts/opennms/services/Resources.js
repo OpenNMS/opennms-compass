@@ -13,7 +13,7 @@
 		'opennms.services.Storage',
 		'opennms.services.Util',
 	])
-	.directive('onmsGraph', function($timeout, $window, Servers) {
+	.directive('onmsGraph', function($timeout, $window, $injector, Servers) {
 		var getWidth = function() {
 			return $window.innerWidth;
 		};
@@ -36,6 +36,7 @@
 				$scope.width = getWidth();
 				$scope.height = getHeight();
 
+				var minDate = moment().subtract($injector.get('default-graph-min-range'), 'milliseconds').toDate();
 				$scope.editDate = function(type) {
 					var date;
 					if (type === 'start') {
@@ -45,6 +46,8 @@
 					}
 					datePicker.show({
 						date: date,
+						minDate: minDate,
+						maxDate: moment().toDate(),
 						mode: 'datetime',
 					}, function(newDate) {
 						$scope.$evalAsync(function() {
