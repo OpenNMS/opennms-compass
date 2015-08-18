@@ -119,14 +119,16 @@ gulp.task('lint', function() {
 		.pipe(jshint.reporter('fail'));
 });
 
-gulp.task('watch', function() {
-	gulp.watch([
-		paths.bower,
-		paths.sass,
-		paths.src,
-		paths.opennms,
-	], ['sass', 'process-bower', 'process-src']);
+gulp.task('watch-bower', function() {
+	gulp.watch([paths.bower], ['process-bower']);
 });
+gulp.task('watch-sass', function() {
+	gulp.watch([paths.sass], ['sass']);
+});
+gulp.task('watch-src', function() {
+	gulp.watch([paths.src], ['process-src']);
+});
+gulp.task('watch', ['watch-bower', 'watch-sass', 'watch-src']);
 
 var minifyMe = function() {
 	return gulp.src('www/index.html')
