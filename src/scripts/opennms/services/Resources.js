@@ -36,6 +36,9 @@
 			link: function($scope, element, attrs) {
 				$scope.width = getWidth();
 				$scope.height = getHeight();
+				if ($scope.display === undefined) {
+					$scope.display = true;
+				}
 
 				var minDate = moment().subtract($injector.get('default-graph-min-range'), 'milliseconds').toDate();
 				$scope.editDate = function(type) {
