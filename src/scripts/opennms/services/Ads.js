@@ -93,9 +93,7 @@
 			scope.showAds = newSettings.showAds;
 		});
 
-		scope.$watch('created', updateAds);
-		scope.$watch('isMeridian', updateAds);
-		scope.$watch('showAds', updateAds);
+		scope.$watchGroup(['created', 'isMeridian', 'showAds'], updateAds);
 
 		return {
 			init: init,

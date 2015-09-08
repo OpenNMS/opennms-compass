@@ -159,8 +159,8 @@
 					}
 					$scope.redraw();
 				}, true);
-				$scope.$watch('width', $scope.redraw);
-				$scope.$watch('height', $scope.redraw);
+
+				$scope.$watchGroup(['width', 'height'], $scope.redraw);
 				$scope.$watch('display', $scope.refresh);
 
 				var rotationListener = function(ev) {
