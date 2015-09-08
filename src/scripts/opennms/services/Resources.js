@@ -29,6 +29,7 @@
 				resourceId: '=',
 				graphDef: '=',
 				range: '=range',
+				display: '=display',
 			},
 			replace: true,
 			templateUrl: 'templates/onms-graph.html',
@@ -95,7 +96,8 @@
 						title: $scope.graphModel.title,
 						verticalLabel: $scope.graphModel.verticalLabel,
 						exportIconSizeRatio: 0,
-						replaceDiv: false,
+						beginOnRender: false,
+						zoom: false,
 					});
 
 					graph._last = {
@@ -117,6 +119,9 @@
 					console.log('Displaying graph: ' + $scope.resourceId + ' / ' + $scope.graphModel.title);
 					$timeout(function() {
 						graph.render();
+						if ($scope.display) {
+							graph.begin();
+						}
 					});
 				};
 
@@ -128,6 +133,16 @@
 							$scope.createGraph();
 						}
 					}, 50);
+				};
+
+				$scope.refresh = function() {
+					if ($scope.graph) {
+						if ($scope.display) {
+							$scope.graph.begin();
+						} else {
+							$scope.graph.cancel();
+						}
+					}
 				};
 
 				$scope.$watch('range', function(newRange, oldRange) {
@@ -146,6 +161,7 @@
 				}, true);
 				$scope.$watch('width', $scope.redraw);
 				$scope.$watch('height', $scope.redraw);
+				$scope.$watch('display', $scope.refresh);
 
 				var rotationListener = function(ev) {
 					if ($scope.graph) {
