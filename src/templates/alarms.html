@@ -8,7 +8,7 @@
 		</ion-nav-buttons>
 	</ion-nav-bar>
 	<ion-header-bar class="bar bar-subheader legend row box" ng-if="legend.length &gt; 0">
-		<div ng-class="'col severity-' + item.severity + ' ' + (severities[item.severity]? 'enabled':'disabled')" ng-repeat="item in legend" ng-click="toggleSeverity(item)"><i ng-class="'icon severity severity-' + item.severity + ' ' + util.icon(item.severity)"></i> {{item.count}}</div>
+		<div ng-class="'col severity-' + item.severity + ' ' + (severities[item.severity]? 'enabled':'disabled')" ng-repeat="item in legend track by item.severity" ng-click="toggleSeverity(item)"><i ng-class="'icon severity severity-' + item.severity + ' ' + util.icon(item.severity)"></i> {{item.count}}</div>
 	</ion-header-bar>
 	<ion-content delegate-handle="alarms-scroll" ng-class="legend.length &gt; 0? 'has-subheader':''">
 		<ion-refresher pulling-text="Pull to Refresh..." on-refresh="refreshAlarms()"></ion-refresher>
