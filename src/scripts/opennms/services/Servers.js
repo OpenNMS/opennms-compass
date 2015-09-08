@@ -32,12 +32,23 @@
 			return deferred.promise;
 		};
 
+		var sortServers = function(a, b) {
+			if (a && b) {
+				return a.name.localeCompare(b.name);
+			}
+			return 0;
+		};
+
 		var checkServersUpdated = function(force) {
 			var oldServers = angular.copy(servers);
+			oldServers.sort(sortServers);
 			return getServers().then(function(newServers) {
-				servers = newServers;
-				if (force || (angular.toJson(oldServers) !== angular.toJson(newServers))) {
+				newServers.sort(sortServers);
+				servers = angular.copy(newServers);
+				if (force === true || !angular.equals(oldServers, newServers)) {
 					console.log('Servers.checkServersUpdated: server list has changed.');
+					console.log('old: ' + angular.toJson(oldServers));
+					console.log('new: ' + angular.toJson(newServers));
 					UtilEventBroadcaster.serversUpdated(newServers, oldServers);
 					$timeout(checkDefaultServerUpdated);
 				}
@@ -49,7 +60,7 @@
 			var oldDefaultServer = defaultServer;
 			getDefaultServer().then(function(newDefaultServer) {
 				defaultServer = newDefaultServer;
-				if (angular.toJson(oldDefaultServer) !== angular.toJson(newDefaultServer)) {
+				if (!angular.equals(oldDefaultServer, newDefaultServer)) {
 					UtilEventBroadcaster.defaultServerUpdated(newDefaultServer);
 					UtilEventBroadcaster.dirty('all');
 				}
