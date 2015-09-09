@@ -76,8 +76,8 @@
 		//severity.$stateful = true;
 		return severity;
 	})
-	.controller('AlarmsCtrl', function($q, $scope, $timeout, $ionicListDelegate, $ionicLoading, $ionicModal, $ionicPopup, $ionicScrollDelegate, $ionicViewSwitcher, storage, util, AlarmService, Errors, Modals, Servers, Settings, severityStateTracker, severities) {
-		console.log('AlarmsCtrl initializing.');
+	.controller('AlarmsCtrl', function($q, $scope, $log, $timeout, $ionicListDelegate, $ionicLoading, $ionicModal, $ionicPopup, $ionicScrollDelegate, $ionicViewSwitcher, storage, util, AlarmService, Errors, Modals, Servers, Settings, severityStateTracker, severities) {
+		$log.info('AlarmsCtrl initializing.');
 
 		var filterParams = storage.get('opennms.alarms.filterParams');
 		if (!filterParams) {
@@ -92,7 +92,7 @@
 		$scope.showAck = false;
 		$scope.severities = severities;
 
-		console.log('alarm filter: ' + angular.toJson($scope.filter));
+		$log.debug('alarm filter: ' + angular.toJson($scope.filter));
 		Servers.getDefault().then(function(server) {
 			if (server && server.username) {
 				$scope.username = server.username;
@@ -101,7 +101,7 @@
 
 		$scope.toggleSeverity = function(item) {
 			severityStateTracker.toggle(item.severity);
-			//console.log(item.severity + '=' + severityStateTracker.get(item.severity));
+			//$log.debug(item.severity + '=' + severityStateTracker.get(item.severity));
 		};
 
 		$ionicModal.fromTemplateUrl('templates/alarm-filter.html', {
@@ -125,7 +125,7 @@
 			});
 
 			AlarmService.get($scope.filter).then(function(alarms) {
-				//console.log('got alarms=',alarms);
+				//$log.debug('got alarms=',alarms);
 				$scope.alarms = alarms;
 				if (!$scope.alarms) {
 					$scope.alarms = [];

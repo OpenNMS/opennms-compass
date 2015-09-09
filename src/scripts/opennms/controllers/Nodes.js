@@ -10,8 +10,8 @@
 		'opennms.services.Nodes',
 		'opennms.services.Util',
 	])
-	.controller('NodesCtrl', function($q, $scope, $timeout, $window, $state, $ionicLoading, storage, util, Errors, NodeService) {
-		console.log('NodesCtrl: initializing.');
+	.controller('NodesCtrl', function($q, $scope, $log, $timeout, $window, $state, $ionicLoading, storage, util, Errors, NodeService) {
+		$log.info('NodesCtrl: initializing.');
 
 		$scope.searching = false;
 		$scope.util  = util;
@@ -31,7 +31,7 @@
 
 			searchPromise.then(function(nodes) {
 				Errors.clear('nodes');
-				//console.log('Got nodes:',nodes);
+				//$log.debug('Got nodes:',nodes);
 				$scope.searching = false;
 				$scope.nodes = nodes;
 				if (nodes.length === 20 && angular.isUndefined(searchFor) || searchFor.trim() === '') {

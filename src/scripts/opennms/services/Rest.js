@@ -14,8 +14,8 @@
 		'opennms.services.Util',
 	])
 
-	.factory('RestService', function($q, $rootScope, $window, $http, $injector, Servers, Settings, util) {
-		console.log('RestService: Initializing.');
+	.factory('RestService', function($q, $rootScope, $log, $window, $http, $injector, Servers, Settings, util) {
+		$log.info('RestService: Initializing.');
 
 		var ready = $q.defer();
 
@@ -73,34 +73,34 @@
 			};
 
 			return clearCookies().then(function() {
-				console.log('RestService.updateAuthorization: cleared cookies.');
+				$log.debug('RestService.updateAuthorization: cleared cookies.');
 				return Servers.getDefault();
 			}).then(function(server) {
-				console.log('update authorization: default server = ' + ((server && server.name)? server.name:'unknown'));
-				//console.log('username=' + server.username +', password=' + server.password);
+				$log.debug('update authorization: default server = ' + ((server && server.name)? server.name:'unknown'));
+				//$log.debug('username=' + server.username +', password=' + server.password);
 				if (!server || angular.isUndefined(server.username) || angular.isUndefined(server.password)) {
-					console.log('RestService.updateAuthorization: username or password not set.');
+					$log.info('RestService.updateAuthorization: username or password not set.');
 					delete $http.defaults.headers.common['Authorization'];
 					if (useCordovaHTTP) {
 						return cordovaHTTP.useBasicAuth(undefined, undefined).then(function() {
-							console.log('RestService.updateAuthorization: unconfigured basic auth.');
+							$log.debug('RestService.updateAuthorization: unconfigured basic auth.');
 							return done();
 						}, function(err) {
-							console.log('RestService.updateAuthorization: failed to unconfigure basic auth.');
+							$log.error('RestService.updateAuthorization: failed to unconfigure basic auth.');
 							return done();
 						});
 					} else {
 						return done();
 					}
 				} else {
-					//console.log('RestService.updateAuthorization: setting basic auth with username "' + server.username + '".');
+					//$log.debug('RestService.updateAuthorization: setting basic auth with username "' + server.username + '".');
 					$http.defaults.headers.common['Authorization'] = 'Basic ' + $window.btoa(server.username + ':' + server.password);
 					if (useCordovaHTTP) {
 						return cordovaHTTP.useBasicAuth(server.username, server.password).then(function() {
-							console.log('RestService.updateAuthorization: configured basic auth with username "' + server.username + '".');
+							$log.debug('RestService.updateAuthorization: configured basic auth with username "' + server.username + '".');
 							return done();
 						}, function(err) {
-							console.log('RestService.updateAuthorization: failed to configure basic auth with username "' + server.username + '".');
+							$log.error('RestService.updateAuthorization: failed to configure basic auth with username "' + server.username + '".');
 							return done();
 						});
 					} else {
@@ -108,29 +108,29 @@
 					}
 				}
 			}, function(err) {
-				console.log('RestService.updateAuthorization: failed: ' + angular.toJson(err));
+				$log.error('RestService.updateAuthorization: failed: ' + angular.toJson(err));
 				return done(true);
 			});
 		};
 
 		var getUrl = function(restFragment) {
-			//console.log('RestService.getUrl: restFragment='+restFragment);
+			//$log.debug('RestService.getUrl: restFragment='+restFragment);
 			return ready.promise.then(function() {
-				//console.log('RestService.getUrl: ready');
+				//$log.debug('RestService.getUrl: ready');
 				return Servers.getDefault();
 			}).then(function(server) {
 				var restURL = server? server.restUrl() : undefined;
-				//console.log('RestService.getUrl: restURL=' + restURL);
+				//$log.debug('RestService.getUrl: restURL=' + restURL);
 				if (restURL) {
 					var uri = URI(restURL);
 					if (restFragment.startsWith('/')) {
 						restFragment = restFragment.slice(1);
 					}
 					uri.segment(restFragment);
-					//console.log('RestService.getUrl: returning=' + uri.toString());
+					//$log.debug('RestService.getUrl: returning=' + uri.toString());
 					return uri.toString();
 				} else {
-					//console.log('RestService.getUrl: returning=undefined');
+					//$log.debug('RestService.getUrl: returning=undefined');
 					return undefined;
 				}
 			});
@@ -152,14 +152,14 @@
 
 			var url;
 			return Servers.getDefault().then(function(server) {
-				//console.log('Rest.doQuery: ' + method + ' ' + restFragment + ': isServerConfigured=' + serverConfigured);
+				//$log.debug('Rest.doQuery: ' + method + ' ' + restFragment + ': isServerConfigured=' + serverConfigured);
 				if (server) {
 					return getUrl(restFragment);
 				} else {
 					return $q.reject(new RestError(restFragment, undefined, 0, 'Server information is not complete.'));
 				}
 			}).then(function(u) {
-				//console.log('Rest.doQuery: ' + method + ' ' + restFragment + ': url=' + u);
+				//$log.debug('Rest.doQuery: ' + method + ' ' + restFragment + ': url=' + u);
 				url = u;
 				return Settings.restLimit();
 			}).then(function(restLimit) {
@@ -170,16 +170,16 @@
 				return myparams;
 			}).then(function(myparams) {
 				var deferred = $q.defer();
-				//console.log('Rest.doQuery: url=' + url + ', params=' + angular.toJson(myparams) + ', headers=' + angular.toJson(headers));
+				//$log.debug('Rest.doQuery: url=' + url + ', params=' + angular.toJson(myparams) + ', headers=' + angular.toJson(headers));
 
 				if (useCordovaHTTP) {
 					var handleSuccess = function(response) {
-						//console.log('Rest.doQuery: got: ' + angular.toJson(response.data));
+						//$log.debug('Rest.doQuery: got: ' + angular.toJson(response.data));
 						return response.data;
 					};
 					var handleError = function(err) {
 						var error = new RestError(url, err.data, err.status);
-						console.log('Rest.doQuery: failed: ' + error.toString());
+						$log.error('Rest.doQuery: failed: ' + error.toString());
 						return $q.reject(error);
 					};
 
@@ -191,7 +191,7 @@
 						return cordovaHTTP.post(url, myparams, headers).then(handleSuccess, handleError);
 					}
 				} else {
-					//console.log('Rest.doQuery: starting');
+					//$log.debug('Rest.doQuery: starting');
 					return $http({
 						method: method,
 						url: url,
@@ -200,16 +200,16 @@
 						withCredentials: true,
 						timeout: requestTimeout,
 					}).then(function(response) {
-						//console.log('Rest.doQuery:',response.data);
+						//$log.debug('Rest.doQuery:',response.data);
 						return response.data;
 					}, function(response) {
 						var err = new RestError(url, response.data, response.status, response.statusText);
-						//console.log('Rest.doQuery failed: ' + err.toString());
+						//$log.debug('Rest.doQuery failed: ' + err.toString());
 						return $q.reject(err);
 					});
 				}
 			}, function(err) {
-				//console.log('Rest.doQuery: failed: ' + angular.toJson(err));
+				//$log.debug('Rest.doQuery: failed: ' + angular.toJson(err));
 				return $q.reject(err);
 			});
 		};
@@ -244,7 +244,7 @@
 					timeout: requestTimeout,
 					headers: headers,
 				}).success(function(data) {
-					//console.log('Rest.doQuery:',data);
+					//$log.debug('Rest.doQuery:',data);
 					return data;
 				}).error(function(data, status, headers, config, statusText) {
 					return $q.reject(new RestError(url, data, status, statusText));
@@ -265,7 +265,7 @@
 							try {
 								json = angular.fromJson(data);
 							} catch (error) {
-								console.log('Rest.get: failed to parse "' + data + "' as JSON: " + error);
+								$log.error('Rest.get: failed to parse "' + data + "' as JSON: " + error);
 							}
 						}
 						if (json !== undefined) {
@@ -281,7 +281,7 @@
 			getXml: function(restFragment, params, headers) {
 				return doGet(restFragment, params, headers).then(function(data) {
 					var json = x2js.xml_str2json(data);
-					//console.log('Rest.getXml:',json);
+					//$log.debug('Rest.getXml:',json);
 					return json;
 				});
 			},

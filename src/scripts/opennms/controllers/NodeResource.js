@@ -13,8 +13,8 @@
 		'opennms.services.Resources',
 		'opennms.services.Settings',
 	])
-	.controller('NodeResourceCtrl', function($q, $scope, $injector, $timeout, $ionicScrollDelegate, NodeService, ResourceService) {
-		console.log('NodeResourceCtrl: initializing.');
+	.controller('NodeResourceCtrl', function($q, $scope, $injector, $log, $timeout, $ionicScrollDelegate, NodeService, ResourceService) {
+		$log.info('NodeResourceCtrl: initializing.');
 
 		var defaultRange = $injector.get('default-graph-range');
 
@@ -33,13 +33,13 @@
 								position += (offsetTop - scrollTop + clientTop);
 								scrollEl = scrollEl.parent();
 						}
-						console.log('offset='+position);
+						$log.debug('offset='+position);
 						if (position < 10) {
 								return 0;
 						}
 						return position;
 				} else {
-						console.log("can't find element " + id);
+						$log.error("can't find element " + id);
 						return 0;
 				}
 		};
@@ -51,7 +51,7 @@
 		$scope.range.start = new Date($scope.range.end.getTime() - defaultRange);
 
 		$scope.refresh = function() {
-			console.log('refreshing: ' + $scope.resourceId);
+			$log.debug('refreshing: ' + $scope.resourceId);
 			if ($scope.nodeId) {
 				NodeService.get($scope.nodeId).then(function(node) {
 					$scope.node = node;
@@ -69,7 +69,7 @@
 							scopeFavorites[favorite.graphName] = favorite;
 						}
 					}
-					console.log('got favorites: ' + angular.toJson(scopeFavorites));
+					$log.debug('got favorites: ' + angular.toJson(scopeFavorites));
 					$scope.favorites = scopeFavorites;
 				});
 				ResourceService.graphNames($scope.resourceId).then(function(graphs) {
@@ -123,15 +123,15 @@
 
 		$scope.toggleOpen = function(graph) {
 			if ($scope.shown && $scope.shown.name && graph && graph.name && $scope.shown.name === graph.name) {
-				//console.log('hiding: ' + angular.toJson(graph));
+				//$log.debug('hiding: ' + angular.toJson(graph));
 				delete $scope.shown;
 			} else {
-				//console.log('showing: ' + angular.toJson(graph));
+				//$log.debug('showing: ' + angular.toJson(graph));
 				$scope.shown = graph;
 				$timeout(function() {
 					$scope.$broadcast('scroll.refreshComplete');
 					var position = findElementById('graph-' + graph.name);
-					console.log('Found element position: ' + position);
+					$log.debug('Found element position: ' + position);
 					$ionicScrollDelegate.$getByHandle('node-resources-scroll').scrollTo(0, position, true);
 				}, 500);
 			}
@@ -144,8 +144,8 @@
 		};
 
 		$scope.$on('$ionicView.beforeEnter', function(ev, info) {
-			console.log('NodeResourceCtrl: entering node view.');
-			//console.log('info=' + angular.toJson(info));
+			$log.info('NodeResourceCtrl: entering node view.');
+			//$log.debug('info=' + angular.toJson(info));
 			if (info && info.stateParams) {
 				if (info.stateParams.node) {
 					var nodeId = parseInt(info.stateParams.node, 10);
@@ -154,9 +154,9 @@
 				if (info.stateParams.resource) {
 					$scope.resourceId = info.stateParams.resource;
 				}
-				//console.log('node id = ' + $scope.nodeId + ', resource id = ' + $scope.resourceId);
+				//$log.debug('node id = ' + $scope.nodeId + ', resource id = ' + $scope.resourceId);
 			} else {
-				console.log('NodeResourcesCtrl: unable to determine node or resource from view.');
+				$log.error('NodeResourcesCtrl: unable to determine node or resource from view.');
 			}
 			$scope.refresh();
 		});
@@ -165,7 +165,7 @@
 			if (info.direction === 'forward') {
 				// we're going deeper, keep the model in memory
 			} else {
-				console.log('NodeResourceCtrl: leaving node resource view; cleaning up.');
+				$log.debug('NodeResourceCtrl: leaving node resource view; cleaning up.');
 				resetModel();
 			}
 		});

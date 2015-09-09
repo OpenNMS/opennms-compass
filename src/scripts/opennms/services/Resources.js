@@ -13,7 +13,7 @@
 		'opennms.services.Storage',
 		'opennms.services.Util',
 	])
-	.directive('onmsGraph', function($timeout, $window, $injector, Servers) {
+	.directive('onmsGraph', function($log, $timeout, $window, $injector, Servers) {
 		var getWidth = function() {
 			return $window.innerWidth;
 		};
@@ -77,7 +77,7 @@
 						if ($scope.graph._last.ds         === $scope.ds &&
 							$scope.graph._last.graphModel === $scope.graphModel &&
 							angular.equals($scope.graph._last.range, $scope.range)) {
-							console.log('Graph is unchanged since last render.  Skipping.');
+							$log.debug('Graph is unchanged since last render.  Skipping.');
 							return;
 						}
 					}
@@ -119,7 +119,7 @@
 
 					$scope.graph = graph;
 
-					console.log('Displaying graph: ' + $scope.resourceId + ' / ' + $scope.graphModel.title);
+					$log.debug('Displaying graph: ' + $scope.resourceId + ' / ' + $scope.graphModel.title);
 					$timeout(function() {
 						graph.render();
 						if ($scope.display) {
@@ -213,7 +213,7 @@
 				var cleanUp = function() {
 					var resourceId = $scope.resourceId;
 					var graphTitle = ($scope.graphModel && $scope.graphModel.title)? $scope.graphModel.title : 'N/A';
-					console.log('Destroying graph: ' + resourceId + ' / ' + graphTitle);
+					$log.debug('Destroying graph: ' + resourceId + ' / ' + graphTitle);
 					if ($scope.graph) {
 						if ($scope.graph.destroy) {
 							$scope.graph.destroy();
@@ -232,8 +232,8 @@
 			}
 		};
 	})
-	.factory('ResourceService', function($q, $rootScope, RestService, Servers, StorageService, util) {
-		console.log('ResourceService: Initializing.');
+	.factory('ResourceService', function($q, $rootScope, $log, RestService, Servers, StorageService, util) {
+		$log.info('ResourceService: Initializing.');
 
 		var _graphs = {};
 
@@ -246,7 +246,7 @@
 		};
 		var getResourcesForNode = function(nodeId) {
 			return RestService.get('/resources/fornode/' + nodeId, {}, {'Accept': 'application/json'}).then(function(res) {
-				//console.log('ResourceService.getResourcesForNode: res=' + angular.toJson(res));
+				//$log.debug('ResourceService.getResourcesForNode: res=' + angular.toJson(res));
 				var ret = {
 					label: res.label,
 					id: parseInt(res.name, 10),
@@ -365,16 +365,16 @@
 					for (i=0; i < len; i++) {
 						file = files[i];
 						if (file.startsWith(prefix)) {
-							console.log('ResourceService.getFavorites: matched file ' + file);
+							$log.debug('ResourceService.getFavorites: matched file ' + file);
 							favorites.push(StorageService.load('favorites/' + file));
 						} else {
-							//console.log('ResourceService.getFavorites: ' + prefix + ' did not match file ' + file);
+							//$log.debug('ResourceService.getFavorites: ' + prefix + ' did not match file ' + file);
 						}
 					}
 					return $q.all(favorites);
 				});
 			}).then(function(favorites) {
-				//console.log('ResourceService.getFavorites: found: ' + angular.toJson(favorites));
+				//$log.debug('ResourceService.getFavorites: found: ' + angular.toJson(favorites));
 				return favorites;
 				//return $q.reject('nope');
 			});
@@ -408,27 +408,27 @@
 			return _getFavoritesFilename(resourceId, graphName).then(function(filename) {
 				return StorageService.remove('favorites/' + filename);
 			}, function(err) {
-				console.log('ResourceService.removeFavorite: failed: ' + angular.toJson(err));
+				$log.error('ResourceService.removeFavorite: failed: ' + angular.toJson(err));
 				return $q.reject(err);
 			});
 		};
 
 		util.onServerRemoved(function(server) {
-			console.log('ResourceService.onServerRemoved: cleaning up favorites for server ' + server.name);
+			$log.debug('ResourceService.onServerRemoved: cleaning up favorites for server ' + server.name);
 			return StorageService.list('favorites').then(function(files) {
 				var i, len = files.length, file, prefix = _getFavoritesPrefixForServer(server), operations = [];
 				for (i=0; i < len; i++) {
 					file = files[i];
 					if (file.startsWith(prefix)) {
-						console.log('ResourceService.onServerRemoved: * ' + file);
+						$log.debug('ResourceService.onServerRemoved: * ' + file);
 						operations.push(StorageService.remove('favorites/' + file));
 					}
 				}
 				return $q.all(operations).then(function(result) {
-					console.log('ResourceService.onServerRemoved: finished cleaning up favorites for server ' + server.name);
+					$log.debug('ResourceService.onServerRemoved: finished cleaning up favorites for server ' + server.name);
 					return result;
 				}, function(err) {
-					console.log('ResourceService.onServerRemoved: failed: ' + angular.toJson(err));
+					$log.error('ResourceService.onServerRemoved: failed: ' + angular.toJson(err));
 					return $q.reject(err);
 				});
 			});

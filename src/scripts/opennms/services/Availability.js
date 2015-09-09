@@ -9,8 +9,8 @@
 		'ionic',
 		'opennms.services.Rest',
 	])
-	.factory('AvailabilityService', function($q, $rootScope, RestService, util) {
-		console.log('AvailabilityService: Initializing.');
+	.factory('AvailabilityService', function($q, $rootScope, $log, RestService, util) {
+		$log.info('AvailabilityService: Initializing.');
 
 		var hasAvailability;
 
@@ -24,12 +24,12 @@
 			};
 
 			hasAvailability = $q.defer();
-			console.log('AvailabilityService.checkAvailability: checking if availability service is valid.');
+			$log.debug('AvailabilityService.checkAvailability: checking if availability service is valid.');
 			RestService.getXml('/availability').then(function() {
-				console.log('AvailabilityService.checkAvailability: availability service works!');
+				$log.info('AvailabilityService.checkAvailability: availability service works!');
 				done(true);
 			}, function() {
-				console.log('AvailabilityService.checkAvailability: availability service does not work. :(');
+				$log.info('AvailabilityService.checkAvailability: availability service does not work. :(');
 				done(false);
 			});
 		};

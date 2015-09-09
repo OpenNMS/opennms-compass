@@ -73,7 +73,7 @@ function Report(report) {
    */
   self.graphs = [];
   if (report['kscGraph']) {
-    console.log('graphs: ', report['kscGraph']);
+    //console.log('graphs: ', report['kscGraph']);
     if (angular.isArray(report['kscGraph'])) {
       report['kscGraph'].map(function(graph) {
         self.graphs.push(new ReportGraph(graph));

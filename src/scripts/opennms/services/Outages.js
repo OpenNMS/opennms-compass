@@ -9,8 +9,8 @@
 		'ionic',
 		'opennms.services.Rest'
 	])
-	.factory('OutageService', function($q, RestService) {
-		console.log('OutageService: Initializing.');
+	.factory('OutageService', function($q, $log, RestService) {
+		$log.info('OutageService: Initializing.');
 
 		var getOutages = function(all) {
 			var deferred = $q.defer();

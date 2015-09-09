@@ -18,11 +18,11 @@
 		packageName: 'opennms',
 		packageDescription: 'OpenNMS'
 	})
-	.factory('Info', function($q, $rootScope, $http, $injector, $window, $timeout, RestService, Servers, Settings, util) {
-		console.log('Info: Initializing.');
+	.factory('Info', function($q, $rootScope, $http, $injector, $log, $window, $timeout, RestService, Servers, Settings, util) {
+		$log.info('Info: Initializing.');
 
 		var onSuccess = function(data) {
-			//console.log('info success=' + angular.toJson(data));
+			//$log.debug('info success=' + angular.toJson(data));
 			data.numericVersion = parseFloat(data.version.replace('^(\\d+\\.\\d+).*$', '$1'));
 			var info = $injector.get('info');
 			angular.extend(info, data);
@@ -32,11 +32,11 @@
 		var updateInfo = function() {
 			Servers.getDefault().then(function(server) {
 				if (!server) {
-					console.log('Info.updateInfo: skipping update, server is not configured yet.');
+					$log.debug('Info.updateInfo: skipping update, server is not configured yet.');
 					return;
 				}
 
-				console.log('Info.updateInfo: Initializing.');
+				$log.info('Info.updateInfo: Initializing.');
 
 				RestService.get('/info', {'limit':0}, {'Accept': 'application/json'}).then(function(response) {
 					if (angular.isString(response)) {
@@ -45,7 +45,7 @@
 					onSuccess(response);
 					return response;
 				}, function(err) {
-					console.log('Info.updateInfo: failed: ' + angular.toJson(err));
+					$log.error('Info.updateInfo: failed: ' + angular.toJson(err));
 					return $q.reject(err);
 				});
 			});

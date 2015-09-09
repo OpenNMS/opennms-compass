@@ -6,8 +6,8 @@
 	angular.module('opennms.controllers.Menu', [
 		'ionic'
 	])
-	.controller('MenuCtrl', ['$scope', function($scope) {
-		console.log('MenuCtrl initializing.');
-	}]);
+	.controller('MenuCtrl', function($scope, $log) {
+		$log.info('MenuCtrl initializing.');
+	});
 
 }());

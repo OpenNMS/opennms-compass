@@ -89,7 +89,7 @@
 			toolbarposition:'top'
 		});
 	})
-	.run(function($rootScope, $timeout, $window, $ionicPlatform, $ionicPopup, Ads, IAP, Info, /*IonicService, */ Modals, Servers, Settings, util) {
+	.run(function($rootScope, $log, $timeout, $window, $ionicPlatform, $ionicPopup, Ads, IAP, Info, /*IonicService, */ Modals, Servers, Settings, util) {
 		var updateTheme = function(info) {
 			if (!info) {
 				info = Info.get();
@@ -104,17 +104,17 @@
 		util.onInfoUpdated(updateTheme);
 
 		Servers.all().then(function(servers) {
-			console.log('main: servers=' + angular.toJson(servers));
+			$log.debug('main: servers=' + angular.toJson(servers));
 			var defaultServer = servers.filter(function(s) {
 				return s.isDefault;
 			});
 			if (defaultServer.length === 0) {
-				console.log('main: server found, but not set to default.');
+				$log.debug('main: server found, but not set to default.');
 				return Servers.setDefault(servers[0]).then(function() {
 					util.hideSplashscreen();
 					return true;
 				}, function(err) {
-					console.log('main: something went wrong setting the default server: ' + angular.toJson(err));
+					$log.error('main: something went wrong setting the default server: ' + angular.toJson(err));
 					Modals.settings(true);
 					$timeout(function() {
 						util.hideSplashscreen();
@@ -122,7 +122,7 @@
 					return false;
 				});
 			} else {
-				console.log('main: no default server');
+				$log.debug('main: no default server');
 				Modals.settings(true);
 				$timeout(function() {
 					util.hideSplashscreen();
@@ -134,19 +134,19 @@
 		/*
 		Servers.configured().then(function(isConfigured) {
 			if (!isConfigured) {
-				console.log('main: server not configured');
+				$log.debug('main: server not configured');
 				util.hideSplashscreen();
 				Modals.settings(true);
 			} else {
 				Servers.getDefault().then(function(server) {
-					console.log('main: default server is ' + server.name);
+					$log.debug('main: default server is ' + server.name);
 				});
 			}
 		});
 		*/
 
 		var init = function() {
-			console.log('Ionic is ready.');
+			$log.info('Ionic is ready.');
 			IAP.init().then(Ads.init);
 		};
 
@@ -156,7 +156,7 @@
 			if (res) {
 				IonicService.update().then(function() {
 					var args = Array.prototype.slice.call(arguments);
-					console.log('Update complete: ' + angular.toJson(args));
+					$log.debug('Update complete: ' + angular.toJson(args));
 				}, function(err) {
 					$ionicPopup.alert({
 						title: 'Update failed.',

@@ -13,8 +13,8 @@
 		'opennms.services.Settings',
 		'opennms.services.Util',
 	])
-	.factory('IAP', function($q, $rootScope, $timeout, $window, $ionicLoading, $ionicPopup, Errors, Info, Servers, Settings, util) {
-		console.log('IAP: Initializing.');
+	.factory('IAP', function($q, $rootScope, $log, $timeout, $window, $ionicLoading, $ionicPopup, Errors, Info, Servers, Settings, util) {
+		$log.info('IAP: Initializing.');
 
 		var $scope = $rootScope.$new();
 		$scope.products = {};
@@ -59,7 +59,7 @@
 							rejected = true;
 							deferred.reject(err);
 						}
-						console.log('IAP: ERROR ' + err.code + ': ' + err.message);
+						$log.error('IAP: ERROR ' + err.code + ': ' + err.message);
 						$rootScope.$broadcast('opennms.product.error', err);
 						if (visibleMessage) {
 							Errors.set('store', err.code + ': ' + visibleMessage);
@@ -86,7 +86,7 @@
 				});
 				store.when('product').updated(function(p) {
 					$scope.$evalAsync(function() {
-						//console.log('IAP: product updated: ' + angular.toJson(p));
+						//$log.debug('IAP: product updated: ' + angular.toJson(p));
 						$scope.products[p.alias] = p;
 						if (p.owned) {
 							Errors.clear('store');
@@ -96,7 +96,7 @@
 				});
 				store.when('disable_ads').approved(function(product) {
 					$scope.$evalAsync(function() {
-						console.log('IAP: disable_ads approved.');
+						$log.info('IAP: disable_ads approved.');
 						Settings.disableAds();
 						$ionicLoading.hide();
 						product.finish();
@@ -104,14 +104,14 @@
 				});
 				store.when('disable_ads_free').approved(function(product) {
 					$scope.$evalAsync(function() {
-						console.log('IAP: disable_ads_free approved.');
+						$log.info('IAP: disable_ads_free approved.');
 						Settings.disableAds();
 						$ionicLoading.hide();
 						product.finish();
 					});
 				});
 				store.ready(function() {
-					console.log('IAP: Store is ready.');
+					$log.debug('IAP: Store is ready.');
 					Errors.clear('store');
 					Servers.getDefault().then(function(server) {
 						if (!server) {
@@ -124,7 +124,7 @@
 				});
 				store.refresh();
 			} else {
-				console.log('IAP: Not available.');
+				$log.error('IAP: Not available.');
 				deferred.resolve(false);
 			}
 			return deferred.promise;
@@ -135,14 +135,14 @@
 			if ($window.store) {
 				var order = store.order(alias);
 				order.then(function(p) {
-					console.log('IAP.purchase: order initiated!');
-					console.log('IAP.purchase: ' + angular.toJson(p));
+					$log.info('IAP.purchase: order initiated!');
+					$log.debug('IAP.purchase: ' + angular.toJson(p));
 					util.trackEvent('IAP', 'purchase', 'IAP Purchase', alias);
 					deferred.resolve(p);
 				});
 				order.error(function(err) {
 					var errorMessage = err.code + ': ' + err.message;
-					console.log('IAP.purchase: Error: ' + errorMessage);
+					$log.error('IAP.purchase: Error: ' + errorMessage);
 					util.trackEvent('IAP', 'error', 'IAP Error', errorMessage);
 					deferred.reject(err);
 				});

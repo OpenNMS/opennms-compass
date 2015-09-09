@@ -8,8 +8,8 @@
 		'ionic',
 		'opennms.services.Rest'
 	])
-	.factory('EventService', function($q, RestService) {
-		console.log('EventService: Initializing.');
+	.factory('EventService', function($q, $log, RestService) {
+		$log.info('EventService: Initializing.');
 
 		var getEventsForNode = function(nodeId, limit) {
 			var deferred = $q.defer();

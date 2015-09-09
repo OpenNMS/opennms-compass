@@ -31,24 +31,24 @@
 			}
 		});
 	})
-	.factory('UtilEventBroadcaster', function($rootScope) {
+	.factory('UtilEventBroadcaster', function($rootScope, $log) {
 		var markDirty = function(type) {
-			console.log('util.markDirty: ' + type);
+			$log.debug('util.markDirty: ' + type);
 			$rootScope.$broadcast('opennms.dirty', type);
 		};
 
 		var defaultServerUpdated = function(server) {
-			console.log('util.defaultServerUpdated: ' + angular.toJson(server));
+			$log.debug('util.defaultServerUpdated: ' + angular.toJson(server));
 			$rootScope.$broadcast('opennms.servers.defaultUpdated', server);
 		};
 
 		var serversUpdated = function(newServers, oldServers) {
-			console.log('util.serversUpdated: ' + angular.toJson(newServers));
+			$log.debug('util.serversUpdated: ' + angular.toJson(newServers));
 			$rootScope.$broadcast('opennms.servers.updated', newServers, oldServers);
 		};
 
 		var serverRemoved = function(server) {
-			console.log('util.serversUpdated: ' + server.name);
+			$log.debug('util.serversUpdated: ' + server.name);
 			$rootScope.$broadcast('opennms.servers.removed', server);
 		};
 
@@ -59,7 +59,7 @@
 			serverRemoved: serverRemoved,
 		};
 	})
-	.factory('UtilEventHandler', function($rootScope) {
+	.factory('UtilEventHandler', function($rootScope, $log) {
 		var eventListeners = {
 		};
 
@@ -93,7 +93,7 @@
 			len = types.length;
 			for (i=0; i < len; i++) {
 				if (eventListeners['opennms.dirty'] && eventListeners['opennms.dirty'][types[i]]) {
-					console.log('util.onDirty: ' + types[i]);
+					$log.debug('util.onDirty: ' + types[i]);
 					handleType(eventListeners['opennms.dirty'][types[i]]);
 				}
 			}
@@ -101,7 +101,7 @@
 
 		$rootScope.$on('opennms.errors.updated', function(ev, errors) {
 			if (eventListeners['opennms.errors.updated']) {
-				console.log('util.onErrorsUpdated: ' + angular.toJson(errors));
+				$log.debug('util.onErrorsUpdated: ' + angular.toJson(errors));
 				$rootScope.$evalAsync(function() {
 					var i, len=eventListeners['opennms.errors.updated'].length;
 					for (i=0; i < len; i++) {
@@ -113,7 +113,7 @@
 
 		$rootScope.$on('opennms.info.updated', function(ev, info) {
 			if (eventListeners['opennms.info.updated']) {
-				console.log('util.onInfoUpdated: ' + angular.toJson(info));
+				$log.debug('util.onInfoUpdated: ' + angular.toJson(info));
 				$rootScope.$evalAsync(function() {
 					var i, len=eventListeners['opennms.info.updated'].length;
 					for (i=0; i < len; i++) {
@@ -125,7 +125,7 @@
 
 		$rootScope.$on('opennms.product.updated', function(ev, product) {
 			if (eventListeners['opennms.product.updated']) {
-				console.log('util.onProductUpdated: ' + product.id);
+				$log.debug('util.onProductUpdated: ' + product.id);
 				$rootScope.$evalAsync(function() {
 					var i, len=eventListeners['opennms.product.updated'].length;
 					for (i=0; i < len; i++) {
@@ -137,7 +137,7 @@
 
 		$rootScope.$on('opennms.servers.defaultUpdated', function(ev, server) {
 			if (eventListeners['opennms.servers.defaultUpdated']) {
-				console.log('util.onDefaultServerUpdated: ' + angular.toJson(server));
+				$log.debug('util.onDefaultServerUpdated: ' + angular.toJson(server));
 				$rootScope.$evalAsync(function() {
 					var i, len=eventListeners['opennms.servers.defaultUpdated'].length;
 					for (i=0; i < len; i++) {
@@ -149,7 +149,7 @@
 
 		$rootScope.$on('opennms.servers.updated', function(ev, newServers, oldServers) {
 			if (eventListeners['opennms.servers.updated']) {
-				console.log('util.onServersUpdated: ' + angular.toJson(newServers));
+				$log.debug('util.onServersUpdated: ' + angular.toJson(newServers));
 				$rootScope.$evalAsync(function() {
 					var i, len=eventListeners['opennms.servers.updated'].length;
 					for (i=0; i < len; i++) {
@@ -161,7 +161,7 @@
 
 		$rootScope.$on('opennms.servers.removed', function(ev, server) {
 			if (eventListeners['opennms.servers.removed']) {
-				console.log('util.onServerRemoved: ' + server.name);
+				$log.debug('util.onServerRemoved: ' + server.name);
 				$rootScope.$evalAsync(function() {
 					var i, len=eventListeners['opennms.servers.removed'].length;
 					for (i=0; i < len; i++) {
@@ -173,7 +173,7 @@
 
 		$rootScope.$on('opennms.settings.updated', function(ev, newSettings, oldSettings, changedSettings) {
 			if (eventListeners['opennms.settings.updated']) {
-				console.log('util.onSettingsUpdated: ' + angular.toJson(changedSettings));
+				$log.debug('util.onSettingsUpdated: ' + angular.toJson(changedSettings));
 				$rootScope.$evalAsync(function() {
 					var i, len=eventListeners['opennms.settings.updated'].length;
 					for (i=0; i < len; i++) {
@@ -216,8 +216,8 @@
 			},
 		};
 	})
-	.factory('util', function($rootScope, $state, $window, $cordovaInAppBrowser, $ionicHistory, $ionicViewSwitcher, Servers, Settings, UtilEventBroadcaster, UtilEventHandler) {
-		console.log('util: Initializing.');
+	.factory('util', function($rootScope, $log, $state, $window, $cordovaInAppBrowser, $ionicHistory, $ionicViewSwitcher, Servers, Settings, UtilEventBroadcaster, UtilEventHandler) {
+		$log.info('util: Initializing.');
 
 		var goToDashboard = function(direction) {
 			$ionicHistory.nextViewOptions({
@@ -250,13 +250,13 @@
 		};
 
 		var showKeyboard = function() {
-			//console.log('util.showKeyboard');
+			//$log.debug('util.showKeyboard');
 			if ($window.cordova && $window.cordova.plugins && $window.cordova.plugins.Keyboard) {
 				cordova.plugins.Keyboard.show();
 			}
 		};
 		var hideKeyboard = function() {
-			//console.log('util.hideKeyboard');
+			//$log.debug('util.hideKeyboard');
 			if ($window.cordova && $window.cordova.plugins && $window.cordova.plugins.Keyboard) {
 				cordova.plugins.Keyboard.close();
 			}
@@ -271,13 +271,13 @@
 		var openServer = function() {
 			Servers.getDefault().then(function(server) {
 				if (server) {
-					console.log('util.openServer: ' + server.url);
+					$log.debug('util.openServer: ' + server.url);
 					$cordovaInAppBrowser.open(server.url, '_blank');
 				} else {
-					console.log('util.openServer: no server defined');
+					$log.debug('util.openServer: no server defined');
 				}
 			}, function() {
-				console.log('util.openServer: unable to get default server');
+				$log.debug('util.openServer: unable to get default server');
 			});
 		};
 

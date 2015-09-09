@@ -8,7 +8,7 @@
 	angular.module('opennms.services.DonutWidget', [
 		'ionic',
 	])
-	.factory('DonutWidget', function($window) {
+	.factory('DonutWidget', function($log, $window) {
 		function DonutWidget(properties) {
 			var self = this;
 			self.dirty = true;
@@ -22,18 +22,18 @@
 
 			self.queue = async.queue(function(task, callback) {
 				if (task && task.description) {
-					//console.log(self.getLogMessage('queue', 'executing ' + task.description));
+					//$log.debug(self.getLogMessage('queue', 'executing ' + task.description));
 					task.f();
 					setTimeout(callback, 300);
 				} else {
-					//console.log(self.getLogMessage('queue', 'executing next task'));
+					//$log.debug(self.getLogMessage('queue', 'executing next task'));
 					task();
 					setTimeout(callback, 300);
 				}
 			}, 1);
 			/*
 			self.queue.drain = function() {
-				console.log(self.getLogMessage('queue', 'finished all items'));
+				$log.debug(self.getLogMessage('queue', 'finished all items'));
 			};
 			*/
 
@@ -44,10 +44,10 @@
 
 				setTimeout(function() {
 					self.refreshSize();
-					//console.log(self.getLogMessage('handleSizeChange', oldWidth + 'x' + oldHeight + '(' + oldOrientation + ') -> ' + self.width + 'x' + self.height + '(' + self.orientation + ')'));
+					//$log.debug(self.getLogMessage('handleSizeChange', oldWidth + 'x' + oldHeight + '(' + oldOrientation + ') -> ' + self.width + 'x' + self.height + '(' + self.orientation + ')'));
 					if (self.width !== oldWidth || self.height !== oldHeight || self.orientation !== oldOrientation) {
 						if (self.pie) {
-							console.log(self.getLogMessage('handleSizeChange', 'Pie already exists, but orientation is changing.  Destroying it.'));
+							$log.debug(self.getLogMessage('handleSizeChange', 'Pie already exists, but orientation is changing.  Destroying it.'));
 							self.pie.destroy();
 							self.pie = undefined;
 						}
@@ -76,7 +76,7 @@
 
 		DonutWidget.prototype.setDirty = function(reason) {
 			var self = this;
-			console.log(self.getLogMessage('setDirty', reason));
+			$log.debug(self.getLogMessage('setDirty', reason));
 			self.dirty = true;
 			if (self.onDirty) {
 				var info = {
@@ -84,7 +84,7 @@
 					height: self.getHeight(),
 					landscape: (self.orientation === 'landscape'),
 				};
-				//console.log(self.getLogMessage('setDirty', 'onDirty info = ' + angular.toJson(info)));
+				//$log.debug(self.getLogMessage('setDirty', 'onDirty info = ' + angular.toJson(info)));
 				self.onDirty(info);
 			}
 		};
@@ -97,7 +97,7 @@
 			} else {
 				this.orientation = 'portrait';
 			}
-			// console.log(this.getLogMessage('refreshSize', 'size=' + this.width + 'x' + this.height + ', orientation=' + this.orientation));
+			// $log.debug(this.getLogMessage('refreshSize', 'size=' + this.width + 'x' + this.height + ', orientation=' + this.orientation));
 		};
 
 		DonutWidget.prototype.init = function() {
@@ -134,16 +134,16 @@
 				self.pieOptions().labels.inner.format = 'none';
 			}
 
-			//console.log(self.getLogMessage('setData', 'inner.format=' + self.pieOptions().labels.inner.format));
+			//$log.debug(self.getLogMessage('setData', 'inner.format=' + self.pieOptions().labels.inner.format));
 			var oldData = angular.toJson(self.pieOptions().data.content) || "";
 			var newData = angular.toJson(data);
-			//console.log(self.getLogMellage('setData: oldData: ' + oldData));
-			//console.log(self.getLogMessage('setData', 'newData: ' + newData));
+			//$log.debug(self.getLogMessage('setData', 'oldData: ' + oldData));
+			//$log.debug(self.getLogMessage('setData', 'newData: ' + newData));
 			if (oldData.indexOf(newData) !== 0 || newData.indexOf(oldData) !== 0) {
 				self.pieOptions().data.content = data;
 				self.setDirty('data was changed');
-				//console.log(self.getLogMessage('setData', 'old data: ' + angular.toJson(self.pieOptions().data.content)));
-				//console.log(self.getLogMessage('setData', 'new data: ' + angular.toJson(data)));
+				//$log.debug(self.getLogMessage('setData', 'old data: ' + angular.toJson(self.pieOptions().data.content)));
+				//$log.debug(self.getLogMessage('setData', 'new data: ' + angular.toJson(data)));
 				self.refresh();
 			}
 		};
@@ -184,7 +184,7 @@
 			var width = self.getWidth();
 			var height = self.getHeight();
 
-			//console.log(self.getLogMessage('redraw', 'redrawing pie'));
+			//$log.debug(self.getLogMessage('redraw', 'redrawing pie'));
 			var element = angular.element('#' + elementName);
 			if (element && element.length) {
 				var options = self.merge_({}, self.pieOptions());
@@ -193,7 +193,7 @@
 				options.size.canvasHeight = height;
 
 				if (angular.isUndefined(options.data.content) || !options.data.content) {
-					console.log(self.getLogMessage('redraw', 'Data not initialized.  Skipping redraw.'));
+					$log.debug(self.getLogMessage('redraw', 'Data not initialized.  Skipping redraw.'));
 					return;
 				}
 
@@ -207,7 +207,7 @@
 
 				element.width(options.size.canvasWidth);
 				element.height(options.size.canvasHeight);
-				//console.log(self.getLogMessage('redraw', 'size is ' + options.size.canvasWidth + 'x' + options.size.canvasHeight));
+				//$log.debug(self.getLogMessage('redraw', 'size is ' + options.size.canvasWidth + 'x' + options.size.canvasHeight));
 
 				if (angular.isArray(options.data.content) && options.data.content.length > 0) {
 					options.labels.inner.format = 'value';
@@ -220,22 +220,22 @@
 					}];
 				}
 
-				//console.log(self.getLogMessage('redraw', 'element is visible'));
+				//$log.debug(self.getLogMessage('redraw', 'element is visible'));
 				if (self.pie) {
-					console.log(self.getLogMessage('redraw', 'pie exists, redrawing'));
+					$log.debug(self.getLogMessage('redraw', 'pie exists, redrawing'));
 					self.merge_(self.pie.options, options);
 					self.pie.options.data.content = options.data.content;
-					//console.log('pie.options='+angular.toJson(self.pie.options));
+					//$log.debug('pie.options='+angular.toJson(self.pie.options));
 					self.pie.destroy();
 					self.pie.recreate();
 				} else {
 					/*jshint -W055 */
-					console.log(self.getLogMessage('redraw', 'pie does not exist'));
-					//console.log('options='+angular.toJson(options));
+					$log.debug(self.getLogMessage('redraw', 'pie does not exist'));
+					//$log.debug('options='+angular.toJson(options));
 					self.pie = new d3pie(elementId + '-' + orientation, options);
 				}
 			} else {
-				console.log(self.getLogMessage('redraw', 'element does not exist, staying dirty'));
+				$log.debug(self.getLogMessage('redraw', 'element does not exist, staying dirty'));
 			}
 		};
 

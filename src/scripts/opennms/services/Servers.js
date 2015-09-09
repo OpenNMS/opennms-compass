@@ -14,8 +14,8 @@
 		'opennms.services.Settings',
 		'opennms.services.Storage',
 		'opennms.services.Util',
-	]).factory('Servers', function($q, $rootScope, $interval, $timeout, uuid4, Settings, StorageService, UtilEventBroadcaster, UtilEventHandler) {
-		console.log('Servers: Initializing.');
+	]).factory('Servers', function($q, $rootScope, $interval, $log, $timeout, uuid4, Settings, StorageService, UtilEventBroadcaster, UtilEventHandler) {
+		$log.info('Servers: Initializing.');
 
 		var ready = $q.defer();
 		var fsPrefix = 'servers';
@@ -46,9 +46,9 @@
 				newServers.sort(sortServers);
 				servers = angular.copy(newServers);
 				if (force === true || !angular.equals(oldServers, newServers)) {
-					console.log('Servers.checkServersUpdated: server list has changed.');
-					console.log('old: ' + angular.toJson(oldServers));
-					console.log('new: ' + angular.toJson(newServers));
+					$log.debug('Servers.checkServersUpdated: server list has changed.');
+					$log.debug('old: ' + angular.toJson(oldServers));
+					$log.debug('new: ' + angular.toJson(newServers));
 					UtilEventBroadcaster.serversUpdated(newServers, oldServers);
 					$timeout(checkDefaultServerUpdated);
 				}
@@ -85,7 +85,7 @@
 
 		var fetchServerNames = function() {
 			return StorageService.list(fsPrefix).then(function(entries) {
-				//console.log('fetchServerNames: ' + angular.toJson(entries));
+				//$log.debug('fetchServerNames: ' + angular.toJson(entries));
 				var ret = [], i, len = entries.length;
 				for (i=0; i < len; i++) {
 					var filename = entries[i];
@@ -95,7 +95,7 @@
 				ret.sort();
 				return ret;
 			}, function(err) {
-				console.log('Servers.fetchServerNames: WARNING: StorageService.list('+fsPrefix+') failed: ' + angular.toJson(err));
+				$log.error('Servers.fetchServerNames: WARNING: StorageService.list('+fsPrefix+') failed: ' + angular.toJson(err));
 				return [];
 			});
 		};
@@ -108,7 +108,7 @@
 				checkServersUpdated();
 				return server;
 			}, function(err) {
-				console.log('Servers.saveServer: WARNING: StorageService.save(' + server.name + ') failed: ' + angular.toJson(err));
+				$log.error('Servers.saveServer: WARNING: StorageService.save(' + server.name + ') failed: ' + angular.toJson(err));
 				return undefined;
 			});
 		};
@@ -118,9 +118,9 @@
 				if (names.length > 0) {
 					return names;
 				} else {
-					console.log('Servers.init: no server names found, attempting to upgrade old settings.');
+					$log.info('Servers.init: no server names found, attempting to upgrade old settings.');
 					return Settings.get().then(function(settings) {
-						console.log('Servers.init: settings = ' + angular.toJson(settings));
+						$log.debug('Servers.init: settings = ' + angular.toJson(settings));
 						if (settings.server !== undefined && settings.username !== undefined && settings.password !== undefined) {
 							var server = new Server({
 								name: URI(settings.server).hostname(),
@@ -128,16 +128,16 @@
 								username: settings.username,
 								password: settings.password,
 							});
-							console.log('Servers.init: saving default server: ' + angular.toJson(server, true));
+							$log.debug('Servers.init: saving default server: ' + angular.toJson(server, true));
 							return saveServer(server).then(function() {
 								return server;
 							});
 						} else {
-							console.log('Servers.init: No servers configured.');
+							$log.debug('Servers.init: No servers configured.');
 							return $q.reject('No servers configured.');
 						}
 					}, function(err) {
-						console.log('Servers.init: No settings found.');
+						$log.info('Servers.init: No settings found.');
 						return $q.reject(err);
 					});
 				}
@@ -146,7 +146,7 @@
 				startRefresh();
 				return ready.promise;
 			}, function(err) {
-				console.log('Servers.init: failed initialization: ' + angular.toJson(err));
+				$log.error('Servers.init: failed initialization: ' + angular.toJson(err));
 				ready.resolve(false);
 				return ready.promise;
 			});
@@ -164,7 +164,7 @@
 					deferred.resolve();
 				});
 			}, function(err) {
-				console.log('Servers.getServer: failed to get ' + serverName + ': ' + angular.toJson(err));
+				$log.error('Servers.getServer: failed to get ' + serverName + ': ' + angular.toJson(err));
 				deferred.resolve();
 			});
 			return deferred.promise;
@@ -178,11 +178,11 @@
 					promises.push(getServer(names[i]));
 				}
 				return $q.all(promises).then(function(servers) {
-					//console.log('servers='+angular.toJson(servers));
+					//$log.debug('servers='+angular.toJson(servers));
 					var defaultServerName = servers.shift(), ret = [];
 					len = servers.length;
 					for (i=0; i < len; i++) {
-						//console.log('servers['+i+']='+angular.toJson(servers[i]));
+						//$log.debug('servers['+i+']='+angular.toJson(servers[i]));
 						if (servers[i] === null || servers[i] === undefined) {
 							continue;
 						}
@@ -192,7 +192,7 @@
 					return ret;
 				});
 			}, function(err) {
-				console.log('Servers.getServers: failed: ' + angular.toJson(err));
+				$log.error('Servers.getServers: failed: ' + angular.toJson(err));
 				return [];
 			});
 		};
@@ -206,7 +206,7 @@
 		var getDefaultServer = function() {
 			return isReady().then(function() {
 				return Settings.getDefaultServerName().then(function(serverName) {
-					//console.log('Servers.getDefaultServer: ' + serverName);
+					//$log.debug('Servers.getDefaultServer: ' + serverName);
 					if (serverName) {
 						return getServer(serverName);
 					} else {
@@ -214,7 +214,7 @@
 					}
 				});
 			}, function(err) {
-				console.log('Servers.getDefaultServer: failed: ' + angular.toJson(err));
+				$log.error('Servers.getDefaultServer: failed: ' + angular.toJson(err));
 				return undefined;
 			});
 		};

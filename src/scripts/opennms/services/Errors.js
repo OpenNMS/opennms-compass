@@ -6,8 +6,8 @@
 	angular.module('opennms.services.Errors', [
 		'ionic',
 	])
-	.factory('Errors', function($rootScope) {
-		console.log('Errors: Initializing.');
+	.factory('Errors', function($rootScope, $log) {
+		$log.info('Errors: Initializing.');
 
 		var _errors = {};
 

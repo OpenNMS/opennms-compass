@@ -8,12 +8,12 @@
 		'ngCordova',
 		'opennms.services.Settings',
 	])
-	.factory('Analytics', ['$rootScope', '$window', '$cordovaGoogleAnalytics', 'Settings',
+	.factory('Analytics', ['$rootScope', '$log', '$window', '$cordovaGoogleAnalytics', 'Settings',
 		'config.build.analyticsIdAndroid', 'config.build.analyticsIdIos', 'config.build.analyticsIdOther',
-		function($rootScope, $window, $cordovaGoogleAnalytics, Settings,
+		function($rootScope, $log, $window, $cordovaGoogleAnalytics, Settings,
 		androidAnalyticsId, iosAnalyticsId, otherAnalyticsId) {
 
-		console.log('Analytics: Initializing.');
+		$log.info('Analytics: Initializing.');
 
 		if ($window.plugins && $window.plugins.analytics) {
 			$cordovaGoogleAnalytics.debugMode();

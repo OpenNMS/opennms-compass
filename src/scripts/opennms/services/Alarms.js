@@ -10,8 +10,8 @@
 		'opennms.services.Rest',
 		'opennms.services.Util',
 	])
-	.factory('AlarmService', function($q, RestService, util) {
-		console.log('AlarmService: Initializing.');
+	.factory('AlarmService', function($q, $log, RestService, util) {
+		$log.info('AlarmService: Initializing.');
 
 		var getAlarms = function(filter) {
 			var deferred = $q.defer();
@@ -51,7 +51,7 @@
 			}
 
 			if (!alarmId) {
-				console.log('AlarmService.getAlarm: invalid alarm is missing ID! ' + angular.toJson(alarm));
+				$log.error('AlarmService.getAlarm: invalid alarm is missing ID! ' + angular.toJson(alarm));
 				deferred.reject('Alarm is missing ID!');
 				return deferred.promise;
 			}

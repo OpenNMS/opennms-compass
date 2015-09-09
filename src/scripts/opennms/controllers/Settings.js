@@ -15,7 +15,7 @@
 		'opennms.services.Settings',
 		'opennms.services.Util',
 	])
-	.factory('ServerModal', function($q, $rootScope, $ionicModal, Servers, Settings) {
+	.factory('ServerModal', function($q, $rootScope, $log, $ionicModal, Servers, Settings) {
 		var $scope = $rootScope.$new();
 
 		$scope.openModal = function(server) {
@@ -36,7 +36,7 @@
 				modal.show();
 				return modal;
 			}, function(err) {
-				console.log('ServerModal.open: failed: ' + angular.toJson(err));
+				$log.error('ServerModal.open: failed: ' + angular.toJson(err));
 				return $q.reject(err);
 			});
 		};
@@ -54,7 +54,7 @@
 
 		$scope.saveServer = function() {
 			var server = $scope.server;
-			console.log('ServerModal.save: Saving server: ' + angular.toJson(server));
+			$log.debug('ServerModal.save: Saving server: ' + angular.toJson(server));
 			if (server.originalName && server.name !== server.originalName) {
 				// They have renamed the server, we have to special-case it.
 				Settings.getDefaultServerName().then(function(defaultServerName) {
@@ -81,8 +81,8 @@
 			close: $scope.closeModal,
 		};
 	})
-	.controller('SettingsCtrl', function($scope, $timeout, $window, $filter, $ionicListDelegate, $ionicPlatform, $ionicPopup, ServerModal, AvailabilityService, Capabilities, Errors, IAP, Info, Servers, Settings, util) {
-		console.log('Settings initializing.');
+	.controller('SettingsCtrl', function($scope, $log, $timeout, $window, $filter, $ionicListDelegate, $ionicPlatform, $ionicPopup, ServerModal, AvailabilityService, Capabilities, Errors, IAP, Info, Servers, Settings, util) {
+		$log.info('Settings initializing.');
 
 		$scope.util = util;
 
@@ -142,13 +142,13 @@
 			for (i=0; i < len; i++) {
 				if ($scope.servers[i].isDefault) {
 					$scope.defaultServer = i;
-					//console.log('default server: ' + $scope.servers[i].name);
+					//$log.debug('default server: ' + $scope.servers[i].name);
 				} else {
-					//console.log('not default server: ' + $scope.servers[i].name);
+					//$log.debug('not default server: ' + $scope.servers[i].name);
 				}
 			}
 			if (angular.isUndefined($scope.defaultServer) && len > 0) {
-				console.log('Settings.initDefaultServer: no default server defined.');
+				$log.info('Settings.initDefaultServer: no default server defined.');
 				Settings.setDefaultServerName($scope.servers[0].name);
 			}
 		};
@@ -227,26 +227,26 @@
 				$scope.isIOS = ionic.Platform.isIOS();
 
 				if ($window.appAvailability) {
-					console.log('SettingsCtrl: checking for availability of onms://');
+					$log.debug('SettingsCtrl: checking for availability of onms://');
 					$window.appAvailability.check('onms://',
 						function() {
-							console.log('SettingsCtrl: OpenNMS.app is available!');
+							$log.debug('SettingsCtrl: OpenNMS.app is available!');
 							$scope.$evalAsync(function() {
 								$scope.hasOpenNMS = true;
 							});
 						}, function() {
-							console.log('SettingsCtrl: OpenNMS.app is not available.  :(');
+							$log.debug('SettingsCtrl: OpenNMS.app is not available.  :(');
 							$scope.$evalAsync(function() {
 								$scope.hasOpenNMS = false;
 							});
 						}
 					);
 				} else {
-					console.log('SettingsCtrl: Cannot check app availability.');
+					$log.error('SettingsCtrl: Cannot check app availability.');
 				}
 
-				console.log('SettingsCtrl: isCordova: ' + $scope.isCordova);
-				console.log('SettingsCtrl: isIOS:     ' + $scope.isIOS);
+				$log.debug('SettingsCtrl: isCordova: ' + $scope.isCordova);
+				$log.debug('SettingsCtrl: isIOS:     ' + $scope.isIOS);
 			});
 		});
 
@@ -256,7 +256,7 @@
 
 		$scope.removeAds = function(alias) {
 			IAP.purchase(alias).then(function() {
-				console.log('SettingsCtrl.removeAds: purchase successfully initiated.');
+				$log.info('SettingsCtrl.removeAds: purchase successfully initiated.');
 			}, function(err) {
 				$ionicPopup.alert({
 					title: 'Ad Removal Failed',

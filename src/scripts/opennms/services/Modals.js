@@ -19,8 +19,8 @@
 		'opennms.services.Settings',
 		'opennms.services.Util',
 	])
-	.factory('Modals', function($q, $rootScope, $interval, $ionicModal, $ionicPopup, AlarmService, Analytics, AvailabilityService, Errors, EventService, Info, NodeService, OutageService, Servers, Settings, util) {
-		console.log('Modals: initializing.');
+	.factory('Modals', function($q, $rootScope, $interval, $log, $ionicModal, $ionicPopup, AlarmService, Analytics, AvailabilityService, Errors, EventService, Info, NodeService, OutageService, Servers, Settings, util) {
+		$log.info('Modals: initializing.');
 
 		var $scope = $rootScope.$new();
 		$scope.util = util;
@@ -53,7 +53,7 @@
 
 			var getOutages = function(outage) {
 				OutageService.node(outage.nodeId).then(function(nodeOutages) {
-					//console.log('Node Outages:',nodeOutages);
+					//$log.debug('Node Outages:',nodeOutages);
 					nodeOutages.sort(function(a, b) {
 						var comp = a.ipAddress.localeCompare(b.ipAddress);
 						if (comp === 0) {
@@ -148,13 +148,13 @@
 						modal.scope.alarm = alarm;
 					});
 				} else {
-					console.log('Modals.updateAlarmData: no alarm associated with alarm modal!');
+					$log.debug('Modals.alarmDetail.updateAlarmData: no alarm associated with alarm modal!');
 					modal.scope.$broadcast('scroll.refreshComplete');
 				}
 			};
 			modal.scope.clear = function() {
 				AlarmService.clear(modal.scope.alarm).then(modal.scope.updateAlarmData, function(err) {
-					console.log('err=',err);
+					$log.error('Modals.alarmDetail.clear: error: ',err);
 					if (err.permissionDenied()) {
 						$ionicPopup.alert({
 							title: 'Permission Denied',
@@ -168,7 +168,7 @@
 			};
 			modal.scope.escalate = function() {
 				AlarmService.escalate(modal.scope.alarm).then(modal.scope.updateAlarmData, function(err) {
-					console.log('err=',err);
+					$log.error('Modals.alarmDetail.escalate: error: ',err);
 					if (err.permissionDenied()) {
 						$ionicPopup.alert({
 							title: 'Permission Denied',

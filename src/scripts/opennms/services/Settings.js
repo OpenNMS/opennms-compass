@@ -11,7 +11,7 @@
 	])
 	.value('default-graph-min-range', 7 * 24 * 60 * 60 * 1000) // 1 week
 	.value('default-graph-range', 24 * 60 * 60 * 1000) // 1 day
-	.factory('Settings', function($q, $rootScope, $injector, storage, uuid4, StorageService) {
+	.factory('Settings', function($q, $rootScope, $injector, $log, storage, uuid4, StorageService) {
 		var $scope = $rootScope.$new();
 
 		var defaultRestLimit = 100;
@@ -51,7 +51,7 @@
 		};
 
 		var convertOldSettings = function() {
-			console.log('Settings.convertSettings: WARNING: attempting to convert settings from old location.');
+			$log.error('Settings.convertSettings: WARNING: attempting to convert settings from old location.');
 			var settings = storage.get('opennms.settings');
 			if (isEmpty(settings)) {
 				settings = {};
@@ -85,16 +85,16 @@
 		};
 
 		var init = function() {
-			console.log('Settings.init: Initializing.');
+			$log.info('Settings.init: Initializing.');
 			return StorageService.load('settings.json').then(function(settings) {
-				//console.log('Settings.init: loaded settings.json');
+				//$log.debug('Settings.init: loaded settings.json');
 				if (isEmpty(settings)) {
 					return $q.reject('No settings found.');
 				} else {
 					return settings;
 				}
 			}, function(err) {
-				console.log('Settings.init: Converting old settings.');
+				$log.debug('Settings.init: Converting old settings.');
 				return convertOldSettings();
 			}).then(function(settings) {
 				if (!settings || settings === 'undefined') {
@@ -133,13 +133,13 @@
 					settings.showAds = true;
 				}
 
-				//console.log('Settings.init: storing final settings: ' + angular.toJson(settings, true));
+				//$log.debug('Settings.init: storing final settings: ' + angular.toJson(settings, true));
 				return storeSettings(settings).then(function() {
-					//console.log('Settings.init: finished storing final settings.');
+					//$log.debug('Settings.init: finished storing final settings.');
 					ready.resolve(true);
 					return settings;
 				}, function(err) {
-					console.log('Settings.init: failed to store final settings: ' + angular.toJson(err));
+					$log.error('Settings.init: failed to store final settings: ' + angular.toJson(err));
 					ready.resolve(false);
 					return $q.reject(err);
 				});
@@ -215,12 +215,12 @@
 					c = angular.toJson(changedSettings);
 
 				if (c === "{}") {
-					//console.log('Settings.saveSettings: settings are unchanged.');
+					//$log.debug('Settings.saveSettings: settings are unchanged.');
 					return oldSettings;
 				} else {
-					console.log('Settings.saveSettings: settings have changed.  Updating.');
-					console.log('Settings.saveSettings: Old Settings: ' + o);
-					console.log('Settings.saveSettings: New Settings: ' + n);
+					$log.debug('Settings.saveSettings: settings have changed.  Updating.');
+					$log.debug('Settings.saveSettings: Old Settings: ' + o);
+					$log.debug('Settings.saveSettings: New Settings: ' + n);
 
 					return storeSettings(newSettings).then(function(stored) {
 						if (changedSettings.server) {

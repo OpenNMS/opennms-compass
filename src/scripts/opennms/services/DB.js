@@ -17,15 +17,15 @@
 			find: 'qify',
 		};
 		pouchDBProvider.methods = angular.extend({}, POUCHDB_METHODS, extraMethods);
-	}).factory('db', function($rootScope, storage, pouchDB, uuid4) {
-		console.log('DB: Initializing.');
+	}).factory('db', function($rootScope, $log, storage, pouchDB, uuid4) {
+		$log.info('DB: Initializing.');
 
 		var db = pouchDB('compass');
 		db.allDocs({
 			include_docs: true
 		}).then(function(docs) {
 			/*
-			console.log('all docs: ' + angular.toJson(docs));
+			$log.debug('all docs: ' + angular.toJson(docs));
 			for (var i=0; i < docs.rows.length; i++) {
 				db.remove(docs.rows[i].doc);
 			} */

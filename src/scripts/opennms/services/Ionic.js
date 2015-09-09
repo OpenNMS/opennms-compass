@@ -12,9 +12,9 @@
 		'opennms.services.BuildConfig',
 		'opennms.services.Settings',
 	])
-	.config(['$ionicAppProvider', 'config.build.ionicPublicKey', function($ionicAppProvider, ionicPublicKey) {
+	.config(['$ionicAppProvider', 'config.build.ionicPublicKey', function($log, $ionicAppProvider, ionicPublicKey) {
 		if (ionicPublicKey) {
-			console.log('Public key set.  Initializing.');
+			$log.info('Public key set.  Initializing.');
 			$ionicAppProvider.identify({
 				// The App ID (from apps.ionic.io) for the server
 				app_id: 'bf988c24',
@@ -23,7 +23,7 @@
 			});
 		}
 	}])
-	.factory('IonicService', ['$q', '$ionicDeploy', '$ionicPopup', 'config.build.ionicPublicKey', function($q, $ionicDeploy, $ionicPopup, ionicPublicKey) {
+	.factory('IonicService', ['$q', '$log', '$ionicDeploy', '$ionicPopup', 'config.build.ionicPublicKey', function($q, $log, $ionicDeploy, $ionicPopup, ionicPublicKey) {
 		var rejected = $q.defer();
 		rejected.reject(false);
 
@@ -33,17 +33,17 @@
 			var deferred = $q.defer();
 
 			if (!ionicPublicKey) {
-				console.log('Ionic.checkForUpdates: skipping, no public key configured.');
+				$log.info('Ionic.checkForUpdates: skipping, no public key configured.');
 				deferred.reject(false);
 				return deferred.promise;
 			}
 
-			console.log('Ionic.checkForUpdates: checking for updates.');
+			$log.info('Ionic.checkForUpdates: checking for updates.');
 			$ionicDeploy.check().then(function(hasUpdate) {
-				console.log('Ionic.checkForUpdates: hasUpdate = ' + hasUpdate);
+				$log.debug('Ionic.checkForUpdates: hasUpdate = ' + hasUpdate);
 				deferred.resolve(hasUpdate);
 			}, function(err) {
-				console.log('Ionic.checkForUpdates: failed: ' + angular.toJson(err));
+				$log.error('Ionic.checkForUpdates: failed: ' + angular.toJson(err));
 				deferred.reject(err);
 			});
 
@@ -52,7 +52,7 @@
 
 		var promptForUpdates = function() {
 			if (!ionicPublicKey) {
-				console.log('Ionic.promptForUpdates: skipping, no public key configured.');
+				$log.info('Ionic.promptForUpdates: skipping, no public key configured.');
 				return rejected.promise;
 			}
 
@@ -69,26 +69,26 @@
 					return false;
 				}
 			}, function(err) {
-				console.log('Ionic.promptForUpdates: failed: ' + angular.toJson(err));
+				$log.error('Ionic.promptForUpdates: failed: ' + angular.toJson(err));
 				return false;
 			});
 		};
 
 		var doUpdate = function() {
 			if (!ionicPublicKey) {
-				console.log('Ionic.doUpdate: skipping, no public key configured.');
+				$log.debug('Ionic.doUpdate: skipping, no public key configured.');
 				return rejected.promise;
 			}
 
-			console.log('Ionic.doUpdate: updating app.');
+			$log.info('Ionic.doUpdate: updating app.');
 			return $ionicDeploy.update().then(function(res) {
-				console.log('Ionic.doUpdate: success! ' + angular.toJson(res));
+				$log.debug('Ionic.doUpdate: success! ' + angular.toJson(res));
 				return true;
 			}, function(err) {
-				console.log('Ionic.doUpdate: failed: ' + angular.toJson(err));
+				$log.info('Ionic.doUpdate: failed: ' + angular.toJson(err));
 				return false;
 			}, function(progress) {
-				console.log('Ionic.doUpdate: progress: ' + angular.toJson(progress));
+				$log.debug('Ionic.doUpdate: progress: ' + angular.toJson(progress));
 			});
 		};
 

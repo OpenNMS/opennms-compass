@@ -37,8 +37,8 @@
 		'opennms.services.Settings',
 		'opennms.services.Util',
 	])
-	.controller('DashboardCtrl', function($q, $rootScope, $scope, $injector, $interval, $timeout, $state, $document, $window, $ionicLoading, $ionicPopup, $ionicPopover, $ionicSlideBoxDelegate, debounce, resize, AlarmService, AvailabilityService, DonutWidget, Errors, Info, Modals, OutageService, ResourceService, Servers, Settings, util) {
-		console.log('DashboardCtrl: Initializing.');
+	.controller('DashboardCtrl', function($q, $rootScope, $scope, $injector, $interval, $log, $timeout, $state, $document, $window, $ionicLoading, $ionicPopup, $ionicPopover, $ionicSlideBoxDelegate, debounce, resize, AlarmService, AvailabilityService, DonutWidget, Errors, Info, Modals, OutageService, ResourceService, Servers, Settings, util) {
+		$log.info('DashboardCtrl: Initializing.');
 
 		var updateArrows = function(height) {
 			var arrowOffset = (Math.round(height * 0.5) - 50);
@@ -79,7 +79,7 @@
 		});
 
 		var onWidget = function(info) {
-			//console.log('onDirty: ' + angular.toJson(info));
+			//$log.debug('onDirty: ' + angular.toJson(info));
 			$scope.$broadcast('scroll.refreshComplete');
 			$rootScope.landscape = info.landscape;
 			$scope.landscape     = info.landscape;
@@ -101,7 +101,7 @@
 			} else if (index === 1) {
 				alarmDonut.refresh();
 			} else {
-				console.log('WTF?  DonutSlide=' + index);
+				$log.error('WTF?  DonutSlide=' + index);
 			}
 		};
 
@@ -140,7 +140,7 @@
 		};
 
 		var refreshFavorites = function() {
-			//console.log('refreshing favorites');
+			//$log.debug('refreshing favorites');
 			$scope.graphs = {};
 			$scope.favoriteGraphs = [];
 			return ResourceService.favorites().then(function(favs) {
@@ -299,7 +299,7 @@
 			}
 			refreshing = true;
 
-			console.log('DashboardCtrl.refreshData: refreshing data.');
+			$log.info('DashboardCtrl.refreshData: refreshing data.');
 
 			var finished = function(type) {
 				util.hideSplashscreen();
@@ -327,7 +327,7 @@
 		});
 
 		$scope.resetData = function() {
-			console.log('Resetting Data.');
+			$log.debug('Resetting Data.');
 			$scope.serverName = undefined;
 			resetAvailability();
 			resetOutages();
@@ -418,8 +418,8 @@
 
 		/*
 		util.onSettingsUpdated(function(newSettings, oldSettings, changedSettings) {
-			console.log('Dashboard: settings changed, refreshing data.');
-			console.log(angular.toJson(changedSettings, true));
+			$log.debug('Dashboard: settings changed, refreshing data.');
+			$log.debug(angular.toJson(changedSettings, true));
 			if (changedSettings.defaultServerName) {
 				$scope.serverName = changedSettings.defaultServerName;
 				$scope.refreshData();

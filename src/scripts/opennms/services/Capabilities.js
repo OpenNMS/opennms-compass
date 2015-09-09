@@ -9,8 +9,8 @@
 		'opennms.services.Info',
 		'opennms.services.Util',
 	])
-	.factory('Capabilities', function(Info, util) {
-		console.log('Capabilities: Initializing.');
+	.factory('Capabilities', function($log, Info, util) {
+		$log.info('Capabilities: Initializing.');
 
 		var hasGraphs = function() {
 			if (Info.isMeridian()) {

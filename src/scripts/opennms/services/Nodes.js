@@ -10,8 +10,8 @@
 		'opennms.services.Info',
 		'opennms.services.Rest'
 	])
-	.factory('NodeService', function($q, Info, RestService) {
-		console.log('NodeService: Initializing.');
+	.factory('NodeService', function($q, $log, Info, RestService) {
+		$log.info('NodeService: Initializing.');
 
 		var searchNodes = function(search, limit) {
 			var deferred = $q.defer();

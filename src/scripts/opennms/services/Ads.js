@@ -14,12 +14,12 @@
 		'opennms.services.Settings',
 		'opennms.services.Util',
 	])
-	.factory('Ads', ['$rootScope', '$window', 'debounce', 'Info', 'Settings', 'util',
+	.factory('Ads', ['$rootScope', '$log', '$window', 'debounce', 'Info', 'Settings', 'util',
 		'config.build.admobIdAndroidBanner', 'config.build.admobIdIosBanner', 'config.build.admobIdOtherBanner',
-		function($rootScope, $window, debounce, Info, Settings, util,
+		function($rootScope, $log, $window, debounce, Info, Settings, util,
 		androidBannerId, iosBannerId, otherBannerId) {
 
-		console.log('Ads: Initializing.');
+		$log.info('Ads: Initializing.');
 
 		var scope = $rootScope.$new();
 
@@ -33,20 +33,20 @@
 
 		var updateAds = debounce(scope.waitTime, function() {
 			if (!scope.created) {
-				console.log('Ads.updateAds: skipping, ad not created yet.');
+				$log.info('Ads.updateAds: skipping, ad not created yet.');
 				return;
 			}
 
-			console.log('Ads.updateAds: isMeridian = ' + scope.isMeridian + ', showAds = ' + scope.showAds);
+			$log.debug('Ads.updateAds: isMeridian = ' + scope.isMeridian + ', showAds = ' + scope.showAds);
 
 			if (scope.isMeridian) {
-				console.log('Ads.updateAds: hiding ads.');
+				$log.debug('Ads.updateAds: hiding ads.');
 				$window.AdMob.hideBanner();
 			} else if (scope.showAds) {
-				console.log('Ads.updateAds: showing ads.');
+				$log.debug('Ads.updateAds: showing ads.');
 				$window.AdMob.showBanner(AdMob.AD_POSITION.BOTTOM_CENTER);
 			} else {
-				console.log('Ads.updateAds: hiding ads.');
+				$log.debug('Ads.updateAds: hiding ads.');
 				$window.AdMob.hideBanner();
 			}
 		});
@@ -63,7 +63,7 @@
 				}
 
 				if (admobid) {
-					console.log('Ads.init: Creating AdMob banner with ID: ' + admobid);
+					$log.debug('Ads.init: Creating AdMob banner with ID: ' + admobid);
 					$window.AdMob.createBanner({
 						'adId': admobid,
 						'position': AdMob.AD_POSITION.BOTTOM_CENTER,
@@ -71,10 +71,10 @@
 					});
 					scope.created = true;
 				} else {
-					console.log('Ads.init: WARNING: Unable to determine platform.');
+					$log.error('Ads.init: WARNING: Unable to determine platform.');
 				}
 			} else {
-				console.log('Ads.init: AdMob is not available.');
+				$log.error('Ads.init: AdMob is not available.');
 			}
 		};
 
