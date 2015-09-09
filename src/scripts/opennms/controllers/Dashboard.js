@@ -139,6 +139,14 @@
 			}
 		};
 
+		var sortFavorites = function(a, b) {
+			var ret = a.nodeLabel.localeCompare(b.nodeLabel);
+			if (ret === 0) {
+				ret = a.graphName.localeCompare(b.graphName);
+			}
+			return ret;
+		};
+
 		var refreshFavorites = function() {
 			//$log.debug('refreshing favorites');
 			$scope.graphs = {};
@@ -147,6 +155,8 @@
 				var i, favorite,
 					length = favs.length,
 					graphPromises = [];
+
+				favs.sort(sortFavorites);
 
 				for (i=0; i < length; i++) {
 					favorite = favs[i];
