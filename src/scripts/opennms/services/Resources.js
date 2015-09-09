@@ -310,8 +310,8 @@
 			}
 			resources.sort(_sortFunction);
 
-			var ret = [], i, child, lastLabel, length = resources.length;
-			for (i=0; i < length; i++) {
+			var ret = [], child, lastLabel;
+			for (var i=0, len=resources.length; i < len; i++) {
 				child = resources[i];
 				if (child.typeLabel !== lastLabel) {
 					ret.push({
@@ -361,8 +361,8 @@
 		var getFavorites = function() {
 			return _getFavoritesPrefix().then(function(prefix) {
 				return StorageService.list('favorites').then(function(files) {
-					var favorites = [], i, len = files.length, file;
-					for (i=0; i < len; i++) {
+					var favorites = [], file;
+					for (var i=0, len=files.length; i < len; i++) {
 						file = files[i];
 						if (file.startsWith(prefix)) {
 							$log.debug('ResourceService.getFavorites: matched file ' + file);
@@ -416,8 +416,8 @@
 		util.onServerRemoved(function(server) {
 			$log.debug('ResourceService.onServerRemoved: cleaning up favorites for server ' + server.name);
 			return StorageService.list('favorites').then(function(files) {
-				var i, len = files.length, file, prefix = _getFavoritesPrefixForServer(server), operations = [];
-				for (i=0; i < len; i++) {
+				var file, prefix = _getFavoritesPrefixForServer(server), operations = [];
+				for (var i=0, len=files.length; i < len; i++) {
 					file = files[i];
 					if (file.startsWith(prefix)) {
 						$log.debug('ResourceService.onServerRemoved: * ' + file);

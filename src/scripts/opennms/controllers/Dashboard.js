@@ -152,21 +152,19 @@
 			$scope.graphs = {};
 			$scope.favoriteGraphs = [];
 			return ResourceService.favorites().then(function(favs) {
-				var i, favorite,
-					length = favs.length,
+				var favorite,
 					graphPromises = [];
 
 				favs.sort(sortFavorites);
 
-				for (i=0; i < length; i++) {
+				for (var i=0, len=favs.length; i < len; i++) {
 					favorite = favs[i];
 					graphPromises.push(ResourceService.graph(favorite.graphName));
 				}
 
 				return $q.all(graphPromises).then(function(gds) {
 					var graphDefs = {}, def;
-					length = gds.length;
-					for (i=0; i < length; i++) {
+					for (var i=0, len=gds.length; i < len; i++) {
 						def = gds[i];
 						graphDefs[def.name] = def;
 					}
@@ -213,9 +211,9 @@
 
 		var refreshOutages = function() {
 			return OutageService.get().then(function(results) {
-				var data = {}, outages = [], outage, service, total = 0, i;
+				var data = {}, outages = [], outage, service, total = 0;
 
-				for (i=0; i < results.length; i++) {
+				for (var i=0, len=results.length; i < len; i++) {
 					outage = results[i];
 					service = outage.monitoredService.serviceName;
 					if (!data[service]) {
@@ -271,7 +269,7 @@
 			return AlarmService.severities().then(function(results) {
 				var severities = [], severity, total = 0;
 
-				for (var i=0; i < results.length; i++) {
+				for (var i=0, len=results.length; i < len; i++) {
 					severity = results[i];
 					total += severity.count;
 					severities.push({

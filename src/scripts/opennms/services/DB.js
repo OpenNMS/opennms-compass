@@ -26,7 +26,7 @@
 		}).then(function(docs) {
 			/*
 			$log.debug('all docs: ' + angular.toJson(docs));
-			for (var i=0; i < docs.rows.length; i++) {
+			for (var i=0, len=docs.rows.length; i < len; i++) {
 				db.remove(docs.rows[i].doc);
 			} */
 			return docs;

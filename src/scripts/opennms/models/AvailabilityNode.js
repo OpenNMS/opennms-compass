@@ -61,7 +61,7 @@ function AvailabilityNode(node) {
     if (!angular.isArray(node.ipinterfaces.ipinterface)) {
       node.ipinterfaces.ipinterface = [node.ipinterfaces.ipinterface];
     }
-    for (var i=0; i < node.ipinterfaces.ipinterface.length; i++) {
+    for (var i=0, len=node.ipinterfaces.ipinterface.length; i < len; i++) {
       self.ipinterfaces.push(new AvailabilityIpInterface(node.ipinterfaces.ipinterface[i]));
     }
   }

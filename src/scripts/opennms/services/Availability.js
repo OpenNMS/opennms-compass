@@ -50,7 +50,7 @@
 							if (!angular.isArray(sections)) {
 								sections = [sections];
 							}
-							for (var i=0; i < sections.length; i++) {
+							for (var i=0, len=sections.length; i < len; i++) {
 								ret.push(new AvailabilitySection(sections[i]));
 							}
 						}

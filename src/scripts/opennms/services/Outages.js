@@ -28,7 +28,7 @@
 					if (!angular.isArray(outages)) {
 						outages = [outages];
 					}
-					for (var i=0; i < outages.length; i++) {
+					for (var i=0, len=outages.length; i < len; i++) {
 						ret.push(new Outage(outages[i]));
 					}
 				}
@@ -56,7 +56,7 @@
 					if (!angular.isArray(outages)) {
 						outages = [outages];
 					}
-					for (var i=0; i < outages.length; i++) {
+					for (var i=0, len=outages.length; i < len; i++) {
 						ret.push(new Outage(outages[i]));
 					}
 				}
@@ -78,7 +78,7 @@
 					if (!angular.isArray(summaries)) {
 						summaries = [summaries];
 					}
-					for (var i=0; i < summaries.length; i++) {
+					for (var i=0, len=summaries.length; i < len; i++) {
 						ret.push(new OutageSummary(summaries[i]));
 					}
 				}

@@ -28,7 +28,7 @@
 					if (!angular.isArray(alarms)) {
 						alarms = [alarms];
 					}
-					for (var i=0; i < alarms.length; i++) {
+					for (var i=0, len=alarms.length; i < len; i++) {
 						ret.push(new Alarm(alarms[i]));
 					}
 				}
@@ -76,7 +76,8 @@
 
 			getAlarms(filter).then(function(results) {
 				var alarmSeverities = {}, alarm, legend = [];
-				for (var i=0; i < results.length; i++) {
+
+				for (var i=0, len=results.length; i < len; i++) {
 					alarm = results[i];
 					if (alarmSeverities.hasOwnProperty(alarm.severity)) {
 						alarmSeverities[alarm.severity]++;

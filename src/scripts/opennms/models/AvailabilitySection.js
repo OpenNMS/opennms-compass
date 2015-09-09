@@ -34,7 +34,7 @@ function AvailabilitySection(section) {
     if (!angular.isArray(section.categories.category)) {
       section.categories.category = [section.categories.category];
     }
-    for (var i=0; i < section.categories.category.length; i++) {
+    for (var i=0, len=section.categories.category.length; i < len; i++) {
       self.categories.push(new AvailabilityCategory(section.categories.category[i]));
     }
   }

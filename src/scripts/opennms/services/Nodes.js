@@ -36,7 +36,7 @@
 					if (!angular.isArray(nodes)) {
 						nodes = [nodes];
 					}
-					for (var i=0; i < nodes.length; i++) {
+					for (var i=0, len=nodes.length; i < len; i++) {
 						ret.push(new Node(nodes[i]));
 					}
 				}
@@ -94,7 +94,7 @@
 					if (!angular.isArray(nodes)) {
 						nodes = [nodes];
 					}
-					for (var i=0; i < nodes.length; i++) {
+					for (var i=0, len=nodes.length; i < len; i++) {
 						ret.push(new Node(nodes[i]));
 					}
 				}

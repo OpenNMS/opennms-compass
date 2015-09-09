@@ -20,7 +20,8 @@
 		/* jshint -W026: true */
 
 		var severityNames = util.severities();
-		for (var i=0; i < severityNames.length; i++) {
+
+		for (var i=0, len=severityNames.length; i < len; i++) {
 			severities[severityNames[i]] = true;
 		}
 

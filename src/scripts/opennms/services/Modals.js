@@ -72,7 +72,7 @@
 
 			var byId = function(outages) {
 				var ret = {};
-				for (var i=0; i < outages.length; i++) {
+				for (var i=0, len=outages.length; i < len; i++) {
 					ret[outages[i].nodeId] = outages[i];
 				}
 				return ret;
@@ -83,7 +83,7 @@
 				promise.then(function(outages) {
 					var oldOutages = byId(modal.scope.outages);
 					var oldOutage;
-					for (var i=0; i < outages.length; i++) {
+					for (var i=0, len=outages.length; i < len; i++) {
 						oldOutage = oldOutages[outages[i].nodeId];
 						if (oldOutage && oldOutage.nodeOutages) {
 							outages[i].nodeOutages = oldOutage.nodeOutages;

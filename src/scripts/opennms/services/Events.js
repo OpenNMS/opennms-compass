@@ -29,7 +29,7 @@
 					if (!angular.isArray(events)) {
 						events = [events];
 					}
-					for (var i=0; i < events.length; i++) {
+					for (var i=0, len=events.length; i < len; i++) {
 						ret.push(new Event(events[i]));
 					}
 				}

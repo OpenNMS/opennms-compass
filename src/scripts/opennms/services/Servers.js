@@ -86,8 +86,8 @@
 		var fetchServerNames = function() {
 			return StorageService.list(fsPrefix).then(function(entries) {
 				//$log.debug('fetchServerNames: ' + angular.toJson(entries));
-				var ret = [], i, len = entries.length;
-				for (i=0; i < len; i++) {
+				var ret = [];
+				for (var i=0, len=entries.length; i < len; i++) {
 					var filename = entries[i];
 					var serverName = decodeURIComponent(filename.replace(/\.json$/, ''));
 					ret.push(serverName);
@@ -172,16 +172,15 @@
 
 		var getServers = function() {
 			return getServerNames().then(function(names) {
-				var promises = [], i, len = names.length;
+				var promises = [];
 				promises.push(Settings.getDefaultServerName());
-				for (i=0; i < len; i++) {
+				for (var i=0, len=names.length; i < len; i++) {
 					promises.push(getServer(names[i]));
 				}
 				return $q.all(promises).then(function(servers) {
 					//$log.debug('servers='+angular.toJson(servers));
 					var defaultServerName = servers.shift(), ret = [];
-					len = servers.length;
-					for (i=0; i < len; i++) {
+					for (var i=0, len=servers.length; i < len; i++) {
 						//$log.debug('servers['+i+']='+angular.toJson(servers[i]));
 						if (servers[i] === null || servers[i] === undefined) {
 							continue;

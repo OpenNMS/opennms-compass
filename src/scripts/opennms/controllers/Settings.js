@@ -109,8 +109,8 @@
 			Settings.getDefaultServerName().then(function(defaultServerName) {
 				if (server.name === defaultServerName) {
 					return Servers.all().then(function(servers) {
-						var s = [], i, len = servers.length;
-						for (i=0; i < len; i++) {
+						var s = [];
+						for (var i=0, len=servers.length; i < len; i++) {
 							if (servers[i].name !== server.name) {
 								s.push(servers[i]);
 							}
@@ -138,8 +138,7 @@
 		};
 
 		var initDefaultServer = function() {
-			var i, len = $scope.servers.length;
-			for (i=0; i < len; i++) {
+			for (var i=0, len=$scope.servers.length; i < len; i++) {
 				if ($scope.servers[i].isDefault) {
 					$scope.defaultServer = i;
 					//$log.debug('default server: ' + $scope.servers[i].name);
@@ -192,7 +191,7 @@
 			if (type) {
 				var chunks = type.split('-');
 				var ret = "";
-				for (var i=0; i < chunks.length; i++) {
+				for (var i=0, len=chunks.length; i < len; i++) {
 					ret += chunks[i].capitalize();
 					if ((i+1) !== chunks.length) {
 						ret += " ";

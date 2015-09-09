@@ -52,7 +52,7 @@ function AvailabilityIpInterface(iface) {
     if (!angular.isArray(iface.services.service)) {
       iface.services.service = [iface.services.service];
     }
-    for (var i=0; i < iface.services.service.length; i++) {
+    for (var i=0, len=iface.services.service.length; i < len; i++) {
       self.services.push(new AvailabilityService(iface.services.service[i]));
     }
   }

@@ -59,11 +59,10 @@
 			}
 			if ($scope.resourceId) {
 				ResourceService.favorites().then(function(favorites) {
-					var i, favorite,
-						scopeFavorites = {},
-						length = favorites.length;
+					var favorite,
+						scopeFavorites = {};
 
-					for (i=0; i < length; i++) {
+					for (var i=0, len=favorites.length; i < len; i++) {
 						favorite = favorites[i];
 						if (favorite.resourceId === $scope.resourceId) {
 							scopeFavorites[favorite.graphName] = favorite;
@@ -73,8 +72,8 @@
 					$scope.favorites = scopeFavorites;
 				});
 				ResourceService.graphNames($scope.resourceId).then(function(graphs) {
-					var promises = [], i, length = graphs.length;
-					for (i=0; i < length; i++) {
+					var promises = [];
+					for (var i=0, len=graphs.length; i < len; i++) {
 						promises.push(ResourceService.graph(graphs[i]));
 					}
 					$q.all(promises).then(function(graphDefs) {
