@@ -4,6 +4,7 @@
 	angular.module('opennms.services.BuildConfig', [])
 		.constant('config.build.version', 'Unknown')
 		.constant('config.build.build', 'Unknown')
+		.constant('config.build.debug', true)
 		.constant('config.build.analyticsIdIos', undefined)
 		.constant('config.build.analyticsIdAndroid', undefined)
 		.constant('config.build.analyticsIdOther', undefined)

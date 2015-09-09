@@ -28,6 +28,12 @@
 		'opennms.controllers.Nodes',
 		'opennms.controllers.Settings',
 	])
+	.config(['$compileProvider', '$logProvider', 'config.build.debug', function($compileProvider, $logProvider, isDebug) {
+		isDebug = !!isDebug;
+		console.log('debug mode: ' + isDebug);
+		$compileProvider.debugInfoEnabled(isDebug);
+		$logProvider.debugEnabled(isDebug);
+	}])
 	.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider, $cordovaInAppBrowserProvider) {
 		$urlRouterProvider.otherwise('/dashboard');
 
