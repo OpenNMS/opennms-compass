@@ -33,6 +33,7 @@
 		var timer;
 
 		var resetModel = function() {
+			$scope.loaded = false;
 			$scope.node = {};
 			$scope.canUpdateGeolocation = false;
 			$scope.hasAddress = false;
@@ -102,6 +103,7 @@
 				return err;
 			});
 			$q.all(avail, ev, outage)['finally'](function() {
+				$scope.loaded = true;
 				$scope.$broadcast('scroll.refreshComplete');
 			});
 		};

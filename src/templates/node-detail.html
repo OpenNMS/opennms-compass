@@ -16,6 +16,16 @@
 				<div class="col col-33">ID:</div>
 				<div class="col">{{node.id}}</div>
 			</ion-item>
+			<span ng-if="!loaded">
+				<ion-item class="row">
+					<div class="col col-33">Foreign Source:</div>
+					<div class="col">...</div>
+				</ion-item>
+				<ion-item class="row">
+					<div class="col col-33">Foreign ID:</div>
+					<div class="col">...</div>
+				</ion-item>
+			</span>
 			<ion-item class="row" ng-if="node.foreignSource">
 				<div class="col col-33">Foreign Source:</div>
 				<div class="col">{{node.foreignSource}}</div>
@@ -24,6 +34,11 @@
 				<div class="col col-33">Foreign ID:</div>
 				<div class="col">{{node.foreignId}}</div>
 			</ion-item>
+			<span ng-if="!loaded">
+				<ion-item class="item-divider item-compass">
+					SNMP Attributes
+				</ion-item>
+			</span>
 			<span ng-if="hasSnmpAttributes()">
 				<ion-item class="item-divider item-compass">
 					SNMP Attributes
