@@ -20,6 +20,9 @@
 	<ion-content delegate-handle="nodes-scroll">
 		<ion-refresher pulling-text="Pull to Refresh..." on-refresh="updateSearch(searchString)"></ion-refresher>
 		<ion-list>
+			<ion-item ng-if="error" class="error">
+				Error retrieving nodes.
+			</ion-item>
 			<ion-item ng-repeat="node in nodes track by node.id" ui-sref="node-detail({node:node.id})" nav-direction="forward" class="item-text-wrap">
 				<span ng-switch="node.id === 'more'">
 					<span ng-switch-when="true">

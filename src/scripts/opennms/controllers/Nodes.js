@@ -31,6 +31,7 @@
 
 			searchPromise.then(function(nodes) {
 				Errors.clear('nodes');
+				$scope.error = false;
 				//$log.debug('Got nodes:',nodes);
 				$scope.searching = false;
 				$scope.nodes = nodes;
@@ -39,6 +40,7 @@
 				}
 			}, function(err) {
 				Errors.set('nodes', err);
+				$scope.error = true;
 				$scope.nodes = [];
 			});
 
