@@ -31,6 +31,7 @@ var paths = {
 	typescript: './src/scripts/opennms/**/*.ts',
 	sass: './scss/*.scss',
 	sassIncludes: './scss/includes/*.scss',
+	templates: './src/templates/**/*.html',
 	opennms: './src/scripts/opennms/**/*.js',
 	spec: './spec/*.js',
 	excludes: [],
@@ -126,7 +127,7 @@ gulp.task('watch-sass', function() {
 	gulp.watch([paths.sass], ['sass']);
 });
 gulp.task('watch-opennms', function() {
-	gulp.watch([paths.opennms], ['process-src']);
+	gulp.watch([paths.opennms, paths.templates], ['process-src']);
 });
 gulp.task('watch', ['watch-bower', 'watch-sass', 'watch-opennms']);
 
