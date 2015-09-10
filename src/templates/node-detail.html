@@ -16,16 +16,6 @@
 				<div class="col col-33">ID:</div>
 				<div class="col">{{node.id}}</div>
 			</ion-item>
-			<span ng-if="!loaded &amp;&amp; false">
-				<ion-item class="row">
-					<div class="col col-33">Foreign Source:</div>
-					<div class="col">...</div>
-				</ion-item>
-				<ion-item class="row">
-					<div class="col col-33">Foreign ID:</div>
-					<div class="col">...</div>
-				</ion-item>
-			</span>
 			<ion-item class="row" ng-if="node.foreignSource">
 				<div class="col col-33">Foreign Source:</div>
 				<div class="col">{{node.foreignSource}}</div>
