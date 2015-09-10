@@ -1,5 +1,5 @@
 <a name="2.1.0"</a>
-## 2.1.0 (2015-07-23)
+## 2.1.0 (2015-09-10)
 
 
 #### Bug Fixes
@@ -11,25 +11,38 @@
   * extend debounce to avoid flash when refreshing ([6ea04335](https://github.com/nicksrandall/kotojs/commit/6ea04335e2b90340cbbb01a48643df0a60309057))
   * don't let 'loading' block forever ([04d520ae](https://github.com/nicksrandall/kotojs/commit/04d520ae854fb99484441cc8ba502aa0c75a69cc))
 * **favorites:** fix removing favorites ([6b2bea0d](https://github.com/nicksrandall/kotojs/commit/6b2bea0d447896f30b12675dee225745d53e57ab))
-* **graphs:** fix minify mangling of backshift lib that could cause failures ([f2464629](https://github.com/nicksrandall/kotojs/commit/f2464629dbc253ff770f5a6f987c9e1ffb9ff407))
+* **graphs:**
+  * fix minify mangling of backshift lib that could cause failures ([f2464629](https://github.com/nicksrandall/kotojs/commit/f2464629dbc253ff770f5a6f987c9e1ffb9ff407))
+  * set display=true by default in the graph widget ([9ed332ff](https://github.com/nicksrandall/kotojs/commit/9ed332ff52111be12c0a7731c4d42168ff4ee219))
 * **iap:** re-add missing IAP call ([05e5545e](https://github.com/nicksrandall/kotojs/commit/05e5545e0e22cc16f008ba61d08b081bd6720b32))
 * **nodes:** don't clean up view data until they are not visible ([8da8ad92](https://github.com/nicksrandall/kotojs/commit/8da8ad921387e66b446db17737ea866c36ee8c58))
+* **outages:** fix outages popup on donut tap ([7c32adfc](https://github.com/nicksrandall/kotojs/commit/7c32adfc8932dd0f46f2e34670f5da36bfed8b50))
 * **rest:**
   * fix iOS ReST breakage introduced by cordovaHTTP refactor ([51c75b99](https://github.com/nicksrandall/kotojs/commit/51c75b993ab0e5aa121f4ccfc07f231037e08551))
   * handle unusual payloads better ([b8847ff1](https://github.com/nicksrandall/kotojs/commit/b8847ff1e4b6689555cfbb6d8aaee2003a0744ad))
   * missing dependency on SSL/HTTP framework ([a70cf6da](https://github.com/nicksrandall/kotojs/commit/a70cf6da64f187c825bcbe682cbd92088eab0649))
 * **servers:**
   * handle renames gracefully ([cba27594](https://github.com/nicksrandall/kotojs/commit/cba2759443a17936166563071aa8bb6b5d7ac119))
+  * fix "server updated" check handling ([7f829f73](https://github.com/nicksrandall/kotojs/commit/7f829f73da23af7830e673f7963bd898d4647b45))
   * fix an initialization issue on clean install ([fa47035b](https://github.com/nicksrandall/kotojs/commit/fa47035b90f567c4b929a3da69fb748668d1ad52))
   * only refresh when default server changes ([00a5f004](https://github.com/nicksrandall/kotojs/commit/00a5f00442d3decb18fd6ffad9fe33892b1329e0))
+* **settings:**
+  * hide "Add" button unless on the settings tab ([325d325b](https://github.com/nicksrandall/kotojs/commit/325d325b5e6b8246791be4393823cf437fdf78f1))
+  * store default server in a non-cloud file ([17d9b7e9](https://github.com/nicksrandall/kotojs/commit/17d9b7e96a063298c1f0d1010a72e9ae6f2417b3))
 
 
 #### Features
 
 * **core:** add support for Ionic Deploy ([e8a16754](https://github.com/nicksrandall/kotojs/commit/e8a1675481cc711aab0c93b58dd896fe0ddf10dd))
 * **favorites:** store favorites in the filesystem ([28905374](https://github.com/nicksrandall/kotojs/commit/289053749da272fe921530cb4ec87c21bf00bdb9))
-* **graphs**  add support for showing graphs from 16.0.0 and higher ((487cbc2b))
-* **nodes:** query the first 20 if no search is present ([51649e51](https://github.com/nicksrandall/kotojs/commit/51649e517b08fc64ecbd89d836c5ac6caa910b60))
+* **graphs**
+  * add support for showing graphs from 16.0.0 and higher ((487cbc2b))
+  * set a min/max date so we don't overload the graphs ([ab25e340](https://github.com/nicksrandall/kotojs/commit/ab25e340f2d454dbb64f6894bd71be24d007e533))
+  * sort favorited graphs by node label and title ([454c6970](https://github.com/nicksrandall/kotojs/commit/454c6970a6fd6ceaecb367b3ec6c398d1e48e52e))
+  * working DC-based graphing, with date ranges enabled ([51984f17](https://github.com/nicksrandall/kotojs/commit/51984f1780d19b92721dc01e62b0dfc187761423))
+* **nodes:**
+  * make node loading less jarring visually ([b46c46b2](https://github.com/nicksrandall/kotojs/commit/b46c46b287b028b640b1d16ba36ffb64a0395e32))
+  * query the first 20 if no search is present ([51649e51](https://github.com/nicksrandall/kotojs/commit/51649e517b08fc64ecbd89d836c5ac6caa910b60))
 * **settings:**
   * allow configuration of multiple servers (COMPASS-30) ([50fcd852](https://github.com/nicksrandall/kotojs/commit/50fcd852198dcd760eddd6976628a49b31daa198))
 * **startup:** fancier splash screen initialization ([aa22467b](https://github.com/nicksrandall/kotojs/commit/aa22467b16a7168be380853cf5d83986addaf4aa))
