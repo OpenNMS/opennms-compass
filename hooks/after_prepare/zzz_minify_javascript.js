@@ -4,15 +4,10 @@ var exec = require('child_process').exec;
 
 var rootdir = process.argv[2];
 
-/*
-for (var thing in process.env) {
-	if (process.env.hasOwnProperty(thing) && thing.indexOf('CORDOVA_') === 0) {
-		console.log(thing + ' = ' + process.env[thing]);
-	}
+var target = 'debug';
+if (process.env['CORDOVA_CMDLINE'] && process.env['CORDOVA_CMDLINE'].indexOf('--release') >= 0) {
+	target = 'release';
 }
-*/
-
-var target = 'release';
 if (process.env.TARGET) {
 	target = process.env.TARGET;
 }
