@@ -26,6 +26,9 @@ $modal-inset-mode-bottom:         0;
 $modal-inset-mode-left:           0;
 $modal-inset-mode-min-height:     240px;
 
+$font-family-sans-serif:          "SF UI Text Medium", "SF UI Text", "San Francisco Text", "San Francisco", system, -apple-system, -apple-system-font, "Helvetica Neue", "Roboto", "Segoe UI", sans-serif;
+$font-family-light-sans-serif:    "SF UI Text Light", "San Francisco Text Light", "San Francisco Text-Light", "San Francisco Light", "San Francisco-Light", system-light, -apple-system-light, -apple-system-font-light, "-apple-system-light", "HelveticaNeue-Light", "Roboto-Light", "Segoe UI-Light", "SF UI Text", "San Francisco", sans-serif-light;
+
 /* END OVERRIDE IONIC VARIABLES HERE */
 
 @import "bower_components/ionic/scss/ionic";
