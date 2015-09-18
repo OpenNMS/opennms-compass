@@ -55,24 +55,29 @@
 		$scope.saveServer = function() {
 			var server = $scope.server;
 			$log.debug('ServerModal.save: Saving server: ' + angular.toJson(server));
-			if (server.originalName && server.name !== server.originalName) {
-				// They have renamed the server, we have to special-case it.
-				Settings.getDefaultServerName().then(function(defaultServerName) {
-				var operations = [];
-					operations.push(Servers.remove(server.originalName));
-					operations.push(Servers.put(new Server(server)));
-					if (defaultServerName === server.originalName) {
-						// The renamed server was the default, also set default to the new name
-						operations.push(Settings.setDefaultServerName(server.name));
-					}
-					$q.all(operations).finally(function() {
+			if (server && server.name && server.url) {
+				if (server.originalName && server.name !== server.originalName) {
+					// They have renamed the server, we have to special-case it.
+					Settings.getDefaultServerName().then(function(defaultServerName) {
+					var operations = [];
+						operations.push(Servers.remove(server.originalName));
+						operations.push(Servers.put(new Server(server)));
+						if (defaultServerName === server.originalName) {
+							// The renamed server was the default, also set default to the new name
+							operations.push(Settings.setDefaultServerName(server.name));
+						}
+						$q.all(operations).finally(function() {
+							$scope.closeModal();
+						});
+					});
+				} else {
+					Servers.put(new Server(server)).finally(function() {
 						$scope.closeModal();
 					});
-				});
+				}
 			} else {
-				Servers.put(new Server(server)).finally(function() {
-					$scope.closeModal();
-				});
+				$log.warn('Server did not have a name or URL!');
+				$scope.closeModal();
 			}
 		};
 

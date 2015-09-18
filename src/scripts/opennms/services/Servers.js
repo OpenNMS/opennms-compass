@@ -219,7 +219,7 @@
 		};
 
 		var setDefaultServer = function(server) {
-			var serverName = server.name? server.name:server;
+			var serverName = (server && server.name)? server.name:server;
 			if (serverName) {
 				return Settings.setDefaultServerName(serverName).then(function() {
 					return checkServersUpdated();
