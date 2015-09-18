@@ -84,6 +84,28 @@
     <icon src="resources/ios/icon/icon-76@2x.png" width="152" height="152"/>
     <icon src="resources/ios/icon/icon-small.png" width="29" height="29"/>
     <icon src="resources/ios/icon/icon-small@2x.png" width="58" height="58"/>
+    <config-file platform="ios" target="*-Info.plist" parent="UISupportedInterfaceOrientations">
+      <array>
+        <string>UIInterfaceOrientationPortrait</string>
+        <string>UIInterfaceOrientationLandscapeLeft</string>
+        <string>UIInterfaceOrientationPortraitUpsideDown</string>
+        <string>UIInterfaceOrientationLandscapeRight</string>
+      </array>
+    </config-file>
+    <config-file platform="ios" target="*-Info.plist" parent="UISupportedInterfaceOrientations~ipad">
+      <array>
+        <string>UIInterfaceOrientationPortrait</string>
+        <string>UIInterfaceOrientationLandscapeLeft</string>
+        <string>UIInterfaceOrientationPortraitUpsideDown</string>
+        <string>UIInterfaceOrientationLandscapeRight</string>
+      </array>
+    </config-file>
+    <config-file platform="ios" target="*-Info.plist" parent="NSAppTransportSecurity">
+      <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+      </dict>
+    </config-file>
   </platform>
   <icon src="resources/android/icon/drawable-xhdpi-icon.png"/>
 </widget>

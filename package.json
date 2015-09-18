@@ -18,6 +18,7 @@
     "bower": "*",
     "commonmark": "*",
     "cordova-android": "*",
+    "cordova-config-utils": "*",
     "fs.extra": "*",
     "grunt-conventional-changelog": "^1.2.1",
     "gulp-changelog-release": "0.0.11",
