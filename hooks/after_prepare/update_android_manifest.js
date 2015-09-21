@@ -56,31 +56,6 @@ if (fs.existsSync(manifestFile)) {
 		changed = true;
 	}
 
-	var usesSdk = xpath.select('//uses-sdk', doc);
-	for (i=0; i < usesSdk.length; i++) {
-		if (usesSdk[i].hasAttribute('android:minSdkVersion')) {
-			var minSdkVersion = parseInt(usesSdk[i].getAttribute('android:minSdkVersion'), 10);
-			if (minSdkVersion !== configobj.minSdk) {
-				usesSdk[i].setAttribute('android:minSdkVersion', configobj.minSdk);
-				changed = true;
-			}
-		}
-	}
-
-	var versionCode = parseInt(manifest.getAttribute('android:versionCode'), 10);
-	if (versionCode != configobj.build) {
-		console.log('* changing version code from ' + versionCode + ' to ' + configobj.build);
-		manifest.setAttribute('android:versionCode', configobj.build);
-		changed = true;
-	}
-
-	var versionName = manifest.getAttribute('android:versionName');
-	if (versionName != configobj.version) {
-		console.log('* changing version name from ' + versionName + ' to ' + configobj.version);
-		manifest.setAttribute('android:versionName', configobj.version);
-		changed = true;
-	}
-
 	var minSdk = parseInt(manifest.getAttribute('android:minSdkVersion'), 10);
 	if (minSdk != configobj.minSdk) {
 		console.log('* changing minimum SDK from ' + minSdk + ' to ' + configobj.minSdk);
