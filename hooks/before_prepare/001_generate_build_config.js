@@ -4,10 +4,13 @@
 
 var fs = require('fs.extra');
 var path = require('path');
+var exec = require('child_process').execSync;
 
 var rootdir = process.argv[2];
 
 if (rootdir) {
+
+	exec('gulp process');
 
 	var dirs = [
 		'www',

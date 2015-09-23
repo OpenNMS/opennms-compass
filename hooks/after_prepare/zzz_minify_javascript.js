@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-var exec = require('child_process').exec;
+var exec = require('child_process').execSync;
 
 var rootdir = process.argv[2];
 

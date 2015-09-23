@@ -44,8 +44,6 @@ function addPlatformBodyTag(indexPath, platform) {
     html = html.replace(bodyTag, newBodyTag);
 
     fs.writeFileSync(indexPath, html, 'utf8');
-
-    process.stdout.write('add to body class: ' + platformClass + '\n');
   } catch(e) {
     process.stdout.write(e);
   }

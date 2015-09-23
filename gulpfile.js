@@ -43,7 +43,9 @@ for (var i=0; i < cordovaIgnore.length; i++) {
 	}
 }
 
-gulp.task('default', ['process-src', 'sass', 'lint', 'test']);
+gulp.task('default', ['process', 'lint', 'test']);
+
+gulp.task('process', ['process-bower', 'sass', 'process-src']);
 
 gulp.task('process-bower', function(done) {
 	gulp.src([paths.bower])
@@ -69,8 +71,6 @@ gulp.task('sass', function(done) {
 		.pipe(gulp.dest('./www/css/'))
 		.on('end', done);
 });
-
-gulp.task('process', ['process-bower', 'sass', 'process-src', 'lint']);
 
 gulp.task('lint', function() {
 	return gulp.src([paths.opennms, paths.spec])
@@ -104,7 +104,7 @@ var minifyMe = function() {
 		}));
 };
 
-gulp.task('prepare', ['process']);
+gulp.task('prepare', ['process', 'lint']);
 
 gulp.task('minify', ['prepare'], function() {
 	var prep = prepareMe();
