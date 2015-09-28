@@ -148,7 +148,6 @@ gulp.task('git-check', function(done) {
 });
 
 var testSource = [
-	'./bower_components/modernizr/modernizr.js',
 	'./bower_components/es5-shim/es5-shim.js',
 	'./bower_components/blob-util/dist/blob-util.min.js',
 	'./bower_components/jquery/dist/jquery.min.js',
