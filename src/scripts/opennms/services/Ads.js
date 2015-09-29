@@ -15,8 +15,10 @@
 		'opennms.services.Util',
 	])
 	.factory('Ads', ['$rootScope', '$log', '$window', 'debounce', 'Info', 'Settings', 'util',
+		'config.build.debug',
 		'config.build.admobIdAndroidBanner', 'config.build.admobIdIosBanner', 'config.build.admobIdOtherBanner',
 		function($rootScope, $log, $window, debounce, Info, Settings, util,
+		debug,
 		androidBannerId, iosBannerId, otherBannerId) {
 
 		$log.info('Ads: Initializing.');
@@ -28,7 +30,12 @@
 		scope.created = false;
 		scope.isMeridian = false;
 		Settings.showAds().then(function(showAds) {
-			scope.showAds = showAds;
+			if (debug) {
+				$log.debug('Ads.onSettingsUpdated: config.build.debug = true, skipping ads.');
+				scope.showAds = false;
+			} else {
+				scope.showAds = showAds;
+			}
 		});
 
 		var updateAds = debounce(scope.waitTime, function() {
@@ -90,7 +97,12 @@
 		});
 
 		util.onSettingsUpdated(function(newSettings, oldSettings, changedSettings) {
-			scope.showAds = newSettings.showAds;
+			if (debug) {
+				$log.debug('Ads.onSettingsUpdated: config.build.debug = true, skipping ads.');
+				scope.showAds = false;
+			} else {
+				scope.showAds = newSettings.showAds;
+			}
 		});
 
 		scope.$watchGroup(['created', 'isMeridian', 'showAds'], updateAds);
