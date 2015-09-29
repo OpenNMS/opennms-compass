@@ -51,7 +51,7 @@
 		};
 
 		var convertOldSettings = function() {
-			$log.error('Settings.convertSettings: WARNING: attempting to convert settings from old location.');
+			$log.error('Settings.convertOldSettings: WARNING: attempting to convert settings from old location.');
 			var settings = storage.get('opennms.settings');
 			if (isEmpty(settings)) {
 				settings = {};

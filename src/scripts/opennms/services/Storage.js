@@ -13,7 +13,15 @@
 	]).factory('StorageService', function($q, $rootScope, $log, $timeout, $window, $ionicPlatform, $cordovaFile, CloudStorage) {
 		$log.info('StorageService: Initializing.');
 
-		CloudStorage.setDefaultBackend('local');
+		$log.info('Current platform: ' + ionic.Platform.platform());
+
+		if (ionic.Platform.isIOS() || ionic.Platform.isAndroid() || ionic.Platform.isWindowsPhone()) {
+			$log.info('On a device, using local backend.');
+			CloudStorage.setDefaultBackend('local');
+		} else {
+			$log.info('In a browser, using memory backend.');
+			CloudStorage.setDefaultBackend('memory');
+		}
 
 		var backendArg = function(local) {
 			return local? 'local':undefined;

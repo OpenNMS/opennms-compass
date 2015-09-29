@@ -56,7 +56,10 @@
     "cordova-plugin-datepicker",
     "cordova-plugin-file",
     "cordova-plugin-geolocation",
-    "https://github.com/RangerRick/google-analytics-plugin",
+    {
+      "locator": "https://github.com/RangerRick/google-analytics-plugin",
+      "id": "cordova-plugin-google-analytics"
+    },
     "cordova-plugin-inappbrowser",
     "cordova-plugin-network-information",
     "cordova-plugin-purchase",
@@ -76,12 +79,20 @@
       "id": "com.raccoonfink.cordova.plugins.http"
     },
     {
+      "locator": "https://github.com/apache/cordova-plugin-file",
+      "id": "org.apache.cordova.file"
+    },
+    {
       "locator": "https://github.com/driftyco/ionic-plugins-deploy",
-      "id": "com.ionic.deploy"
+      "id": "ionic-plugin-deploy"
     },
     {
       "locator": "https://github.com/OpenNMS/cordova-plugin-storage.git",
       "id": "org.opennms.cordova.storage"
+    },
+    {
+      "locator": "https://github.com/shazron/KeychainPlugin.git",
+      "id": "com.shazron.cordova.plugin.keychainutil"
     }
   ],
   "cordovaPlatforms": [
@@ -94,6 +105,11 @@
       "platform": "ios",
       "version": "3.9.1",
       "locator": "ios"
+    },
+    {
+      "platform": "browser",
+      "version": "",
+      "locator": "browser"
     }
   ]
 }
