@@ -5,6 +5,7 @@
 
 	angular.module('opennms.controllers.Node', [
 		'ionic',
+		'leaflet-directive',
 		'angularLocalStorage',
 		'opennms.services.Analytics',
 		'opennms.services.Availability',
@@ -29,6 +30,11 @@
 			}
 			return 'severity severity-INDETERMINATE';
 		};
+		$scope.leaflet = {
+			markers: {},
+			center: {},
+			defaults: {},
+		};
 
 		var timer;
 
@@ -43,6 +49,11 @@
 			$scope.alarms = undefined;
 			$scope.ipInterfaces = undefined;
 			$scope.snmpInterfaces = undefined;
+			$scope.leaflet = {
+				markers: {},
+				center: {},
+				defaults: {},
+			};
 		};
 
 		var showLoading = function() {
@@ -74,6 +85,30 @@
 			$scope.address = $scope.node.getAddress();
 			if ($scope.address && ($scope.address.city || $scope.address.state || $scope.address.zip)) {
 				$scope.hasAddress = true;
+			}
+			if ($scope.address && ($scope.address.hasOwnProperty('latitude') && $scope.address.hasOwnProperty('longitude'))) {
+				$scope.leaflet.markers = {
+					node: {
+						lat: $scope.address.latitude,
+						lng: $scope.address.longitude,
+						focus: true,
+						draggable: false,
+					}
+				};
+				$scope.leaflet.center = {
+					lat: $scope.address.latitude,
+					lng: $scope.address.longitude,
+					zoom: 13,
+				};
+				$scope.leaflet.defaults = {
+					dragging: false,
+					zoomControl: true,
+					scrollWheelZoom: false,
+					doubleClickZoom: false,
+					touchZoom: false,
+					tap: true,
+				};
+				console.log('leaflet=' + angular.toJson($scope.leaflet));
 			}
 
 			$scope.canUpdateGeolocation = Capabilities.setLocation();
@@ -132,8 +167,10 @@
 					if (confirmed) {
 						$log.debug('NodeCtrl.submitCoordinates: posting latitude=' + latitude + ', longitude=' + longitude);
 						NodeService.setLocation($scope.node, longitude, latitude).then(function() {
-							$log.debug('Submitted coordinates.  Refreshing.');
+							$log.debug('NodeCtrl.submitCoordinates: Submitted coordinates.  Refreshing.');
 							$scope.refreshNode();
+						}, function(err) {
+							$log.error('NodeCtrl.submitCoordinates: failed to submit coordinates: ' + angular.toJson(err));
 						});
 					} else {
 						$log.debug('NodeCtrl.submitCoordinates: user canceled.');

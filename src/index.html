@@ -13,6 +13,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta http-equiv="Content-Security-Policy" content="default-src *; style-src 'self' 'unsafe-inline'; script-src * 'self' 'unsafe-inline' 'unsafe-eval'">
 
+<link rel="stylesheet" href="lib/leaflet/dist/leaflet.css" />
 <link rel="stylesheet" href="css/opennms.min.css" />
 <link rel="stylesheet" href="lib/dcjs/dc.css" />
 <link rel="stylesheet" href="lib/onmsicons/css/onmsicons.min.css" />
@@ -77,6 +78,7 @@
 	<script src="lib/angular-debounce/dist/angular-debounce.js"></script>
 	<script src="lib/angularLocalStorage/src/angularLocalStorage.js"></script>
 	<script src="lib/ng-resize/ngresize.js"></script>
+	<script src="lib/angular-simple-logger/dist/angular-simple-logger.js"></script>
 	<!-- endbuild -->
 
 	<!-- build:crypto scripts/crypto.js -->
@@ -97,6 +99,11 @@
     <!-- build:backshift scripts/backshift.js -->
 	<script src="lib/backshift/dist/backshift.js"></script>
 	<script src="lib/backshift/dist/backshift.onms.js"></script>
+    <!-- endbuild -->
+
+    <!-- build:maps scripts/maps.js -->
+    <script src="lib/leaflet/dist/leaflet-src.js"></script>
+    <script src="lib/angular-leaflet-directive/dist/angular-leaflet-directive.js"></script>
     <!-- endbuild -->
 
 	<!-- build:models scripts/models.js -->

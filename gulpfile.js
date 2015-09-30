@@ -100,6 +100,7 @@ var minifyMe = function() {
 			backshift: [uglify({mangle:false}), rev()],
 			charts: [uglify(), rev()],
 			models: [uglify(), rev()],
+			maps: [uglify(), rev()],
 			opennms: [ngAnnotate(), uglify(), rev()],
 		}));
 };

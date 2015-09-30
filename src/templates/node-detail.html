@@ -72,11 +72,15 @@
 						<span ng-if="address.zip">{{address.zip}}</span>
 					</div>
 					<div ng-if="address &amp;&amp; address.country">{{address.country}}</div>
-					<div ng-if="address.longitude &amp;&amp; address.latitude" style="text-align: center">
+					<span ng-if="address.longitude &amp;&amp; address.latitude">
 						<br ng-if="hasAddress" />
-						Lat: {{address.latitude}},
-						Lon: {{address.longitude}}
-					</div>
+						<leaflet width="100%" height="400px" defaults="leaflet.defaults" center="leaflet.center" markers="leaflet.markers"></leaflet>
+						<br />
+						<div style="text-align: center">
+							Lat: {{address.latitude}},
+							Lon: {{address.longitude}}
+						</div>
+					</span>
 					<button class="button button-block button-compass" ng-click="submitCoordinates()" ng-if="canUpdateGeolocation">Set Coordinates to Current Location</button>
 				</ion-item>
 			</span>
