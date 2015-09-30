@@ -6,33 +6,24 @@
 	angular.module('opennms.services.DB', [
 		'ionic',
 		'angularLocalStorage',
-		'pouchdb',
+		'lokijs',
 		'uuid4',
-	])
-	.config(function(pouchDBProvider, POUCHDB_METHODS) {
-		var extraMethods = {
-			createIndex: 'qify',
-			getIndexes: 'qify',
-			deleteIndex: 'qify',
-			find: 'qify',
-		};
-		pouchDBProvider.methods = angular.extend({}, POUCHDB_METHODS, extraMethods);
-	}).factory('db', function($rootScope, $log, storage, pouchDB, uuid4) {
+		'CloudStorage',
+	]).factory('db', function($rootScope, $log, storage, Loki, uuid4, CloudStorage) {
 		$log.info('DB: Initializing.');
 
-		var db = pouchDB('compass');
-		db.allDocs({
-			include_docs: true
-		}).then(function(docs) {
-			/*
-			$log.debug('all docs: ' + angular.toJson(docs));
-			for (var i=0, len=docs.rows.length; i < len; i++) {
-				db.remove(docs.rows[i].doc);
-			} */
-			return docs;
-		});
+		var loki = new Loki();
+		var dbs = {};
 
-		return db;
+		/*
+		var load = function(dbname, options) {
+			if (!dbs[dbname]) {
+				dbs[dbname] = loki.addCollection(dbname, options);
+			}
+		};
+		*/
+
+		return loki;
 	});
 
 }());
