@@ -101,6 +101,7 @@
 					zoom: 13,
 				};
 				$scope.leaflet.defaults = {
+					attributionControl: false,
 					dragging: false,
 					zoomControl: true,
 					scrollWheelZoom: false,
@@ -187,7 +188,7 @@
 				NodeService.get($scope.node.id).then(function(n) {
 					showNode(n);
 				}, function(err) {
-					err.caller = 'NodeCtrl.refreshNode';
+					err.caller = 'NodeCtrl.refresh';
 					$log.error(err.toString());
 				}).finally(function() {
 					hideLoading();
