@@ -33,7 +33,8 @@
     "uri.js": "~1.16.0",
     "version_compare": "~0.0.3",
     "x2js": "~1.1.7",
-    "urijs": "uri.js#~1.16.1"
+    "urijs": "uri.js#~1.16.1",
+    "onmsicons": "https://github.com/OpenNMS/onmsicons.git"
   },
   "devDependencies": {
     "angular-mocks": "1.4.6"

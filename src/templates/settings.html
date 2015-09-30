@@ -11,19 +11,22 @@
 	<ion-content scroll="false">
 		<ion-tabs class="tabs-compass tabs-icon-left" ng-keypress="handleKey($event)">
 			<ion-tab title="Settings" icon-on="ion-ios-gear" icon-off="ion-ios-gear-outline" scroll="true" on-select="hideAddButton = false" on-deselect="hideAddButton = true">
-				<ion-view>
+				<ion-view class="servers">
 					<ion-content scroll="true">
 						<ion-list show-delete="showDelete" show-reorder="false" can-swipe="true" delegate-handle="server-list">
 							<ion-item class="item item-divider">Servers</ion-item>
-							<ion-item ng-repeat="server in servers track by server.name" class="item item-icon-right compass" ng-click="selectServer(server)">
+							<ion-item ng-repeat="server in servers track by server.name" class="item item-icon-left item-icon-right compass" ng-click="selectServer(server)">
+								<i ng-class="'icon ' + ($index === defaultServer? 'ion-checkmark':'')"></i>
 								<h2>{{server.name}}</h2>
 								<p>{{server.url}}</p>
-								<i ng-class="'icon ' + ($index === defaultServer? 'ion-checkmark':'')"></i>
+								<i class="icon onms-grabber" style="right:-5"></i>
 								<ion-option-button class="button-compass" ng-click="editServer(server)">
-									<i class="icon ion-edit"></i>
+									<!-- <i class="icon ion-edit"></i> -->
+									Edit
 								</ion-option-button>
 								<ion-option-button class="button-assertive" ng-click="deleteServer(server)">
-									<i class="icon ion-trash-a"></i>
+									<!-- <i class="icon ion-trash-a"></i> -->
+									Delete
 								</ion-option-button>
 							</ion-item>
 						</ion-list>
