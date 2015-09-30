@@ -453,8 +453,23 @@
 			delete $scope.serverPopover;
 		});
 
-		$scope.$on('$ionicView.beforeEnter', function() {
-			/* ionic.trigger('resize', {target:window}); */
+		$scope.$on('$ionicView.beforeEnter', function(ev, info) {
+			/* // skip all this for now, getting weird rendering bug
+			$log.debug('info=' + angular.toJson(info));
+			if (info) {
+				if (info.direction === 'back') {
+					// don't refresh if we're going back
+					return;
+				}
+				if (info.stateParams && info.stateParams.refresh === false) {
+					// also don't refresh if we've been explicitly asked not to
+					return;
+				}
+			}
+
+			// otherwise, fall through to refreshing
+			$log.debug("refreshing");
+			*/
 			$scope.refreshData();
 		});
 	});

@@ -49,13 +49,15 @@
 			} else {
 				$log.error('NodeResourcesCtrl: unable to determine node from view.');
 			}
-			$scope.refresh();
+			if (info && info.direction === 'forward') {
+				$scope.refresh();
+			}
 		});
 
 		$scope.$on('$ionicView.afterLeave', function(ev, info) {
-			if (info.direction === 'forward') {
+			if (info && info.direction === 'forward') {
 				// we're going deeper, keep the model in memory
-			} else {
+			} else if (info) {
 				$log.debug('NodeResourcesCtrl: leaving node view; cleaning up.');
 				resetModel();
 			}

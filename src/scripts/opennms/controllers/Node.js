@@ -108,7 +108,7 @@
 					touchZoom: false,
 					tap: true,
 				};
-				console.log('leaflet=' + angular.toJson($scope.leaflet));
+				//console.log('leaflet=' + angular.toJson($scope.leaflet));
 			}
 
 			$scope.canUpdateGeolocation = Capabilities.setLocation();
@@ -168,7 +168,7 @@
 						$log.debug('NodeCtrl.submitCoordinates: posting latitude=' + latitude + ', longitude=' + longitude);
 						NodeService.setLocation($scope.node, longitude, latitude).then(function() {
 							$log.debug('NodeCtrl.submitCoordinates: Submitted coordinates.  Refreshing.');
-							$scope.refreshNode();
+							$scope.refresh();
 						}, function(err) {
 							$log.error('NodeCtrl.submitCoordinates: failed to submit coordinates: ' + angular.toJson(err));
 						});
@@ -181,7 +181,7 @@
 			});
 		};
 
-		$scope.refreshNode = function() {
+		$scope.refresh = function() {
 			if ($scope.node.id) {
 				showLoading();
 				NodeService.get($scope.node.id).then(function(n) {
@@ -204,7 +204,7 @@
 
 		util.onDirty('alarms', function() {
 			if ($scope.node && $scope.node.id) {
-				$scope.refreshNode();
+				$scope.refresh();
 			}
 		});
 		util.onInfoUpdated(function(info) {
@@ -221,11 +221,19 @@
 			$log.info('NodeCtrl: entering node view.');
 			if (info && info.stateParams && info.stateParams.node) {
 				var nodeId = parseInt(info.stateParams.node, 10);
-				$scope.node = { id: nodeId };
+				if ($scope.node && $scope.node.id) {
+					if ($scope.node.id !== nodeId) {
+						$scope.node = { id: nodeId };
+					}
+				} else {
+					$scope.node = { id: nodeId };
+				}
 			} else {
 				$log.error('NodeCtrl: unable to determine node from view.');
 			}
-			$scope.refreshNode();
+			if (info && info.direction === 'forward') {
+				$scope.refresh();
+			}
 		});
 
 		$scope.$on('$ionicView.afterLeave', function(ev, info) {

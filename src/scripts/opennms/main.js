@@ -52,6 +52,9 @@
 		$stateProvider
 		.state('dashboard', {
 			url: '/dashboard',
+			params: {
+				refresh: true,
+			},
 			templateUrl: 'templates/dashboard.html',
 			controller: 'DashboardCtrl',
 		})
