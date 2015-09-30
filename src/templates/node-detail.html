@@ -1,7 +1,7 @@
 <ion-view view-title="{{node.label}}" class="node-detail">
 	<ion-nav-bar class="bar-light" align-title="center">
 		<ion-nav-back-button class="button-compass button-clear"></ion-nav-back-button>
-		<h1 class="title">{{node.label}}</h1>
+		<!-- <h1 class="title">{{node.label}}</h1> -->
 		<ion-nav-buttons side="secondary">
 			<button class="button button-compass button-clear" nav-direction="forward" ui-sref="node-resources({node: node.id})" ng-if="showGraphButton"><i class="icon ion-stats-bars"></i></button>
 		</ion-nav-buttons>
@@ -28,11 +28,13 @@
 				<ion-item class="item-divider item-compass">
 					SNMP Attributes
 				</ion-item>
+				<ion-item class="row item-text-wrap"><div class="col"><ion-spinner></ion-spinner></div></ion-item>
+				<!--
 				<ion-item class="row item-text-wrap"><div class="col">&nbsp;</div></ion-item>
 				<ion-item class="row item-text-wrap"><div class="col">&nbsp;</div></ion-item>
 				<ion-item class="row item-text-wrap"><div class="col">&nbsp;</div></ion-item>
 				<ion-item class="row item-text-wrap"><div class="col">&nbsp;</div></ion-item>
-				<ion-item class="row item-text-wrap"><div class="col">&nbsp;</div></ion-item>
+				-->
 			</span>
 			<span ng-if="loaded &amp;&amp; hasSnmpAttributes()">
 				<ion-item class="item-divider item-compass">

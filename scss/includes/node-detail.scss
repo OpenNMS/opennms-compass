@@ -10,4 +10,7 @@
 	.row {
 		font-size: 90%;
 	}
+	.leaflet-map-pane, .leaflet-container {
+		pointer-events:none;
+	}
 }
