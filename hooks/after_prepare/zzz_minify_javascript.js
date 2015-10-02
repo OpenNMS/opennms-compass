@@ -25,5 +25,5 @@ if (rootdir && target === 'release') {
 	}
 } else {
 	console.log('* skipping minification');
-	exec('gulp prepare');
+	exec('gulp lint');
 }
