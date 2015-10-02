@@ -2,28 +2,41 @@
 	'use strict';
 
 	/* global ionic: true */
+	/* global CloudSyncAdapter: true */
 
 	angular.module('opennms.services.DB', [
 		'ionic',
-		'angularLocalStorage',
 		'lokijs',
 		'uuid4',
-		'CloudStorage',
-	]).factory('db', function($rootScope, $log, storage, Loki, uuid4, CloudStorage) {
+	]).factory('db', function($rootScope, $log, $window, Loki, uuid4) {
 		$log.info('DB: Initializing.');
 
-		var loki = new Loki();
 		var dbs = {};
 
-		/*
-		var load = function(dbname, options) {
+		var getDb = function(dbname, options) {
 			if (!dbs[dbname]) {
-				dbs[dbname] = loki.addCollection(dbname, options);
+				dbs[dbname] = new Loki(dbname, {
+					autosave: true,
+					autosaveInterval: 5000,
+					autoload: true,
+					autoLoadCallback: function() {
+						$rootScope.$eval(function() {
+							$log.info('Db.getDb: Database ' + dbname + ' autoloaded.');
+							$rootScope.$broadcast('opennms.db.loaded');
+						});
+					},
+					adapter: new $window.cloudSyncAdapter({
+						prefix: 'compass.',
+						suffix: '.lokidb',
+					}),
+				});
 			}
+			return dbs[dbname];
 		};
-		*/
 
-		return loki;
+		return {
+			get: getDb,
+		};
 	});
 
 }());
