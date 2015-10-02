@@ -8,9 +8,10 @@
 
 	angular.module('opennms.services.Resources', [
 		'ionic',
+		'uuid4',
+		'opennms.services.DB',
 		'opennms.services.Rest',
 		'opennms.services.Servers',
-		'opennms.services.Storage',
 		'opennms.services.Util',
 	])
 	.directive('onmsGraph', function($log, $timeout, $window, $injector, Servers) {
@@ -232,10 +233,17 @@
 			}
 		};
 	})
-	.factory('ResourceService', function($q, $rootScope, $log, RestService, Servers, StorageService, util) {
+	.factory('ResourceService', function($q, $rootScope, $log, uuid4, db, RestService, Servers, util) {
 		$log.info('ResourceService: Initializing.');
 
 		var _graphs = {};
+		var resourceDb = db.get('resources');
+		var favoritesCollection = resourceDb.getCollection('favorites');
+		if (!favoritesCollection) {
+			favoritesCollection = resourceDb.addCollection('favorites', {
+				transactional: true,
+			});
+		}
 
 		var _sortFunction = function(a,b) {
 			if (a.typeLabel && b.typeLabel) {
@@ -325,112 +333,79 @@
 			return ret;
 		};
 
-		var _getResourceInfo = function(prefix, id) {
-			if (id.startsWith(prefix)) {
-				var sub = id.substring(prefix.length+1); // get the colon too
-				var chunks = sub.split(':');
-				var favorite = {};
-				favorite.resourceId = chunks[0];
-				favorite.graphName = chunks[1];
-				return favorite;
-			} else {
-				return {};
-			}
-		};
-
-		var _getFavoritesPrefixForServer = function(server) {
-			if (server && angular.isDefined(server.id) && angular.isDefined(server.username)) {
-				return ['favorite', server.id, encodeURIComponent(server.username)].join('_');
-			} else {
-				return $q.reject('Server unconfigured.');
-			}
-		};
-
-		var _getFavoritesPrefix = function() {
+		var _getServer = function(caller) {
 			return Servers.getDefault().then(function(server) {
-				return _getFavoritesPrefixForServer(server);
-			});
-		};
-
-		var _getFavoritesFilename = function(resourceId, graphName) {
-			return _getFavoritesPrefix().then(function(prefix) {
-				return prefix + '_' + [encodeURIComponent(resourceId), encodeURIComponent(graphName)].join('_') + '.json';
+				if (server && angular.isDefined(server.id) && angular.isDefined(server.username)) {
+					return server;
+				} else {
+					return $q.reject('ResourceService.' + caller + ': Unable to determine default server.');
+				}
 			});
 		};
 
 		var getFavorites = function() {
-			return _getFavoritesPrefix().then(function(prefix) {
-				return StorageService.list('favorites').then(function(files) {
-					var favorites = [], file;
-					for (var i=0, len=files.length; i < len; i++) {
-						file = files[i];
-						if (file.startsWith(prefix)) {
-							$log.debug('ResourceService.getFavorites: matched file ' + file);
-							favorites.push(StorageService.load('favorites/' + file));
-						} else {
-							//$log.debug('ResourceService.getFavorites: ' + prefix + ' did not match file ' + file);
-						}
-					}
-					return $q.all(favorites);
+			return _getServer('getFavorites').then(function(server) {
+				var chain = favoritesCollection.chain();
+				chain.where(function(obj) {
+					return obj.server === server.id && obj.username === server.username;
 				});
-			}).then(function(favorites) {
-				//$log.debug('ResourceService.getFavorites: found: ' + angular.toJson(favorites));
-				return favorites;
-				//return $q.reject('nope');
+				chain.simplesort('time');
+				return chain.data();
 			});
 		};
 
 		var getFavorite = function(resourceId, graphName) {
-			return _getFavoritesFilename(resourceId, graphName).then(function(filename) {
-				return StorageService.load('favorites/' + filename);
-			}).then(function(fav) {
-				return fav;
-			}, function() {
-				// if it's not there, don't error, just return undefined
-				return undefined;
+			return _getServer('getFavorite').then(function(server) {
+				var favs = favoritesCollection.where(function(obj) {
+					return obj.server === server.id &&
+						obj.username === server.username &&
+						obj.resourceId === resourceId &&
+						obj.graphName === graphName;
+				});
+				if (favs.length === 1) {
+					return favs[0];
+				} else if (favs.length > 1) {
+					$log.warn('ResourceService.getFavorite: ' + favs.length + ' resources found for ' + resourceId + '/' + graphName + '.  Returning the first match.');
+					return favs[0];
+				} else {
+					return undefined;
+				}
 			});
 		};
 
 		var addFavorite = function(resourceId, graphName, nodeId, nodeLabel) {
-			return _getFavoritesFilename(resourceId, graphName).then(function(filename) {
-				var fav = {
-					_id: filename,
+			return _getServer('addFavorite').then(function(server) {
+				var favorite = {
+					id: uuid4.generate(),
+					server: server.id,
+					username: server.username,
 					resourceId: resourceId,
 					graphName: graphName,
 					nodeId: nodeId,
 					nodeLabel: nodeLabel,
+					isFavorite: true,
+					time: new Date().getTime(),
 				};
-				return StorageService.save('favorites/' + filename, fav);
+				favoritesCollection.insert(favorite);
+				return favorite;
 			});
 		};
 
 		var removeFavorite = function(resourceId, graphName) {
-			return _getFavoritesFilename(resourceId, graphName).then(function(filename) {
-				return StorageService.remove('favorites/' + filename);
-			}, function(err) {
-				$log.error('ResourceService.removeFavorite: failed: ' + angular.toJson(err));
-				return $q.reject(err);
+			return _getServer('removeFavorite').then(function(server) {
+				return favoritesCollection.removeWhere(function(obj) {
+						return obj.server === server.id &&
+							obj.username === server.username &&
+							obj.resourceId === resourceId &&
+							obj.graphName === graphName;
+					});
 			});
 		};
 
 		util.onServerRemoved(function(server) {
 			$log.debug('ResourceService.onServerRemoved: cleaning up favorites for server ' + server.name);
-			return StorageService.list('favorites').then(function(files) {
-				var file, prefix = _getFavoritesPrefixForServer(server), operations = [];
-				for (var i=0, len=files.length; i < len; i++) {
-					file = files[i];
-					if (file.startsWith(prefix)) {
-						$log.debug('ResourceService.onServerRemoved: * ' + file);
-						operations.push(StorageService.remove('favorites/' + file));
-					}
-				}
-				return $q.all(operations).then(function(result) {
-					$log.debug('ResourceService.onServerRemoved: finished cleaning up favorites for server ' + server.name);
-					return result;
-				}, function(err) {
-					$log.error('ResourceService.onServerRemoved: failed: ' + angular.toJson(err));
-					return $q.reject(err);
-				});
+			return favoritesCollection.removeWhere(function(obj) {
+				return obj.server === server.id && obj.username === server.username;
 			});
 		});
 
