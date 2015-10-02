@@ -75,10 +75,6 @@
       "id": "com.raccoonfink.cordova.plugins.certificates"
     },
     {
-      "locator": "https://github.com/RangerRick/cordova-HTTP.git",
-      "id": "com.raccoonfink.cordova.plugins.http"
-    },
-    {
       "locator": "https://github.com/apache/cordova-plugin-file",
       "id": "org.apache.cordova.file"
     },
@@ -93,6 +89,10 @@
     {
       "locator": "https://github.com/shazron/KeychainPlugin.git",
       "id": "com.shazron.cordova.plugin.keychainutil"
+    },
+    {
+      "locator": "https://github.com/RangerRick/cordova-HTTP.git",
+      "id": "com.raccoonfink.cordova.plugins.http"
     }
   ],
   "cordovaPlatforms": [

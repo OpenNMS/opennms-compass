@@ -93,15 +93,16 @@ gulp.task('watch', ['watch-bower', 'watch-sass', 'watch-opennms']);
 var minifyMe = function() {
 	return gulp.src('www/index.html')
 		.pipe(usemin({
-			shim: [uglify(), rev()],
-			thirdparty: [uglify(), rev()],
-			ipv6: [uglify(), rev()],
 			angular: [ngAnnotate(), uglify(), rev()],
 			backshift: [uglify({mangle:false}), rev()],
 			charts: [uglify(), rev()],
-			models: [uglify(), rev()],
+			db: [uglify(), rev()],
+			ipv6: [uglify(), rev()],
 			maps: [uglify(), rev()],
+			models: [uglify(), rev()],
 			opennms: [ngAnnotate(), uglify(), rev()],
+			shim: [uglify(), rev()],
+			thirdparty: [uglify(), rev()],
 		}));
 };
 
