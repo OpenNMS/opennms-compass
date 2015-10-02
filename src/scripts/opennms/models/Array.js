@@ -33,3 +33,10 @@ if (typeof Array.prototype.filter !== 'function') {
 		return res;
 	};
 }
+
+if (typeof Array.prototype.difference !== 'function') {
+	Array.prototype.difference = function(e) {
+		'use strict';
+		return this.filter(function(i) {return e.indexOf(i) < 0;});
+	};
+}
