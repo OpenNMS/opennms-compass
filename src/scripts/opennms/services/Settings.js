@@ -35,10 +35,10 @@
 
 		var storeSettings = function(settings) {
 			storage.set('opennms.settings', settings);
-			return StorageService.save('default-server.json', {defaultServerName:settings.defaultServerName}, true).then(function() {
+			return StorageService.save('default-server.json', {defaultServerId:settings.defaultServerId}, true).then(function() {
 				// if we successfully saved the default server to a separate file, don't include it in settings
 				var savedSettings = angular.copy(settings);
-				delete savedSettings.defaultServerName;
+				delete savedSettings.defaultServerId;
 				return StorageService.save('settings.json', savedSettings).then(function() {
 					return settings;
 				});
@@ -63,10 +63,10 @@
 			return isReady().then(function() {
 				return StorageService.load('settings.json').then(function(settings) {
 					return StorageService.load('default-server.json', true).then(function(result) {
-						if (result && result.defaultServerName) {
-							settings.defaultServerName = result.defaultServerName;
+						if (result && result.defaultServerId) {
+							settings.defaultServerId = result.defaultServerId;
 						} else {
-							delete settings.defaultServerName;
+							delete settings.defaultServerId;
 						}
 						return settings;
 					}, function(err) {
@@ -101,12 +101,12 @@
 					settings = {};
 				}
 
-				if (settings.defaultServerName) {
+				if (settings.defaultServerId) {
 					delete settings.server;
 					delete settings.username;
 					delete settings.password;
 				} else {
-					settings.defaultServerName = undefined;
+					settings.defaultServerId = undefined;
 
 					// obsolete
 					if (!settings.server) {
@@ -154,11 +154,11 @@
 			var serverTypeMatch = new RegExp('^([Hh][Tt][Tt][Pp][Ss]?):');
 			var changedSettings = {};
 
-			if (isEmpty(settings.defaultServerName)) {
-				settings.defaultServerName = undefined;
+			if (isEmpty(settings.defaultServerId)) {
+				settings.defaultServerId = undefined;
 			}
 
-			if (settings.defaultServerName) {
+			if (settings.defaultServerId) {
 				delete settings.server;
 				delete settings.username;
 				delete settings.password;
@@ -238,26 +238,19 @@
 
 		init();
 
-		var _getDefaultServerName = function() {
+		var _getDefaultServerId = function() {
 			return getSettings().then(function(settings) {
-				if (settings && angular.isDefined(settings.defaultServerName)) {
-					return settings.defaultServerName;
-				} else if (settings && angular.isDefined(settings.server)) {
-					var server = settings.server;
-					if (server) {
-						var a = document.createElement('a');
-						a.href = server;
-						return a.hostname;
-					}
+				if (settings && angular.isDefined(settings.defaultServerId)) {
+					return settings.defaultServerId;
 				} else {
 					return undefined;
 				}
 			});
 		};
 
-		var _setDefaultServerName = function(name) {
+		var _setDefaultServerId = function(id) {
 			return getSettings().then(function(settings) {
-				settings.defaultServerName = name;
+				settings.defaultServerId = id;
 				return saveSettings(settings);
 			});
 		};
@@ -304,8 +297,8 @@
 		return {
 			get: getSettings,
 			set: saveSettings,
-			getDefaultServerName: _getDefaultServerName,
-			setDefaultServerName: _setDefaultServerName,
+			getDefaultServerId: _getDefaultServerId,
+			setDefaultServerId: _setDefaultServerId,
 			refreshInterval: _refreshInterval,
 			restLimit: _getRestLimit,
 			showAds: _showAds,

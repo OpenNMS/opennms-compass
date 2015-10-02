@@ -391,7 +391,7 @@
 			popover.scope.selectServer = function(server) {
 				$ionicLoading.show({templateUrl: 'templates/loading.html', duration: 5000});
 				popover.hide();
-				Settings.setDefaultServerName(server.name);
+				Servers.setDefault(server);
 			};
 		});
 
@@ -402,8 +402,8 @@
 		$scope.currentDonutSlide = 0;
 		$scope.currentGraphSlide = 0;
 		$scope.landscape = true;
-		Settings.getDefaultServerName().then(function(serverName) {
-			$scope.serverName = serverName;
+		Servers.getDefault().then(function(server) {
+			$scope.serverName = server.name;
 		});
 
 		$scope.range = {
@@ -423,19 +423,6 @@
 				$scope.resetData();
 			}
 		});
-
-		/*
-		util.onSettingsUpdated(function(newSettings, oldSettings, changedSettings) {
-			$log.debug('Dashboard: settings changed, refreshing data.');
-			$log.debug(angular.toJson(changedSettings, true));
-			if (changedSettings.defaultServerName) {
-				$scope.serverName = changedSettings.defaultServerName;
-				$scope.refreshData();
-			} else if (!newSettings.defaultServerName) {
-				$scope.resetData();
-			}
-		});
-*/
 
 		util.onDirty('alarms', $scope.refreshData);
 		util.onDirty('outages', $scope.refreshData);

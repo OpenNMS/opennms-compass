@@ -68,7 +68,7 @@
 		};
 
 		UtilEventHandler.onSettingsUpdated(function(newSettings, oldSettings, changedSettings) {
-			if (changedSettings && changedSettings.defaultServerName) {
+			if (changedSettings && changedSettings.defaultServerId) {
 				$timeout(checkServersUpdated);
 			}
 		});
@@ -100,7 +100,7 @@
 			});
 		};
 
-		var saveServer = function(server) {
+		var _saveServer = function(server) {
 			if (!server.id) {
 				server.id = uuid4.generate();
 			}
@@ -108,7 +108,7 @@
 				checkServersUpdated();
 				return server;
 			}, function(err) {
-				$log.error('Servers.saveServer: WARNING: StorageService.save(' + server.name + ') failed: ' + angular.toJson(err));
+				$log.error('Servers._saveServer: WARNING: StorageService.save(' + server.name + ') failed: ' + angular.toJson(err));
 				return undefined;
 			});
 		};
@@ -129,7 +129,7 @@
 								password: settings.password,
 							});
 							$log.debug('Servers.init: saving default server: ' + angular.toJson(server, true));
-							return saveServer(server).then(function() {
+							return _saveServer(server).then(function() {
 								return server;
 							});
 						} else {
@@ -173,19 +173,19 @@
 		var getServers = function() {
 			return getServerNames().then(function(names) {
 				var promises = [];
-				promises.push(Settings.getDefaultServerName());
+				promises.push(Settings.getDefaultServerId());
 				for (var i=0, len=names.length; i < len; i++) {
 					promises.push(getServer(names[i]));
 				}
 				return $q.all(promises).then(function(servers) {
 					//$log.debug('servers='+angular.toJson(servers));
-					var defaultServerName = servers.shift(), ret = [];
+					var defaultServerId = servers.shift(), ret = [];
 					for (var i=0, len=servers.length; i < len; i++) {
 						//$log.debug('servers['+i+']='+angular.toJson(servers[i]));
 						if (servers[i] === null || servers[i] === undefined) {
 							continue;
 						}
-						servers[i].isDefault = (servers[i].name === defaultServerName);
+						servers[i].isDefault = (servers[i].id === defaultServerId);
 						ret.push(servers[i]);
 					}
 					return ret;
@@ -204,10 +204,18 @@
 
 		var getDefaultServer = function() {
 			return isReady().then(function() {
-				return Settings.getDefaultServerName().then(function(serverName) {
+				return Settings.getDefaultServerId().then(function(serverId) {
 					//$log.debug('Servers.getDefaultServer: ' + serverName);
-					if (serverName) {
-						return getServer(serverName);
+					if (serverId) {
+						return getServers().then(function(servers) {
+							for (var i=0, len=servers.length, server; i < len; i++) {
+								server = servers[i];
+								if (server.id === serverId) {
+									return server;
+								}
+							}
+							return undefined;
+						});
 					} else {
 						return $q.reject('No default server name.');
 					}
@@ -219,21 +227,18 @@
 		};
 
 		var setDefaultServer = function(server) {
-			var serverName = (server && server.name)? server.name:server;
-			if (serverName) {
-				return Settings.setDefaultServerName(serverName).then(function() {
+			if (server && server.id) {
+				return Settings.setDefaultServerId(server.id).then(function() {
 					return checkServersUpdated();
-				}).then(function() {
-					return serverName;
 				});
 			} else {
 				return $q.reject('Not sure how to handle server "'+server+'"');
 			}
 		};
 
-		var putServer = function(server) {
+		var saveServer = function(server) {
 			return isReady().then(function() {
-				return saveServer(server);
+				return _saveServer(server);
 			});
 		};
 
@@ -248,14 +253,11 @@
 			});
 		};
 
-		var removeServer = function(s) {
-			var serverName = s.name? s.name:s;
+		var removeServer = function(server) {
 			return isReady().then(function() {
-				return getServer(serverName);
-			}).then(function(server) {
-				return Settings.getDefaultServerName().then(function(defaultServerName) {
-					if (defaultServerName === serverName) {
-						return Settings.setDefaultServerName(undefined).then(function() {
+				return Settings.getDefaultServerId().then(function(defaultServerId) {
+					if (defaultServerId === server.id) {
+						return Settings.setDefaultServerId(undefined).then(function() {
 							return doRemoveServer(server);
 						});
 					} else {
@@ -286,7 +288,7 @@
 			names: getServerNames,
 			all: getServers,
 			get: getServer,
-			put: putServer,
+			save: saveServer,
 			remove: removeServer,
 		};
 	});

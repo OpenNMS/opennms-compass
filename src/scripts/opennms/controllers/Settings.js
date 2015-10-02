@@ -56,25 +56,9 @@
 			var server = $scope.server;
 			$log.debug('ServerModal.save: Saving server: ' + angular.toJson(server));
 			if (server && server.name && server.url) {
-				if (server.originalName && server.name !== server.originalName) {
-					// They have renamed the server, we have to special-case it.
-					Settings.getDefaultServerName().then(function(defaultServerName) {
-					var operations = [];
-						operations.push(Servers.remove(server.originalName));
-						operations.push(Servers.put(new Server(server)));
-						if (defaultServerName === server.originalName) {
-							// The renamed server was the default, also set default to the new name
-							operations.push(Settings.setDefaultServerName(server.name));
-						}
-						$q.all(operations).finally(function() {
-							$scope.closeModal();
-						});
-					});
-				} else {
-					Servers.put(new Server(server)).finally(function() {
-						$scope.closeModal();
-					});
-				}
+				Servers.save(server)['finally'](function() {
+					$scope.closeModal();
+				});
 			} else {
 				$log.warn('Server did not have a name or URL!');
 				$scope.closeModal();
@@ -105,35 +89,16 @@
 		};
 
 		$scope.deleteServer = function(server) {
-			var remove = function(s) {
-				return Servers.remove(s).then(function() {
-					return s;
+			return Settings.getDefaultServerId().then(function(defaultServerId) {
+				return Servers.remove(server).then(function() {
+					if (server.id === defaultServerId) {
+						return Settings.setDefaultServerId(undefined).then(function() {
+							return server;
+						});
+					} else {
+						return server;
+					}
 				});
-			};
-
-			Settings.getDefaultServerName().then(function(defaultServerName) {
-				if (server.name === defaultServerName) {
-					return Servers.all().then(function(servers) {
-						var s = [];
-						for (var i=0, len=servers.length; i < len; i++) {
-							if (servers[i].name !== server.name) {
-								s.push(servers[i]);
-							}
-						}
-
-						if (s.length === 0) {
-							// no other servers to set as default
-							return remove(server);
-						} else {
-							// set the first remaining server as default
-							return Settings.setDefaultServerName(s[0].name).then(function() {
-								return remove(server);
-							});
-						}
-					});
-				} else {
-					return remove(server);
-				}
 			});
 		};
 
@@ -153,7 +118,8 @@
 			}
 			if (angular.isUndefined($scope.defaultServer) && len > 0) {
 				$log.info('Settings.initDefaultServer: no default server defined.');
-				Settings.setDefaultServerName($scope.servers[0].name);
+				$scope.defaultServer = $scope.servers[0];
+				Settings.setDefaultServerId($scope.servers[0].id);
 			}
 		};
 
