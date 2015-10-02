@@ -106,12 +106,10 @@
 			if ($scope.isFavorite(graph.name)) {
 				ResourceService.unfavorite($scope.resourceId, graph.name).then(function(fav) {
 					delete $scope.favorites[graph.name];
-					return fav.isFavorite || false;
 				});
 			} else {
 				ResourceService.favorite($scope.resourceId, graph.name, $scope.nodeId, $scope.node.label).then(function(fav) {
 					$scope.favorites[graph.name] = fav;
-					return fav.isFavorite || false;
 				});
 			}
 		};
