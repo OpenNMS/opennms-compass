@@ -7,15 +7,54 @@
 		'angularLocalStorage',
 		'uuid4',
 		'opennms.services.BuildConfig',
-		'opennms.services.Storage',
+		'opennms.services.DB',
 	])
 	.value('default-graph-min-range', 7 * 24 * 60 * 60 * 1000) // 1 week
 	.value('default-graph-range', 24 * 60 * 60 * 1000) // 1 day
-	.factory('Settings', function($q, $rootScope, $injector, $log, storage, uuid4, StorageService) {
+	.factory('Settings', function($q, $rootScope, $injector, $log, storage, db, uuid4) {
 		var $scope = $rootScope.$new();
 
 		var defaultRestLimit = 100;
 		var defaultRefreshInterval = 10000;
+
+		var settingsDb = db.get('settings');
+		var settingsCollection = settingsDb.getCollection('settings');
+		if (!settingsCollection) {
+			settingsCollection = settingsDb.addCollection('settings', {
+				transactional: true,
+			});
+		}
+
+		var _keys = function() {
+			return settingsCollection.where(function() { return true; }).map(function(obj) {
+				return obj.key;
+			});
+		};
+		var _get = function(key) {
+			//$log.debug('Settings._get: ' + key);
+			var ret = settingsCollection.findObject({'key': key});
+			if (ret && ret.hasOwnProperty('value')) {
+				return ret.value;
+			} else {
+				return null;
+			}
+		};
+		var _set = function(key, value) {
+			//$log.debug('Settings._set: ' + key + '=' + value);
+			var existing = settingsCollection.findObject({key: key});
+			if (!existing) {
+				settingsCollection.insert({key: key, value: value});
+			} else {
+				if (existing.value !== value) {
+					existing.value = value;
+					settingsCollection.update(existing);
+				}
+			}
+		};
+		var _delete = function(key) {
+			$log.debug('Settings._delete: ' + key);
+			settingsCollection.removeWhere({key:key});
+		};
 
 		var isEmpty = function(v) {
 			return !!(angular.isUndefined(v) || v === '' || v === 'undefined' || v === null);
@@ -33,46 +72,63 @@
 			return deferred.promise;
 		};
 
+		var _saveSettings = function(settings) {
+			var newKeys = Object.keys(settings),
+				deletedKeys = _keys().difference(newKeys),
+				i, len;
+
+			if (settings.defaultServerId) {
+				storage.set('opennms.default-server-id', settings.defaultServerId);
+			} else {
+				storage.remove('opennms.default-server-id');
+			}
+
+			$log.debug('Settings._saveSettings: setting: ' + newKeys);
+			$log.debug('Settings._saveSettings: deleting: ' + deletedKeys);
+
+			for (i=0, len=newKeys.length; i < len; i++) {
+				if (newKeys[i] === 'defaultServerId') {
+					continue;
+				}
+				_set(newKeys[i], settings[newKeys[i]]);
+			}
+			for (i=0, len=deletedKeys.length; i < len; i++) {
+				_delete(deletedKeys[i]);
+			}
+
+			return settings;
+		};
+
 		var storeSettings = function(settings) {
-			storage.set('opennms.settings', settings);
-			return StorageService.save('default-server.json', {defaultServerId:settings.defaultServerId}, true).then(function() {
-				// if we successfully saved the default server to a separate file, don't include it in settings
-				var savedSettings = angular.copy(settings);
-				delete savedSettings.defaultServerId;
-				return StorageService.save('settings.json', savedSettings).then(function() {
-					return settings;
-				});
-			}, function(err) {
-				// otherwise, just fall back to the default behavior
-				return StorageService.save('settings.json', settings).then(function() {
-					return settings;
-				});
+			return isReady().then(function() {
+				return _saveSettings(settings);
 			});
 		};
 
-		var convertOldSettings = function() {
-			$log.error('Settings.convertOldSettings: WARNING: attempting to convert settings from old location.');
-			var settings = storage.get('opennms.settings');
-			if (isEmpty(settings)) {
-				settings = {};
+		var _loadSettings = function() {
+			$log.debug('Settings._loadSettings()');
+			var settings = {},
+				defaultServerId = storage.get('opennms.default-server-id'),
+				keys = _keys(), i, len, value;
+
+			if (!isEmpty(defaultServerId)) {
+				settings.defaultServerId = defaultServerId;
 			}
+
+			for (i=0, len=keys.length; i < len; i++) {
+				value = _get(keys[i]);
+				if (value !== null) {
+					settings[keys[i]] = value;
+				}
+			}
+
+			$log.debug('Settings._loadSettings: ' + angular.toJson(settings));
 			return settings;
 		};
 
 		var getSettings = function() {
 			return isReady().then(function() {
-				return StorageService.load('settings.json').then(function(settings) {
-					return StorageService.load('default-server.json', true).then(function(result) {
-						if (result && result.defaultServerId) {
-							settings.defaultServerId = result.defaultServerId;
-						} else {
-							delete settings.defaultServerId;
-						}
-						return settings;
-					}, function(err) {
-						return settings;
-					});
-				});
+				return _loadSettings();
 			}).then(function(settings) {
 				if (isEmpty(settings)) {
 					return $q.reject('No settings found.');
@@ -86,64 +142,45 @@
 
 		var init = function() {
 			$log.info('Settings.init: Initializing.');
-			return StorageService.load('settings.json').then(function(settings) {
-				//$log.debug('Settings.init: loaded settings.json');
-				if (isEmpty(settings)) {
-					return $q.reject('No settings found.');
-				} else {
-					return settings;
-				}
-			}, function(err) {
-				$log.debug('Settings.init: Converting old settings.');
-				return convertOldSettings();
-			}).then(function(settings) {
-				if (!settings || settings === 'undefined') {
-					settings = {};
-				}
 
-				if (settings.defaultServerId) {
-					delete settings.server;
-					delete settings.username;
-					delete settings.password;
-				} else {
-					settings.defaultServerId = undefined;
+			if (_get('restLimit')) {
+				// the lokijs database is populated, we don't have to do anything
+				return ready.resolve(true);
+			}
 
-					// obsolete
-					if (!settings.server) {
-						settings.server = undefined;
-					}
-					if (!settings.username) {
-						settings.username = undefined;
-					}
-					if (!settings.password) {
-						settings.password = undefined;
+			var oldSettings = storage.get('opennms.settings');
+			if (!isEmpty(oldSettings)) {
+				var keys = Object.keys(oldSettings);
+				for (var i=0, len=keys.length, key, value; i < len; i++) {
+					key = keys[i];
+					value = oldSettings[key];
+					if (!isEmpty(value)) {
+						if (key === 'refreshInterval' || key === 'restLimit') {
+							value = parseInt(value, 10);
+							if (isNaN(value)) {
+								value = null;
+							}
+						}
+						_set(key, value);
 					}
 				}
+			}
+			storage.remove('opennms.settings');
 
-				if (!settings.uuid) {
-					settings.uuid = uuid4.generate();
-				}
-				if (!settings.restLimit) {
-					settings.restLimit = defaultRestLimit;
-				}
-				if (!settings.refreshInterval || isNaN(parseInt(settings.refreshInterval, 10))) {
-					settings.refreshInterval = defaultRefreshInterval;
-				}
-				if (angular.isUndefined(settings.showAds) || settings.showAds === 'undefined') {
-					settings.showAds = true;
-				}
+			if (isEmpty(_get('uuid'))) {
+				_set('uuid', uuid4.generate());
+			}
+			if (isEmpty(_get('restLimit'))) {
+				_set('restLimit', defaultRestLimit);
+			}
+			if (isEmpty(_get('refreshInterval'))) {
+				_set('refreshInterval', defaultRefreshInterval);
+			}
+			if (isEmpty(_get('showAds'))) {
+				_set('showAds', true);
+			}
 
-				//$log.debug('Settings.init: storing final settings: ' + angular.toJson(settings, true));
-				return storeSettings(settings).then(function() {
-					//$log.debug('Settings.init: finished storing final settings.');
-					ready.resolve(true);
-					return settings;
-				}, function(err) {
-					$log.error('Settings.init: failed to store final settings: ' + angular.toJson(err));
-					ready.resolve(false);
-					return $q.reject(err);
-				});
-			});
+			return ready.resolve(true);
 		};
 
 		var saveSettings = function(settings) {
@@ -162,22 +199,9 @@
 				delete settings.server;
 				delete settings.username;
 				delete settings.password;
-			} else {
-				// obsolete
-				if (isEmpty(settings.server)) {
-					settings.server = undefined;
-				}
-				if (settings.server && !settings.server.endsWith('/')) {
-					settings.server += '/';
-				}
-
-				if (isEmpty(settings.username)) {
-					settings.username = undefined;
-				}
-
-				if (isEmpty(settings.password)) {
-					settings.password = undefined;
-				}
+				_delete('server');
+				_delete('username');
+				_delete('password');
 			}
 
 			if (angular.isUndefined(settings.showAds) || settings.showAds === 'undefined') {
@@ -239,45 +263,34 @@
 		init();
 
 		var _getDefaultServerId = function() {
-			return getSettings().then(function(settings) {
-				if (settings && angular.isDefined(settings.defaultServerId)) {
-					return settings.defaultServerId;
-				} else {
-					return undefined;
-				}
-			});
+			return $q.when(_get('defaultServerId') || undefined);
 		};
 
 		var _setDefaultServerId = function(id) {
-			return getSettings().then(function(settings) {
-				settings.defaultServerId = id;
-				return saveSettings(settings);
+			return $q.when(_set('defaultServerId', id)).then(function() {
+				return id;
 			});
 		};
 
 		var _getRestLimit = function() {
-			return getSettings().then(function(settings) {
-				return settings.restLimit;
-			});
-		};
-
-		var _showAds = function() {
-			return getSettings().then(function(settings) {
-				return settings.showAds;
-			});
+			return $q.when(_get('restLimit') || defaultRestLimit);
 		};
 
 		var _uuid = function() {
-			return getSettings().then(function(settings) {
-				return settings.uuid;
-			});
+			return $q.when(_get('uuid'));
+		};
+
+		var _showAds = function() {
+			var showAds = _get('showAds');
+			if (isEmpty(showAds)) {
+				showAds = true;
+			}
+			return $q.when(showAds);
 		};
 
 		var _disableAds = function() {
-			return getSettings().then(function(settings) {
-				settings.showAds = false;
-				return saveSettings(settings);
-			});
+			_set('showAds', false);
+			return $q.when(false);
 		};
 
 		var _version = function() {
@@ -289,9 +302,7 @@
 		};
 
 		var _refreshInterval = function() {
-			return getSettings().then(function(settings) {
-				return settings.refreshInterval;
-			});
+			return $q.when(_get('refreshInterval'));
 		};
 
 		return {
