@@ -31,6 +31,10 @@ CloudSyncAdapter.prototype.saveDatabase = function (name, data, callback) {
   'use strict';
   var fileName = this.getName(name);
   console.log('LokiJS CloudSyncAdapter: saveDatabase: ' + fileName);
+  // lokijs actually passes us a stringified JSON string, but CloudStorage expects an object
+  if (typeof data === 'string') {
+    data = JSON.parse(data);
+  }
   window.plugins.CloudStorage.writeFile(fileName, data, function(res) {
     console.log('save succeeded: ' + JSON.stringify(res));
     callback(null);
@@ -46,7 +50,8 @@ CloudSyncAdapter.prototype.loadDatabase = function (name, callback) {
   console.log('LokiJS CloudSyncAdapter: loadDatabase: ' + fileName);
   window.plugins.CloudStorage.readFile(fileName, function(res) {
     if (res.success) {
-      callback(res.contents);
+    // CloudStorage returns a JSON object, but lokijs expects it stringified
+      callback(JSON.stringify(res.contents));
     } else {
       callback(new CloudSyncAdapterError('Unknown error occurred.  Result was: ' + JSON.stringify(res)));
     }
