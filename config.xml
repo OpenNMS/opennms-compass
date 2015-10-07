@@ -22,6 +22,9 @@
   <preference name="FadeSplashScreenDuration" value="4"/>
   <preference name="ShowSplashScreenSpinner" value="true"/>
   <preference name="AutoHideSplashScreen" value="true"/>
+  <preference name="KeyboardDisplayRequiresUserAction" value="false"/>
+  <preference name="MediaPlaybackRequiresUserAction" value="false"/>
+  <preference name="SuppressesIncrementalRendering" value="false"/>
   <feature name="Console">
     <param name="ios-package" value="CDVLogger" onload="true"/>
   </feature>
