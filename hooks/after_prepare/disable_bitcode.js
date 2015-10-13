@@ -1,30 +1,10 @@
 #!/usr/bin/env node
 
-var enable_bitcode = false;
-
 var fs = require("fs"),
     path = require("path"),
     shell = require("shelljs"),
     xcode = require('xcode'),
     projectRoot = process.argv[2];
-
-function propReplace(obj, prop, value) {
-  for (var p in obj) {
-    if (obj.hasOwnProperty(p)) {
-      if (typeof obj[p] === 'object') {
-        propReplace(obj[p], prop, value);
-      } else if (p === prop) {
-        obj[p] = value;
-      }
-    }
-  }
-}
-
-function setEnableBitcode(xcodeProject, xcodeProjectPath, enable) {
-  var buildConfig = xcodeProject.pbxXCBuildConfigurationSection();
-  propReplace(buildConfig, 'ENABLE_BITCODE', enable? 'YES':'NO');
-  fs.writeFileSync(xcodeProjectPath, xcodeProject.writeSync(), 'utf-8');
-}
 
 function getProjectName(protoPath) {
   var cordovaConfigPath = path.join(protoPath, 'config.xml');
@@ -53,7 +33,8 @@ function run(projectRoot) {
     if(err) {
       shell.echo('An error occured during parsing of [' + xcodeProjectPath + ']: ' + JSON.stringify(err));
     } else {
-      setEnableBitcode(xcodeProject, xcodeProjectPath, enable_bitcode);
+      xcodeProject.addBuildProperty('ENABLE_BITCODE', 'NO');
+      fs.writeFileSync(xcodeProjectPath, xcodeProject.writeSync(), 'utf-8');
     }
   });
 }
