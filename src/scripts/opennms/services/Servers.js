@@ -11,16 +11,25 @@
 		'ionic',
 		'ngCordova',
 		'uuid4',
+		'opennms.services.DB',
 		'opennms.services.Settings',
 		'opennms.services.Storage',
 		'opennms.services.Util',
-	]).factory('Servers', function($q, $rootScope, $interval, $log, $timeout, uuid4, Settings, StorageService, UtilEventBroadcaster, UtilEventHandler) {
+	]).factory('Servers', function($q, $rootScope, $interval, $log, $timeout, uuid4, db, Settings, StorageService, UtilEventBroadcaster, UtilEventHandler) {
 		$log.info('Servers: Initializing.');
 
 		var ready = $q.defer();
 		var fsPrefix = 'servers';
 		var servers = [];
 		var defaultServer;
+
+		var serversDb = db.get('servers');
+		var serversCollection = serversDb.getCollection('servers');
+		if (!serversCollection) {
+			serversCollection = serversDb.addCollection('servers', {
+				transactional: true,
+			});
+		}
 
 		var isReady = function() {
 			var deferred = $q.defer();
@@ -84,33 +93,42 @@
 		};
 
 		var fetchServerNames = function() {
-			return StorageService.list(fsPrefix).then(function(entries) {
-				//$log.debug('fetchServerNames: ' + angular.toJson(entries));
-				var ret = [];
-				for (var i=0, len=entries.length; i < len; i++) {
-					var filename = entries[i];
-					var serverName = decodeURIComponent(filename.replace(/\.json$/, ''));
-					ret.push(serverName);
-				}
-				ret.sort();
-				return ret;
-			}, function(err) {
-				$log.error('Servers.fetchServerNames: WARNING: StorageService.list('+fsPrefix+') failed: ' + angular.toJson(err));
-				return [];
-			});
+			return $q.when(serversCollection.chain().simplesort('name').data().map(function(obj) {
+				return obj.name;
+			}));
 		};
 
+		var _toServer = function(server) {
+			if (!server) {
+				return server;
+			}
+			if (Array.isArray(server)) {
+				for (var i=0, len=server.length; i < len; i++) {
+					server[i] = _toServer(server[i]);
+				}
+				return server;
+			} else if (server instanceof Server) {
+				return server;
+			} else {
+				return new Server(server);
+			}
+		};
 		var _saveServer = function(server) {
 			if (!server.id) {
 				server.id = uuid4.generate();
 			}
-			return StorageService.save(fsPrefix + '/' + encodeURIComponent(server.name) + '.json', server).then(function() {
-				checkServersUpdated();
-				return server;
-			}, function(err) {
-				$log.error('Servers._saveServer: WARNING: StorageService.save(' + server.name + ') failed: ' + angular.toJson(err));
-				return undefined;
-			});
+
+			var existing = serversCollection.findObject({'id': server.id});
+			if (existing) {
+				server = _toServer(angular.extend(existing, server));
+				serversCollection.update(server);
+			} else {
+				server = _toServer(server);
+				serversCollection.insert(server);
+			}
+
+			checkServersUpdated();
+			return $q.when(_toServer(server));
 		};
 
 		var init = function() {
@@ -129,9 +147,7 @@
 								password: settings.password,
 							});
 							$log.debug('Servers.init: saving default server: ' + angular.toJson(server, true));
-							return _saveServer(server).then(function() {
-								return server;
-							});
+							return _saveServer(server);
 						} else {
 							$log.debug('Servers.init: No servers configured.');
 							return $q.reject('No servers configured.');
@@ -152,47 +168,23 @@
 			});
 		};
 
-		var getServer = function(serverName) {
-			var deferred = $q.defer();
-			isReady().then(function() {
-				return StorageService.load(fsPrefix + '/' + encodeURIComponent(serverName) + '.json').then(function(data) {
-					if (!data.id) {
-						data.id = uuid4.generate();
-					}
-					deferred.resolve(new Server(data));
-				}, function(err) {
-					deferred.resolve();
-				});
-			}, function(err) {
-				$log.error('Servers.getServer: failed to get ' + serverName + ': ' + angular.toJson(err));
-				deferred.resolve();
+		var getServerById = function(id) {
+			return isReady().then(function() {
+				return _toServer(serversCollection.findObject({id: id}));
 			});
-			return deferred.promise;
+		};
+
+		var getServer = function(name) {
+			return isReady().then(function() {
+				return _toServer(serversCollection.findObject({name: name}));
+			});
 		};
 
 		var getServers = function() {
-			return getServerNames().then(function(names) {
-				var promises = [];
-				promises.push(Settings.getDefaultServerId());
-				for (var i=0, len=names.length; i < len; i++) {
-					promises.push(getServer(names[i]));
-				}
-				return $q.all(promises).then(function(servers) {
-					//$log.debug('servers='+angular.toJson(servers));
-					var defaultServerId = servers.shift(), ret = [];
-					for (var i=0, len=servers.length; i < len; i++) {
-						//$log.debug('servers['+i+']='+angular.toJson(servers[i]));
-						if (servers[i] === null || servers[i] === undefined) {
-							continue;
-						}
-						servers[i].isDefault = (servers[i].id === defaultServerId);
-						ret.push(servers[i]);
-					}
-					return ret;
+			return isReady().then(function() {
+				return serversCollection.chain().simplesort('name').data().map(function(server) {
+					return _toServer(server);
 				});
-			}, function(err) {
-				$log.error('Servers.getServers: failed: ' + angular.toJson(err));
-				return [];
 			});
 		};
 
@@ -205,24 +197,20 @@
 		var getDefaultServer = function() {
 			return isReady().then(function() {
 				return Settings.getDefaultServerId().then(function(serverId) {
-					//$log.debug('Servers.getDefaultServer: ' + serverName);
-					if (serverId) {
-						return getServers().then(function(servers) {
-							for (var i=0, len=servers.length, server; i < len; i++) {
-								server = servers[i];
-								if (server.id === serverId) {
-									return server;
-								}
-							}
-							return undefined;
-						});
+					var server = serversCollection.findObject({'id':serverId});
+					if (server) {
+						return _toServer(server);
 					} else {
-						return $q.reject('No default server name.');
+						return getServers().then(function(servers) {
+							if (servers.length > 0) {
+								Settings.setDefaultServerId(servers[0].id);
+								return _toServer(servers[0]);
+							} else {
+								return undefined;
+							}
+						});
 					}
 				});
-			}, function(err) {
-				$log.error('Servers.getDefaultServer: failed: ' + angular.toJson(err));
-				return undefined;
 			});
 		};
 
@@ -242,26 +230,20 @@
 			});
 		};
 
-		var doRemoveServer = function(server) {
-			if (!server) {
-				return $q.reject('No server to remove!');
-			}
-			return StorageService.remove(fsPrefix + '/' + encodeURIComponent(server.name) + '.json').then(function(ret) {
-				UtilEventBroadcaster.serverRemoved(server);
-				checkServersUpdated(true);
-				return ret;
-			});
-		};
-
 		var removeServer = function(server) {
 			return isReady().then(function() {
+				serversCollection.removeWhere({'id':server.id});
 				return Settings.getDefaultServerId().then(function(defaultServerId) {
 					if (defaultServerId === server.id) {
 						return Settings.setDefaultServerId(undefined).then(function() {
-							return doRemoveServer(server);
+							UtilEventBroadcaster.serverRemoved(server);
+							checkServersUpdated(true);
+							return server;
 						});
 					} else {
-						return doRemoveServer(server);
+						UtilEventBroadcaster.serverRemoved(server);
+						checkServersUpdated(true);
+						return server;
 					}
 				});
 			});

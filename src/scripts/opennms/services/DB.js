@@ -2,7 +2,6 @@
 	'use strict';
 
 	/* global ionic: true */
-	/* global CloudSyncAdapter: true */
 
 	angular.module('opennms.services.DB', [
 		'ionic',
@@ -19,13 +18,13 @@
 					autosave: true,
 					autosaveInterval: 5000,
 					autoload: true,
-					autoLoadCallback: function() {
+					autoloadCallback: function() {
 						$rootScope.$eval(function() {
-							$log.info('Db.getDb: Database ' + dbname + ' autoloaded.');
+							$log.info('Db.getDb: Database "' + dbname + '" autoloaded.');
 							$rootScope.$broadcast('opennms.db.loaded');
 						});
 					},
-					adapter: new $window.cloudSyncAdapter({
+					adapter: new $window.jsonSyncAdapter({
 						prefix: 'compass.',
 						suffix: '.lokidb',
 					}),

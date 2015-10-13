@@ -403,7 +403,7 @@
 		$scope.currentGraphSlide = 0;
 		$scope.landscape = true;
 		Servers.getDefault().then(function(server) {
-			$scope.serverName = server.name;
+			$scope.serverName = (server && server.name)? server.name : undefined;
 		});
 
 		$scope.range = {

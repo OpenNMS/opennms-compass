@@ -89,16 +89,8 @@
 		};
 
 		$scope.deleteServer = function(server) {
-			return Settings.getDefaultServerId().then(function(defaultServerId) {
-				return Servers.remove(server).then(function() {
-					if (server.id === defaultServerId) {
-						return Settings.setDefaultServerId(undefined).then(function() {
-							return server;
-						});
-					} else {
-						return server;
-					}
-				});
+			return Servers.remove(server).then(function() {
+				return server;
 			});
 		};
 
@@ -108,19 +100,9 @@
 		};
 
 		var initDefaultServer = function() {
-			for (var i=0, len=$scope.servers.length; i < len; i++) {
-				if ($scope.servers[i].isDefault) {
-					$scope.defaultServer = i;
-					//$log.debug('default server: ' + $scope.servers[i].name);
-				} else {
-					//$log.debug('not default server: ' + $scope.servers[i].name);
-				}
-			}
-			if (angular.isUndefined($scope.defaultServer) && len > 0) {
-				$log.info('Settings.initDefaultServer: no default server defined.');
-				$scope.defaultServer = $scope.servers[0];
-				Settings.setDefaultServerId($scope.servers[0].id);
-			}
+			Servers.getDefaultServer().then(function(defaultServer) {
+				$scope.defaultServer = defaultServer;
+			});
 		};
 
 		var init = function() {
