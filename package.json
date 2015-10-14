@@ -54,7 +54,10 @@
     "cordova-plugin-appavailability",
     "cordova-plugin-console",
     "cordova-plugin-datepicker",
-    "cordova-plugin-file",
+    {
+      "locator": "https://github.com/apache/cordova-plugin-file",
+      "id": "cordova-plugin-file"
+    },
     "cordova-plugin-geolocation",
     {
       "locator": "https://github.com/RangerRick/google-analytics-plugin",
@@ -87,8 +90,8 @@
       "id": "org.opennms.cordova.storage"
     },
     {
-      "locator": "https://github.com/shazron/KeychainPlugin.git",
-      "id": "com.shazron.cordova.plugin.keychainutil"
+      "locator": "https://github.com/RangerRick/KeychainPlugin.git",
+      "id": "com.raccoonfink.cordova.plugin.keychainutil"
     },
     {
       "locator": "https://github.com/RangerRick/cordova-HTTP.git",
