@@ -110,6 +110,9 @@
         <true/>
       </dict>
     </config-file>
+    <config-file platform="ios" target="project.pbxproj">
+      <build-property name="ENABLE_BITCODE" value="NO"/>
+    </config-file>
   </platform>
   <icon src="resources/android/icon/drawable-xhdpi-icon.png"/>
 </widget>

@@ -10,7 +10,7 @@
     "bower": "*",
     "commonmark": "*",
     "cordova-android": "*",
-    "cordova-config-utils": "*",
+    "https://github.com/RangerRick/cordova-config-utils.git": "*",
     "fs.extra": "*",
     "grunt-conventional-changelog": "*",
     "gulp": "*",
