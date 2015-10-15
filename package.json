@@ -78,20 +78,12 @@
       "id": "com.raccoonfink.cordova.plugins.certificates"
     },
     {
-      "locator": "https://github.com/apache/cordova-plugin-file",
-      "id": "org.apache.cordova.file"
-    },
-    {
       "locator": "https://github.com/driftyco/ionic-plugins-deploy",
       "id": "ionic-plugin-deploy"
     },
     {
       "locator": "https://github.com/OpenNMS/cordova-plugin-storage.git",
-      "id": "org.opennms.cordova.storage"
-    },
-    {
-      "locator": "https://github.com/RangerRick/KeychainPlugin.git",
-      "id": "com.raccoonfink.cordova.plugin.keychainutil"
+      "id": "cordova-plugin-storage"
     },
     {
       "locator": "https://github.com/RangerRick/cordova-HTTP.git",
@@ -111,7 +103,7 @@
     },
     {
       "platform": "browser",
-      "version": "",
+      "version": "4.0.0",
       "locator": "browser"
     }
   ]
