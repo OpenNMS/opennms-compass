@@ -17,43 +17,37 @@
 		var defaultRestLimit = 100;
 		var defaultRefreshInterval = 10000;
 
-		var settingsDb = db.get('settings');
-		var settingsCollection = settingsDb.getCollection('settings');
-		if (!settingsCollection) {
-			settingsCollection = settingsDb.addCollection('settings', {
-				transactional: true,
-			});
-		}
+		var settingsCollection = db.collection('settings', 'settings', { transactional: true });
 
-		var _keys = function() {
-			return settingsCollection.where(function() { return true; }).map(function(obj) {
+		var _keys = function(sc) {
+			return sc.where(function() { return true; }).map(function(obj) {
 				return obj.key;
 			});
 		};
-		var _get = function(key) {
+		var _get = function(sc, key) {
 			//$log.debug('Settings._get: ' + key);
-			var ret = settingsCollection.findObject({'key': key});
+			var ret = sc.findObject({'key': key});
 			if (ret && ret.hasOwnProperty('value')) {
 				return ret.value;
 			} else {
 				return null;
 			}
 		};
-		var _set = function(key, value) {
+		var _set = function(sc, key, value) {
 			//$log.debug('Settings._set: ' + key + '=' + value);
-			var existing = settingsCollection.findObject({key: key});
+			var existing = sc.findObject({key: key});
 			if (!existing) {
-				settingsCollection.insert({key: key, value: value});
+				sc.insert({key: key, value: value});
 			} else {
 				if (existing.value !== value) {
 					existing.value = value;
-					settingsCollection.update(existing);
+					sc.update(existing);
 				}
 			}
 		};
-		var _delete = function(key) {
+		var _delete = function(sc, key) {
 			$log.debug('Settings._delete: ' + key);
-			settingsCollection.removeWhere({key:key});
+			sc.removeWhere({key:key});
 		};
 
 		var isEmpty = function(v) {
@@ -73,30 +67,32 @@
 		};
 
 		var _saveSettings = function(settings) {
-			var newKeys = Object.keys(settings),
-				deletedKeys = _keys().difference(newKeys),
-				i, len;
+			return settingsCollection.then(function(sc) {
+				var newKeys = Object.keys(settings),
+					deletedKeys = _keys(sc).difference(newKeys),
+					i, len;
 
-			if (settings.defaultServerId) {
-				storage.set('opennms.default-server-id', settings.defaultServerId);
-			} else {
-				storage.remove('opennms.default-server-id');
-			}
-
-			$log.debug('Settings._saveSettings: setting: ' + newKeys);
-			$log.debug('Settings._saveSettings: deleting: ' + deletedKeys);
-
-			for (i=0, len=newKeys.length; i < len; i++) {
-				if (newKeys[i] === 'defaultServerId') {
-					continue;
+				if (settings.defaultServerId) {
+					storage.set('opennms.default-server-id', settings.defaultServerId);
+				} else {
+					storage.remove('opennms.default-server-id');
 				}
-				_set(newKeys[i], settings[newKeys[i]]);
-			}
-			for (i=0, len=deletedKeys.length; i < len; i++) {
-				_delete(deletedKeys[i]);
-			}
 
-			return settings;
+				$log.debug('Settings._saveSettings: setting: ' + newKeys);
+				$log.debug('Settings._saveSettings: deleting: ' + deletedKeys);
+
+				for (i=0, len=newKeys.length; i < len; i++) {
+					if (newKeys[i] === 'defaultServerId') {
+						continue;
+					}
+					_set(sc, newKeys[i], settings[newKeys[i]]);
+				}
+				for (i=0, len=deletedKeys.length; i < len; i++) {
+					_delete(sc, deletedKeys[i]);
+				}
+
+				return settings;
+			});
 		};
 
 		var storeSettings = function(settings) {
@@ -106,24 +102,26 @@
 		};
 
 		var _loadSettings = function() {
-			$log.debug('Settings._loadSettings()');
-			var settings = {},
-				defaultServerId = storage.get('opennms.default-server-id'),
-				keys = _keys(), i, len, value;
+			return settingsCollection.then(function(sc) {
+				$log.debug('Settings._loadSettings()');
+				var settings = {},
+					defaultServerId = storage.get('opennms.default-server-id'),
+					keys = _keys(sc), i, len, value;
 
-			if (!isEmpty(defaultServerId)) {
-				settings.defaultServerId = defaultServerId;
-			}
-
-			for (i=0, len=keys.length; i < len; i++) {
-				value = _get(keys[i]);
-				if (value !== null) {
-					settings[keys[i]] = value;
+				if (!isEmpty(defaultServerId)) {
+					settings.defaultServerId = defaultServerId;
 				}
-			}
 
-			$log.debug('Settings._loadSettings: ' + angular.toJson(settings));
-			return settings;
+				for (i=0, len=keys.length; i < len; i++) {
+					value = _get(sc, keys[i]);
+					if (value !== null) {
+						settings[keys[i]] = value;
+					}
+				}
+
+				$log.debug('Settings._loadSettings: ' + angular.toJson(settings));
+				return settings;
+			});
 		};
 
 		var getSettings = function() {
@@ -143,154 +141,169 @@
 		var init = function() {
 			$log.info('Settings.init: Initializing.');
 
-			if (_get('restLimit')) {
-				// the lokijs database is populated, we don't have to do anything
-				return ready.resolve(true);
-			}
+			return settingsCollection.then(function(sc) {
+				if (_get(sc, 'restLimit')) {
+					// the lokijs database is populated, we don't have to do anything
+					return ready.resolve(true);
+				}
 
-			var oldSettings = storage.get('opennms.settings');
-			if (!isEmpty(oldSettings)) {
-				var keys = Object.keys(oldSettings);
-				for (var i=0, len=keys.length, key, value; i < len; i++) {
-					key = keys[i];
-					value = oldSettings[key];
-					if (!isEmpty(value)) {
-						if (key === 'refreshInterval' || key === 'restLimit') {
-							value = parseInt(value, 10);
-							if (isNaN(value)) {
-								value = null;
+				var oldSettings = storage.get('opennms.settings');
+				if (!isEmpty(oldSettings)) {
+					var keys = Object.keys(oldSettings);
+					for (var i=0, len=keys.length, key, value; i < len; i++) {
+						key = keys[i];
+						value = oldSettings[key];
+						if (!isEmpty(value)) {
+							if (key === 'refreshInterval' || key === 'restLimit') {
+								value = parseInt(value, 10);
+								if (isNaN(value)) {
+									value = null;
+								}
 							}
+							_set(sc, key, value);
 						}
-						_set(key, value);
 					}
 				}
-			}
-			storage.remove('opennms.settings');
+				storage.remove('opennms.settings');
 
-			if (isEmpty(_get('uuid'))) {
-				_set('uuid', uuid4.generate());
-			}
-			if (isEmpty(_get('restLimit'))) {
-				_set('restLimit', defaultRestLimit);
-			}
-			if (isEmpty(_get('refreshInterval'))) {
-				_set('refreshInterval', defaultRefreshInterval);
-			}
-			if (isEmpty(_get('showAds'))) {
-				_set('showAds', true);
-			}
+				if (isEmpty(_get(sc, 'uuid'))) {
+					_set(sc, 'uuid', uuid4.generate());
+				}
+				if (isEmpty(_get(sc, 'restLimit'))) {
+					_set(sc, 'restLimit', defaultRestLimit);
+				}
+				if (isEmpty(_get(sc, 'refreshInterval'))) {
+					_set(sc, 'refreshInterval', defaultRefreshInterval);
+				}
+				if (isEmpty(_get(sc, 'showAds'))) {
+					_set(sc, 'showAds', true);
+				}
 
-			return ready.resolve(true);
+				return ready.resolve(true);
+			});
 		};
 
 		var saveSettings = function(settings) {
-			if (!settings) {
-				return $q.reject('Settings.saveSettings: ERROR: no settings provided.');
-			}
-
-			var serverTypeMatch = new RegExp('^([Hh][Tt][Tt][Pp][Ss]?):');
-			var changedSettings = {};
-
-			if (isEmpty(settings.defaultServerId)) {
-				settings.defaultServerId = undefined;
-			}
-
-			if (settings.defaultServerId) {
-				delete settings.server;
-				delete settings.username;
-				delete settings.password;
-				_delete('server');
-				_delete('username');
-				_delete('password');
-			}
-
-			if (angular.isUndefined(settings.showAds) || settings.showAds === 'undefined') {
-				settings.showAds = true;
-			}
-			if (angular.isUndefined(settings.refreshInterval) || settings.refreshInterval === 'undefined') {
-				settings.refreshInterval = undefined;
-			} else {
-				settings.refreshInterval =  parseInt(settings.refreshInterval, 10);
-				if (isNaN(settings.refreshInterval)) {
-					settings.refreshInterval = defaultRefreshInterval;
-				}
-			}
-
-			return getSettings().then(function(oldSettings) {
-				var newSettings = angular.copy(settings), prop;
-
-				if (!oldSettings) {
-					oldSettings = {};
+			return settingsCollection.then(function(sc) {
+				if (!settings) {
+					return $q.reject('Settings.saveSettings: ERROR: no settings provided.');
 				}
 
-				for (prop in newSettings) {
-					if (newSettings.hasOwnProperty(prop) && newSettings[prop] !== oldSettings[prop]) {
-						changedSettings[prop] = newSettings[prop];
-					}
-				}
-				for (prop in oldSettings) {
-					if (oldSettings.hasOwnProperty(prop) && !newSettings.hasOwnProperty(prop)) {
-						changedSettings[prop] = undefined;
-					}
+				var serverTypeMatch = new RegExp('^([Hh][Tt][Tt][Pp][Ss]?):');
+				var changedSettings = {};
+
+				if (isEmpty(settings.defaultServerId)) {
+					settings.defaultServerId = undefined;
 				}
 
-				var o = angular.toJson(oldSettings),
-					n = angular.toJson(newSettings),
-					c = angular.toJson(changedSettings);
+				if (settings.defaultServerId) {
+					delete settings.server;
+					delete settings.username;
+					delete settings.password;
+					_delete(sc, 'server');
+					_delete(sc, 'username');
+					_delete(sc, 'password');
+				}
 
-				if (c === "{}") {
-					//$log.debug('Settings.saveSettings: settings are unchanged.');
-					return oldSettings;
+				if (angular.isUndefined(settings.showAds) || settings.showAds === 'undefined') {
+					settings.showAds = true;
+				}
+				if (angular.isUndefined(settings.refreshInterval) || settings.refreshInterval === 'undefined') {
+					settings.refreshInterval = undefined;
 				} else {
-					$log.debug('Settings.saveSettings: settings have changed.  Updating.');
-					$log.debug('Settings.saveSettings: Old Settings: ' + o);
-					$log.debug('Settings.saveSettings: New Settings: ' + n);
-
-					return storeSettings(newSettings).then(function(stored) {
-						if (changedSettings.server) {
-							var match = serverTypeMatch.exec(changedSettings.server);
-							if (match && match.length > 0) {
-								$rootScope.$broadcast('opennms.analytics.trackEvent', 'settings', 'serverType', 'Server Type', match[0]);
-							}
-						}
-						$rootScope.$broadcast('opennms.settings.updated', newSettings, oldSettings, changedSettings);
-						return stored;
-					});
+					settings.refreshInterval =  parseInt(settings.refreshInterval, 10);
+					if (isNaN(settings.refreshInterval)) {
+						settings.refreshInterval = defaultRefreshInterval;
+					}
 				}
+
+				return getSettings().then(function(oldSettings) {
+					var newSettings = angular.copy(settings), prop;
+
+					if (!oldSettings) {
+						oldSettings = {};
+					}
+
+					for (prop in newSettings) {
+						if (newSettings.hasOwnProperty(prop) && newSettings[prop] !== oldSettings[prop]) {
+							changedSettings[prop] = newSettings[prop];
+						}
+					}
+					for (prop in oldSettings) {
+						if (oldSettings.hasOwnProperty(prop) && !newSettings.hasOwnProperty(prop)) {
+							changedSettings[prop] = undefined;
+						}
+					}
+
+					var o = angular.toJson(oldSettings),
+						n = angular.toJson(newSettings),
+						c = angular.toJson(changedSettings);
+
+					if (c === "{}") {
+						//$log.debug('Settings.saveSettings: settings are unchanged.');
+						return oldSettings;
+					} else {
+						$log.debug('Settings.saveSettings: settings have changed.  Updating.');
+						$log.debug('Settings.saveSettings: Old Settings: ' + o);
+						$log.debug('Settings.saveSettings: New Settings: ' + n);
+
+						return storeSettings(newSettings).then(function(stored) {
+							if (changedSettings.server) {
+								var match = serverTypeMatch.exec(changedSettings.server);
+								if (match && match.length > 0) {
+									$rootScope.$broadcast('opennms.analytics.trackEvent', 'settings', 'serverType', 'Server Type', match[0]);
+								}
+							}
+							$rootScope.$broadcast('opennms.settings.updated', newSettings, oldSettings, changedSettings);
+							return stored;
+						});
+					}
+				});
 			});
 		};
 
 		init();
 
 		var _getDefaultServerId = function() {
-			return $q.when(_get('defaultServerId') || undefined);
+			return settingsCollection.then(function(sc) {
+				return _get(sc, 'defaultServerId') || undefined;
+			});
 		};
 
 		var _setDefaultServerId = function(id) {
-			return $q.when(_set('defaultServerId', id)).then(function() {
+			return settingsCollection.then(function(sc) {
+				_set(sc, 'defaultServerId', id);
 				return id;
 			});
 		};
 
 		var _getRestLimit = function() {
-			return $q.when(_get('restLimit') || defaultRestLimit);
+			return settingsCollection.then(function(sc) {
+				return _get(sc, 'restLimit') || defaultRestLimit;
+			});
 		};
 
 		var _uuid = function() {
-			return $q.when(_get('uuid'));
+			return settingsCollection.then(function(sc) {
+				return _get(sc, 'uuid');
+			});
 		};
 
 		var _showAds = function() {
-			var showAds = _get('showAds');
-			if (isEmpty(showAds)) {
-				showAds = true;
-			}
-			return $q.when(showAds);
+			return settingsCollection.then(function(sc) {
+				var showAds = _get(sc, 'showAds');
+				if (isEmpty(showAds)) {
+					showAds = true;
+				}
+				return $q.when(showAds);
+			});
 		};
 
 		var _disableAds = function() {
-			_set('showAds', false);
-			return $q.when(false);
+			return settingsCollection.then(function(sc) {
+				_set(sc, 'showAds', false);
+				return false;
+			});
 		};
 
 		var _version = function() {
@@ -302,7 +315,9 @@
 		};
 
 		var _refreshInterval = function() {
-			return $q.when(_get('refreshInterval'));
+			return settingsCollection.then(function(sc) {
+				return _get(sc, 'refreshInterval');
+			});
 		};
 
 		return {

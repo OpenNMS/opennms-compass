@@ -30,7 +30,7 @@
 		/* jshint -W069 */ /* "better written in dot notation" */
 		$http.defaults.headers.common['Accept'] = 'application/xml';
 
-		if ($window.cordova && cordovaHTTP && ionic.Platform.isAndroid()) {
+		if ($window.cordova && cordovaHTTP) {
 			useCordovaHTTP = true;
 			cordovaHTTP.acceptAllCerts(true);
 			cordovaHTTP.setTimeouts(requestTimeout, requestTimeout);

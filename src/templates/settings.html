@@ -16,7 +16,7 @@
 						<ion-list show-delete="showDelete" show-reorder="false" can-swipe="true" delegate-handle="server-list">
 							<ion-item class="item item-divider">Servers</ion-item>
 							<ion-item ng-repeat="server in servers track by server.name" class="item item-icon-left item-icon-right compass" ng-click="selectServer(server)">
-								<i ng-class="'icon ' + ($index === defaultServer? 'ion-checkmark':'')"></i>
+								<i ng-class="'icon ' + (server === defaultServer? 'ion-checkmark':'')"></i>
 								<h2>{{server.name}}</h2>
 								<p>{{server.url}}</p>
 								<i class="icon onms-grabber" style="right:-5"></i>

@@ -96,19 +96,20 @@
 
 		$scope.selectServer = function(server) {
 			$ionicListDelegate.$getByHandle('server-list').closeOptionButtons();
+			console.log('set default: ' + server.name);
 			Servers.setDefault(server);
 		};
 
 		var initDefaultServer = function() {
-			Servers.getDefaultServer().then(function(defaultServer) {
+			Servers.getDefault().then(function(defaultServer) {
 				$scope.defaultServer = defaultServer;
 			});
 		};
 
 		var init = function() {
+			initDefaultServer();
 			Servers.all().then(function(servers) {
 				$scope.servers = servers;
-				initDefaultServer();
 				if ($scope.launchAdd) {
 					$scope.launchAdd = false;
 					$scope.addServer();

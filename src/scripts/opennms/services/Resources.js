@@ -237,13 +237,7 @@
 		$log.info('ResourceService: Initializing.');
 
 		var _graphs = {};
-		var resourceDb = db.get('resources');
-		var favoritesCollection = resourceDb.getCollection('favorites');
-		if (!favoritesCollection) {
-			favoritesCollection = resourceDb.addCollection('favorites', {
-				transactional: true,
-			});
-		}
+		var favoritesCollection = db.collection('resources', 'favorites', { transactional: true });
 
 		var _sortFunction = function(a,b) {
 			if (a.typeLabel && b.typeLabel) {
@@ -345,31 +339,35 @@
 
 		var getFavorites = function() {
 			return _getServer('getFavorites').then(function(server) {
-				var chain = favoritesCollection.chain();
-				chain.where(function(obj) {
-					return obj.server === server.id && obj.username === server.username;
+				return favoritesCollection.then(function(fc) {
+					var chain = fc.chain();
+					chain.where(function(obj) {
+						return obj.server === server.id && obj.username === server.username;
+					});
+					chain.simplesort('time');
+					return chain.data();
 				});
-				chain.simplesort('time');
-				return chain.data();
 			});
 		};
 
 		var getFavorite = function(resourceId, graphName) {
 			return _getServer('getFavorite').then(function(server) {
-				var favs = favoritesCollection.where(function(obj) {
-					return obj.server === server.id &&
-						obj.username === server.username &&
-						obj.resourceId === resourceId &&
-						obj.graphName === graphName;
+				return  favoritesCollection.then(function(fc) {
+					var favs = fc.where(function(obj) {
+						return obj.server === server.id &&
+							obj.username === server.username &&
+							obj.resourceId === resourceId &&
+							obj.graphName === graphName;
+					});
+					if (favs.length === 1) {
+						return favs[0];
+					} else if (favs.length > 1) {
+						$log.warn('ResourceService.getFavorite: ' + favs.length + ' resources found for ' + resourceId + '/' + graphName + '.  Returning the first match.');
+						return favs[0];
+					} else {
+						return undefined;
+					}
 				});
-				if (favs.length === 1) {
-					return favs[0];
-				} else if (favs.length > 1) {
-					$log.warn('ResourceService.getFavorite: ' + favs.length + ' resources found for ' + resourceId + '/' + graphName + '.  Returning the first match.');
-					return favs[0];
-				} else {
-					return undefined;
-				}
 			});
 		};
 
@@ -386,26 +384,32 @@
 					isFavorite: true,
 					time: new Date().getTime(),
 				};
-				favoritesCollection.insert(favorite);
-				return favorite;
+				return favoritesCollection.then(function(fc) {
+					fc.insert(favorite);
+					return favorite;
+				});
 			});
 		};
 
 		var removeFavorite = function(resourceId, graphName) {
 			return _getServer('removeFavorite').then(function(server) {
-				return favoritesCollection.removeWhere(function(obj) {
-						return obj.server === server.id &&
-							obj.username === server.username &&
-							obj.resourceId === resourceId &&
-							obj.graphName === graphName;
-					});
+				return favoritesCollection.then(function(fc) {
+					return fc.removeWhere(function(obj) {
+							return obj.server === server.id &&
+								obj.username === server.username &&
+								obj.resourceId === resourceId &&
+								obj.graphName === graphName;
+						});
+				});
 			});
 		};
 
 		util.onServerRemoved(function(server) {
 			$log.debug('ResourceService.onServerRemoved: cleaning up favorites for server ' + server.name);
-			return favoritesCollection.removeWhere(function(obj) {
-				return obj.server === server.id && obj.username === server.username;
+			return favoritesCollection.then(function(fc) {
+				return fc.removeWhere(function(obj) {
+					return obj.server === server.id && obj.username === server.username;
+				});
 			});
 		});
 

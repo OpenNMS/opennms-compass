@@ -7,14 +7,16 @@
 		'ionic',
 		'lokijs',
 		'uuid4',
-	]).factory('db', function($rootScope, $log, $window, Loki, uuid4) {
+	]).factory('db', function($q, $rootScope, $log, $window, $ionicPlatform, Loki, uuid4) {
 		$log.info('DB: Initializing.');
 
 		var dbs = {};
 
-		var getDb = function(dbname, options) {
+		var getDb = function(dbname) {
 			if (!dbs[dbname]) {
-				dbs[dbname] = new Loki(dbname, {
+				var deferred = $q.defer();
+				dbs[dbname] = deferred.promise;
+				var db = new Loki(dbname, {
 					autosave: true,
 					autosaveInterval: 5000,
 					autoload: true,
@@ -22,6 +24,7 @@
 						$rootScope.$eval(function() {
 							$log.info('Db.getDb: Database "' + dbname + '" autoloaded.');
 							$rootScope.$broadcast('opennms.db.loaded');
+							deferred.resolve(db);
 						});
 					},
 					adapter: new $window.jsonSyncAdapter({
@@ -33,8 +36,19 @@
 			return dbs[dbname];
 		};
 
+		var getCollection = function(dbname, collectionName, options) {
+			return getDb(dbname).then(function(db) {
+				var collection = db.getCollection(collectionName);
+				if (!collection) {
+					collection = db.addCollection(collectionName, options);
+				}
+				return collection;
+			});
+		};
+
 		return {
 			get: getDb,
+			collection: getCollection,
 		};
 	});
 

@@ -15,9 +15,9 @@ JSONSyncAdapterError.prototype = new Error();
 
 function JSONSyncAdapter(options) {
   'use strict';
+  console.log('LokiJS JSONSyncAdapter initializing.');
   window.plugins.JSONStorage.setDefaultBackend('local');
   this.options = options;
-  console.log('LokiJS JSONSyncAdapter initializing.');
 }
 
 JSONSyncAdapter.prototype.getName = function(name) {
@@ -61,5 +61,4 @@ JSONSyncAdapter.prototype.loadDatabase = function (name, callback) {
   });
 };
 
-console.log('hey');
 window.jsonSyncAdapter = JSONSyncAdapter;

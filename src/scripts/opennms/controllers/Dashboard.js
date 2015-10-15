@@ -374,25 +374,29 @@
 		};
 
 		$scope.showSelectServer = function($event) {
-			Servers.all().then(function(servers) {
-				$scope.serverPopover.scope.servers = servers;
-				return $scope.serverPopover.show($event);
+			return Servers.all().then(function(servers) {
+				return $scope.serverPopover.then(function(popover) {
+					popover.scope.servers = servers;
+					return popover.show($event);
+				});
 			});
 		};
 
 		$scope.hideSelectServer = function() {
-			$scope.serverPopover.hide();
+			return $scope.serverPopover.then(function(popover) {
+				return popover.hide();
+			});
 		};
 
-		$ionicPopover.fromTemplateUrl('templates/server-popover.html', {
+		$scope.serverPopover = $ionicPopover.fromTemplateUrl('templates/server-popover.html', {
 			scope: $scope
 		}).then(function(popover) {
-			$scope.serverPopover = popover;
 			popover.scope.selectServer = function(server) {
 				$ionicLoading.show({templateUrl: 'templates/loading.html', duration: 5000});
 				popover.hide();
 				Servers.setDefault(server);
 			};
+			return popover;
 		});
 
 		$scope.util = util;
@@ -436,8 +440,11 @@
 			outageDonut = undefined;
 			alarmDonut.destroy();
 			alarmDonut = undefined;
-			$scope.serverPopover.remove();
-			delete $scope.serverPopover;
+			$scope.serverPopover.then(function(popover) {
+				popover.remove();
+			}).finally(function() {
+				delete $scope.serverPopover;
+			});
 		});
 
 		$scope.$on('$ionicView.beforeEnter', function(ev, info) {

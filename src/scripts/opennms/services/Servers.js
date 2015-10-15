@@ -13,9 +13,8 @@
 		'uuid4',
 		'opennms.services.DB',
 		'opennms.services.Settings',
-		'opennms.services.Storage',
 		'opennms.services.Util',
-	]).factory('Servers', function($q, $rootScope, $interval, $log, $timeout, uuid4, db, Settings, StorageService, UtilEventBroadcaster, UtilEventHandler) {
+	]).factory('Servers', function($q, $rootScope, $interval, $log, $timeout, uuid4, db, Settings, UtilEventBroadcaster, UtilEventHandler) {
 		$log.info('Servers: Initializing.');
 
 		var ready = $q.defer();
@@ -23,13 +22,7 @@
 		var servers = [];
 		var defaultServer;
 
-		var serversDb = db.get('servers');
-		var serversCollection = serversDb.getCollection('servers');
-		if (!serversCollection) {
-			serversCollection = serversDb.addCollection('servers', {
-				transactional: true,
-			});
-		}
+		var serversCollection = db.collection('servers', 'servers', { transactional: true });
 
 		var isReady = function() {
 			var deferred = $q.defer();
@@ -93,9 +86,11 @@
 		};
 
 		var fetchServerNames = function() {
-			return $q.when(serversCollection.chain().simplesort('name').data().map(function(obj) {
-				return obj.name;
-			}));
+			return serversCollection.then(function(sc) {
+				return sc.chain().simplesort('name').data().map(function(obj) {
+					return obj.name;
+				});
+			});
 		};
 
 		var _toServer = function(server) {
@@ -118,17 +113,19 @@
 				server.id = uuid4.generate();
 			}
 
-			var existing = serversCollection.findObject({'id': server.id});
-			if (existing) {
-				server = _toServer(angular.extend(existing, server));
-				serversCollection.update(server);
-			} else {
-				server = _toServer(server);
-				serversCollection.insert(server);
-			}
+			return serversCollection.then(function(sc) {
+				var existing = sc.findObject({'id': server.id});
+				if (existing) {
+					server = _toServer(angular.extend(existing, server));
+					sc.update(server);
+				} else {
+					server = _toServer(server);
+					sc.insert(server);
+				}
 
-			checkServersUpdated();
-			return $q.when(_toServer(server));
+				checkServersUpdated();
+				return _toServer(server);
+			});
 		};
 
 		var init = function() {
@@ -170,20 +167,26 @@
 
 		var getServerById = function(id) {
 			return isReady().then(function() {
-				return _toServer(serversCollection.findObject({id: id}));
+				return serversCollection.then(function(sc) {
+					return _toServer(sc.findObject({id: id}));
+				});
 			});
 		};
 
 		var getServer = function(name) {
 			return isReady().then(function() {
-				return _toServer(serversCollection.findObject({name: name}));
+				return serversCollection.then(function(sc) {
+					return _toServer(sc.findObject({name: name}));
+				});
 			});
 		};
 
 		var getServers = function() {
 			return isReady().then(function() {
-				return serversCollection.chain().simplesort('name').data().map(function(server) {
-					return _toServer(server);
+				return serversCollection.then(function(sc) {
+					return sc.chain().simplesort('name').data().map(function(server) {
+						return _toServer(server);
+					});
 				});
 			});
 		};
@@ -197,19 +200,21 @@
 		var getDefaultServer = function() {
 			return isReady().then(function() {
 				return Settings.getDefaultServerId().then(function(serverId) {
-					var server = serversCollection.findObject({'id':serverId});
-					if (server) {
-						return _toServer(server);
-					} else {
-						return getServers().then(function(servers) {
-							if (servers.length > 0) {
-								Settings.setDefaultServerId(servers[0].id);
-								return _toServer(servers[0]);
-							} else {
-								return undefined;
-							}
-						});
-					}
+					return serversCollection.then(function(sc) {
+						var server = sc.findObject({'id':serverId});
+						if (server) {
+							return _toServer(server);
+						} else {
+							return getServers().then(function(servers) {
+								if (servers.length > 0) {
+									Settings.setDefaultServerId(servers[0].id);
+									return _toServer(servers[0]);
+								} else {
+									return undefined;
+								}
+							});
+						}
+					});
 				});
 			});
 		};
@@ -232,19 +237,21 @@
 
 		var removeServer = function(server) {
 			return isReady().then(function() {
-				serversCollection.removeWhere({'id':server.id});
-				return Settings.getDefaultServerId().then(function(defaultServerId) {
-					if (defaultServerId === server.id) {
-						return Settings.setDefaultServerId(undefined).then(function() {
+				return serversCollection.then(function(sc) {
+					sc.removeWhere({'id':server.id});
+					return Settings.getDefaultServerId().then(function(defaultServerId) {
+						if (defaultServerId === server.id) {
+							return Settings.setDefaultServerId(undefined).then(function() {
+								UtilEventBroadcaster.serverRemoved(server);
+								checkServersUpdated(true);
+								return server;
+							});
+						} else {
 							UtilEventBroadcaster.serverRemoved(server);
 							checkServersUpdated(true);
 							return server;
-						});
-					} else {
-						UtilEventBroadcaster.serverRemoved(server);
-						checkServersUpdated(true);
-						return server;
-					}
+						}
+					});
 				});
 			});
 		};

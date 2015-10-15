@@ -112,32 +112,22 @@
 		updateTheme();
 		util.onInfoUpdated(updateTheme);
 
-		Servers.all().then(function(servers) {
-			$log.debug('main: servers=' + angular.toJson(servers));
-			var defaultServer = servers.filter(function(s) {
-				return s.isDefault;
-			});
-			if (defaultServer.length === 0) {
-				$log.debug('main: server found, but not set to default.');
-				return Servers.setDefault(servers[0]).then(function() {
-					util.hideSplashscreen();
-					return true;
-				}, function(err) {
-					$log.error('main: something went wrong setting the default server: ' + angular.toJson(err));
-					Modals.settings(true);
-					$timeout(function() {
-						util.hideSplashscreen();
-					}, 500);
-					return false;
-				});
+		Servers.getDefault().then(function(server) {
+			$log.debug('main: default server: ' + (server? server.name : 'unknown'));
+			if (server && server.name) {
+				return true;
 			} else {
-				$log.debug('main: no default server');
 				Modals.settings(true);
-				$timeout(function() {
-					util.hideSplashscreen();
-				}, 500);
 				return false;
 			}
+		}, function(err) {
+			$log.error('Failed to get default server: ' + angular.toJson(err));
+			Modals.settings(true);
+			return false;
+		}).finally(function() {
+			$timeout(function() {
+				util.hideSplashscreen();
+			}, 1000);
 		});
 
 		/*
