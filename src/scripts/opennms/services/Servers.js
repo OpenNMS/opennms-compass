@@ -116,7 +116,7 @@
 			return serversCollection.then(function(sc) {
 				var existing = sc.findObject({'id': server.id});
 				if (existing) {
-					server = _toServer(angular.extend(existing, server));
+					server = _toServer(angular.extend({}, existing, server));
 					sc.update(server);
 				} else {
 					server = _toServer(server);
@@ -238,7 +238,16 @@
 		var removeServer = function(server) {
 			return isReady().then(function() {
 				return serversCollection.then(function(sc) {
-					sc.removeWhere({'id':server.id});
+					try {
+						sc.removeWhere({'id':server.id});
+					} catch (error) {
+						if (error && error.message && error.message.indexOf('rematerialize is not a function') >= 0) {
+							// known issue, ignore
+							$log.debug('Known LokiJS error encountered.  Ignoring.');
+						} else {
+							return $q.reject(error);
+						}
+					}
 					return Settings.getDefaultServerId().then(function(defaultServerId) {
 						if (defaultServerId === server.id) {
 							return Settings.setDefaultServerId(undefined).then(function() {
