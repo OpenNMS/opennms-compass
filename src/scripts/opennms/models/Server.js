@@ -16,6 +16,10 @@ function Server(server) {
     server = {};
   }
 
+  /* LokiJS Metadata */
+  self.meta = server.meta;
+  self.$loki = server.$loki;
+
   /**
    * @description
    * @ngdoc property
