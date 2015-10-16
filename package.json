@@ -83,7 +83,7 @@
     },
     {
       "locator": "https://github.com/OpenNMS/cordova-plugin-storage.git",
-      "id": "cordova-plugin-storage"
+      "id": "cordova-plugin-json-storage"
     },
     {
       "locator": "https://github.com/RangerRick/cordova-HTTP.git",
