@@ -122,8 +122,9 @@
 			}
 		}, function(err) {
 			$log.error('Failed to get default server: ' + angular.toJson(err));
-			Modals.settings(true);
-			return false;
+			return Modals.settings(true).then(function() {
+				return false;
+			});
 		}).finally(function() {
 			$timeout(function() {
 				util.hideSplashscreen();

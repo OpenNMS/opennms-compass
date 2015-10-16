@@ -47,8 +47,6 @@
 			scope: $scope.$new(),
 			animation: 'slide-in-up'
 		}).then(function(modal) {
-			$scope.outageModal.resolve(modal);
-
 			var timer;
 
 			var getOutages = function(outage) {
@@ -129,14 +127,13 @@
 				}
 			});
 			modal.scope.$on('modal.hidden', stopRefresh);
+			$scope.outageModal.resolve(modal);
 		});
 
 		$ionicModal.fromTemplateUrl('templates/alarm-detail.html', {
 			scope: $scope.$new(),
 			animation: 'slide-in-up'
 		}).then(function(modal) {
-			$scope.alarmModal.resolve(modal);
-
 			var timer;
 			modal.scope.updateAlarmData = function() {
 				if (modal.scope.alarm && modal.scope.alarm.id) {
@@ -234,20 +231,23 @@
 				}
 			});
 			modal.scope.$on('modal.hidden', stopRefresh);
+			$scope.alarmModal.resolve(modal);
 		});
 
 		$ionicModal.fromTemplateUrl('templates/settings.html', {
 			scope: $scope.$new(),
 			animation: 'slide-in-up'
 		}).then(function(modal) {
-			$scope.settingsModal.resolve(modal);
-			modal.scope.show = function() {
+			modal.scope.show = function(launchAdd) {
+				//$scope.launchAddServer = launchAdd;
+				modal.scope.launchAddServer = launchAdd;
 				Analytics.trackView('settings');
 				modal.show();
 			};
 			modal.scope.hide = function() {
 				modal.hide();
 			};
+			$scope.settingsModal.resolve(modal);
 		});
 
 		$scope.$on('$destroy', function() {
@@ -278,8 +278,7 @@
 			},
 			settings: function(launchAdd) {
 				$scope.settingsModal.promise.then(function(modal) {
-					modal.scope.launchAdd = !!launchAdd;
-					modal.scope.show();
+					modal.scope.show(launchAdd);
 				});
 			},
 		};

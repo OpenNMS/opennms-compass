@@ -72,7 +72,6 @@
 	})
 	.controller('SettingsCtrl', function($scope, $log, $timeout, $window, $filter, $ionicListDelegate, $ionicPlatform, $ionicPopup, ServerModal, AvailabilityService, Capabilities, Errors, IAP, Info, Servers, Settings, util) {
 		$log.info('Settings initializing.');
-
 		$scope.util = util;
 
 		$scope.addServer = function() {
@@ -96,7 +95,7 @@
 
 		$scope.selectServer = function(server) {
 			$ionicListDelegate.$getByHandle('server-list').closeOptionButtons();
-			console.log('set default: ' + server.name);
+			$log.debug('SettingsCtrl.selectServer: ' + server.name);
 			Servers.setDefault(server);
 		};
 
@@ -107,13 +106,16 @@
 		};
 
 		var init = function() {
+			$log.debug('SettingsCtrl.init(): ' + $scope.launchAddServer);
 			initDefaultServer();
 			Servers.all().then(function(servers) {
-				$scope.servers = servers;
-				if ($scope.launchAdd) {
-					$scope.launchAdd = false;
-					$scope.addServer();
+				if ($scope.launchAddServer) {
+					$scope.launchAddServer = false;
+					if (servers.length === 0) {
+						$scope.addServer();
+					}
 				}
+				$scope.servers = servers;
 			});
 			Settings.get().then(function(settings) {
 				$scope.settings = settings;
@@ -166,6 +168,10 @@
 
 		$scope.clearErrors = function() {
 			Errors.reset();
+		};
+
+		$scope.isDefaultServer = function(server) {
+			return server && $scope.defaultServer && server.id === $scope.defaultServer.id;
 		};
 
 		$ionicPlatform.ready(function() {
@@ -285,7 +291,7 @@
 		});
 		util.onInfoUpdated(init);
 
-		$scope.$on('$ionicView.beforeEnter', init);
+		$scope.$on('modal.shown', init);
 	});
 
 }());
