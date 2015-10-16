@@ -109,7 +109,7 @@ var minifyMe = function() {
 gulp.task('prepare', ['process', 'lint']);
 
 gulp.task('minify', ['prepare'], function() {
-	var prep = prepareMe();
+	var prep = minifyMe();
 
 	if (fs.existsSync('platforms/android/assets/www')) {
 		prep = prep.pipe(gulp.dest('platforms/android/assets/www'));
