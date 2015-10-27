@@ -11,40 +11,36 @@
 	<ion-header-bar class="bar bar-header bar-subheader">
 		<h3 class="title compass" ng-click="showSelectServer($event)"><span ng-if="serverName">{{serverName}} <i class="icon ion-arrow-down-b"></i></span></h3>
 	</ion-header-bar>
-	<ion-content padding="false" scroll="true" class="has-header">
+	<ion-content padding="false" scroll="true" class="has-header" overflow-scroll="false">
 		<ion-refresher pulling-text="Pull to Refresh..." on-refresh="refreshData()"></ion-refresher>
 		<ion-slide-box on-slide-changed="refreshDonutSlide(index)" show-pager="false" delegate-handle="donut-slide-box" ng-if="!landscape">
-			<ion-slide class="outages">
+			<ion-slide class="outages" ng-style="{width: donutSize, height: donutSize}">
 				<i id="outage-arrow" class="icon ion-chevron-right right-arrow compass" ng-click="goToDonutSlide(1)" ng-class="donutClass('outages')"></i>
 				<h3 ng-if="e.hasError('outage-chart')" class="item item-text-wrap title error">Error: Unable to retrieve outages.<span ng-if="e.get('outage-chart').permissionDenied()"><br/>Permission denied.</span></h3>
-				<div id="outages-portrait-container" ng-class="donutClass('outages')">
-					<div id="outages-portrait" ng-click="modals.outages()"></div>
-				</div>
+				<flot dataset="donuts.outages.data" options="donuts.outages.options" ng-click="modals.outages()"></flot>
+				<div class="donut-title"></div>
 			</ion-slide>
-			<ion-slide class="alarms">
+			<ion-slide class="alarms" ng-style="{width: donutSize, height: donutSize}">
 				<i id="alarm-arrow" class="icon ion-chevron-left left-arrow compass" ng-click="goToDonutSlide(0)" ng-class="donutClass('alarms')"></i>
 				<h3 ng-if="e.hasError('alarm-chart')" class="item item-text-wrap title error">Error: Unable to retrieve alarm data.<span ng-if="e.get('alarm-chart').permissionDenied()"><br/>Permission denied.</span></h3>
-				<div id="alarms-portrait-container" ng-class="donutClass('alarms')">
-					<div id="alarms-portrait" ui-sref="alarms" nav-direction="back"></div>
-				</div>
+				<flot dataset="donuts.alarms.data" options="donuts.alarms.options"></flot>
+				<div class="donut-title"></div>
 			</ion-slide>
 		</ion-slide-box>
 		<div class="row" ng-if="landscape">
-			<div class="outages col col-50">
+			<div class="outages col col-50" ng-style="{width: donutSize, height: donutSize}">
 				<h3 ng-if="e.hasError('outage-chart')" class="item item-text-wrap title error">Error: Unable to retrieve outages.<span ng-if="e.get('outage-chart').permissionDenied()"><br/>Permission denied.</span></h3>
-				<div id="outages-landscape-container" ng-class="donutClass('outages')">
-					<div id="outages-landscape" ng-click="modals.outages()"></div>
-				</div>
+				<flot dataset="donuts.outages.data" options="donuts.outages.options" ng-click="modals.outages()"></flot>
+				<div class="donut-title"></div>
 			</div>
-			<div class="alarms col col-50">
+			<div class="alarms col col-50" ng-style="{width: donutSize, height: donutSize}">
 				<h3 ng-if="e.hasError('alarm-chart')" class="item item-text-wrap title error">Error: Unable to retrieve alarm data.<span ng-if="e.get('alarm-chart').permissionDenied()"><br/>Permission denied.</span></h3>
-				<div id="alarms-landscape-container" ng-class="donutClass('alarms')">
-					<div id="alarms-landscape" ui-sref="alarms" nav-direction="back"></div>
-				</div>
+				<flot dataset="donuts.alarms.data" options="donuts.alarms.options"></flot>
+				<div class="donut-title"></div>
 			</div>
 		</div>
 		<span ng-if="favoriteGraphs &amp;&amp; favoriteGraphs.length > 0" class="graphs">
-			<div class="spacer"></div>
+			<!--<div class="spacer"></div>-->
 			<div class="header compass-bg"><h3>Favorited Graphs</h3></div>
 			<ion-slide-box on-slide-changed="refreshGraphSlide(index)" delegate-handle="graph-slide-box" show-pager="false">
 				<ion-slide ng-repeat="favorite in favoriteGraphs track by favorite.id">

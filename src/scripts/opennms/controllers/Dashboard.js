@@ -23,6 +23,7 @@
 
 	angular.module('opennms.controllers.Dashboard', [
 		'ionic',
+		'angular-flot',
 		'ngResize',
 		'rt.debounce',
 		'opennms.services.Alarms',
@@ -39,6 +40,8 @@
 	])
 	.controller('DashboardCtrl', function($q, $rootScope, $scope, $injector, $interval, $log, $timeout, $state, $document, $window, $ionicLoading, $ionicPopup, $ionicPopover, $ionicSlideBoxDelegate, debounce, resize, AlarmService, AvailabilityService, DonutWidget, Errors, Info, Modals, OutageService, ResourceService, Servers, Settings, util) {
 		$log.info('DashboardCtrl: Initializing.');
+
+		$scope.donuts = {};
 
 		var updateArrows = function(height) {
 			var arrowOffset = (Math.round(height * 0.5) - 50);
@@ -78,16 +81,36 @@
 			}
 		});
 
+
+		$scope.$on('resize', function(ev, info) {
+			info.landscape = info.width > info.height;
+			onWidget(info);
+		});
+
 		var onWidget = function(info) {
-			//$log.debug('onDirty: ' + angular.toJson(info));
 			$scope.$broadcast('scroll.refreshComplete');
 			$rootScope.landscape = info.landscape;
-			$scope.landscape     = info.landscape;
-			$scope.width         = info.width;
-			$scope.height        = info.height;
+			$rootScope.width     = info.width;
+			$rootScope.height    = info.height;
+
+			if (info.landscape) {
+				$scope.donutSize = Math.round(info.width / 2.0);
+			} else {
+				$scope.donutSize = info.width;
+			}
 
 			updateArrows(info.height);
+			$log.debug('Dashboard.onWidget: ' + angular.toJson(info));
 		};
+
+		$rootScope.width  = angular.element($window).width();
+		$rootScope.height = angular.element($window).height();
+		$rootScope.landscape = $rootScope.width > $rootScope.height;
+		onWidget({
+			width: $rootScope.width,
+			height: $rootScope.height,
+			landscape: $rootScope.landscape,
+		});
 
 		outageDonut.onDirty = onWidget;
 		alarmDonut.onDirty = onWidget;
@@ -175,15 +198,14 @@
 					}
 					$scope.graphs = graphDefs;
 					$scope.favoriteGraphs = favs;
-
-					$timeout(function() {
-						var delegate = $ionicSlideBoxDelegate.$getByHandle('graph-slide-box');
-						delegate.slide($scope.currentGraphSlide);
-						delegate.update();
-					});
 				});
 			}).finally(function() {
 				$scope.$broadcast('scroll.refreshComplete');
+				$timeout(function() {
+					var delegate = $ionicSlideBoxDelegate.$getByHandle('graph-slide-box');
+					delegate.slide($scope.currentGraphSlide);
+					delegate.update();
+				});
 			});
 		};
 
@@ -209,6 +231,63 @@
 			$scope.availability = undefined;
 		};
 
+		var labelFormatter = function(label, series) {
+			//return "<div style='text-align:center; text-shadow: -1px -1px black, 1px -1px black, 1px 1px black, -1px 1px black; padding:2px; color:white;'>" + label + '<br/>' + series.data[0][1] + "</div>";
+			return "<div class='labelContents'><div class='labelText'>" + label + "</div><div class='valueText'>" + series.data[0][1] + "</div></div>";
+		};
+
+		var flotOptions = {
+			canvas: true,
+			series: {
+				pie: {
+					show: true,
+					radius: 0.9,
+					innerRadius: 0.4,
+					combine: {
+						threshold: 0.05,
+					},
+					stroke: {
+						color: 'black',
+						width: 1,
+					},
+					label: {
+						show: true,
+						radius: 0.65,
+						formatter: labelFormatter,
+					}
+				}
+			},
+			legend: {
+				show: false,
+			},
+		};
+
+		var updateTitles = function() {
+			var updateTitle = function(type) {
+				$log.debug('updateTitles(' + type + ')');
+				var div = $('.' + type + ' .donut-title');
+
+				if ($scope.donuts) {
+					if ($scope.donuts[type]) {
+						var total = $scope.donuts[type].total;
+						$log.debug(type + ' total: ' + total);
+						if (total === undefined) {
+							div.hide();
+							div.text('');
+						} else {
+							var html = '<div class="row total"><div class="col">' + total + '</div></div>' +
+								'<div class="row type"><div class="col">' + type + '</div></div>';
+							div.html(html);
+							div.show();
+						}
+					}
+				}
+			};
+
+			updateTitle('outages');
+			updateTitle('alarms');
+		};
+
 		var refreshOutages = function() {
 			return OutageService.get().then(function(results) {
 				var data = {}, outages = [], outage, service, total = 0;
@@ -228,12 +307,12 @@
 					if (data.hasOwnProperty(service) && data[service]) {
 						outages.push({
 							'label': service,
-							'value': data[service]
+							'data': data[service],
 						});
 					}
 				}
 				outages.sort(function(a, b) {
-					var ret = b.value - a.value;
+					var ret = b.data - a.data;
 					if (ret === 0) {
 						return a.label.localeCompare(b.label);
 					} else {
@@ -245,13 +324,18 @@
 				}
 
 				Errors.clear('outage-chart');
+				$scope.donuts.outages = {
+					total: total,
+					data: outages,
+					options: angular.extend({}, flotOptions),
+				};
 				hideDonut('outages', false);
-				outageDonut.setData(outages);
-				outageDonut.setTitle(total);
+				updateTitles();
 				return outages;
 			}, function(err) {
 				Errors.set('outage-chart', err);
 				resetOutages();
+				updateTitles();
 				return $q.reject(err);
 			}).finally(function() {
 				$scope.$broadcast('scroll.refreshComplete');
@@ -261,8 +345,10 @@
 
 		var resetOutages = function() {
 			hideDonut('outages', true);
-			outageDonut.setData([]);
-			outageDonut.setTitle(0);
+			if ($scope.donuts && $scope.donuts.outages && $scope.donuts.outages.series) {
+				$scope.donuts.outages.total = undefined;
+				$scope.donuts.outages.series.pie.show = false;
+			}
 		};
 
 		var refreshAlarms = function() {
@@ -274,19 +360,24 @@
 					total += severity.count;
 					severities.push({
 						'label': severity.severity.capitalize(),
-						'value': severity.count,
+						'data': severity.count,
 						'color': util.color(severity.severity)
 					});
 				}
 
 				Errors.clear('alarm-chart');
+				$scope.donuts.alarms = {
+					total: total,
+					data: severities,
+					options: angular.extend({}, flotOptions),
+				};
 				hideDonut('alarms', false);
-				alarmDonut.setData(severities);
-				alarmDonut.setTitle(total);
+				updateTitles();
 				return severities;
 			}, function(err) {
 				Errors.set('alarm-chart', err);
 				resetAlarms();
+				updateTitles();
 				return $q.reject(err);
 			}).finally(function() {
 				$scope.$broadcast('scroll.refreshComplete');
@@ -296,8 +387,10 @@
 
 		var resetAlarms = function() {
 			hideDonut('alarms', true);
-			alarmDonut.setData([]);
-			alarmDonut.setTitle(0);
+			if ($scope.donuts && $scope.donuts.alarms && $scope.donuts.alarms.series) {
+				$scope.donuts.alarms.total = undefined;
+				$scope.donuts.alarms.series.pie.show = false;
+			}
 		};
 
 		var refreshing = false;
@@ -351,7 +444,12 @@
 				okType: 'button-compass',
 			}).then(function(confirmed) {
 				if (confirmed) {
-					return ResourceService.unfavorite(favorite.resourceId, favorite.graphName).then(function() {
+					var favoriteIndex = $scope.favoriteGraphs.indexOf(favorite);
+					if (favoriteIndex >= 0) {
+						$scope.favoriteGraphs = [];
+						$ionicSlideBoxDelegate.$getByHandle('graph-slide-box').update();
+					}
+					return ResourceService.unfavorite(favorite.resourceId, favorite.graphName).finally(function() {
 						return refreshFavorites();
 					});
 				} else {
@@ -366,7 +464,7 @@
 
 		$scope.shouldRenderGraph = function(index) {
 			//return $scope.currentGraphSlide === index;
-			return ($scope.currentGraphSlide >= (index - 1) && $scope.currentGraphSlide <= (index + 1));
+			return ($scope.currentGraphSlide >= (index - 2) && $scope.currentGraphSlide <= (index + 2));
 		};
 
 		$scope.goToDonutSlide = function(slide) {
@@ -405,7 +503,6 @@
 		$scope.errors = [];
 		$scope.currentDonutSlide = 0;
 		$scope.currentGraphSlide = 0;
-		$scope.landscape = true;
 		Servers.getDefault().then(function(server) {
 			$scope.serverName = (server && server.name)? server.name : undefined;
 		});

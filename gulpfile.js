@@ -97,6 +97,7 @@ var minifyMe = function() {
 			backshift: [uglify({mangle:false}), rev()],
 			charts: [uglify(), rev()],
 			db: [uglify(), rev()],
+			flot: [ngAnnotate(), uglify(), rev()],
 			ipv6: [uglify(), rev()],
 			maps: [uglify(), rev()],
 			models: [uglify(), rev()],

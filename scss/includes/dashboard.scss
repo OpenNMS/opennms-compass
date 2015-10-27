@@ -4,7 +4,22 @@ $arrow-top-offset: 60px;
 $arrow-touch-padding: 20px;
 $arrow-edge-padding: 6px;
 
+$shadow-color: rgba(0,0,0,0.3);
+
 .dashboard {
+	.donut-title {
+		z-index: 1000;
+		position: absolute;
+		margin-top: -($font-size-large * 1.6);
+		font-size: $font-size-large * 2;
+		top:50%;
+		left:0;
+		width: 100%;
+		color: black;
+		.type {
+			font-size: $font-size-base;
+		}
+	}
 	.nav-bar-title img {
 		vertical-align: baseline;
 		margin: 4px;
@@ -33,6 +48,16 @@ $arrow-edge-padding: 6px;
 	}
 	.outages {
 		text-align: center;
+	}
+	.labelContents {
+		text-align: center;
+		padding: 2px;
+		color: white;
+		text-shadow:
+			-1px -1px $shadow-color,
+			1px -1px $shadow-color,
+			1px 1px $shadow-color,
+			-1px 1px $shadow-color;
 	}
 	.availability {
 		.header {

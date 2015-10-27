@@ -36,7 +36,7 @@
 			templateUrl: 'templates/onms-graph.html',
 			link: function($scope, element, attrs) {
 				$scope.width = getWidth();
-				$scope.height = getHeight();
+				$scope.height = getWidth();
 				if ($scope.display === undefined) {
 					$scope.display = true;
 				}
@@ -77,6 +77,8 @@
 					if ($scope.graph && $scope.graph._last) {
 						if ($scope.graph._last.ds         === $scope.ds &&
 							$scope.graph._last.graphModel === $scope.graphModel &&
+							$scope.graph._last.width      === $scope.width &&
+							$scope.graph._last.height     === $scope.height &&
 							angular.equals($scope.graph._last.range, $scope.range)) {
 							$log.debug('Graph is unchanged since last render.  Skipping.');
 							return;
@@ -85,29 +87,42 @@
 
 					var onmsGraphElement = angular.element(element).find('.graph').first();
 					onmsGraphElement.width($scope.width);
-					onmsGraphElement.height($scope.height);
+					onmsGraphElement.height($scope.width);
 
-					var graph = new Backshift.Graph.DC({
+					//var graph = new Backshift.Graph.DC({
+					var graph = new Backshift.Graph.Flot({
 						element: onmsGraphElement[0],
 						start: $scope.range.start.getTime(),
 						end: $scope.range.end.getTime(),
 						width: $scope.width,
-						height: $scope.height,
+						height: $scope.width,
 						interactive: false,
 						dataSource: $scope.ds,
 						series: $scope.graphModel.series,
-						step: true,
+						printStatements: $scope.graphModel.printStatements,
 						title: $scope.graphModel.title,
 						verticalLabel: $scope.graphModel.verticalLabel,
 						exportIconSizeRatio: 0,
 						beginOnRender: false,
 						zoom: false,
+						xaxisFont: {
+							size: 10,
+							family: 'sans-serif',
+						},
+						yaxisFont: {
+							size: 10,
+							family: 'sans-serif',
+						},
+						legendFontSize: 6,
+						ticks: 4,
 					});
 
 					graph._last = {
 						ds: $scope.ds,
 						graphModel: $scope.graphModel,
-						range: angular.copy($scope.range)
+						range: angular.copy($scope.range),
+						width: $scope.width,
+						height: $scope.width,
 					};
 
 					if ($scope.graph && $scope.graph.destroy) {
@@ -115,6 +130,8 @@
 						delete $scope.graph._last.ds;
 						delete $scope.graph._last.graphModel;
 						delete $scope.graph._last.range;
+						delete $scope.graph._last.width;
+						delete $scope.graph._last.height;
 						delete $scope.graph._last;
 					}
 
@@ -167,15 +184,10 @@
 				$scope.$watchGroup(['width', 'height'], $scope.redraw);
 				$scope.$watch('display', $scope.refresh);
 
-				var rotationListener = function(ev) {
-					if ($scope.graph) {
-						$scope.$evalAsync(function() {
-							$scope.width = getWidth();
-							$scope.height = getHeight();
-						});
-					}
-				};
-				$window.addEventListener('orientationchange', rotationListener, false);
+				$scope.$on('resize', function(ev, info) {
+					$scope.width = info.width;
+					$scope.height = info.height;
+				});
 
 				$scope.$watch('graphDef', function(graphDef) {
 					if (graphDef && $scope.resourceId) {
@@ -208,7 +220,7 @@
 				});
 
 				$scope.$watch('ds', function() {
-					$scope.createGraph();
+					$scope.redraw();
 				});
 
 				var cleanUp = function() {
@@ -225,7 +237,6 @@
 						delete $scope.graph._last;
 						$scope.graph = undefined;
 					}
-					$window.removeEventListener('orientationchange', rotationListener, false);
 				};
 
 				$scope.$on('$destroy', cleanUp);

@@ -98,7 +98,16 @@
 			toolbarposition:'top'
 		});
 	})
-	.run(function($rootScope, $log, $timeout, $window, $ionicPlatform, $ionicPopup, Ads, IAP, Info, /*IonicService, */ Modals, Servers, Settings, util) {
+	.run(function($rootScope, $http, $log, $templateCache, $timeout, $window, $ionicPlatform, $ionicPopup, Ads, IAP, Info, /*IonicService, */ Modals, Servers, Settings, util) {
+
+		var templates = ['alarm-detail', 'alarm-filter', 'alarms', 'dashboard', 'edit-server', 'loading', 'menu',
+			'node-detail', 'node-resource', 'node-resources', 'nodes', 'onms-graph', 'outages', 'server-popover', 'settings'];
+
+		for (var t=0, len=templates.length; t < len; t++) {
+			$log.debug('loading template: ' + templates[t]);
+			$http.get('templates/' + templates[t] + '.html', {cache:$templateCache});
+		}
+
 		var updateTheme = function(info) {
 			if (!info) {
 				info = Info.get();

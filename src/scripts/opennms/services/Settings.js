@@ -9,7 +9,7 @@
 		'opennms.services.BuildConfig',
 		'opennms.services.DB',
 	])
-	.value('default-graph-min-range', 7 * 24 * 60 * 60 * 1000) // 1 week
+	.value('default-graph-min-range', 30 * 24 * 60 * 60 * 1000) // 1 month
 	.value('default-graph-range', 24 * 60 * 60 * 1000) // 1 day
 	.factory('Settings', function($q, $rootScope, $injector, $log, storage, db, uuid4) {
 		var $scope = $rootScope.$new();
