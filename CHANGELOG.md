@@ -1,5 +1,5 @@
 <a name="2.1.0"</a>
-## 2.1.0 (2015-10-16)
+## 2.1.0 (2015-10-27)
 
 
 #### Bug Fixes
@@ -41,7 +41,7 @@
 
 #### Features
 
-* try to use San Francisco font on iOS 9 ([d8c5c845](https://github.com/nicksrandall/kotojs/commit/d8c5c845b86c545ddb14dbd45bcc624dade5b2eb))
+* **android:** use Crosswalk to improve performance on old Android versions ([62e84138](https://github.com/nicksrandall/kotojs/commit/62e841383e9d93b467e3165db922c2509d05d80a))
 * **core:** add support for Ionic Deploy ([e8a16754](https://github.com/nicksrandall/kotojs/commit/e8a1675481cc711aab0c93b58dd896fe0ddf10dd))
 * **dashboard:** show a caret on the server-chooser ([01690c36](https://github.com/nicksrandall/kotojs/commit/01690c3603e2766dac0922e56936e45a17c00709))
 * **favorites:** store favorites in the filesystem ([28905374](https://github.com/nicksrandall/kotojs/commit/289053749da272fe921530cb4ec87c21bf00bdb9))
@@ -50,6 +50,7 @@
   * set a min/max date so we don't overload the graphs ([ab25e340](https://github.com/nicksrandall/kotojs/commit/ab25e340f2d454dbb64f6894bd71be24d007e533))
   * sort favorited graphs by node label and title ([454c6970](https://github.com/nicksrandall/kotojs/commit/454c6970a6fd6ceaecb367b3ec6c398d1e48e52e))
   * working DC-based graphing, with date ranges enabled ([51984f17](https://github.com/nicksrandall/kotojs/commit/51984f1780d19b92721dc01e62b0dfc187761423))
+* **ios:** try to use San Francisco font on iOS 9 ([d8c5c845](https://github.com/nicksrandall/kotojs/commit/d8c5c845b86c545ddb14dbd45bcc624dade5b2eb))
 * **nodes:**
   * make node loading less jarring visually ([b46c46b2](https://github.com/nicksrandall/kotojs/commit/b46c46b287b028b640b1d16ba36ffb64a0395e32))
   * show map of node location if lat/lon is set ([1e66cc58](https://github.com/nicksrandall/kotojs/commit/1e66cc58ca3b29d4bdee073bd54d38f4f500f493))
