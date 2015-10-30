@@ -80,13 +80,13 @@ gulp.task('lint', function() {
 });
 
 gulp.task('watch-bower', function() {
-	gulp.watch([paths.bower], ['process-bower']);
+	return gulp.watch([paths.bower], ['process-bower']);
 });
 gulp.task('watch-sass', function() {
-	gulp.watch([paths.sass], ['sass']);
+	return gulp.watch([paths.sass], ['sass']);
 });
 gulp.task('watch-opennms', function() {
-	gulp.watch([paths.opennms, paths.templates], ['process-src']);
+	return gulp.watch([paths.opennms, paths.templates], ['process-src']);
 });
 gulp.task('watch', ['watch-bower', 'watch-sass', 'watch-opennms']);
 

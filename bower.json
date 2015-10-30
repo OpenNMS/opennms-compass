@@ -39,7 +39,7 @@
     "angular-flot": "~0.0.14",
     "flot-axislabels": "https://github.com/j-white/flot-axislabels.git#master",
     "flot.tooltip": "~0.8.5",
-    "flot-legend": "https://github.com/j-white/flot-legend.git#master"
+    "flot-legend": "https://github.com/RangerRick/flot-legend.git#master"
   },
   "devDependencies": {
     "angular-mocks": "1.4.7"

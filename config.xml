@@ -25,9 +25,9 @@
   <preference name="KeyboardDisplayRequiresUserAction" value="false"/>
   <preference name="MediaPlaybackRequiresUserAction" value="false"/>
   <preference name="SuppressesIncrementalRendering" value="false"/>
-  <preference name="xwalkVersion" value="14+" />
-  <preference name="xwalkCommandLine" value="--disable-pull-to-refresh-effect" />
-  <preference name="xwalkMode" value="embedded" />
+  <preference name="xwalkVersion" value="14+"/>
+  <preference name="xwalkCommandLine" value="--disable-pull-to-refresh-effect"/>
+  <preference name="xwalkMode" value="embedded"/>
   <feature name="Console">
     <param name="ios-package" value="CDVLogger" onload="true"/>
   </feature>
@@ -94,9 +94,6 @@
     <config-file platform="ios" target="*-Info.plist" parent="UISupportedInterfaceOrientations">
       <array>
         <string>UIInterfaceOrientationPortrait</string>
-        <string>UIInterfaceOrientationLandscapeLeft</string>
-        <string>UIInterfaceOrientationPortraitUpsideDown</string>
-        <string>UIInterfaceOrientationLandscapeRight</string>
       </array>
     </config-file>
     <config-file platform="ios" target="*-Info.plist" parent="UISupportedInterfaceOrientations~ipad">

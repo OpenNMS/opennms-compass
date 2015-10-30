@@ -19,16 +19,13 @@
 	/* global ionic: true */
 	/* global d3pie: true */
 	/* global AlarmFilter: true */
-	/* global DonutWidget: true */
 
 	angular.module('opennms.controllers.Dashboard', [
 		'ionic',
 		'angular-flot',
-		'ngResize',
 		'rt.debounce',
 		'opennms.services.Alarms',
 		'opennms.services.Availability',
-		'opennms.services.DonutWidget',
 		'opennms.services.Errors',
 		'opennms.services.Info',
 		'opennms.services.Modals',
@@ -38,7 +35,7 @@
 		'opennms.services.Settings',
 		'opennms.services.Util',
 	])
-	.controller('DashboardCtrl', function($q, $rootScope, $scope, $injector, $interval, $log, $timeout, $state, $document, $window, $ionicLoading, $ionicPopup, $ionicPopover, $ionicSlideBoxDelegate, debounce, resize, AlarmService, AvailabilityService, DonutWidget, Errors, Info, Modals, OutageService, ResourceService, Servers, Settings, util) {
+	.controller('DashboardCtrl', function($q, $rootScope, $scope, $injector, $interval, $log, $timeout, $state, $document, $window, $ionicLoading, $ionicPopup, $ionicPopover, $ionicSlideBoxDelegate, debounce, AlarmService, AvailabilityService, Errors, Info, Modals, OutageService, ResourceService, Servers, Settings, util) {
 		$log.info('DashboardCtrl: Initializing.');
 
 		$scope.donuts = {};
@@ -57,75 +54,26 @@
 			}
 		};
 
-		var outageDonut = new DonutWidget({
-			elementId: 'outages',
-			pieOptions: {
-				footer: {
-					text: 'Outages By Service',
-					location: 'bottom-center',
-					color: 'black',
-				},
-			}
-		});
-		var alarmDonut = new DonutWidget({
-			elementId: 'alarms',
-			pieOptions: {
-				data: {
-					sortOrder: 'none'
-				},
-				footer: {
-					text: 'Pending Problems',
-					location: 'bottom-center',
-					color: 'black',
-				},
-			}
-		});
 
-
-		$scope.$on('resize', function(ev, info) {
-			info.landscape = info.width > info.height;
-			onWidget(info);
-		});
-
-		var onWidget = function(info) {
-			$scope.$broadcast('scroll.refreshComplete');
-			$rootScope.landscape = info.landscape;
-			$rootScope.width     = info.width;
-			$rootScope.height    = info.height;
-
-			if (info.landscape) {
-				$scope.donutSize = Math.round(info.width / 2.0);
+		$scope.$watchGroup(['width', 'height', 'wide'], function(dims) {
+			var width  = dims[0],
+				height = dims[1],
+				wide   = dims[2],
+				oldDonutSize = $scope.donutSize;
+			if (wide) {
+				$scope.donutSize = Math.round(Math.min(width, height) / 2.0);
+				//$scope.donutSize = Math.round(width / 2.0);
 			} else {
-				$scope.donutSize = info.width;
+				$scope.donutSize = width;
 			}
 
-			updateArrows(info.height);
-			$log.debug('Dashboard.onWidget: ' + angular.toJson(info));
-		};
-
-		$rootScope.width  = angular.element($window).width();
-		$rootScope.height = angular.element($window).height();
-		$rootScope.landscape = $rootScope.width > $rootScope.height;
-		onWidget({
-			width: $rootScope.width,
-			height: $rootScope.height,
-			landscape: $rootScope.landscape,
+			$log.debug('Updated donuts: ' + oldDonutSize + ' -> ' + $scope.donutSize);
+			updateArrows(height);
+			updateTitles();
 		});
-
-		outageDonut.onDirty = onWidget;
-		alarmDonut.onDirty = onWidget;
-		outageDonut.onRedraw = onWidget;
-		alarmDonut.onRedraw = onWidget;
 
 		$scope.refreshDonutSlide = function(index) {
 			$scope.currentDonutSlide = index;
-			if (index === 0) {
-				outageDonut.refresh();
-			} else if (index === 1) {
-				alarmDonut.refresh();
-			} else {
-				$log.error('WTF?  DonutSlide=' + index);
-			}
 		};
 
 		var shouldHideDonut = {
@@ -265,20 +213,31 @@
 		var updateTitles = function() {
 			var updateTitle = function(type) {
 				$log.debug('updateTitles(' + type + ')');
-				var div = $('.' + type + ' .donut-title');
+				var visible, hidden;
+				if ($rootScope.wide) {
+					//$log.debug('wide is enabled');
+					visible = $('.wide .' + type + ' .donut-title');
+					hidden = $('.portrait .' + type + ' .donut-title');
+				} else {
+					//$log.debug('wide is disabled');
+					visible = $('.portrait .' + type + ' .donut-title');
+					hidden = $('.wide .' + type + ' .donut-title');
+				}
 
+				//$log.debug('visible='+angular.toJson(visible));
+				//$log.debug('hidden='+angular.toJson(hidden));
 				if ($scope.donuts) {
 					if ($scope.donuts[type]) {
 						var total = $scope.donuts[type].total;
-						$log.debug(type + ' total: ' + total);
+						//$log.debug(type + ' total: ' + total);
 						if (total === undefined) {
-							div.hide();
-							div.text('');
+							visible.hide();
+							visible.text('');
 						} else {
 							var html = '<div class="row total"><div class="col">' + total + '</div></div>' +
 								'<div class="row type"><div class="col">' + type + '</div></div>';
-							div.html(html);
-							div.show();
+							visible.html(html);
+							visible.show();
 						}
 					}
 				}
@@ -533,10 +492,6 @@
 		});
 
 		$scope.$on('$destroy', function() {
-			outageDonut.destroy();
-			outageDonut = undefined;
-			alarmDonut.destroy();
-			alarmDonut = undefined;
 			$scope.serverPopover.then(function(popover) {
 				popover.remove();
 			}).finally(function() {

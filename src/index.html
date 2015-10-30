@@ -54,7 +54,7 @@
 
 <title>OpenNMS Compass</title>
 </head>
-<body class="antialiased off-canvas hide-extras" ng-class="themeType + ' ' + (landscape?'landscape':'portrait')" ng-cloak animation="no-animation">
+<body class="antialiased off-canvas hide-extras" ng-class="themeType + ' ' + (wide?'wide':'')" ng-cloak animation="no-animation">
 	<ion-nav-view></ion-nav-view>
 
 	<!-- build:angular scripts/angular.js -->
@@ -72,7 +72,6 @@
 	-->
 	<script src="lib/angular-debounce/dist/angular-debounce.js"></script>
 	<script src="lib/angularLocalStorage/src/angularLocalStorage.js"></script>
-	<script src="lib/ng-resize/ngresize.js"></script>
 	<script src="lib/angular-simple-logger/dist/angular-simple-logger.js"></script>
 	<!-- endbuild -->
 
@@ -95,11 +94,12 @@
 	<script src="lib/flot/jquery.flot.js"></script>
 	<script src="lib/flot/jquery.flot.canvas.js"></script>
 	<script src="lib/flot/jquery.flot.pie.js"></script>
+	<script src="lib/flot/jquery.flot.resize.js"></script>
 	<script src="lib/flot/jquery.flot.time.js"></script>
 	<script src="lib/flot-axislabels/jquery.flot.axislabels.js"></script>
 	<script src="lib/flot-legend/jquery.flot.legend.js"></script>
 	<script src="lib/flot.tooltip/js/jquery.flot.tooltip.js"></script>
-	<script src="lib/angular-flot/angular-flot.js"></script>
+	<script src="scripts/3rdparty/angular-flot.js"></script>
 	<!-- endbuild -->
 
     <!-- build:backshift scripts/backshift.js -->
@@ -158,7 +158,6 @@
 	<script src="scripts/opennms/services/Availability.js"></script>
 	<script src="scripts/opennms/services/Capabilities.js"></script>
 	<script src="scripts/opennms/services/DB.js"></script>
-	<script src="scripts/opennms/services/DonutWidget.js"></script>
 	<script src="scripts/opennms/services/Errors.js"></script>
 	<script src="scripts/opennms/services/Events.js"></script>
 	<script src="scripts/opennms/services/IAP.js"></script>

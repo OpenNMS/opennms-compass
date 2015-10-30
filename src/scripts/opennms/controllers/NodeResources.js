@@ -24,7 +24,9 @@
 			if ($scope.nodeId) {
 				ResourceService.resources($scope.nodeId).then(function(ret) {
 					$scope.resourceLabel = ret.label;
-					$scope.resources = ResourceService.withDividers(ret.children);
+					var children = ret.children;
+					children.sort(sortFunction);
+					$scope.resources = ResourceService.withDividers(children);
 				}, function(err) {
 					$log.error('NodeResources.refresh: failed: ' + angular.toJson(err));
 					return $q.reject(err);

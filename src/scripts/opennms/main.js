@@ -4,11 +4,13 @@
 	/* global ionic: true */
 	/* global cordova: true */
 	/* global moment: true */
+	/* global screen: true */
 	/* global AdMob: true */
 
 	angular.module('opennms.Main', [
 		'ionic',
 		'ngCordova',
+		'rt.debounce',
 		'opennms.services.Ads',
 		'opennms.services.BuildConfig',
 		'opennms.services.Alarms',
@@ -98,7 +100,35 @@
 			toolbarposition:'top'
 		});
 	})
-	.run(function($rootScope, $http, $log, $templateCache, $timeout, $window, $ionicPlatform, $ionicPopup, Ads, IAP, Info, /*IonicService, */ Modals, Servers, Settings, util) {
+	.run(function($rootScope, $http, $log, $templateCache, $timeout, $window, $ionicPlatform, $ionicPopup, debounce, Ads, IAP, Info, /*IonicService, */ Modals, Servers, Settings, util) {
+
+		var calculateSizes = function() {
+			$rootScope.width  = angular.element($window).width();
+			$rootScope.height = angular.element($window).height();
+			if ($rootScope.height === 0) {
+				$rootScope.height = $rootScope.width;
+			}
+			if ($rootScope.width === 0) {
+				$rootScope.width = $rootScope.height;
+			}
+			var minDim = Math.min($rootScope.width, $rootScope.height),
+				maxDim = Math.max($rootScope.width, $rootScope.height);
+
+			$rootScope.wide = (minDim / maxDim >= 0.7 && minDim >= 767); // tablet-sized
+
+			$log.debug('main.handleResize complete: width=' + $rootScope.width + ', height=' + $rootScope.height + ', wide=' + $rootScope.wide);
+		};
+		var handleResize = debounce(100, calculateSizes);
+
+		$rootScope.$on('resize', handleResize);
+		$window.addEventListener('orientationchange', handleResize);
+		calculateSizes();
+		if (!$rootScope.wide) {
+			$log.debug('Looks like we\'re on a phone-like device.  Locking orientation to portrait.');
+			screen.lockOrientation('portrait');
+		} else {
+			$log.debug('Looks like we\'re on a tablet-like device.');
+		}
 
 		var templates = ['alarm-detail', 'alarm-filter', 'alarms', 'dashboard', 'edit-server', 'loading', 'menu',
 			'node-detail', 'node-resource', 'node-resources', 'nodes', 'onms-graph', 'outages', 'server-popover', 'settings'];

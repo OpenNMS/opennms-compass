@@ -4,21 +4,42 @@ $arrow-top-offset: 60px;
 $arrow-touch-padding: 20px;
 $arrow-edge-padding: 6px;
 
+$overlay-z-index: 10;
+
 $shadow-color: rgba(0,0,0,0.3);
 
 .dashboard {
 	.donut-title {
-		z-index: 1000;
-		position: absolute;
+		z-index: $overlay-z-index;
 		margin-top: -($font-size-large * 1.6);
 		font-size: $font-size-large * 2;
-		top:50%;
 		left:0;
 		width: 100%;
 		color: black;
 		.type {
 			font-size: $font-size-base;
 		}
+	}
+	.donut-title {
+		top: 50%;
+		position: absolute;
+	}
+	flot {
+		border: 0;
+		> div {
+			border: 0;
+		}
+		.flot-base, .flot-overlay {
+			border: 0;
+		}
+	}
+	.wide .donut-title {
+		top: -50%;
+		position: relative;
+	}
+	.wide flot {
+		display: table;
+		margin: 0 auto;
 	}
 	.nav-bar-title img {
 		vertical-align: baseline;
@@ -95,7 +116,7 @@ $shadow-color: rgba(0,0,0,0.3);
 		position: absolute;
 		left: 0;
 		top: $arrow-top-offset;
-		z-index: 10;
+		z-index: $overlay-z-index;
 		padding-top: $arrow-touch-padding;
 		padding-left: $arrow-edge-padding;
 		padding-right: $arrow-touch-padding;
@@ -107,7 +128,7 @@ $shadow-color: rgba(0,0,0,0.3);
 		position: absolute;
 		right: 0;
 		top: $arrow-top-offset;
-		z-index: 10;
+		z-index: $overlay-z-index;
 		padding-top: $arrow-touch-padding;
 		padding-left: $arrow-touch-padding;
 		padding-right: $arrow-edge-padding;

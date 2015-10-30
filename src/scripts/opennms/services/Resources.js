@@ -98,10 +98,7 @@
 						height: $scope.width,
 						interactive: false,
 						dataSource: $scope.ds,
-						series: $scope.graphModel.series,
-						printStatements: $scope.graphModel.printStatements,
-						title: $scope.graphModel.title,
-						verticalLabel: $scope.graphModel.verticalLabel,
+						model: $scope.graphModel,
 						exportIconSizeRatio: 0,
 						beginOnRender: false,
 						zoom: false,
@@ -113,7 +110,7 @@
 							size: 10,
 							family: 'sans-serif',
 						},
-						legendFontSize: 6,
+						//legendFontSize: 6,
 						ticks: 4,
 					});
 

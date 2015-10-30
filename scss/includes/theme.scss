@@ -2,6 +2,20 @@ $meridian-blue: #237cb7;
 $horizon-green: #4d9c2d;
 
 @mixin compass-theme($dark, $light) {
+	.backshift-status {
+		z-index: 10000;
+		background-color: $dark;
+		color: white;
+		border-radius: .5em;
+		padding: 5px;
+		position: relative;
+		top: 20%;
+		width: 33%;
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+	}
+
 	.tabs .tab-item .badge, .badge {
 		&.badge-compass {
 			@include badge-style($dark, $light);
