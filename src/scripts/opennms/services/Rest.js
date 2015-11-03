@@ -5,6 +5,7 @@
 	/* global RestError: true */
 	/* global URI: true */
 	/* global X2JS: true */
+	/* global Backshift.DataSource.OpenNMS: true */
 
 	angular.module('opennms.services.Rest', [
 		'ng',
@@ -31,9 +32,12 @@
 		$http.defaults.headers.common['Accept'] = 'application/xml';
 
 		if ($window.cordova && cordovaHTTP) {
+			$log.debug("RestService: Cordova HTTP is available.");
 			useCordovaHTTP = true;
 			cordovaHTTP.acceptAllCerts(true);
 			cordovaHTTP.setTimeouts(requestTimeout, requestTimeout);
+		} else {
+			$log.debug("RestService: Cordova HTTP is not available.");
 		}
 
 		var clearCookies = function() {
@@ -287,6 +291,13 @@
 			},
 			put: doPut,
 			postXml: doPostXml,
+			getCordovaHTTP: function() {
+				if (useCordovaHTTP) {
+					return cordovaHTTP;
+				} else {
+					return undefined;
+				}
+			},
 		};
 	});
 

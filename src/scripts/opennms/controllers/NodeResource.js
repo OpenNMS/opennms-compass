@@ -1,6 +1,7 @@
 (function() {
 	'use strict';
 
+	/* global $: true */
 	/* global ionic: true */
 	/* global datePicker: true */
 	/* global moment: true */
@@ -13,35 +14,35 @@
 		'opennms.services.Resources',
 		'opennms.services.Settings',
 	])
-	.controller('NodeResourceCtrl', function($q, $scope, $injector, $log, $timeout, $ionicScrollDelegate, NodeService, ResourceService) {
+	.controller('NodeResourceCtrl', function($q, $scope, $injector, $log, $timeout, $ionicScrollDelegate, $window, NodeService, ResourceService) {
 		$log.info('NodeResourceCtrl: initializing.');
 
 		var defaultRange = $injector.get('default-graph-range');
 
 		var findElementById = function(id) {
-				var elm, scrollEl, position = 0;
-				elm = document.getElementById(id);
-				if (elm) {
-						scrollEl = angular.element(elm);
-						while (scrollEl) {
-								if (scrollEl.hasClass('scroll-content')) {
-										break;
-								}
-								var offsetTop = scrollEl[0].offsetTop,
-										scrollTop = scrollEl[0].scrollTop,
-										clientTop = scrollEl[0].clientTop;
-								position += (offsetTop - scrollTop + clientTop);
-								scrollEl = scrollEl.parent();
-						}
-						$log.debug('offset='+position);
-						if (position < 10) {
-								return 0;
-						}
-						return position;
-				} else {
-						$log.error("can't find element " + id);
-						return 0;
-				}
+			var elm, scrollEl, position = 0;
+			elm = document.getElementById(id);
+			if (elm) {
+					scrollEl = angular.element(elm);
+					while (scrollEl) {
+							if (scrollEl.hasClass('scroll-content')) {
+									break;
+							}
+							var offsetTop = scrollEl[0].offsetTop,
+									scrollTop = scrollEl[0].scrollTop,
+									clientTop = scrollEl[0].clientTop;
+							position += (offsetTop - scrollTop + clientTop);
+							scrollEl = scrollEl.parent();
+					}
+					$log.debug('offset='+position);
+					if (position < 10) {
+							return 0;
+					}
+					return position;
+			} else {
+					$log.error("can't find element " + id);
+					return 0;
+			}
 		};
 
 		$scope.favorites = {};
@@ -49,6 +50,30 @@
 		};
 		$scope.range.end = new Date();
 		$scope.range.start = new Date($scope.range.end.getTime() - defaultRange);
+
+		$scope.getId = function(graph) {
+			return 'graph-' + encodeURIComponent(graph.name);
+		};
+
+		$scope.display = {};
+
+		$scope.calculateHeight = function(graph) {
+			$scope.shouldDisplay(graph);
+			return $scope.width + 80;
+		};
+
+		$scope.shouldDisplay = function(graph) {
+			if (graph && graph.name) {
+				var id = 'graph-' + graph.name;
+				var el = $(document.getElementById(id));
+				var visible = el.visible(true);
+				if ($scope.display[id] !== visible) {
+					$log.debug(graph.name + ': ' + $scope.display[id] + ' -> ' + visible);
+				}
+				$scope.display[id] = visible;
+			}
+			return true;
+		};
 
 		$scope.refresh = function() {
 			$log.debug('refreshing: ' + $scope.resourceId);

@@ -54,7 +54,6 @@
 			}
 		};
 
-
 		$scope.$watchGroup(['width', 'height', 'wide'], function(dims) {
 			var width  = dims[0],
 				height = dims[1],
@@ -186,6 +185,16 @@
 
 		var flotOptions = {
 			canvas: true,
+			grid: {
+				borderWidth:0,
+				labelMargin:0,
+				axisMargin:0,
+				minBorderMargin:0,
+			},
+			yaxis: {
+				ticks: 0,
+				show: false,
+			},
 			series: {
 				pie: {
 					show: true,
@@ -304,9 +313,8 @@
 
 		var resetOutages = function() {
 			hideDonut('outages', true);
-			if ($scope.donuts && $scope.donuts.outages && $scope.donuts.outages.series) {
-				$scope.donuts.outages.total = undefined;
-				$scope.donuts.outages.series.pie.show = false;
+			if ($scope.donuts && $scope.donuts.outages) {
+				$scope.donuts.outages = {};
 			}
 		};
 
@@ -346,9 +354,8 @@
 
 		var resetAlarms = function() {
 			hideDonut('alarms', true);
-			if ($scope.donuts && $scope.donuts.alarms && $scope.donuts.alarms.series) {
-				$scope.donuts.alarms.total = undefined;
-				$scope.donuts.alarms.series.pie.show = false;
+			if ($scope.donuts && $scope.donuts.alarms) {
+				$scope.donuts.alarms = {};
 			}
 		};
 

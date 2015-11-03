@@ -14,7 +14,7 @@
 		'opennms.services.Servers',
 		'opennms.services.Util',
 	])
-	.directive('onmsGraph', function($log, $timeout, $window, $injector, Servers) {
+	.directive('onmsGraph', function($log, $timeout, $window, $injector, RestService, Servers) {
 		var getWidth = function() {
 			return $window.innerWidth;
 		};
@@ -110,7 +110,7 @@
 							size: 10,
 							family: 'sans-serif',
 						},
-						//legendFontSize: 6,
+						legendFontSize: 16,
 						ticks: 4,
 					});
 
@@ -139,7 +139,10 @@
 						graph.render();
 						if ($scope.display) {
 							graph.begin();
+						} else {
+							graph.onQuerySuccess();
 						}
+						$scope.$broadcast('scroll.refreshComplete');
 					});
 				};
 
@@ -205,12 +208,32 @@
 					if (graphModel && graphModel.metrics) {
 						Servers.getDefault().then(function(server) {
 							if (server) {
-								$scope.ds = new Backshift.DataSource.OpenNMS({
+								var options = {
 									url: server.restUrl('measurements'),
 									username: server.username,
 									password: server.password,
 									metrics: graphModel.metrics,
-								});
+								};
+
+								var cordovaHTTP = RestService.getCordovaHTTP();
+								if (cordovaHTTP) {
+									console.log('cordovaHTTP found');
+									options.fetchFunction = function(url, data, success, failure) {
+										cordovaHTTP.post(url, data, {
+											'Content-Type': 'application/json',
+											'Accept': 'application/json',
+										}).then(function(response) {
+											//$log.debug('cordovaHTTP response: ' + angular.toJson(response));
+											success(response.data);
+										}, function(err) {
+											var error = new RestError(url, err.data, err.status);
+											$log.error('cordovaHTTP error: ' + error.toString());
+											failure(error.toString());
+										});
+									};
+								}
+
+								$scope.ds = new Backshift.DataSource.OpenNMS(options);
 							}
 						});
 					}
