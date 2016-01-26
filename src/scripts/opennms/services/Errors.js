@@ -35,18 +35,18 @@
 				$rootScope.$broadcast('opennms.errors.updated', getErrorsAsArray());
 			}
 		};
-		var resetErrors = function() {
-			var oldErrors = getErrors();
-			_errors = {};
-			if (oldErrors.length > 0) {
-				$rootScope.$broadcast('opennms.errors.updated', getErrorsAsArray());
-			}
-		};
 		var getErrors = function(type) {
 			if (type) {
 				return _errors[type];
 			} else {
 				return getErrorsAsArray();
+			}
+		};
+		var resetErrors = function() {
+			var oldErrors = getErrors();
+			_errors = {};
+			if (oldErrors.length > 0) {
+				$rootScope.$broadcast('opennms.errors.updated', getErrorsAsArray());
 			}
 		};
 

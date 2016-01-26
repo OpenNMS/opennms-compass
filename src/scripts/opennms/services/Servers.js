@@ -34,27 +34,58 @@
 			return deferred.promise;
 		};
 
-		var sortServers = function(a, b) {
+		var _sortServers = function(a, b) {
 			if (a && b) {
 				return a.name.localeCompare(b.name);
 			}
 			return 0;
 		};
 
-		var checkServersUpdated = function(force) {
-			var oldServers = angular.copy(servers);
-			oldServers.sort(sortServers);
-			return getServers().then(function(newServers) {
-				newServers.sort(sortServers);
-				servers = angular.copy(newServers);
-				if (force === true || !angular.equals(oldServers, newServers)) {
-					$log.debug('Servers.checkServersUpdated: server list has changed.');
-					$log.debug('old: ' + angular.toJson(oldServers));
-					$log.debug('new: ' + angular.toJson(newServers));
-					UtilEventBroadcaster.serversUpdated(newServers, oldServers);
-					$timeout(checkDefaultServerUpdated);
+		var _toServer = function(server) {
+			if (!server) {
+				return server;
+			}
+			if (Array.isArray(server)) {
+				for (var i=0, len=server.length; i < len; i++) {
+					server[i] = _toServer(server[i]);
 				}
-				return newServers;
+				return server;
+			} else if (server instanceof Server) {
+				return server;
+			} else {
+				return new Server(server);
+			}
+		};
+
+		var getServers = function() {
+			return isReady().then(function() {
+				return serversCollection.then(function(sc) {
+					return sc.chain().simplesort('name').data().map(function(server) {
+						return _toServer(server);
+					});
+				});
+			});
+		};
+
+		var getDefaultServer = function() {
+			return isReady().then(function() {
+				return Settings.getDefaultServerId().then(function(serverId) {
+					return serversCollection.then(function(sc) {
+						var server = sc.findObject({'id':serverId});
+						if (server) {
+							return _toServer(server);
+						} else {
+							return getServers().then(function(servers) {
+								if (servers.length > 0) {
+									Settings.setDefaultServerId(servers[0].id);
+									return _toServer(servers[0]);
+								} else {
+									return undefined;
+								}
+							});
+						}
+					});
+				});
 			});
 		};
 
@@ -69,11 +100,22 @@
 			});
 		};
 
-		UtilEventHandler.onSettingsUpdated(function(newSettings, oldSettings, changedSettings) {
-			if (changedSettings && changedSettings.defaultServerId) {
-				$timeout(checkServersUpdated);
-			}
-		});
+		var checkServersUpdated = function(force) {
+			var oldServers = angular.copy(servers);
+			oldServers.sort(_sortServers);
+			return getServers().then(function(newServers) {
+				newServers.sort(_sortServers);
+				servers = angular.copy(newServers);
+				if (force === true || !angular.equals(oldServers, newServers)) {
+					$log.debug('Servers.checkServersUpdated: server list has changed.');
+					$log.debug('old: ' + angular.toJson(oldServers));
+					$log.debug('new: ' + angular.toJson(newServers));
+					UtilEventBroadcaster.serversUpdated(newServers, oldServers);
+					$timeout(checkDefaultServerUpdated);
+				}
+				return newServers;
+			});
+		};
 
 		var refreshPromise;
 		var startRefresh = function() {
@@ -93,21 +135,6 @@
 			});
 		};
 
-		var _toServer = function(server) {
-			if (!server) {
-				return server;
-			}
-			if (Array.isArray(server)) {
-				for (var i=0, len=server.length; i < len; i++) {
-					server[i] = _toServer(server[i]);
-				}
-				return server;
-			} else if (server instanceof Server) {
-				return server;
-			} else {
-				return new Server(server);
-			}
-		};
 		var _saveServer = function(server) {
 			if (!server.id) {
 				server.id = uuid4.generate();
@@ -181,41 +208,9 @@
 			});
 		};
 
-		var getServers = function() {
-			return isReady().then(function() {
-				return serversCollection.then(function(sc) {
-					return sc.chain().simplesort('name').data().map(function(server) {
-						return _toServer(server);
-					});
-				});
-			});
-		};
-
 		var getServerNames = function() {
 			return isReady().then(function() {
 				return fetchServerNames();
-			});
-		};
-
-		var getDefaultServer = function() {
-			return isReady().then(function() {
-				return Settings.getDefaultServerId().then(function(serverId) {
-					return serversCollection.then(function(sc) {
-						var server = sc.findObject({'id':serverId});
-						if (server) {
-							return _toServer(server);
-						} else {
-							return getServers().then(function(servers) {
-								if (servers.length > 0) {
-									Settings.setDefaultServerId(servers[0].id);
-									return _toServer(servers[0]);
-								} else {
-									return undefined;
-								}
-							});
-						}
-					});
-				});
 			});
 		};
 
@@ -276,6 +271,12 @@
 				return false;
 			});
 		};
+
+		UtilEventHandler.onSettingsUpdated(function(newSettings, oldSettings, changedSettings) {
+			if (changedSettings && changedSettings.defaultServerId) {
+				$timeout(checkServersUpdated);
+			}
+		});
 
 		init();
 

@@ -5,6 +5,7 @@
 	/* global datePicker: true */
 	/* global ionic: true */
 	/* global moment: true */
+	/* global RestError: true */
 
 	angular.module('opennms.services.Resources', [
 		'ionic',

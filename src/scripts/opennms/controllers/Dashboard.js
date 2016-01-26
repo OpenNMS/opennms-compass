@@ -54,23 +54,6 @@
 			}
 		};
 
-		$scope.$watchGroup(['width', 'height', 'wide'], function(dims) {
-			var width  = dims[0],
-				height = dims[1],
-				wide   = dims[2],
-				oldDonutSize = $scope.donutSize;
-			if (wide) {
-				$scope.donutSize = Math.round(Math.min(width, height) / 2.0);
-				//$scope.donutSize = Math.round(width / 2.0);
-			} else {
-				$scope.donutSize = width;
-			}
-
-			$log.debug('Updated donuts: ' + oldDonutSize + ' -> ' + $scope.donutSize);
-			updateArrows(height);
-			updateTitles();
-		});
-
 		$scope.refreshDonutSlide = function(index) {
 			$scope.currentDonutSlide = index;
 		};
@@ -256,6 +239,13 @@
 			updateTitle('alarms');
 		};
 
+		var resetOutages = function() {
+			hideDonut('outages', true);
+			if ($scope.donuts && $scope.donuts.outages) {
+				$scope.donuts.outages = {};
+			}
+		};
+
 		var refreshOutages = function() {
 			return OutageService.get().then(function(results) {
 				var data = {}, outages = [], outage, service, total = 0;
@@ -311,10 +301,10 @@
 
 		};
 
-		var resetOutages = function() {
-			hideDonut('outages', true);
-			if ($scope.donuts && $scope.donuts.outages) {
-				$scope.donuts.outages = {};
+		var resetAlarms = function() {
+			hideDonut('alarms', true);
+			if ($scope.donuts && $scope.donuts.alarms) {
+				$scope.donuts.alarms = {};
 			}
 		};
 
@@ -350,13 +340,6 @@
 				$scope.$broadcast('scroll.refreshComplete');
 			});
 
-		};
-
-		var resetAlarms = function() {
-			hideDonut('alarms', true);
-			if ($scope.donuts && $scope.donuts.alarms) {
-				$scope.donuts.alarms = {};
-			}
 		};
 
 		var refreshing = false;
@@ -496,6 +479,23 @@
 		util.onInfoUpdated(updateLogo);
 		util.onErrorsUpdated(function(errors) {
 			$scope.errors = errors;
+		});
+
+		$scope.$watchGroup(['width', 'height', 'wide'], function(dims) {
+			var width  = dims[0],
+				height = dims[1],
+				wide   = dims[2],
+				oldDonutSize = $scope.donutSize;
+			if (wide) {
+				$scope.donutSize = Math.round(Math.min(width, height) / 2.0);
+				//$scope.donutSize = Math.round(width / 2.0);
+			} else {
+				$scope.donutSize = width;
+			}
+
+			$log.debug('Updated donuts: ' + oldDonutSize + ' -> ' + $scope.donutSize);
+			updateArrows(height);
+			updateTitles();
 		});
 
 		$scope.$on('$destroy', function() {

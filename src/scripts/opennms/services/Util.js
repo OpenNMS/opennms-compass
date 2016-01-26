@@ -3,8 +3,7 @@
 
 	/* global cordova: true */
 	/* global ionic: true */
-	/* global v4: true */
-	/* global v6: true */
+	/* global Address6: true */
 
 	angular.module('opennms.services.Util', [
 		'ionic',
@@ -15,7 +14,7 @@
 	.filter('ip', function() {
 		return function(addr) {
 			if (addr && addr.contains(':')) {
-				var address = new v6.Address(addr);
+				var address = new Address6(addr);
 				if (address.isValid()) {
 					return address.correctForm();
 				}

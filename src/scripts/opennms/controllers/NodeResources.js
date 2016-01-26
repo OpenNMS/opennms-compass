@@ -12,10 +12,20 @@
 		$log.info('NodeResourcesCtrl: initializing.');
 
 		var sortFunction = function(a,b) {
+			//$log.debug('sortFunction: a=' + angular.toJson(a));
+			//$log.debug('sortFunction: b=' + angular.toJson(b));
 			if (a.typeLabel) {
-				return a.typeLabel.compareLocale(b.typeLabel);
+				if (b.typeLabel) {
+					return a.typeLabel.localeCompare(b.typeLabel);
+				} else {
+					return -1;
+				}
 			} else {
-				return 0;
+				if (b.typeLabel) {
+					return 1;
+				} else {
+					return 0;
+				}
 			}
 		};
 

@@ -171,7 +171,7 @@ var testSource = [
 	'./bower_components/angular-queue/angular-queue.js',
 	'./bower_components/ng-resize/ngresize.min.js',
 	'./bower_components/ngCordova/dist/ng-cordova-mocks.js',
-	'./bower_components/momentjs/moment.js',
+	'./bower_components/moment/moment.js',
 	paths.opennms,
 	paths.spec
 ];

@@ -9,7 +9,6 @@
 		'opennms.services.Availability',
 		'opennms.services.Capabilities',
 		'opennms.services.Errors',
-		'opennms.services.IAP',
 		'opennms.services.Info',
 		'opennms.services.Servers',
 		'opennms.services.Settings',
@@ -70,7 +69,7 @@
 			close: $scope.closeModal,
 		};
 	})
-	.controller('SettingsCtrl', function($scope, $log, $timeout, $window, $filter, $ionicListDelegate, $ionicPlatform, $ionicPopup, ServerModal, AvailabilityService, Capabilities, Errors, IAP, Info, Servers, Settings, util) {
+	.controller('SettingsCtrl', function($scope, $log, $timeout, $window, $filter, $ionicListDelegate, $ionicPlatform, $ionicPopup, ServerModal, AvailabilityService, Capabilities, Errors, Info, Servers, Settings, util) {
 		$log.info('Settings initializing.');
 		$scope.util = util;
 
@@ -174,90 +173,8 @@
 			return server && $scope.defaultServer && server.id === $scope.defaultServer.id;
 		};
 
-		$ionicPlatform.ready(function() {
-			$scope.$evalAsync(function() {
-				$scope.products = IAP.get();
-
-				if ($window.cordova) {
-					$scope.isCordova = true;
-				} else {
-					$scope.isCordova = false;
-				}
-				$scope.isIOS = ionic.Platform.isIOS();
-
-				if ($window.appAvailability) {
-					$log.debug('SettingsCtrl: checking for availability of onms://');
-					$window.appAvailability.check('onms://',
-						function() {
-							$log.debug('SettingsCtrl: OpenNMS.app is available!');
-							$scope.$evalAsync(function() {
-								$scope.hasOpenNMS = true;
-							});
-						}, function() {
-							$log.debug('SettingsCtrl: OpenNMS.app is not available.  :(');
-							$scope.$evalAsync(function() {
-								$scope.hasOpenNMS = false;
-							});
-						}
-					);
-				} else {
-					$log.error('SettingsCtrl: Cannot check app availability.');
-				}
-
-				$log.debug('SettingsCtrl: isCordova: ' + $scope.isCordova);
-				$log.debug('SettingsCtrl: isIOS:     ' + $scope.isIOS);
-			});
-		});
-
 		$scope.getRefreshInterval = function() {
 			return Math.round(parseInt($scope.settings.refreshInterval, 10)/1000);
-		};
-
-		$scope.removeAds = function(alias) {
-			IAP.purchase(alias).then(function() {
-				$log.info('SettingsCtrl.removeAds: purchase successfully initiated.');
-			}, function(err) {
-				$ionicPopup.alert({
-					title: 'Ad Removal Failed',
-					template: '<p>ERROR ' + err.code + ': Failed to remove ads: ' + err.message + '</p>',
-					okType: 'button-assertive',
-				});
-			});
-		};
-
-		$scope.restorePurchases = function() {
-			IAP.refresh().then(function() {
-				$scope.products = IAP.get();
-			});
-		};
-
-		var hasPurchased = function() {
-			if ($scope.products && Object.keys($scope.products).length > 0) {
-				if ($scope.products.disable_ads && $scope.products.disable_ads.owned) {
-					return true;
-				} else if ($scope.products.disable_ads_free && $scope.products.disable_ads_free.owned) {
-					return true;
-				}
-			}
-			return false;
-		};
-
-		$scope.disabled = function(alias) {
-			if (hasPurchased()) {
-				return true;
-			} else if (alias === 'disable_ads_free' && !$scope.hasOpenNMS) {
-				return true;
-			}
-			return false;
-		};
-
-		$scope.showUpgrade = function() {
-			if ($scope.isCordova && $scope.isIOS) {
-				if ($scope.products.disable_ads_free) {
-					return true;
-				}
-			}
-			return false;
 		};
 
 		$scope.handleKey = function(ev) {
@@ -268,10 +185,6 @@
 			}
 		};
 
-		util.onProductUpdated(function() {
-			$scope.products = IAP.get();
-			$scope.$broadcast('scroll.refreshComplete');
-		});
 		util.onInfoUpdated(function() {
 			$scope.info = Info.get();
 			$scope.canSetLocation = Capabilities.setLocation();

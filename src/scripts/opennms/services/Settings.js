@@ -175,9 +175,6 @@
 				if (isEmpty(_get(sc, 'refreshInterval'))) {
 					_set(sc, 'refreshInterval', defaultRefreshInterval);
 				}
-				if (isEmpty(_get(sc, 'showAds'))) {
-					_set(sc, 'showAds', true);
-				}
 
 				return ready.resolve(true);
 			});
@@ -205,9 +202,6 @@
 					_delete(sc, 'password');
 				}
 
-				if (angular.isUndefined(settings.showAds) || settings.showAds === 'undefined') {
-					settings.showAds = true;
-				}
 				if (angular.isUndefined(settings.refreshInterval) || settings.refreshInterval === 'undefined') {
 					settings.refreshInterval = undefined;
 				} else {
@@ -289,23 +283,6 @@
 			});
 		};
 
-		var _showAds = function() {
-			return settingsCollection.then(function(sc) {
-				var showAds = _get(sc, 'showAds');
-				if (isEmpty(showAds)) {
-					showAds = true;
-				}
-				return $q.when(showAds);
-			});
-		};
-
-		var _disableAds = function() {
-			return settingsCollection.then(function(sc) {
-				_set(sc, 'showAds', false);
-				return false;
-			});
-		};
-
 		var _version = function() {
 			return $q.when($injector.get('config.build.version'));
 		};
@@ -327,9 +304,7 @@
 			setDefaultServerId: _setDefaultServerId,
 			refreshInterval: _refreshInterval,
 			restLimit: _getRestLimit,
-			showAds: _showAds,
 			uuid: _uuid,
-			disableAds: _disableAds,
 			version: _version,
 			build: _build,
 		};

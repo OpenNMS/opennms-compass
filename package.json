@@ -10,7 +10,7 @@
     "bower": "*",
     "commonmark": "*",
     "cordova-android": "*",
-    "https://github.com/RangerRick/cordova-config-utils.git": "*",
+    "cordova-config-utils": "*",
     "fs.extra": "*",
     "grunt-conventional-changelog": "*",
     "gulp": "*",
@@ -42,6 +42,7 @@
     "karma-webdriver-launcher": "*",
     "libxmljs": "*",
     "merge2": "*",
+    "phantomjs": "^2.1.2",
     "shelljs": "*",
     "xcode": "*",
     "xmldom": "*",
@@ -65,7 +66,6 @@
     },
     "cordova-plugin-inappbrowser",
     "cordova-plugin-network-information",
-    "cordova-plugin-purchase",
     "cordova-plugin-splashscreen",
     "cordova-plugin-statusbar",
     "cordova-plugin-whitelist",
@@ -82,7 +82,7 @@
       "id": "ionic-plugin-deploy"
     },
     {
-      "locator": "https://github.com/OpenNMS/cordova-plugin-storage.git",
+      "locator": "https://github.com/OpenNMS/cordova-plugin-json-storage.git",
       "id": "cordova-plugin-json-storage"
     },
     {

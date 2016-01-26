@@ -11,10 +11,8 @@
 		'ionic',
 		'ngCordova',
 		'rt.debounce',
-		'opennms.services.Ads',
 		'opennms.services.BuildConfig',
 		'opennms.services.Alarms',
-		'opennms.services.IAP',
 		'opennms.services.Info',
 		/*'opennms.services.Ionic',*/
 		'opennms.services.Modals',
@@ -100,7 +98,7 @@
 			toolbarposition:'top'
 		});
 	})
-	.run(function($rootScope, $http, $log, $templateCache, $timeout, $window, $ionicPlatform, $ionicPopup, debounce, Ads, IAP, Info, /*IonicService, */ Modals, Servers, Settings, util) {
+	.run(function($rootScope, $http, $log, $templateCache, $timeout, $window, $ionicPlatform, $ionicPopup, debounce, Info, /*IonicService, */ Modals, Servers, Settings, util) {
 
 		var calculateSizes = function() {
 			$rootScope.width  = angular.element($window).width();
@@ -170,44 +168,6 @@
 			}, 1000);
 		});
 
-		/*
-		Servers.configured().then(function(isConfigured) {
-			if (!isConfigured) {
-				$log.debug('main: server not configured');
-				util.hideSplashscreen();
-				Modals.settings(true);
-			} else {
-				Servers.getDefault().then(function(server) {
-					$log.debug('main: default server is ' + server.name);
-				});
-			}
-		});
-		*/
-
-		var init = function() {
-			$log.info('Ionic is ready.');
-			IAP.init().then(Ads.init);
-		};
-
-		init();
-		/*
-		IonicService.promptForUpdates().then(function(res) {
-			if (res) {
-				IonicService.update().then(function() {
-					var args = Array.prototype.slice.call(arguments);
-					$log.debug('Update complete: ' + angular.toJson(args));
-				}, function(err) {
-					$ionicPopup.alert({
-						title: 'Update failed.',
-						template: angular.toJson(err),
-						okType: 'button-compass',
-					});
-					init();
-				});
-			} else {
-				init();
-			}
-		});
-		*/
+		$log.info('Ionic is ready.');
 	});
 }());

@@ -77,8 +77,9 @@
 			};
 
 			modal.scope.refreshOutages = function() {
-				var promise = OutageService.summaries();
-				promise.then(function(outages) {
+				$log.debug('Modals.outages.refreshOutages()');
+				return OutageService.summaries().then(function(outages) {
+					$log.debug('Got outages: ' + outages.length);
 					var oldOutages = byId(modal.scope.outages);
 					var oldOutage;
 					for (var i=0, len=outages.length; i < len; i++) {
@@ -90,10 +91,13 @@
 					}
 					modal.scope.outages = outages;
 					delete modal.scope.error;
-					modal.scope.$broadcast('scroll.refreshComplete');
+					return outages;
 				}, function(err) {
+					$log.error('Error refreshing outages: ' + angular.toJson(err));
 					modal.scope.error = err;
 					modal.scope.outages = [];
+					return $q.reject(err);
+				}).finally(function() {
 					modal.scope.$broadcast('scroll.refreshComplete');
 				});
 				return promise;

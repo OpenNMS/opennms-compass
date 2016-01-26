@@ -33,44 +33,6 @@
 					</ion-content>
 				</ion-view>
 			</ion-tab>
-			<ion-tab title="Purchase" icon-on="ion-ios-cart" icon-off="ion-ios-cart-outline" ng-if="products">
-				<ion-view>
-					<ion-content scroll="true">
-						<form class="list">
-							<span class="iap">
-								<span ng-if="products.disable_ads">
-									<ion-item class="item-divider">
-										{{products.disable_ads.title}} <span style="float:right" ng-if="products.disable_ads.owned">Purchased <i class="icon ion-ios-checkmark balanced"></i></span>
-									</ion-item>
-									<ion-item class="item-text-wrap">
-										<p>{{products.disable_ads.description}}</p>
-										<button class="button button-block button-compass" ng-click="removeAds('disable_ads')" ng-disabled="disabled('disable_ads')">{{products.disable_ads.title}} {{products.disable_ads.price}}</button>
-									</ion-item>
-								</span>
-								<span ng-if="showUpgrade()">
-									<ion-item class="item-divider">
-										{{products.disable_ads_free.title}} <span style="float:right" ng-if="products.disable_ads_free.owned">Purchased <i class="icon ion-ios-checkmark balanced"></i></span>
-									</ion-item>
-									<ion-item class="item-text-wrap">
-										<p>{{products.disable_ads_free.description}}</p>
-										<p>Old Mobile App: <strong>{{hasOpenNMS? 'Detected':'Not Detected'}}</strong></p>
-										<button class="button button-block button-compass" ng-click="removeAds('disable_ads_free')" ng-disabled="disabled('disable_ads_free')">{{products.disable_ads_free.title}} {{products.disable_ads_free.price}}</button>
-									</ion-item>
-								</span>
-								<span>
-									<ion-item class="item-divider">Restore Purchases</ion-item>
-									<ion-item class="item-text-wrap">
-										<p>If you have already disabled ads on another device
-										or have reinstalled the OpenNMS Compass app, you can
-										restore your in-app purchases.</p>
-										<button class="button button-block button-compass" ng-click="restorePurchases()">Restore Purchases</button>
-									</ion-item>
-								</span>
-							</span>
-						</form>
-					</ion-content>
-				</ion-view>
-			</ion-tab>
 			<ion-tab title="About" icon-on="ion-ios-information" icon-off="ion-ios-information-outline">
 				<ion-view class="errors">
 					<ion-content scroll="true">

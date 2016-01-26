@@ -72,6 +72,7 @@
 			var deferred = $q.defer();
 			var url = '/outages/summaries';
 			RestService.getXml(url).then(function(results) {
+				$log.debug('summaries: ' + angular.toJson(results));
 				var ret = [];
 				if (results && results['outage-summaries'] && results['outage-summaries']['outage-summary']) {
 					var summaries = results['outage-summaries']['outage-summary'];
