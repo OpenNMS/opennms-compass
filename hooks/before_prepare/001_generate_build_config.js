@@ -39,7 +39,7 @@ if (rootdir) {
 	for (var i=0; i < dirs.length; i++) {
 		var dir = dirs[i];
 		if (fs.existsSync(dir)) {
-			var outfile = path.join(dir, 'scripts/opennms/services/BuildConfig.js');
+			var outfile = path.join(dir, 'app/misc/BuildConfig.js');
 			fs.writeFileSync(outfile, "(function() {\n\t'use strict';\n\n\tangular.module('opennms.services.BuildConfig', [])\n");
 			for (var prop in buildobj) {
 				if (buildobj.hasOwnProperty(prop)) {

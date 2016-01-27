@@ -1,10 +1,7 @@
 {
   "name": "OpenNMS Compass",
   "app_id": "bf988c24",
-  "gulpStartupTasks": [
-    "sass",
-    "watch"
-  ],
+  "gulpStartupTasks": [],
   "watchPatterns": [
     "www/**/*",
     "!www/lib/**/*"

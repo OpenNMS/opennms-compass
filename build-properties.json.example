@@ -1,6 +1,5 @@
 {
 	"billingKey": "12345",
-	"build": 1,
 	"minSdk": 16,
 	"storeFile": undefined,
 	"keyAlias": undefined,

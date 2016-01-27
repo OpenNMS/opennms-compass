@@ -1,0 +1,73 @@
+<ion-view class="dashboard">
+	<ion-nav-bar class="bar-light" align-title="center">
+		<ion-nav-buttons side="left">
+			<a class="button button-icon button-compass button-clear ion-ios-alarm-outline" nav-direction="back" ui-sref="alarms"></a>
+		</ion-nav-buttons>
+		<ion-nav-title><img ng-src="{{logo}}"></ion-nav-title>
+		<ion-nav-buttons side="right">
+			<a class="button button-icon button-compass button-clear ion-monitor" nav-direction="forward" ui-sref="nodes"></a>
+		</ion-nav-buttons>
+	</ion-nav-bar>
+	<ion-header-bar class="bar bar-header bar-subheader">
+		<h3 class="title compass" ng-click="showSelectServer($event)"><span ng-if="serverName">{{serverName}} <i class="icon ion-arrow-down-b"></i></span></h3>
+	</ion-header-bar>
+	<ion-content padding="false" scroll="true" class="has-header" overflow-scroll="false">
+		<ion-refresher pulling-text="Pull to Refresh..." on-refresh="refreshData()"></ion-refresher>
+		<div class="header"><h3 class="title compass" ng-if="serverName === null" style="padding-top: 10px">No server configured.</h3></div>
+		<ion-slide-box on-slide-changed="refreshDonutSlide(index)" show-pager="false" delegate-handle="donut-slide-box" ng-if="!wide" class="portrait">
+			<ion-slide class="outages" ng-style="{width: donutSize, height: donutSize}">
+				<i id="outage-arrow" class="icon ion-chevron-right right-arrow compass" ng-click="goToDonutSlide(1)" ng-class="donutClass('outages')"></i>
+				<h3 ng-if="e.hasError('outage-chart')" class="item item-text-wrap title error">Error: Unable to retrieve outages.<span ng-if="e.get('outage-chart').permissionDenied()"><br/>Permission denied.</span></h3>
+				<flot dataset="donuts.outages.data" options="donuts.outages.options" ng-click="modals.outages()" ng-if="donutSize &gt; 0 &amp;&amp; donuts.outages.options" ng-attr-width="{{donutSize}}" ng-attr-height="{{donutSize}}"></flot>
+				<div class="donut-title"></div>
+			</ion-slide>
+			<ion-slide class="alarms" ng-style="{width: donutSize, height: donutSize}">
+				<i id="alarm-arrow" class="icon ion-chevron-left left-arrow compass" ng-click="goToDonutSlide(0)" ng-class="donutClass('alarms')"></i>
+				<h3 ng-if="e.hasError('alarm-chart')" class="item item-text-wrap title error">Error: Unable to retrieve alarm data.<span ng-if="e.get('alarm-chart').permissionDenied()"><br/>Permission denied.</span></h3>
+				<flot dataset="donuts.alarms.data" options="donuts.alarms.options" ng-if="donutSize &gt; 0 &amp;&amp; donuts.alarms.options" ng-attr-width="{{donutSize}}" ng-attr-height="{{donutSize}}"></flot>
+				<div class="donut-title"></div>
+			</ion-slide>
+		</ion-slide-box>
+		<div class="row wide" ng-if="wide">
+			<div class="outages col col-50" ng-style="{width: donutSize, height: donutSize}">
+				<h3 ng-if="e.hasError('outage-chart')" class="item item-text-wrap title error">Error: Unable to retrieve outages.<span ng-if="e.get('outage-chart').permissionDenied()"><br/>Permission denied.</span></h3>
+				<flot dataset="donuts.outages.data" options="donuts.outages.options" ng-click="modals.outages()" ng-if="donutSize &gt; 0 &amp;&amp; donuts.outages.options" ng-attr-width="{{donutSize}}" ng-attr-height="{{donutSize}}"></flot>
+				<div class="donut-title"></div>
+			</div>
+			<div class="alarms col col-50" ng-style="{width: donutSize, height: donutSize}">
+				<h3 ng-if="e.hasError('alarm-chart')" class="item item-text-wrap title error">Error: Unable to retrieve alarm data.<span ng-if="e.get('alarm-chart').permissionDenied()"><br/>Permission denied.</span></h3>
+				<flot dataset="donuts.alarms.data" options="donuts.alarms.options" ng-if="donutSize &gt; 0 &amp;&amp; donuts.alarms.options" ng-attr-width="{{donutSize}}" ng-attr-height="{{donutSize}}"></flot>
+				<div class="donut-title"></div>
+			</div>
+		</div>
+		<span ng-if="favoriteGraphs &amp;&amp; favoriteGraphs.length > 0" class="graphs">
+			<!--<div class="spacer"></div>-->
+			<div class="header compass-bg"><h3>Favorited Graphs</h3></div>
+			<ion-slide-box on-slide-changed="refreshGraphSlide(index)" delegate-handle="graph-slide-box" show-pager="false">
+				<ion-slide ng-repeat="favorite in favoriteGraphs track by favorite._id">
+					<h4 class="label">{{favorite.nodeLabel}} <button class="button button-clear button-small button-compass" ng-click="unfavorite(favorite)"><i class="icon ion-ios-star"></i></button></h4>
+						<onms-graph graph-def="graphs[favorite.graphName]" resource-id="favorite.resourceId" range="range" display="shouldRenderGraph($index)"></onms-graph>
+				</ion-slide>
+			</ion-slide-box>
+		</span>
+
+		<div class="spacer"></div>
+		<span ng-if="availability &amp;&amp; availability.length > 0" class="availability">
+			<span ng-repeat="section in availability track by section.name">
+				<div class="item item-compass item-divider row" style="font-size: 90%">
+					<div class="col col-50">{{section.name}}</div>
+					<div class="col col-25">Outages</div>
+					<div class="col col-25">Availability</div>
+				</div>
+				<div ng-repeat="category in section.categories track by category.name" class="item row noright nobottom" style="font-size: 75%">
+					<div class="col col-50">{{category.name}}</div>
+					<div class="col col-25 pull-right" ng-class="'severity severity-' + category.outageClass.toUpperCase()">{{category.outageText}}</div>
+					<div class="col col-25 pull-right monospace" ng-class="'severity severity-' + category.availabilityClass.toUpperCase()">{{category.availability | number:3}}%</div>
+				</div>
+			</span>
+		</span>
+	</ion-content>
+	<ion-footer-bar class="bar-light">
+		<button class="button button-compass button-clear pull-right" ng-click="modals.settings()"><i class="icon ion-gear-a"></i></button>
+	</ion-footer-bar>
+</ion-view>

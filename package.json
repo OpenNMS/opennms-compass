@@ -1,6 +1,7 @@
 {
   "name": "OpenNMS",
   "version": "2.1.0",
+  "build": 395,
   "description": "OpenNMS Compass",
   "repository": {
     "type": "git",
@@ -11,6 +12,13 @@
     "commonmark": "*",
     "cordova-android": "*",
     "cordova-config-utils": "*",
+    "css-loader": "^0.23.1",
+    "eslint": "^1.10.3",
+    "eslint-friendly-formatter": "^1.2.2",
+    "eslint-loader": "^1.2.1",
+    "exports-loader": "^0.6.2",
+    "expose-loader": "^0.7.1",
+    "file-loader": "^0.8.5",
     "fs.extra": "*",
     "grunt-conventional-changelog": "*",
     "gulp": "*",
@@ -30,6 +38,8 @@
     "gulp-uglify": "*",
     "gulp-usemin": "*",
     "gulp-util": "*",
+    "html-loader": "^0.4.0",
+    "imports-loader": "^0.6.5",
     "jshint": "*",
     "jshint-stylish": "*",
     "karma": "*",
@@ -42,8 +52,15 @@
     "karma-webdriver-launcher": "*",
     "libxmljs": "*",
     "merge2": "*",
+    "ng-annotate-webpack-plugin": "^0.1.2",
+    "ngtemplate-loader": "^1.3.1",
     "phantomjs": "^2.1.2",
+    "sass-loader": "^3.1.2",
+    "script-loader": "^0.6.1",
     "shelljs": "*",
+    "style-loader": "^0.13.0",
+    "url-loader": "^0.5.7",
+    "webpack": "^1.12.12",
     "xcode": "*",
     "xmldom": "*",
     "xpath": "*"
@@ -51,7 +68,6 @@
   "cordovaPlugins": [
     "com.ionic.keyboard",
     "cordova-plugin-extension",
-    "cordova-plugin-admobpro",
     "cordova-plugin-appavailability",
     "cordova-plugin-console",
     "cordova-plugin-datepicker",
@@ -94,12 +110,12 @@
   "cordovaPlatforms": [
     {
       "platform": "android",
-      "version": "4.1.1",
+      "version": "5.0.0",
       "locator": "android"
     },
     {
       "platform": "ios",
-      "version": "3.9.1",
+      "version": "3.9.2",
       "locator": "ios"
     },
     {
@@ -107,5 +123,19 @@
       "version": "4.0.0",
       "locator": "browser"
     }
-  ]
+  ],
+  "scripts": {
+    "setup": "bower install && npm install && ionic state reset",
+    "build": "webpack --colors --display-error-details && ionic build",
+    "prepare": "webpack --colors --display-error-details && ionic prepare",
+    "increment": "bin/update-build-number.js",
+    "release": "npm run lint && npm run test && webpack --colors --display-error-details --env=production && ionic build --release && bin/sign-android.sh",
+    "verbose-build": "npm run lint && npm run test && webpack --debug --colors --display-modules --display-chunks --display-error-details --display-origins --display-reasons",
+    "genymotion": "ionic run -slc android",
+    "android": "ionic emulate -slc android",
+    "ios": "ionic emulate -slc --address=localhost ios",
+    "device": "ionic run --device -slc ios",
+    "watch": "webpack --colors --display-error-details --watch",
+    "lint": "eslint . --ext .js"
+  }
 }

@@ -13,30 +13,6 @@
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta http-equiv="Content-Security-Policy" content="default-src *; style-src 'self' 'unsafe-inline'; script-src * 'self' 'unsafe-inline' 'unsafe-eval'">
 
-<link rel="stylesheet" href="lib/leaflet/dist/leaflet.css" />
-<link rel="stylesheet" href="css/opennms.min.css" />
-<link rel="stylesheet" href="lib/onmsicons/css/onmsicons.min.css" />
-
-<!-- build:shim scripts/shim.js -->
-<script src="lib/classlist/classList.js"></script>
-<script src="lib/es5-shim/es5-shim.js"></script>
-<!-- endbuild -->
-
-<script src="lib/jquery/dist/jquery.min.js"></script>
-
-<!-- build:thirdparty scripts/3rdparty.js -->
-<script src="lib/jquery-visible/jquery.visible.js"></script>
-<script src="lib/async/lib/async.js"></script>
-<script src="lib/moment/moment.js"></script>
-<script src="lib/urijs/src/URI.js"></script>
-<script src="lib/version_compare/version_compare.js"></script>
-<script src="lib/x2js/xml2json.js"></script>
-<!-- endbuild -->
-
-<!-- build:ipv6 scripts/ipv6.js -->
-<script src="lib/ip-address/dist/ip-address-globals.js"></script>
-<!-- endbuild -->
-
 <style>
 	 [ng\:cloak], [ng-cloak], .ng-cloak {
 		display: none !important;
@@ -53,104 +29,10 @@
 <body class="antialiased off-canvas hide-extras" ng-class="themeType + ' ' + (wide?'wide':'')" ng-cloak animation="no-animation">
 	<ion-nav-view></ion-nav-view>
 
-	<!-- build:angular scripts/angular.js -->
-	<script src="lib/angular/angular.js"></script>
-	<script src="lib/angular-animate/angular-animate.js"></script>
-	<script src="lib/angular-cookies/angular-cookies.js"></script>
-	<script src="lib/angular-uuid4/angular-uuid4.js"></script>
-	<script src="lib/angular-sanitize/angular-sanitize.js"></script>
-	<script src="lib/angular-ui-router/release/angular-ui-router.js"></script>
-	<script src="lib/ionic/release/js/ionic.js"></script>
-	<script src="lib/ionic/release/js/ionic-angular.js"></script>
-	<script src="lib/angular-debounce/dist/angular-debounce.js"></script>
-	<script src="lib/angularLocalStorage/src/angularLocalStorage.js"></script>
-	<script src="lib/angular-simple-logger/dist/angular-simple-logger.js"></script>
-	<!-- endbuild -->
-
-	<!-- build:flot scripts/flot.js -->
-	<script src="lib/d3/d3.js"></script>
-	<script src="lib/flot/jquery.flot.js"></script>
-	<script src="lib/flot/jquery.flot.canvas.js"></script>
-	<script src="lib/flot/jquery.flot.pie.js"></script>
-	<script src="lib/flot/jquery.flot.resize.js"></script>
-	<script src="lib/flot/jquery.flot.time.js"></script>
-	<script src="lib/flot-axislabels/jquery.flot.axislabels.js"></script>
-	<script src="lib/flot-legend/jquery.flot.legend.js"></script>
-	<script src="lib/flot.tooltip/js/jquery.flot.tooltip.js"></script>
-	<script src="scripts/3rdparty/angular-flot.js"></script>
-	<!-- endbuild -->
-
-    <!-- build:backshift scripts/backshift.js -->
-	<script src="lib/backshift/dist/backshift.js"></script>
-	<script src="lib/backshift/dist/backshift.onms.js"></script>
-    <!-- endbuild -->
-
-	<!-- build:db scripts/db.js -->
-	<script src="lib/lokijs/src/lokijs.js"></script>
-	<script src="lib/lokijs/src/loki-angular.js"></script>
-	<!-- endbuild -->
-
-    <!-- build:maps scripts/maps.js -->
-    <script src="lib/leaflet/dist/leaflet-src.js"></script>
-    <script src="lib/angular-leaflet-directive/dist/angular-leaflet-directive.js"></script>
-    <!-- endbuild -->
-
-	<!-- build:models scripts/models.js -->
-	<script src="scripts/opennms/models/Array.js"></script>
-	<script src="scripts/opennms/models/String.js"></script>
-	<script src="scripts/opennms/models/Alarm.js"></script>
-	<script src="scripts/opennms/models/AlarmFilter.js"></script>
-	<script src="scripts/opennms/models/AlarmSummary.js"></script>
-	<script src="scripts/opennms/models/AvailabilityCategory.js"></script>
-	<script src="scripts/opennms/models/AvailabilityNode.js"></script>
-	<script src="scripts/opennms/models/AvailabilityIpInterface.js"></script>
-	<script src="scripts/opennms/models/AvailabilitySection.js"></script>
-	<script src="scripts/opennms/models/AvailabilityService.js"></script>
-	<script src="scripts/opennms/models/Event.js"></script>
-	<script src="scripts/opennms/models/Metric.js"></script>
-	<script src="scripts/opennms/models/MonitoredService.js"></script>
-	<script src="scripts/opennms/models/Node.js"></script>
-	<script src="scripts/opennms/models/Outage.js"></script>
-	<script src="scripts/opennms/models/OutageSummary.js"></script>
-	<script src="scripts/opennms/models/Report.js"></script>
-	<script src="scripts/opennms/models/ReportGraph.js"></script>
-	<script src="scripts/opennms/models/RestError.js"></script>
-	<script src="scripts/opennms/models/Server.js"></script>
-	<!-- endbuild -->
-
-	<script src="scripts/opennms/services/BuildConfig.js"></script>
-
-	<!-- build:opennms scripts/opennms.js -->
-	<script src="scripts/opennms/main.js"></script>
-	<script src="scripts/opennms/db/lokijs-storage-adapter.js"></script>
-	<script src="scripts/opennms/controllers/Alarms.js"></script>
-	<script src="scripts/opennms/controllers/Dashboard.js"></script>
-	<script src="scripts/opennms/controllers/Node.js"></script>
-	<script src="scripts/opennms/controllers/NodeResource.js"></script>
-	<script src="scripts/opennms/controllers/NodeResources.js"></script>
-	<script src="scripts/opennms/controllers/Nodes.js"></script>
-	<script src="scripts/opennms/controllers/Settings.js"></script>
-	<script src="scripts/opennms/services/Alarms.js"></script>
-	<script src="scripts/opennms/services/Analytics.js"></script>
-	<script src="scripts/opennms/services/Availability.js"></script>
-	<script src="scripts/opennms/services/Capabilities.js"></script>
-	<script src="scripts/opennms/services/DB.js"></script>
-	<script src="scripts/opennms/services/Errors.js"></script>
-	<script src="scripts/opennms/services/Events.js"></script>
-	<script src="scripts/opennms/services/Info.js"></script>
-	<script src="scripts/opennms/services/Ionic.js"></script>
-	<script src="scripts/opennms/services/Modals.js"></script>
-	<script src="scripts/opennms/services/Nodes.js"></script>
-	<script src="scripts/opennms/services/Outages.js"></script>
-	<script src="scripts/opennms/services/Resources.js"></script>
-	<script src="scripts/opennms/services/Rest.js"></script>
-	<script src="scripts/opennms/services/Servers.js"></script>
-	<script src="scripts/opennms/services/Settings.js"></script>
-	<script src="scripts/opennms/services/Util.js"></script>
-	<!-- endbuild -->
-
-	<script src="lib/ngCordova/dist/ng-cordova.min.js"></script>
 	<script src="cordova.js"></script>
+
+	<script src="vendor.bundle.js"></script>
+	<script src="app.bundle.js"></script>
 
 	<script>
 		ionic.Platform.ready(function() {

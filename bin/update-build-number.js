@@ -3,11 +3,11 @@
 var fs = require('fs');
 var path = require('path');
 
-var conf = require('../build-properties.json');
+var conf = require('../package.json');
 var buildNumber = conf['build'];
 buildNumber = buildNumber + 1;
 
 conf['build'] = buildNumber;
-fs.writeFileSync('./build-properties.json', JSON.stringify(conf, null, '  '), 'utf8');
+fs.writeFileSync('./package.json', JSON.stringify(conf, null, '  ') + '\n', 'utf8');
 
 console.log(buildNumber);
