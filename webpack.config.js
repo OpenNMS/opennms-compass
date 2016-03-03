@@ -8,7 +8,9 @@ var configfile = path.join(__dirname, 'package.json');
 var configobj  = JSON.parse(fs.readFileSync(configfile, 'utf8'));
 argv.env = argv.env === 'production'? 'production':'development';
 
+/* eslint-disable no-console */
 console.log(configobj.name + ' v' + configobj.version + ' (build ' + configobj.build + ')');
+/* eslint-enable no-console */
 
 var outputDirectory = './www';
 
@@ -27,14 +29,14 @@ var plugins = [
 		add: true
 	}),
 	new webpack.ProvidePlugin({
-		'$': 'jquery',
-		'jQuery': 'jquery',
+		$: 'jquery',
+		jQuery: 'jquery',
 		'window.jQuery': 'jquery'
 	}),
 	new webpack.optimize.CommonsChunkPlugin({
 		name: 'vendor',
 		filename: 'vendor.bundle.js',
-		minChunks: Infinity,
+		minChunks: Infinity
 	}),
 	new webpack.optimize.CommonsChunkPlugin({
 		children: true,
@@ -54,7 +56,7 @@ if (argv.env !== 'development') {
 
 var options = {
 	entry: {
-		'vendor': [
+		vendor: [
 			'angular',
 			'angular-animate',
 			'angular-cookies',
@@ -91,7 +93,7 @@ var options = {
 			'flot.tooltip/js/jquery.flot.tooltip',
 			'./src/3rdparty/angular-flot'
 		],
-		'app': [
+		app: [
 			'./src/app/index'
 		]
 	},
@@ -135,27 +137,27 @@ var options = {
 			},
 			{
 				test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
-				loader: "url?limit=10000&mimetype=application/vnd.ms-fontobject"
+				loader: 'url?limit=10000&mimetype=application/vnd.ms-fontobject'
 			},
 			{
 				test: /\.otf(\?v=\d+\.\d+\.\d+)?$/,
-				loader: "url?limit=10000&mimetype=application/x-font-opentype"
+				loader: 'url?limit=10000&mimetype=application/x-font-opentype'
 			},
 			{
 				test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
-				loader: "url?limit=10000&mimetype=application/octet-stream"
+				loader: 'url?limit=10000&mimetype=application/octet-stream'
 			},
 			{
 				test: /\.woff2?(\?v=\d+\.\d+\.\d+)?$/,
-				loader: "url?limit=10000&mimetype=application/font-woff"
+				loader: 'url?limit=10000&mimetype=application/font-woff'
 			},
 			{
 				test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
-				loader: "file"
+				loader: 'file'
 			},
 			{
 				test: /\.(jpe?g|png|gif)$/i,
-				loader: "file"
+				loader: 'file'
 			},
 			{
 				test: /[\/]angular\.js$/,

@@ -1,5 +1,8 @@
 #!/usr/bin/env node
 
+/* eslint-disable no-console */
+/* eslint-disable no-empty */
+
 /**
  * On a fresh clone, the local platforms/ and plugins/ directories will be
  * missing, so ensure they get created before the first platform is added.
@@ -21,3 +24,6 @@ try {
     if (err) { console.error(err); }
   });
 } catch(ex) {}
+
+/* eslint-enable no-empty */
+/* eslint-enable no-console */

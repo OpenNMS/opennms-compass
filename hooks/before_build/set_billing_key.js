@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+/* eslint-disable no-console */
+
 var fs = require('fs.extra');
 var path = require('path');
 var libxml = require('libxmljs');
@@ -17,10 +19,12 @@ if (rootdir) {
 
 			var doc = new libxml.Document();
 			doc.node('resources')
-				.node('string', buildobj.billingKey).attr({'name':'billing_key_param'});
+				.node('string', buildobj.billingKey).attr({name:'billing_key_param'});
 			fs.writeFileSync(billingFile, doc.toString(), 'utf8');
 		} else {
 			console.log('setBillingKey: no billingKey configured in build-properties.json, skipping');
 		}
 	}
 }
+
+/* eslint-enable no-console */

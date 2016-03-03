@@ -2,6 +2,8 @@
 
 // this plugin replaces arbitrary text in arbitrary files
 
+/* eslint-disable quotes */
+
 var fs = require('fs.extra');
 var path = require('path');
 var exec = require('child_process').execSync;
@@ -13,7 +15,7 @@ if (rootdir) {
 	exec('gulp process');
 
 	var dirs = [
-		'www',
+		'www'
 	];
 
 	var packagejson = path.join(rootdir, 'package.json');
@@ -48,7 +50,7 @@ if (rootdir) {
 						continue;
 					}
 					var value = buildobj[prop];
-					if (typeof value == 'string' || value instanceof String) {
+					if (typeof value === 'string' || value instanceof String) {
 						fs.appendFileSync(outfile, "\t\t.constant('config.build." + prop + "', '" + value + "')\n");
 					} else {
 						fs.appendFileSync(outfile, "\t\t.constant('config.build." + prop + "', " + value + ")\n");
@@ -60,3 +62,5 @@ if (rootdir) {
 	}
 
 }
+
+/* eslint-enable quotes */

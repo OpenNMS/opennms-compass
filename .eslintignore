@@ -1,7 +1,10 @@
+gulpfile.js
+
 bin/
 bower_components/
 couchdb/
 engine/
+hooks/
 node_modules/
 platforms/
 plugins/

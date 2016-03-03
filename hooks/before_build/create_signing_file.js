@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+/* eslint-disable no-console */
+
 var fs = require('fs.extra');
 var path = require('path');
 
@@ -15,17 +17,17 @@ if (rootdir) {
 		var buildobj = JSON.parse(fs.readFileSync(buildjson, 'utf8'));
 
 		if (buildobj.storeFile) {
-			var releaseSigningOutput = "storeFile=" + buildobj.storeFile + "\n";
-				releaseSigningOutput += "keyAlias=" + buildobj.keyAlias + "\n";
-				releaseSigningOutput += "storePassword=" + buildobj.storePassword + "\n";
-				releaseSigningOutput += "keyPassword=" + buildobj.keyPassword + "\n";
+			var releaseSigningOutput = 'storeFile=' + buildobj.storeFile + '\n';
+				releaseSigningOutput += 'keyAlias=' + buildobj.keyAlias + '\n';
+				releaseSigningOutput += 'storePassword=' + buildobj.storePassword + '\n';
+				releaseSigningOutput += 'keyPassword=' + buildobj.keyPassword + '\n';
 
 			fs.writeFileSync(signingFile, releaseSigningOutput, 'utf8');
 
-			var antSigningOutput = "key.store=" + buildobj.storeFile + "\n";
-				antSigningOutput += "key.alias=" + buildobj.keyAlias + "\n";
-				antSigningOutput += "key.store.password=" + buildobj.storePassword + "\n";
-				antSigningOutput += "key.alias.password=" + buildobj.keyPassword + "\n";
+			var antSigningOutput = 'key.store=' + buildobj.storeFile + '\n';
+				antSigningOutput += 'key.alias=' + buildobj.keyAlias + '\n';
+				antSigningOutput += 'key.store.password=' + buildobj.storePassword + '\n';
+				antSigningOutput += 'key.alias.password=' + buildobj.keyPassword + '\n';
 
 			fs.writeFileSync(antFile, antSigningOutput, 'utf8');
 
@@ -35,3 +37,5 @@ if (rootdir) {
 		}
 	}
 }
+
+/* eslint-enable no-console */

@@ -51,7 +51,7 @@ function ReportGraph(graph) {
   self.timespan = graph['_timespan'];
 
   var OK = re.exec(self.resourceId);
-  if (!!OK) {
+  if (OK) {
     /**
      * @description
      * @ngdoc property
