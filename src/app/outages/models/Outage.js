@@ -1,7 +1,8 @@
 /* jshint -W069 */ /* "better written in dot notation" */
 
 var MonitoredService = require('../../nodes/models/MonitoredService'),
-  moment = require('moment');
+  moment = require('moment'),
+  OnmsEvent = require('../../events/models/Event');
 
 /**
  * @ngdoc object
@@ -68,7 +69,7 @@ function Outage(outage) {
    * @propertyOf Outage
    * @returns {Event} The event that was emitted when the service was lost.
    */
-  self.serviceLostEvent = new Event(outage['serviceLostEvent']);
+  self.serviceLostEvent = new OnmsEvent(outage['serviceLostEvent']);
   //self.node = new Node(self.nodeId);
 
   /**

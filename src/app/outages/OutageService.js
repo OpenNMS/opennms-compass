@@ -52,6 +52,7 @@
 			};
 
 			RestService.getXml(url, params).then(function(results) {
+				$log.debug('getOutagesForNode: results=' + angular.toJson(results));
 				var ret = [];
 				if (results && results.outages && results.outages.outage) {
 					var outages = results.outages.outage;
