@@ -52,7 +52,6 @@
 			};
 
 			RestService.getXml(url, params).then(function(results) {
-				$log.debug('getOutagesForNode: results=' + angular.toJson(results));
 				var ret = [];
 				if (results && results.outages && results.outages.outage) {
 					var outages = results.outages.outage;
@@ -75,7 +74,6 @@
 			var deferred = $q.defer();
 			var url = '/outages/summaries';
 			RestService.getXml(url).then(function(results) {
-				$log.debug('summaries: ' + angular.toJson(results));
 				var ret = [];
 				if (results && results['outage-summaries'] && results['outage-summaries']['outage-summary']) {
 					var summaries = results['outage-summaries']['outage-summary'];

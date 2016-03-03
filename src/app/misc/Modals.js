@@ -65,7 +65,6 @@
 
 			var getOutages = function(outage) {
 				OutageService.node(outage.nodeId).then(function(nodeOutages) {
-					$log.debug('Node Outages:' + angular.toJson(nodeOutages));
 					nodeOutages.sort(function(a, b) {
 						var comp = a.ipAddress.localeCompare(b.ipAddress);
 						if (comp === 0) {
