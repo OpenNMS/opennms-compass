@@ -38,6 +38,13 @@ var plugins = [
 		filename: 'vendor.bundle.js',
 		minChunks: Infinity
 	}),
+	/*
+	new webpack.optimize.CommonsChunkPlugin({
+		name: 'css',
+		filename: 'css.bundle.js',
+		minChunks: Infinity
+	}),
+	*/
 	new webpack.optimize.CommonsChunkPlugin({
 		children: true,
 		async: true
@@ -92,6 +99,11 @@ var options = {
 			'flot-legend/jquery.flot.legend',
 			'flot.tooltip/js/jquery.flot.tooltip',
 			'./src/3rdparty/angular-flot'
+		],
+		css: [
+			'./scss/opennms.scss',
+			'./bower_components/onmsicons/scss/onmsicons.scss',
+			'style!css!./bower_components/leaflet/dist/leaflet.css'
 		],
 		app: [
 			'./src/app/index'
@@ -180,6 +192,8 @@ var options = {
 if (argv.env === 'development') {
 	options.output.pathinfo = true;
 	options.devtool = 'eval';
+} else {
+	options.devtool = 'source-map';
 }
 
 module.exports = options;
