@@ -228,9 +228,11 @@
 									metrics: graphModel.metrics
 								};
 
-								var cordovaHTTP = RestService.getCordovaHTTP();
+								var cordovaHTTP;
+								if ($injector.has('cordovaHTTP')) {
+									cordovaHTTP = $injector.get('cordovaHTTP');
+								}
 								if (cordovaHTTP) {
-									$log.debug('cordovaHTTP found');
 									options.fetchFunction = function(url, data, success, failure) {
 										cordovaHTTP.post(url, data, {
 											'Content-Type': 'application/json',
