@@ -10,6 +10,7 @@
   "devDependencies": {
     "bower": "*",
     "commonmark": "*",
+    "conventional-changelog-cli": "^1.1.1",
     "cordova-android": "*",
     "cordova-config-utils": "*",
     "css-loader": "^0.23.1",
@@ -127,6 +128,7 @@
   "scripts": {
     "setup": "bower install && npm install && ionic state reset",
     "build": "webpack --colors --display-error-details && ionic build",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0 -u",
     "prepare": "webpack --colors --display-error-details && ionic prepare",
     "increment": "bin/update-build-number.js",
     "release": "npm run lint && npm run test && webpack --colors --display-error-details --env=production && ionic build --release && bin/sign-android.sh",
