@@ -3,9 +3,11 @@
 
 	/* global screen: true */
 
+	/*
 	require('style!css!../../bower_components/leaflet/dist/leaflet.css');
 	require('../../scss/opennms.scss');
 	require('../../bower_components/onmsicons/scss/onmsicons.scss');
+	*/
 
 	var angular = require('angular');
 

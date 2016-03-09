@@ -137,8 +137,8 @@
 
 					if ($scope.graph && $scope.graph.destroy) {
 						$scope.graph.destroy();
-						delete $scope.graph._last.ds;
 						delete $scope.graph._last.graphModel;
+						delete $scope.graph._last.ds;
 						delete $scope.graph._last.range;
 						delete $scope.graph._last.width;
 						delete $scope.graph._last.height;

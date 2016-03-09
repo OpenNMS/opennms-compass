@@ -27,7 +27,7 @@
     "angular-leaflet-directive": "~0.10.0",
     "flot": "flot#~0.8.3",
     "flot-axislabels": "https://github.com/j-white/flot-axislabels.git#master",
-    "flot.tooltip": "^0.8.6",
+    "flot.tooltip": "https://github.com/RangerRick/flot.tooltip.git#compass",
     "flot-legend": "https://github.com/RangerRick/flot-legend.git#master",
     "urijs": "^1.17.1",
     "moment": "^2.11.2",
