@@ -30,11 +30,12 @@
     "flot.tooltip": "https://github.com/RangerRick/flot.tooltip.git#compass",
     "flot-legend": "https://github.com/RangerRick/flot-legend.git#master",
     "urijs": "^1.17.1",
-    "moment": "^2.11.2",
+    "moment": "^2.12.0",
     "ip-address": "^5.7.0",
     "angular-highlightjs": "~0.5.1",
     "winstore-jscompat": "https://github.com/MSOpenTech/winstore-jscompat.git",
-    "angular-flot": "~0.0.16"
+    "angular-flot": "~0.0.16",
+    "pouchdb": "^5.3.0"
   },
   "devDependencies": {
     "angular-mocks": "1.5.0",
@@ -49,6 +50,6 @@
     "angular-cookies": "1.5.0",
     "angular-ui-router": "^0.2.18",
     "d3": "3.5.6",
-    "pouchdb": "^5.2.1"
+    "pouchdb": "^5.3.0"
   }
 }
