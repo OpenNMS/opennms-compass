@@ -1,7 +1,7 @@
 /* jshint -W069 */ /* "better written in dot notation" */
 
-var AvailabilityCategory = require('./AvailabilityCategory'),
-  moment = require('moment');
+var AvailabilityCategory = require('./AvailabilityCategory');
+var moment = require('moment');
 
 /**
  * @ngdoc object

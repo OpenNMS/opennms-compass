@@ -27,11 +27,15 @@
 		var defaultServer;
 
 		var serversDB = db.get(DB_NAME);
-		serversDB.createIndex({
-			index: {
-				fields: ['name']
-			}
-		});
+		var findServers = function(options) {
+			return serversDB.createIndex({
+				index: {
+					fields: Object.keys(options.selector)
+				}
+			}).then(function() {
+				return serversDB.find(options);
+			});
+		};
 
 		var isReady = function() {
 			var deferred = $q.defer();
@@ -68,7 +72,7 @@
 
 		var getServers = function() {
 			return isReady().then(function() {
-				return serversDB.find({
+				return findServers({
 					selector: { name: {$gt: null}},
 					sort: ['name']
 				}).then(function(docs) {
@@ -148,7 +152,7 @@
 		};
 
 		var fetchServerNames = function() {
-			return serversDB.find({
+			return findServers({
 				selector: {name: {$gt: null}},
 				sort: ['name']
 			}).then(function(docs) {

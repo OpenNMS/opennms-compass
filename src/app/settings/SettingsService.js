@@ -25,14 +25,18 @@
 		var defaultRefreshInterval = 10000;
 
 		var settingsDB = db.get(DB_NAME);
-		settingsDB.createIndex({
-			index: {
-				fields: ['key']
-			}
-		});
+		var findSettings = function(options) {
+			return settingsDB.createIndex({
+				index: {
+					fields: Object.keys(options.selector)
+				}
+			}).then(function() {
+				return settingsDB.find(options);
+			});
+		};
 
 		var _get = function(key) {
-			return settingsDB.find({
+			return findSettings({
 				selector: {key: key}
 			}).then(function(result) {
 				if (result && result.docs && result.docs.length === 1) {
@@ -71,7 +75,7 @@
 			}
 			delete saveme.defaultServerId;
 
-			db.find({
+			return findSettings({
 				selector: {name: {$gt: null}},
 				sort: ['key']
 			}).then(function(result) {

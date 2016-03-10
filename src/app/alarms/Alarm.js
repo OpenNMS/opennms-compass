@@ -1,7 +1,7 @@
 /* jshint -W069 */ /* "better written in dot notation" */
 
-var OnmsEvent = require('../events/models/Event'),
-  moment = require('moment');
+var OnmsEvent = require('../events/models/Event');
+var moment = require('moment');
 
 /**
  * @ngdoc object

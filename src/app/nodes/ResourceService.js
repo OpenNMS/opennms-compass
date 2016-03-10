@@ -285,27 +285,15 @@
 		var _graphs = {};
 
 		var favoritesDB = db.get('favorites');
-		favoritesDB.createIndex({
-			index: {
-				fields: ['server', 'username']
-			}
-		}).catch(function(err) {
-			$log.error('Unable to create server/username index: ' + angular.toJson(err));
-		});
-		favoritesDB.createIndex({
-			index: {
-				fields: ['time', 'server', 'username']
-			}
-		}).catch(function(err) {
-			$log.error('Unable to create server/username index: ' + angular.toJson(err));
-		});
-		favoritesDB.createIndex({
-			index: {
-				fields: ['server', 'username', 'resourceId', 'graphName']
-			}
-		}).catch(function(err) {
-			$log.error('Unable to create server/username/resourceId/graphName index: ' + angular.toJson(err));
-		});
+		var findFavorites = function(options) {
+			return favoritesDB.createIndex({
+				index: {
+					fields: Object.keys(options.selector)
+				}
+			}).then(function() {
+				return favoritesDB.find(options);
+			});
+		};
 
 		var _sortFunction = function(a,b) {
 			if (a.typeLabel && b.typeLabel) {
@@ -408,7 +396,7 @@
 		var getFavorites = function() {
 			//$log.debug('ResourceService.getFavorites()');
 			return _getServer('getFavorites').then(function(server) {
-				return favoritesDB.find({
+			return findFavorites({
 					selector: {
 						server: server._id,
 						username: server.username,
@@ -434,7 +422,7 @@
 		var getFavorite = function(resourceId, graphName) {
 			//$log.debug('ResourceService.getFavorite(' + resourceId + ',' + graphName + ')');
 			return _getServer('getFavorite').then(function(server) {
-				return favoritesDB.find({
+				return findFavorites({
 					selector: {
 						server: server._id,
 						username: server.username,
@@ -484,7 +472,7 @@
 		var removeFavorite = function(resourceId, graphName) {
 			//$log.debug('ResourceService.removeFavorite(' + resourceId + ',' + graphName + ')');
 			return _getServer('removeFavorite').then(function(server) {
-				return favoritesDB.find({
+				return findFavorites({
 					selector: {
 						server: server._id,
 						username: server.username,
@@ -508,7 +496,7 @@
 
 		util.onServerRemoved(function(server) {
 			//$log.debug('ResourceService.onServerRemoved: cleaning up favorites for server ' + server.name);
-			return favoritesDB.find({
+			return findFavorites({
 				selector: {
 					server: server._id,
 					username: server.username
