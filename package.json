@@ -113,18 +113,13 @@
   "cordovaPlatforms": [
     {
       "platform": "android",
-      "version": "5.0.0",
+      "version": "5.1.1",
       "locator": "android"
     },
     {
       "platform": "ios",
       "version": "3.9.2",
       "locator": "ios"
-    },
-    {
-      "platform": "browser",
-      "version": "4.0.0",
-      "locator": "browser"
     }
   ],
   "scripts": {
