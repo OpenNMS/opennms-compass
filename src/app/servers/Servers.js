@@ -166,6 +166,7 @@
 			if (!server._id) {
 				server._id = uuid4.generate();
 			}
+			server = angular.fromJson(angular.toJson(server));
 
 			return serversDB.get(server._id).then(function(doc) {
 				angular.extend(doc, server);

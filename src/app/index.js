@@ -6,8 +6,11 @@
 	/*
 	require('style!css!../../bower_components/leaflet/dist/leaflet.css');
 	require('../../scss/opennms.scss');
-	require('../../bower_components/onmsicons/scss/onmsicons.scss');
 	*/
+	require('../../bower_components/onmsicons/fonts/onmsicons.eot');
+	require('../../bower_components/onmsicons/fonts/onmsicons.svg');
+	require('../../bower_components/onmsicons/fonts/onmsicons.ttf');
+	require('../../bower_components/onmsicons/fonts/onmsicons.woff');
 
 	var angular = require('angular');
 

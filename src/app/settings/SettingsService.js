@@ -132,7 +132,7 @@
 		};
 
 		var _loadSettings = function() {
-			return settingsDB.find({
+			return findSettings({
 				selector: {key: {$gt: null}},
 				sort: ['key']
 			}).then(function(result) {
@@ -288,8 +288,10 @@
 		};
 
 		var _setDefaultServerId = function(id) {
-			storage.set('opennms.default-server-id', id);
-			return $q.when(id);
+			return getSettings().then(function(settings) {
+				settings.defaultServerId = id;
+				return saveSettings(settings);
+			});
 		};
 
 		var _getRestLimit = function() {

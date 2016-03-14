@@ -239,10 +239,26 @@
 											Accept: 'application/json'
 										}).then(function(response) {
 											//$log.debug('cordovaHTTP response: ' + angular.toJson(response));
-											success(response.data);
+											if (angular.isString(response.data)) {
+												try {
+													var json = angular.fromJson(response.data);
+													//$log.debug('cordovaHTTP: json = ' + angular.toJson(json));
+													success(json);
+												} catch (err) {
+													if (err.message) {
+														$log.error('ResourceService.fetchFunction: error: ' + err.message);
+													} else {
+														$log.error('ResourceService.fetchFunction: error: ' + err);
+													}
+													$log.debug('ResourceService.fetchFunction: falling back to sending the raw response data string.');
+													success(response.data);
+												}
+											} else {
+												success(response.data);
+											}
 										}, function(err) {
 											var error = new RestError(url, err.data, err.status);
-											$log.error('cordovaHTTP error: ' + error.toString());
+											$log.error('ResourceService.fetchFunction: cordovaHTTP error: ' + error.toString());
 											failure(error.toString());
 										});
 									};
@@ -285,7 +301,14 @@
 		var _graphs = {};
 
 		var favoritesDB = db.get('favorites');
+		favoritesDB.createIndex({
+			index: {
+				fields: ['time', 'server', 'username']
+			}
+		});
 		var findFavorites = function(options) {
+			var fields = Object.keys(options.selector);
+			// $log.debug('findFavorites: fields=' + fields);
 			return favoritesDB.createIndex({
 				index: {
 					fields: Object.keys(options.selector)
@@ -396,7 +419,7 @@
 		var getFavorites = function() {
 			//$log.debug('ResourceService.getFavorites()');
 			return _getServer('getFavorites').then(function(server) {
-			return findFavorites({
+				return findFavorites({
 					selector: {
 						server: server._id,
 						username: server.username,

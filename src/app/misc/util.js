@@ -237,7 +237,7 @@
 			CLEARED: 'ion-happy',
 			NORMAL: 'ion-record',
 			WARNING: 'ion-minus-circled',
-			MINOR: 'ion-alert-circled',
+			MINOR: 'ion-android-alert',
 			MAJOR: 'ion-flame',
 			CRITICAL: 'ion-nuclear'
 		};
