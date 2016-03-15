@@ -212,6 +212,7 @@
 			});
 		};
 
+		util.onDefaultServerUpdated(updateAuthorization);
 		util.onServersUpdated(updateAuthorization);
 		updateAuthorization();
 

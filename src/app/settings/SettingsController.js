@@ -204,6 +204,10 @@
 		util.onSettingsUpdated(function() {
 			init();
 		});
+		util.onDefaultServerUpdated(function(newDefault) {
+			$scope.defaultServer = newDefault;
+			$scope.$broadcast('scroll.refreshComplete');
+		});
 		util.onServersUpdated(function(newServers) {
 			$scope.servers = newServers;
 			initDefaultServer();

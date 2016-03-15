@@ -4,6 +4,8 @@
 	var angular = require('angular'),
 		VersionCompare = require('version_compare');
 
+	require('angular-debounce');
+
 	require('./Rest');
 	require('./util');
 
@@ -11,6 +13,7 @@
 
 	angular.module('opennms.services.Info', [
 		'ionic',
+		'rt.debounce',
 		'opennms.services.Rest',
 		'opennms.services.Servers',
 		'opennms.services.Util'
@@ -22,7 +25,7 @@
 		packageName: 'opennms',
 		packageDescription: 'OpenNMS'
 	})
-	.factory('Info', function($q, $rootScope, $http, $injector, $log, $window, $timeout, RestService, Servers, util) {
+	.factory('Info', function($q, $rootScope, $http, $injector, $log, $window, $timeout, debounce, RestService, Servers, util) {
 		$log.info('Info: Initializing.');
 
 		var onSuccess = function(data) {
@@ -33,7 +36,7 @@
 			$rootScope.$broadcast('opennms.info.updated', info);
 		};
 
-		var updateInfo = function() {
+		var updateInfo = debounce(500, function() {
 			Servers.getDefault().then(function(server) {
 				if (!server) {
 					$log.debug('Info.updateInfo: skipping update, server is not configured yet.');
@@ -53,9 +56,10 @@
 					return $q.reject(err);
 				});
 			});
-		};
+		});
 
 		util.onSettingsUpdated(updateInfo);
+		util.onDefaultServerUpdated(updateInfo);
 		util.onServersUpdated(updateInfo);
 		$timeout(updateInfo);
 

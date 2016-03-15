@@ -4,6 +4,8 @@
 	var angular = require('angular'),
 		ionic = require('ionic/release/js/ionic');
 
+	require('angular-debounce');
+
 	require('../settings/SettingsService');
 
 	require('../app/misc/BuildConfig');

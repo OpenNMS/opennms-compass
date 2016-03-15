@@ -5,6 +5,9 @@
 		AlarmFilter = require('../alarms/AlarmFilter'),
 		$ = require('jquery');
 
+	require('angular-cache');
+	require('angular-debounce');
+
 	require('../alarms/AlarmService');
 	require('../availability/AvailabilityService');
 	require('../nodes/ResourceService');
@@ -37,6 +40,7 @@
 
 	angular.module('opennms.controllers.Dashboard', [
 		'ionic',
+		'angular-cache',
 		'angular-flot',
 		'rt.debounce',
 		'opennms.services.Alarms',
@@ -50,7 +54,7 @@
 		'opennms.services.Settings', // for default-graph-min-range
 		'opennms.services.Util'
 	])
-	.config(function($stateProvider) {
+	.config(function($stateProvider, CacheFactoryProvider) {
 		$stateProvider
 		.state('dashboard', {
 			url: '/dashboard',
@@ -60,11 +64,18 @@
 			templateUrl: dashboardTemplate,
 			controller: 'DashboardCtrl'
 		});
+		angular.extend(CacheFactoryProvider.defaults, {
+			maxAge: 10 * 60 * 1000
+		});
 	})
-	.controller('DashboardCtrl', function($q, $rootScope, $scope, $injector, $interval, $log, $timeout, $state, $document, $window, $ionicLoading, $ionicPopup, $ionicPopover, $ionicSlideBoxDelegate, debounce, AlarmService, AvailabilityService, Errors, Info, Modals, OutageService, ResourceService, Servers, util) {
+	.controller('DashboardCtrl', function($q, $rootScope, $scope, $injector, $interval, $log, $timeout, $state, $document, $window, $ionicLoading, $ionicPopup, $ionicPopover, $ionicSlideBoxDelegate, AlarmService, AvailabilityService, CacheFactory, debounce, Errors, Info, Modals, OutageService, ResourceService, Servers, util) {
 		$log.info('DashboardCtrl: Initializing.');
 
 		$scope.donuts = {};
+		if (!CacheFactory.get('dashboardCache')) {
+			CacheFactory.createCache('dashboardCache');
+		}
+		var dashboardCache = CacheFactory.get('dashboardCache');
 
 		var updateArrows = function(height) {
 			var arrowOffset = Math.round(height * 0.5) - 50;
@@ -82,6 +93,10 @@
 
 		$scope.refreshDonutSlide = function(index) {
 			$scope.currentDonutSlide = index;
+		};
+
+		$scope.donutVisible = function(type) {
+			return $scope.donutSize && $scope.donutSize > 0 && !Errors.hasError(type+'-chart') && $scope.donuts && $scope.donuts[type] && $scope.donuts[type].data && $scope.donuts[type].options && $scope.donuts[type].options.series;
 		};
 
 		var shouldHideDonut = {
@@ -308,7 +323,7 @@
 					outages.length = 50;
 				}
 
-				Errors.clear('outage-chart');
+				Errors.clear('outages-chart');
 				$scope.donuts.outages = {
 					total: total,
 					data: outages,
@@ -318,7 +333,7 @@
 				updateTitles();
 				return outages;
 			}, function(err) {
-				Errors.set('outage-chart', err);
+				Errors.set('outages-chart', err);
 				resetOutages();
 				updateTitles();
 				return $q.reject(err);
@@ -350,7 +365,7 @@
 					});
 				}
 
-				Errors.clear('alarm-chart');
+				Errors.clear('alarms-chart');
 				$scope.donuts.alarms = {
 					total: total,
 					data: severities,
@@ -360,7 +375,7 @@
 				updateTitles();
 				return severities;
 			}, function(err) {
-				Errors.set('alarm-chart', err);
+				Errors.set('alarms-chart', err);
 				resetAlarms();
 				updateTitles();
 				return $q.reject(err);
@@ -467,7 +482,7 @@
 			scope: $scope
 		}).then(function(popover) {
 			popover.scope.selectServer = function(server) {
-				$ionicLoading.show({templateUrl: loadingTemplate, duration: 5000});
+				$ionicLoading.show({templateUrl: loadingTemplate, duration: 20000});
 				popover.hide();
 				Servers.setDefault(server);
 			};
@@ -495,10 +510,32 @@
 
 		util.onDefaultServerUpdated(function(defaultServer) {
 			if (defaultServer && angular.isDefined(defaultServer.name)) {
+				dashboardCache.put('defaultServer', defaultServer);
 				$scope.serverName = defaultServer.name;
-				$scope.refreshData();
 			} else {
+				dashboardCache.remove('defaultServer');
+				$scope.serverName = null;
+			}
+		});
+
+		$scope.$watchGroup(['serverName'], function(newValues, oldValues) {
+			var doRefresh = false,
+				doReset = false;
+
+			// serverName
+			if (newValues[0] !== oldValues[0]) {
+				if (angular.isDefined(newValues[0])) {
+					doRefresh = true;
+				} else {
+					doReset = true;
+				}
+			}
+
+			if (doReset) {
 				$scope.resetData();
+			}
+			if (doRefresh) {
+				$scope.refreshData();
 			}
 		});
 

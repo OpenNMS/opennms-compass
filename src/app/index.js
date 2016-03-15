@@ -13,6 +13,7 @@
 	require('../../bower_components/onmsicons/fonts/onmsicons.woff');
 
 	var angular = require('angular');
+	require('angular-debounce');
 
 	require('ionic/release/js/ionic');
 	require('ionic/release/js/ionic-angular');
