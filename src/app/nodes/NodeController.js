@@ -43,6 +43,7 @@
 	.controller('NodeCtrl', function($q, $scope, $log, $timeout, $window, $cordovaGeolocation, $ionicLoading, $ionicPopup, storage, util, AvailabilityService, Capabilities, Errors, EventService, NodeService, OutageService, ResourceService) {
 		$log.info('NodeCtrl: initializing.');
 
+		$scope.util = util;
 		$scope.availabilityColor = function(value) {
 			if (value >= 99.99) {
 				return 'severity severity-NORMAL';

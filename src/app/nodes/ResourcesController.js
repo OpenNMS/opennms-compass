@@ -5,12 +5,15 @@
 
 	require('./ResourceService');
 
+	require('../misc/util');
+
 	var nodeResourcesTemplate = require('ngtemplate!html!./node-resources.html');
 
 	angular.module('opennms.controllers.NodeResources', [
 		'ionic',
 		'angularLocalStorage',
-		'opennms.services.Resources'
+		'opennms.services.Resources',
+		'opennms.services.Util'
 	])
 	.config(function($stateProvider) {
 		$stateProvider
@@ -20,7 +23,7 @@
 			controller: 'NodeResourcesCtrl'
 		});
 	})
-	.controller('NodeResourcesCtrl', function($q, $scope, $log, ResourceService) {
+	.controller('NodeResourcesCtrl', function($q, $scope, $log, ResourceService, util) {
 		$log.info('NodeResourcesCtrl: initializing.');
 
 		var sortFunction = function(a,b) {
@@ -41,6 +44,7 @@
 			}
 		};
 
+		$scope.util = util;
 		$scope.refresh = function() {
 			$log.info('NodeResources.refresh: refreshing: ' + $scope.nodeId);
 			if ($scope.nodeId) {

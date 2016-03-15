@@ -11,6 +11,8 @@
 
 	require('../settings/SettingsService');
 
+	require('../misc/util');
+
 	var nodeResourceTemplate = require('ngtemplate!html!./node-resource.html');
 
 	angular.module('opennms.controllers.NodeResource', [
@@ -18,7 +20,8 @@
 		'angularLocalStorage',
 		'opennms.services.Nodes',
 		'opennms.services.Resources',
-		'opennms.services.Settings' // for default-graph-min-range
+		'opennms.services.Settings', // for default-graph-min-range
+		'opennms.services.Util'
 	])
 	.config(function($stateProvider) {
 		$stateProvider
@@ -28,8 +31,9 @@
 			controller: 'NodeResourceCtrl'
 		});
 	})
-	.controller('NodeResourceCtrl', function($q, $scope, $injector, $log, $timeout, $ionicScrollDelegate, $window, NodeService, ResourceService) {
+	.controller('NodeResourceCtrl', function($q, $scope, $injector, $log, $timeout, $ionicScrollDelegate, $window, NodeService, ResourceService, util) {
 		$log.info('NodeResourceCtrl: initializing.');
+		$scope.util = util;
 
 		var defaultRange = $injector.get('default-graph-range');
 
