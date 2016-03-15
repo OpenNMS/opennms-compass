@@ -216,14 +216,22 @@
 				}).finally(function() {
 					hideLoading();
 				});
+				var showGraphButton = Capabilities.graphs();
+				if (showGraphButton) {
+					ResourceService.resources($scope.node.id).then(function(res) {
+						//$log.debug('graphs: got res ' + angular.toJson(res));
+						if (res && res.children && res.children.length > 0)  {
+							$scope.showGraphButton = true;
+						} else {
+							$scope.showGraphButton = false;
+						}
+					}).catch(function(err) {
+						$scope.showGraphButton = false;
+					});
+				} else {
+					$scope.showGraphButton = false;
+				}
 			}
-		};
-
-		$scope.showGraphButton = Capabilities.graphs();
-		$scope.graphs = function() {
-			ResourceService.resources($scope.node.id).then(function(res) {
-				$log.debug('graphs: got res ' + angular.toJson(res));
-			});
 		};
 
 		util.onDirty('alarms', function() {
