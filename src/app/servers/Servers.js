@@ -19,7 +19,7 @@
 		'opennms.services.DB',
 		'opennms.services.Settings',
 		'opennms.services.Util'
-	]).factory('Servers', function($q, $rootScope, $interval, $log, $timeout, uuid4, db, Settings, UtilEventBroadcaster, UtilEventHandler) {
+	]).factory('Servers', function($q, $rootScope, $interval, $log, uuid4, db, Settings, UtilEventBroadcaster, UtilEventHandler) {
 		$log.info('Servers: Initializing.');
 
 		var ready = $q.defer();
@@ -115,40 +115,56 @@
 
 		var checkDefaultServerUpdated = function() {
 			var oldDefaultServer = defaultServer;
-			getDefaultServer().then(function(newDefaultServer) {
+			return getDefaultServer().then(function(newDefaultServer) {
 				defaultServer = newDefaultServer;
 				if (!angular.equals(oldDefaultServer, newDefaultServer)) {
 					UtilEventBroadcaster.defaultServerUpdated(newDefaultServer);
-					UtilEventBroadcaster.dirty('all');
+					//UtilEventBroadcaster.dirty('all');
 				}
+				return defaultServer;
 			});
 		};
 
-		var checkServersUpdated = function(force) {
+		var _checkServersUpdated = function(force, count) {
+			//$log.error('Servers._checkServersUpdated: ' + (count || 0));
 			var oldServers = angular.copy(servers);
 			oldServers.sort(_sortServers);
 			return getServers().then(function(newServers) {
 				newServers.sort(_sortServers);
 				servers = angular.copy(newServers);
 				if (force === true || !angular.equals(oldServers, newServers)) {
-					$log.debug('Servers.checkServersUpdated: server list has changed.');
+					$log.debug('Servers._checkServersUpdated: server list has changed.');
 					$log.debug('old: ' + angular.toJson(oldServers));
 					$log.debug('new: ' + angular.toJson(newServers));
 					UtilEventBroadcaster.serversUpdated(newServers, oldServers);
-					$timeout(checkDefaultServerUpdated);
 				}
-				return newServers;
+				return checkDefaultServerUpdated().then(function() {
+					return newServers;
+				});
+			}, function(err) {
+				$log.error('Servers._checkServersUpdated: error: ' + angular.toJson(err));
+				return $q.reject(err);
 			});
 		};
 
-		var refreshPromise;
-		var startRefresh = function() {
-			if (refreshPromise) {
-				$interval.cancel(refreshPromise);
+		var checkingCount = 0;
+		var checking = null;
+		var checkServersUpdated = function(force) {
+			if (checking) {
+				var deferred = $q.defer();
+
+				checking.finally(function() {
+					_checkServersUpdated(force, ++checkingCount).then(function(ret) {
+						deferred.resolve(ret);
+					}, function(err) {
+						deferred.reject(err);
+					});
+				});
+				checking = deferred.promise;
+			} else {
+				checking = _checkServersUpdated(force, ++checkingCount);
 			}
-			Settings.refreshInterval().then(function(refreshInterval) {
-				refreshPromise = $interval(checkServersUpdated, refreshInterval);
-			});
+			return checking;
 		};
 
 		var fetchServerNames = function() {
@@ -222,7 +238,6 @@
 				}
 			}).then(function() {
 				ready.resolve(true);
-				startRefresh();
 				return ready.promise;
 			}, function(err) {
 				$log.error('Servers.init: failed initialization: ' + angular.toJson(err));
@@ -239,9 +254,7 @@
 
 		var setDefaultServer = function(server) {
 			if (server && server._id) {
-				return Settings.setDefaultServerId(server._id).then(function() {
-					return checkServersUpdated();
-				});
+				return Settings.setDefaultServerId(server._id);
 			} else {
 				return $q.reject('Not sure how to handle server "'+server+'"');
 			}
@@ -287,7 +300,7 @@
 
 		UtilEventHandler.onSettingsUpdated(function(newSettings, oldSettings, changedSettings) {
 			if (changedSettings && changedSettings.defaultServerId) {
-				$timeout(checkServersUpdated);
+				$rootScope.$evalAsync(checkServersUpdated);
 			}
 		});
 

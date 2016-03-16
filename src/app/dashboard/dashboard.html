@@ -9,11 +9,11 @@
 		</ion-nav-buttons>
 	</ion-nav-bar>
 	<ion-header-bar class="bar bar-header bar-subheader">
-		<h3 class="title compass" ng-click="showSelectServer($event)"><span ng-if="serverName">{{serverName}} <i class="icon ion-arrow-down-b"></i></span></h3>
+		<h3 class="title compass" ng-click="showSelectServer($event)"><span ng-if="server">{{server.name}} <i class="icon ion-arrow-down-b"></i></span></h3>
 	</ion-header-bar>
 	<ion-content padding="false" scroll="true" class="has-header" overflow-scroll="false">
-		<ion-refresher pulling-text="Pull to Refresh..." on-refresh="refreshData()"></ion-refresher>
-		<div class="header"><h3 class="title compass" ng-if="serverName === null" style="padding-top: 10px">No server configured.</h3></div>
+		<ion-refresher pulling-text="Pull to Refresh..." on-refresh="refreshData(true)"></ion-refresher>
+		<div class="header"><h3 class="title compass" ng-if="server === null" style="padding-top: 10px">No server configured.</h3></div>
 		<ion-slide-box on-slide-changed="refreshDonutSlide(index)" show-pager="false" delegate-handle="donut-slide-box" ng-if="!wide" class="portrait">
 			<ion-slide class="outages" ng-style="{width: donutSize, height: donutSize}">
 				<i id="outage-arrow" class="icon ion-chevron-right right-arrow compass" ng-click="goToDonutSlide(1)" ng-class="donutClass('outages')"></i>

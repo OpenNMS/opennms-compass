@@ -75,53 +75,18 @@
 			}
 			delete saveme.defaultServerId;
 
-			return findSettings({
-				selector: {name: {$gt: null}},
-				sort: ['key']
-			}).then(function(result) {
-				var entries = result.docs;
-				var existing = {};
-				for (var i=0, len=entries.length, entry; i < len; i++) {
-					entry = entries[i];
-					existing[entry.key] = entry;
+			return settingsDB.get('settings').then(function(existing) {
+				saveme._id = existing._id;
+				saveme._rev = existing._rev;
+				return settingsDB.put(saveme);
+			}).catch(function(err) {
+				if (err.status === 404) {
+					return settingsDB.post(saveme);
+				} else {
+					return $q.reject(err);
 				}
-
-				var newKeys = Object.keys(saveme),
-					existingKeys = Object.keys(existing),
-					deletedKeys = existingKeys.difference(newKeys);
-
-				$log.debug('Settings._saveSettings: setting: ' + newKeys);
-				$log.debug('Settings._saveSettings: deleting: ' + deletedKeys);
-
-				var operations = [];
-
-				for (var i=0, len=newKeys.length, key, entry; i < len; i++) {
-					key = newKeys[i];
-					if (key === 'defaultServerId') {
-						continue;
-					}
-
-					entry = saveme[key];
-					$log.debug('SettingsService: saving ' + angular.toJson(entry));
-					if (existing[key]) {
-						if (existing[key].value !== saveme[key].value) {
-							entry = angular.extend({}, existing[key], saveme[key]);
-							operations.push(settingsDB.put(entry));
-						} else {
-							$log.debug('SettingsService: * ' + key + ' has not changed');
-						}
-					} else {
-						operations.push(settingsDB.post(entry));
-					}
-				}
-				for (var i=0, len=deletedKeys.length, key; i < len; i++) {
-					key = deletedKeys[i];
-					operations.push(settingsDB.remove(existing[key]));
-				}
-
-				return $q.all(operations).then(function() {
-					return settings;
-				});
+			}).then(function(res) {
+				return settings;
 			});
 		};
 
@@ -132,18 +97,8 @@
 		};
 
 		var _loadSettings = function() {
-			return findSettings({
-				selector: {key: {$gt: null}},
-				sort: ['key']
-			}).then(function(result) {
-				var docs = result.docs;
-				var settings = {},
-					defaultServerId = storage.get('opennms.default-server-id');
-
-				for (var i=0, len=docs.length, doc; i < len; i++) {
-					doc = docs[i];
-					settings[doc.key] = doc.value;
-				}
+			return settingsDB.get('settings').then(function(settings) {
+				var defaultServerId = storage.get('opennms.default-server-id');
 
 				if (!isEmpty(defaultServerId)) {
 					settings.defaultServerId = defaultServerId;
@@ -264,18 +219,28 @@
 					return oldSettings;
 				} else {
 					$log.debug('Settings.saveSettings: settings have changed.  Updating.');
+					/*
 					$log.debug('Settings.saveSettings: Old Settings: ' + o);
 					$log.debug('Settings.saveSettings: New Settings: ' + n);
+					*/
+					$log.debug('Settings.saveSettings: Changed Settings: ' + c);
 
 					return storeSettings(newSettings).then(function(stored) {
+						/*
 						if (changedSettings.server) {
 							var match = serverTypeMatch.exec(changedSettings.server);
 							if (match && match.length > 0) {
 								$rootScope.$broadcast('opennms.analytics.trackEvent', 'settings', 'serverType', 'Server Type', match[0]);
 							}
 						}
+						*/
 						$rootScope.$broadcast('opennms.settings.updated', newSettings, oldSettings, changedSettings);
 						return stored;
+					}, function(err) {
+						$log.error('SettingsService.saveSettings: Failed to save settings: ' + angular.toJson(err));
+						if (err.message) {
+							$log.error(err.message);
+						}
 					});
 				}
 			});
