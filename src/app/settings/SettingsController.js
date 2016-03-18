@@ -105,8 +105,10 @@
 
 		$scope.selectServer = function(server) {
 			$ionicListDelegate.$getByHandle('server-list').closeOptionButtons();
+			$scope.defaultServer = server;
 			$log.debug('SettingsCtrl.selectServer: ' + server.name);
 			Servers.setDefault(server);
+			$scope.$broadcast('scroll.refreshComplete');
 		};
 
 		var initDefaultServer = function() {
