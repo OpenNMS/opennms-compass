@@ -23,7 +23,9 @@
 	.factory('RestService', function($q, $rootScope, $http, $log, $window, HTTP, $injector, Servers, Settings, util) {
 		$log.info('RestService: Initializing.');
 
+		var currentServer = null;
 		var ready = $q.defer();
+		ready.resolve(false);
 
 		var x2js = new X2JS();
 
@@ -67,6 +69,8 @@
 				$log.debug('RestService.updateAuthorization: cleared cookies.');
 				return Servers.getDefault();
 			}).then(function(server) {
+				currentServer = angular.copy(server);
+
 				$log.debug('update authorization: default server = ' + (server && server.name? server.name:'unknown'));
 				//$log.debug('username=' + server.username +', password=' + server.password);
 				if (!server || angular.isUndefined(server.username) || angular.isUndefined(server.password)) {
@@ -97,11 +101,9 @@
 		};
 
 		var getUrl = function(restFragment) {
-			//$log.debug('RestService.getUrl: restFragment='+restFragment);
-			return ready.promise.then(function() {
-				//$log.debug('RestService.getUrl: ready');
-				return Servers.getDefault();
-			}).then(function(server) {
+			$log.debug('RestService.getUrl: restFragment='+restFragment);
+
+			var getUrlForServer = function(server) {
 				var restURL = server? server.restUrl() : undefined;
 				//$log.debug('RestService.getUrl: restURL=' + restURL);
 				if (restURL) {
@@ -114,6 +116,27 @@
 					return uri.toString();
 				} else {
 					//$log.debug('RestService.getUrl: returning=undefined');
+					return undefined;
+				}
+			};
+
+			return ready.promise.then(function() {
+				//$log.debug('RestService.getUrl: ready');
+				return Servers.getDefault();
+			}).then(function(server) {
+				if (server && server._id) {
+					if (!currentServer || server._id !== currentServer._id) {
+						var currentServerId = currentServer? currentServer._id : undefined;
+						$log.debug('Rest.getUrl: current server has changed: ' + currentServerId + ' -> ' + server._id);
+						return updateAuthorization().then(function() {
+							return getUrlForServer(server);
+						});
+					} else {
+						//$log.debug('Rest.getUrl: current server is unchanged: ' + server._id);
+						return getUrlForServer(server);
+					}
+				} else {
+					$log.warn('Rest.getUrl: current server is unset');
 					return undefined;
 				}
 			});
@@ -211,10 +234,6 @@
 				});
 			});
 		};
-
-		util.onDefaultServerUpdated(updateAuthorization);
-		util.onServersUpdated(updateAuthorization);
-		updateAuthorization();
 
 		return {
 			url: getUrl,
