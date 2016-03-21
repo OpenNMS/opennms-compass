@@ -126,10 +126,11 @@
   "scripts": {
     "setup": "bower install && npm install && ionic state reset",
     "build": "webpack --colors --display-error-details && ionic build",
+    "release-build": "ionic prepare --release && webpack --colors --display-error-details --env=production && ionic build --release",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0 -u",
     "prepare": "webpack --colors --display-error-details && ionic prepare",
     "increment": "bin/update-build-number.js",
-    "release": "npm run lint && npm run test && ionic prepare --release && webpack --colors --display-error-details --env=production && ionic build --release && bin/sign-android.sh",
+    "release": "npm run lint && npm run test && npm run release-build && bin/sign-android.sh",
     "verbose-build": "npm run lint && npm run test && webpack --debug --colors --display-modules --display-chunks --display-error-details --display-origins --display-reasons",
     "genymotion": "ionic run -slc android",
     "android": "ionic emulate -slc android",
