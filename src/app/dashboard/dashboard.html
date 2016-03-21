@@ -42,7 +42,7 @@
 		</div>
 		<span ng-if="favoriteGraphs &amp;&amp; favoriteGraphs.length > 0" class="graphs">
 			<!--<div class="spacer"></div>-->
-			<div class="header compass-bg"><h3>Favorited Graphs</h3></div>
+			<div class="item item-compass item-divider">Favorited Graphs</div>
 			<ion-slide-box on-slide-changed="refreshGraphSlide(index)" delegate-handle="graph-slide-box" show-pager="false">
 				<ion-slide ng-repeat="favorite in favoriteGraphs track by favorite._id">
 					<h4 class="label">{{favorite.nodeLabel}} <button class="button button-clear button-small button-compass" ng-click="unfavorite(favorite)"><i class="icon ion-ios-star"></i></button></h4>
