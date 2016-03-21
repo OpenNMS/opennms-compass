@@ -98,7 +98,7 @@
 		};
 
 		$scope.donutVisible = function(type) {
-			return $scope.donutSize && $scope.donutSize > 0 && !Errors.hasError(type+'-chart') && $scope.donuts && $scope.donuts[type] && $scope.donuts[type].data && $scope.donuts[type].options && $scope.donuts[type].options.series && $scope.donuts[type].total > 0;
+			return $scope.donutSize && $scope.donutSize > 0 && !Errors.hasError(type+'-chart') && $scope.donuts && $scope.donuts[type] && $scope.donuts[type].data && $scope.donuts[type].options && $scope.donuts[type].options.series;
 		};
 
 		var shouldHideDonut = {
@@ -228,7 +228,10 @@
 
 			if (update.success) {
 				$scope.donuts.outages = update.contents;
-				$scope.donuts.outages.options = angular.extend({}, flotOptions);
+				$scope.donuts.outages.options = angular.copy(flotOptions);
+				if ($scope.donuts.outages.total === 0) {
+					$scope.donuts.outages.options.series.pie.label.show = false;
+				}
 				hideDonut('outages', false);
 				updateTitles();
 			} else {
@@ -250,7 +253,10 @@
 
 			if (update.success) {
 				$scope.donuts.alarms = update.contents;
-				$scope.donuts.alarms.options = angular.extend({}, flotOptions);
+				$scope.donuts.alarms.options = angular.copy(flotOptions);
+				if ($scope.donuts.alarms.total === 0) {
+					$scope.donuts.alarms.options.series.pie.label.show = false;
+				}
 				hideDonut('alarms', false);
 				updateTitles();
 			} else {

@@ -51,6 +51,13 @@ angular.module('opennms.dashboard.Service', [
 					});
 				}
 
+				if (total === 0) {
+					severities.push({
+						label: ' ',
+						data: 1,
+						color: util.color('NORMAL')
+					});
+				}
 				return {
 					total: total,
 					data: severities
@@ -117,6 +124,14 @@ angular.module('opennms.dashboard.Service', [
 				});
 				if (outages.length > 50) {
 					outages.length = 50;
+				}
+
+				if (total === 0) {
+					outages.push({
+						label: ' ',
+						data: 1,
+						color: util.color('NORMAL')
+					});
 				}
 
 				return {
