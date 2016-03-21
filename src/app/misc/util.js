@@ -212,10 +212,10 @@
 		$log.info('util: Initializing.');
 
 		$ionicPlatform.ready(function() {
-			if (typeof cordova.plugins.Keyboard !== 'undefined') {
+			if ($window.cordova && $window.cordova.plugins && $window.cordova.plugins.Keyboard) {
 				$log.debug('Util: disabling native keyboard scroll.');
-				cordova.plugins.Keyboard.disableScroll(true);
-				cordova.plugins.Keyboard.hideKeyboardAccessoryBar(false);
+				$window.cordova.plugins.Keyboard.disableScroll(true);
+				//$window.cordova.plugins.Keyboard.hideKeyboardAccessoryBar(false);
 			} else {
 				$log.debug('Util: no Keyboard plugin found.');
 			}
@@ -254,13 +254,13 @@
 		var showKeyboard = function() {
 			//$log.debug('util.showKeyboard');
 			if ($window.cordova && $window.cordova.plugins && $window.cordova.plugins.Keyboard) {
-				cordova.plugins.Keyboard.show();
+				$window.cordova.plugins.Keyboard.show();
 			}
 		};
 		var hideKeyboard = function() {
 			//$log.debug('util.hideKeyboard');
 			if ($window.cordova && $window.cordova.plugins && $window.cordova.plugins.Keyboard) {
-				cordova.plugins.Keyboard.close();
+				$window.cordova.plugins.Keyboard.close();
 			}
 		};
 
