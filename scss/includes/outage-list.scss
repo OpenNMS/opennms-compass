@@ -22,4 +22,14 @@
 		font-weight: bolder;
 		/* border-top: 1px solid #333; */
 	}
+	.service-name {
+		font-size: smaller;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		/*
+		direction: rtl;
+		text-align: right;
+		*/
+	}
 }

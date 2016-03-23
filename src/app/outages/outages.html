@@ -22,7 +22,7 @@
 				<ion-item ng-repeat="nodeOutage in outage.nodeOutages track by nodeOutage.id" ng-class="'severity ' + nodeOutage.getSeverityClass()" class="no-top no-bottom" ng-click="showNode(outage.nodeId)" ng-click="showNode(outage.nodeId)">
 					<span class="row">
 						<div class="col" style="text-overflow: ellipsis; overflow: hidden">{{nodeOutage.ipAddress}}</div>
-						<div class="col col-20 pull-right">{{nodeOutage.monitoredService.serviceName}}</div>
+						<div class="col col-20 pull-right service-name">{{nodeOutage.monitoredService.serviceName}}</div>
 						<div class="col col-10 pull-right"><i ng-class="'icon severity ' + nodeOutage.getSeverityClass() + ' ' + util.icon(nodeOutage.serviceLostEvent.severity)" title="{{nodeOutage.serviceLostEvent.severity}}"></i></div>
 					</span>
 				</ion-item>
