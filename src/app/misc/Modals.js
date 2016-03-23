@@ -146,7 +146,7 @@
 			$scope.outageModal.resolve(modal);
 		});
 
-		$ionicModal.fromTemplateUrl('templates/alarm-detail.html', {
+		$ionicModal.fromTemplateUrl(alarmDetailTemplate, {
 			scope: $scope.$new(),
 			animation: 'slide-in-up'
 		}).then(function(modal) {
