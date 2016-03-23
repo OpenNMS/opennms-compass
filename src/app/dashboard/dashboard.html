@@ -17,25 +17,25 @@
 		<ion-slide-box on-slide-changed="refreshDonutSlide(index)" show-pager="false" delegate-handle="donut-slide-box" ng-if="!wide" class="portrait">
 			<ion-slide class="outages" ng-style="{width: donutSize, height: donutSize}">
 				<i id="outage-arrow" class="icon ion-chevron-right right-arrow compass" ng-click="goToDonutSlide(1)" ng-class="donutClass('outages')"></i>
-				<h3 ng-if="e.hasError('outages-chart')" class="item item-text-wrap title error">Error: Unable to retrieve outages.<span ng-if="e.get('outages-chart').permissionDenied()"><br/>Permission denied.</span></h3>
+				<h3 ng-if="e.hasError('dashboard-outages')" class="item item-text-wrap title error">Error: Unable to retrieve outages.<span ng-if="e.get('dashboard-outages').permissionDenied()"><br/>Permission denied.</span></h3>
 				<flot dataset="donuts.outages.data" options="donuts.outages.options" ng-click="modals.outages()" ng-if="donutVisible('outages')" ng-attr-width="{{donutSize}}" ng-attr-height="{{donutSize}}"></flot>
 				<div class="donut-title"></div>
 			</ion-slide>
 			<ion-slide class="alarms" ng-style="{width: donutSize, height: donutSize}">
 				<i id="alarm-arrow" class="icon ion-chevron-left left-arrow compass" ng-click="goToDonutSlide(0)" ng-class="donutClass('alarms')"></i>
-				<h3 ng-if="e.hasError('alarms-chart')" class="item item-text-wrap title error">Error: Unable to retrieve alarm data.<span ng-if="e.get('alarms-chart').permissionDenied()"><br/>Permission denied.</span></h3>
+				<h3 ng-if="e.hasError('dashboard-alarms')" class="item item-text-wrap title error">Error: Unable to retrieve alarm data.<span ng-if="e.get('dashboard-alarms').permissionDenied()"><br/>Permission denied.</span></h3>
 				<flot dataset="donuts.alarms.data" options="donuts.alarms.options" ng-if="donutVisible('alarms')" ng-attr-width="{{donutSize}}" ng-attr-height="{{donutSize}}"></flot>
 				<div class="donut-title"></div>
 			</ion-slide>
 		</ion-slide-box>
 		<div class="row wide" ng-if="wide">
 			<div class="outages col col-50" ng-style="{width: donutSize, height: donutSize}">
-				<h3 ng-if="e.hasError('outages-chart')" class="item item-text-wrap title error">Error: Unable to retrieve outages.<span ng-if="e.get('outages-chart').permissionDenied()"><br/>Permission denied.</span></h3>
+				<h3 ng-if="e.hasError('dashboard-outages')" class="item item-text-wrap title error">Error: Unable to retrieve outages.<span ng-if="e.get('dashboard-outages').permissionDenied()"><br/>Permission denied.</span></h3>
 				<flot dataset="donuts.outages.data" options="donuts.outages.options" ng-click="modals.outages()" ng-if="donutVisible('outages')" ng-attr-width="{{donutSize}}" ng-attr-height="{{donutSize}}"></flot>
 				<div class="donut-title"></div>
 			</div>
 			<div class="alarms col col-50" ng-style="{width: donutSize, height: donutSize}">
-				<h3 ng-if="e.hasError('alarms-chart')" class="item item-text-wrap title error">Error: Unable to retrieve alarm data.<span ng-if="e.get('alarms-chart').permissionDenied()"><br/>Permission denied.</span></h3>
+				<h3 ng-if="e.hasError('dashboard-alarms')" class="item item-text-wrap title error">Error: Unable to retrieve alarm data.<span ng-if="e.get('dashboard-alarms').permissionDenied()"><br/>Permission denied.</span></h3>
 				<flot dataset="donuts.alarms.data" options="donuts.alarms.options" ng-if="donutVisible('alarms')" ng-attr-width="{{donutSize}}" ng-attr-height="{{donutSize}}"></flot>
 				<div class="donut-title"></div>
 			</div>
