@@ -126,10 +126,11 @@
   "scripts": {
     "setup": "bower install && npm install && ionic state reset",
     "webpack": "webpack --colors --display-error-details",
+    "webpack-release": "webpack --colors --display-error-details --env=production",
     "build": "npm run webpack && ionic build",
-    "release-build": "ionic prepare --release && webpack --colors --display-error-details --env=production && ionic build --release",
+    "release-build": "ionic prepare --release && npm run webpack-release && ionic build --release",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0 -u",
-    "prepare": "webpack --colors --display-error-details && ionic prepare",
+    "prepare": "npm run webpack && ionic prepare",
     "increment": "bin/update-build-number.js",
     "release": "npm run lint && npm run test && npm run release-build && bin/sign-android.sh",
     "verbose-build": "npm run lint && npm run test && webpack --debug --colors --display-modules --display-chunks --display-error-details --display-origins --display-reasons",
