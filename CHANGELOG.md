@@ -1,19 +1,37 @@
 <a name="2.1.0"></a>
-# [2.1.0](https://github.com/OpenNMS/opennms-compass/compare/v2.1.0-394...v2.1.0) (2016-03-03)
+# [2.1.0](https://github.com/OpenNMS/opennms-compass/compare/v2.1.0-394...v2.1.0) (2016-03-24)
 
 
 ### Bug Fixes
 
+* **alarms:** fix broken alarm template ([4b87d96](https://github.com/OpenNMS/opennms-compass/commit/4b87d96))
+* **dashboard:** fix donut display on 0 outages or alarms ([c8bdfe5](https://github.com/OpenNMS/opennms-compass/commit/c8bdfe5))
+* **dashboard:** fix error display after dashboard refactor ([33e242a](https://github.com/OpenNMS/opennms-compass/commit/33e242a))
+* **dashboard:** fix minification that caused availability panel to not show in production mode ([a2598eb](https://github.com/OpenNMS/opennms-compass/commit/a2598eb))
+* **dashboard:** fix rendering of "favorites" header ([824fec9](https://github.com/OpenNMS/opennms-compass/commit/824fec9))
 * **dashboard:** huge cleanup of dashboard behavior, plus a few other small bugfixes ([c696f39](https://github.com/OpenNMS/opennms-compass/commit/c696f39))
+* **db:** create index if necessary, other misc cleanup ([8af3624](https://github.com/OpenNMS/opennms-compass/commit/8af3624))
 * **graphs:** cleaned up graphs some more, now able to make HTTP calls without AJAX/CORS issue ([c7da878](https://github.com/OpenNMS/opennms-compass/commit/c7da878))
+* **graphs:** fix flot graph exception when removing the active server ([0cfde0e](https://github.com/OpenNMS/opennms-compass/commit/0cfde0e))
+* **graphs:** fix graph rendering on android ([42f3db2](https://github.com/OpenNMS/opennms-compass/commit/42f3db2))
+* **nodes:** only show the graph button if there are graphs ([3afaf41](https://github.com/OpenNMS/opennms-compass/commit/3afaf41))
+* **outages:** fix ? severity on outage list ([6447fc9](https://github.com/OpenNMS/opennms-compass/commit/6447fc9))
+* **outages:** make service name more visible ([d6022f1](https://github.com/OpenNMS/opennms-compass/commit/d6022f1))
+* **ReST:** port to the new cordovaHTTP API ([2cb6978](https://github.com/OpenNMS/opennms-compass/commit/2cb6978))
+* **util:** fix initialization of Keyboard plugin ([72b64b8](https://github.com/OpenNMS/opennms-compass/commit/72b64b8))
 
 ### Features
 
 * disable ads and in-app-purchases ([35c42d5](https://github.com/OpenNMS/opennms-compass/commit/35c42d5))
+* generate source-map and create css bundle ([bab3005](https://github.com/OpenNMS/opennms-compass/commit/bab3005))
+* **navigation:** tap-and-hold back buttons to go straight to the dashboard ([a4d3af1](https://github.com/OpenNMS/opennms-compass/commit/a4d3af1))
 
 ### Performance Improvements
 
 * convert to webpack ([19bc97c](https://github.com/OpenNMS/opennms-compass/commit/19bc97c))
+* **dashboard:** improve the responsiveness of dashboard reloads ([b13931b](https://github.com/OpenNMS/opennms-compass/commit/b13931b))
+* **rest:** only reinitialize cookies&auth on server change ([fc7b6b9](https://github.com/OpenNMS/opennms-compass/commit/fc7b6b9))
+* **settings:** update the server chooser immediately ([17abbea](https://github.com/OpenNMS/opennms-compass/commit/17abbea))
 
 
 
