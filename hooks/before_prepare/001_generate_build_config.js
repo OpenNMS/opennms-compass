@@ -32,11 +32,13 @@ if (rootdir) {
 	if (!buildobj.build) {
 		buildobj.build = configobj.build;
 	}
+	/*
 	if (process.env['CORDOVA_CMDLINE'] && process.env['CORDOVA_CMDLINE'].indexOf('--release') >= 0) {
 		buildobj.debug = false;
 	} else {
 		buildobj.debug = true;
 	}
+	*/
 
 	for (var i=0; i < dirs.length; i++) {
 		var dir = dirs[i];

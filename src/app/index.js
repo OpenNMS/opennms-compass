@@ -63,9 +63,9 @@
 		'opennms.controllers.Nodes',
 		'opennms.controllers.Settings'
 	])
+	.constant('config.build.debug', __DEVELOPMENT__)
 	.config(['$compileProvider', '$logProvider', 'config.build.debug', function($compileProvider, $logProvider, isDebug) {
       /* eslint-disable no-console */
-		isDebug = !!isDebug;
 		console.log('debug mode: ' + isDebug);
 		$compileProvider.debugInfoEnabled(isDebug);
 		$logProvider.debugEnabled(isDebug);
