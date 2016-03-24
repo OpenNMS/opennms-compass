@@ -9,7 +9,7 @@ sign_jar() {
 	local JAR="$1";
 }
 
-find platforms/android -name \*-debug.apk -o -name \*-release-unsigned.apk | while read APKFILE; do
+find platforms/android -name \*-debug.apk -o -name \*-release-unsigned.apk -o -name \*-release.apk | while read APKFILE; do
 	SIGNME=`echo "$APKFILE" | perl -p -e 's,-[^\-]*.apk,-signme.apk,g'`
 	SIGNED=`echo "$APKFILE" | perl -p -e 's,-[^\-]*.apk,-signed.apk,g'`
 
