@@ -13,7 +13,7 @@
 	require('../misc/Rest');
 	require('../misc/util');
 
-	var onmsGraphTemplate = require('ngtemplate!html!./onms-graph.html');
+	var onmsGraphTemplate = require('ngtemplate!./onms-graph.html');
 
 	angular.module('opennms.services.Resources', [
 		'ionic',

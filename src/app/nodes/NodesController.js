@@ -8,8 +8,8 @@
 	require('../misc/Errors');
 	require('../misc/util');
 
-	var nodesTemplate = require('ngtemplate!html!./nodes.html');
-	var loadingTemplate = require('ngtemplate!html!../misc/loading.html');
+	var nodesTemplate = require('ngtemplate!./nodes.html');
+	var loadingTemplate = require('ngtemplate!../misc/loading.html');
 
 	angular.module('opennms.controllers.Nodes', [
 		'ionic',

@@ -21,9 +21,12 @@
 	require('../misc/Modals');
 	require('../misc/util');
 
-	var dashboardTemplate = require('ngtemplate!html!./dashboard.html');
-	var loadingTemplate = require('ngtemplate!html!../misc/loading.html');
-	var serverPopoverTemplate = require('ngtemplate!html!./server-popover.html');
+	var dashboardTemplate = require('ngtemplate!./dashboard.html');
+	var loadingTemplate = require('ngtemplate!../misc/loading.html');
+	var serverPopoverTemplate = require('ngtemplate!./server-popover.html');
+
+	var favoriteGraphsTemplate = require('ngtemplate!./dashboard-favorite-graphs.html');
+	var availabilityTemplate = require('ngtemplate!./dashboard-availability.html');
 
 	var severityOrder = [
 		'INDETERMINATE',
@@ -72,6 +75,9 @@
 	})
 	.controller('DashboardCtrl', function($q, $rootScope, $scope, $injector, $interval, $log, $timeout, $state, $document, $window, $ionicLoading, $ionicPopup, $ionicPopover, $ionicSlideBoxDelegate, AlarmService, AvailabilityService, CacheFactory, DashboardService, debounce, Errors, Info, Modals, OutageService, ResourceService, Servers, util) {
 		$log.info('DashboardCtrl: Initializing.');
+
+		$scope.favoriteGraphsTemplate = favoriteGraphsTemplate;
+		$scope.availabilityTemplate = availabilityTemplate;
 
 		$scope.donuts = {};
 		if (!CacheFactory.get('dashboardCache')) {

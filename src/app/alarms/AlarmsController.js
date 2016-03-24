@@ -12,9 +12,9 @@
 	require('../misc/Modals');
 	require('../misc/util');
 
-	var alarmsTemplate = require('ngtemplate!html!./alarms.html');
-	var filterTemplate = require('ngtemplate!html!./alarm-filter.html');
-	var loadingTemplate = require('ngtemplate!html!../misc/loading.html');
+	var alarmsTemplate = require('ngtemplate!./alarms.html');
+	var filterTemplate = require('ngtemplate!./alarm-filter.html');
+	var loadingTemplate = require('ngtemplate!../misc/loading.html');
 
 	angular.module('opennms.controllers.Alarms', [
 		'ionic',

@@ -148,6 +148,10 @@ var options = {
 				loaders: ['style', 'css', 'sass']
 			},
 			{
+				test: /\.html$/,
+				loader: 'html?config=htmlLoaderConfig'
+			},
+			{
 				test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
 				loader: 'url?limit=10000&mimetype=application/vnd.ms-fontobject'
 			},
@@ -186,6 +190,9 @@ var options = {
 		fs: '{}',
 		cordova: '{}',
 		jQuery: '{}'
+	},
+	htmlLoaderConfig: {
+		minimize: false
 	}
 };
 

@@ -7,7 +7,7 @@
 
 	require('../misc/util');
 
-	var nodeResourcesTemplate = require('ngtemplate!html!./node-resources.html');
+	var nodeResourcesTemplate = require('ngtemplate!./node-resources.html');
 
 	angular.module('opennms.controllers.NodeResources', [
 		'ionic',
