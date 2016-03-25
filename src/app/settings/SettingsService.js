@@ -6,9 +6,10 @@
 	var angular = require('angular'),
 		moment = require('moment');
 
+	require('../../../generated/misc/BuildConfig');
+
 	require('../db/db');
 	require('../misc/Analytics');
-	require('../misc/BuildConfig');
 
 	angular.module('opennms.services.Settings', [
 		'angularLocalStorage',

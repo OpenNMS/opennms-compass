@@ -20,11 +20,11 @@
 
 	require('ngCordova');
 
+	require('../../generated/misc/BuildConfig');
 	require('./misc/Array');
 	require('./misc/String');
 
 	require('./misc/Analytics');
-	require('./misc/BuildConfig');
 	require('./misc/Info');
 	require('./misc/Ionic');
 	require('./misc/Modals');

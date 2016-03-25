@@ -12,12 +12,6 @@ var rootdir = process.argv[2];
 
 if (rootdir) {
 
-	exec('gulp process');
-
-	var dirs = [
-		'www'
-	];
-
 	var packagejson = path.join(rootdir, 'package.json');
 	var configobj = JSON.parse(fs.readFileSync(packagejson, 'utf8'));
 
@@ -40,29 +34,26 @@ if (rootdir) {
 	}
 	*/
 
-	for (var i=0; i < dirs.length; i++) {
-		var dir = dirs[i];
-		if (fs.existsSync(dir)) {
-			var outfile = path.join(dir, 'app/misc/BuildConfig.js');
-			fs.writeFileSync(outfile, "(function() {\n\t'use strict';\n\n\tangular.module('opennms.services.BuildConfig', [])\n");
-			for (var prop in buildobj) {
-				if (buildobj.hasOwnProperty(prop)) {
-					// skip signing properties
-					if (prop === 'storeFile' || prop === 'keyAlias' || prop === 'storePassword' || prop === 'keyPassword') {
-						continue;
-					}
-					var value = buildobj[prop];
-					if (typeof value === 'string' || value instanceof String) {
-						fs.appendFileSync(outfile, "\t\t.constant('config.build." + prop + "', '" + value + "')\n");
-					} else {
-						fs.appendFileSync(outfile, "\t\t.constant('config.build." + prop + "', " + value + ")\n");
-					}
-				}
+	var dir = 'generated';
+	var outfile = path.join(dir, 'misc/BuildConfig.js');
+	var outdir = path.dirname(outfile);
+	fs.mkdirsSync(outdir);
+	fs.writeFileSync(outfile, "(function() {\n\t'use strict';\n\n\tangular.module('opennms.services.BuildConfig', [])\n");
+	for (var prop in buildobj) {
+		if (buildobj.hasOwnProperty(prop)) {
+			// skip signing properties
+			if (prop === 'storeFile' || prop === 'keyAlias' || prop === 'storePassword' || prop === 'keyPassword') {
+				continue;
 			}
-			fs.appendFileSync(outfile, "\t;\n\n}());");
+			var value = buildobj[prop];
+			if (typeof value === 'string' || value instanceof String) {
+				fs.appendFileSync(outfile, "\t\t.constant('config.build." + prop + "', '" + value + "')\n");
+			} else {
+				fs.appendFileSync(outfile, "\t\t.constant('config.build." + prop + "', " + value + ")\n");
+			}
 		}
 	}
-
+	fs.appendFileSync(outfile, "\t;\n\n}());");
 }
 
 /* eslint-enable quotes */

@@ -3,8 +3,9 @@
 
 	var angular = require('angular');
 
+	require('../../../generated/misc/BuildConfig');
+
 	require('./Analytics');
-	require('./BuildConfig');
 	require('./Errors');
 	require('./Info');
 	require('./util');

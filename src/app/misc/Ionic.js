@@ -3,7 +3,7 @@
 
 	var angular = require('angular');
 
-	require('./BuildConfig');
+	require('../../../generated/misc/BuildConfig');
 
 	angular.module('opennms.services.Ionic', [
 		'ionic',
