@@ -6,11 +6,13 @@
 			</div>
 			<h1 class="title">{{adding? 'Add':'Edit'}} Server</h1>
 			<div class="buttons">
-				<button class="button button-compass button-clear" ng-click="saveServer()" ng-disabled="editServer.$invalid">Save</button>
+				<button class="button button-compass button-clear" ng-if="saving"><ion-spinner class="spinner-compass"></ion-spinner></button>
+				<button class="button button-compass button-clear" ng-click="saveServer()" ng-disabled="editServer.$invalid" ng-if="!saving">Save</button>
 			</div>
 		</ion-header-bar>
 		<ion-content scroll="true">
 			<ion-list>
+				<label class="item item-text-wrap error" ng-if="serverError">Failed to connect: {{serverError}}</label>
 				<label class="item item-input item-stacked-label">
 					<span class="input-label">Name</span>
 					<input name="name" type="text" placeholder="displayable name for server ('default', 'home', etc.)" ng-model="server.name" ng-model-options="{debounce:200}" required autofocus>

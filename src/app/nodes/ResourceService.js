@@ -10,6 +10,7 @@
 	require('../servers/Servers');
 	require('../settings/SettingsService');
 
+	require('../misc/HTTP');
 	require('../misc/Rest');
 	require('../misc/util');
 
@@ -22,9 +23,10 @@
 		'opennms.services.Rest',
 		'opennms.services.Servers',
 		'opennms.services.Settings', // for default-graph-min-range
-		'opennms.services.Util'
+		'opennms.services.Util',
+		'opennms.util.HTTP'
 	])
-	.directive('onmsGraph', function($log, $timeout, $window, $injector, RestService, Servers) {
+	.directive('onmsGraph', function($log, $timeout, $window, $injector, HTTP, RestService, Servers) {
 		var getWidth = function() {
 			return $window.innerWidth;
 		};
@@ -228,41 +230,38 @@
 									metrics: graphModel.metrics
 								};
 
-								var cordovaHTTP;
-								if ($injector.has('cordovaHTTP')) {
-									cordovaHTTP = $injector.get('cordovaHTTP');
-								}
-								if (cordovaHTTP) {
-									options.fetchFunction = function(url, data, success, failure) {
-										cordovaHTTP.post(url, data, {
+								options.fetchFunction = function(url, data, success, failure) {
+									HTTP.post(url, {
+										data: data,
+										headers: {
 											'Content-Type': 'application/json',
 											Accept: 'application/json'
-										}).then(function(response) {
-											//$log.debug('cordovaHTTP response: ' + angular.toJson(response));
-											if (angular.isString(response.data)) {
-												try {
-													var json = angular.fromJson(response.data);
-													//$log.debug('cordovaHTTP: json = ' + angular.toJson(json));
-													success(json);
-												} catch (err) {
-													if (err.message) {
-														$log.error('ResourceService.fetchFunction: error: ' + err.message);
-													} else {
-														$log.error('ResourceService.fetchFunction: error: ' + err);
-													}
-													$log.debug('ResourceService.fetchFunction: falling back to sending the raw response data string.');
-													success(response.data);
+										}
+									}).then(function(response) {
+										//$log.debug('ResourceService.fetchFunction: ' + angular.toJson(response));
+										if (angular.isString(response.data)) {
+											try {
+												var json = angular.fromJson(response.data);
+												//$log.debug('ResourceService.fetchFunction: json = ' + angular.toJson(json));
+												success(json);
+											} catch (err) {
+												if (err.message) {
+													$log.error('ResourceService.fetchFunction: error: ' + err.message);
+												} else {
+													$log.error('ResourceService.fetchFunction: error: ' + err);
 												}
-											} else {
+												$log.debug('ResourceService.fetchFunction: falling back to sending the raw response data string.');
 												success(response.data);
 											}
-										}, function(err) {
-											var error = new RestError(url, err.data, err.status);
-											$log.error('ResourceService.fetchFunction: cordovaHTTP error: ' + error.toString());
-											failure(error.toString());
-										});
-									};
-								}
+										} else {
+											success(response.data);
+										}
+									}, function(err) {
+										var error = new RestError(url, err.data, err.status);
+										$log.error('ResourceService.fetchFunction: cordovaHTTP error: ' + error.toString());
+										failure(error.toString());
+									});
+								};
 
 								$scope.ds = new Backshift.DataSource.OpenNMS(options);
 							}

@@ -20,7 +20,7 @@
 		'opennms.util.HTTP'
 	])
 
-	.factory('RestService', function($q, $rootScope, $http, $log, $window, HTTP, $injector, Servers, Settings, util) {
+	.factory('RestService', function($q, $rootScope, $log, $window, HTTP, $injector, Servers, Settings, util) {
 		$log.info('RestService: Initializing.');
 
 		var currentServer = null;
@@ -75,7 +75,6 @@
 				//$log.debug('username=' + server.username +', password=' + server.password);
 				if (!server || angular.isUndefined(server.username) || angular.isUndefined(server.password)) {
 					$log.info('RestService.updateAuthorization: username or password not set.');
-					delete $http.defaults.headers.common['Authorization'];
 					HTTP.useBasicAuth(undefined, undefined).then(function() {
 						$log.debug('RestService.updateAuthorization: unconfigured basic auth.');
 						return done();
@@ -85,7 +84,6 @@
 					});
 				} else {
 					//$log.debug('RestService.updateAuthorization: setting basic auth with username "' + server.username + '".');
-					$http.defaults.headers.common['Authorization'] = 'Basic ' + $window.btoa(server.username + ':' + server.password);
 					HTTP.useBasicAuth(server.username, server.password).then(function() {
 						$log.debug('RestService.updateAuthorization: configured basic auth with username "' + server.username + '".');
 						return done();
@@ -209,30 +207,12 @@
 		};
 
 		var doPostXml = function(restFragment, data, headers) {
-			return Servers.getDefault().then(function(server) {
-				if (server) {
-					return getUrl(restFragment);
-				} else {
-					return $q.reject(new RestError(restFragment, undefined, 0, 'Server information is not complete.'));
-				}
-			}).then(function(url) {
-				if (!headers) {
-					headers = {};
-				}
-				if (!headers['Content-Type']) {
-					headers['Content-Type'] = 'application/xml';
-				}
+			var h = angular.copy(headers) || {};
+			if (!h['Content-Type']) {
+				h['Content-Type'] = 'application/xml';
+			}
 
-				return $http.post(url, data, {
-					withCredentials: true,
-					headers: headers
-				}).success(function(data) {
-					//$log.debug('Rest.doQuery:',data);
-					return data;
-				}).error(function(data, status, headers, config, statusText) {
-					return $q.reject(new RestError(url, data, status, statusText));
-				});
-			});
+			return doQuery('POST', restFragment, data, headers);
 		};
 
 		return {
