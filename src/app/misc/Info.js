@@ -34,6 +34,7 @@
 			var info = $injector.get('info');
 			angular.extend(info, data);
 			$rootScope.$broadcast('opennms.info.updated', info);
+			return data;
 		};
 
 		var updateInfo = debounce(500, function() {
@@ -53,7 +54,13 @@
 					return response;
 				}, function(err) {
 					$log.error('Info.updateInfo: failed: ' + angular.toJson(err));
-					return $q.reject(err);
+					if (err.status === 404) {
+						return onSuccess({
+							version: '0.0.0'
+						});
+					} else {
+						return $q.reject(err);
+					}
 				});
 			});
 		});
