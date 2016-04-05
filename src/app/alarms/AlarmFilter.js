@@ -1,5 +1,15 @@
 /* jshint -W069 */ /* "better written in dot notation" */
 
+var severities = {
+	INDETERMINATE: 1,
+	CLEARED: 2,
+	NORMAL: 3,
+	WARNING: 4,
+	MINOR: 5,
+	MAJOR: 6,
+	CRITICAL: 7
+};
+
 function AlarmFilter(params) {
 	'use strict';
 
@@ -30,7 +40,7 @@ function AlarmFilter(params) {
 	}
 }
 
-AlarmFilter.prototype.toParams = function() {
+AlarmFilter.prototype.toParams = function(version) {
 	'use strict';
 	var self = this;
 	var params = {};
@@ -45,7 +55,7 @@ AlarmFilter.prototype.toParams = function() {
 	}
 	params.limit = self.limit;
 	params.offset = self.offset;
-	if (self.minimumSeverity) {
+	if (self.minimumSeverity && version > 0.0) {
 		params.comparator = 'ge';
 		params.severity = self.minimumSeverity;
 	}

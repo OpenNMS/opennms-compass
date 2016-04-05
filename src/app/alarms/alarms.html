@@ -12,7 +12,7 @@
 	</ion-header-bar>
 	<ion-content delegate-handle="alarms-scroll" ng-class="legend.length &gt; 0? 'has-subheader':''">
 		<ion-refresher pulling-text="Pull to Refresh..." on-refresh="refreshAlarms()"></ion-refresher>
-		<ion-list can-swipe="true">
+		<ion-list can-swipe="canAck()">
 			<ion-item ng-if="alarms &amp;&amp; alarms.length === 0 &amp;&amp; !error">
 				No {{filter.showAcknowledged? 'matching':'unacknowledged'}} alarms found.
 			</ion-item>
@@ -30,9 +30,11 @@
 				<p>{{alarm.nodeLabel}}</p>
 				<p ng-bind-html="alarm.logMessage" class="message"></p>
 				<i ng-class="'icon severity severity-' + alarm.severity + ' ' + util.icon(alarm.severity)" title="{{alarm.severity}}"></i>
-				<ion-option-button ng-click="clear(alarm, $event)" ng-if="alarm.severity !== 'CLEARED'">Clear</ion-option-button>
-				<ion-option-button ng-click="escalate(alarm, $event)" ng-if="alarm.severity !== 'CRITICAL'">Escalate</ion-option-button>
-				<ion-option-button ng-click="toggleAck(alarm, $event)">{{alarm.ackUser? 'Unack':'Ack'}}</ion-option-button>
+				<span ng-if="canAck(alarm)">
+					<ion-option-button ng-click="clear(alarm, $event)" ng-if="canClear(alarm)">Clear</ion-option-button>
+					<ion-option-button ng-click="escalate(alarm, $event)" ng-if="canEscalate(alarm)">Escalate</ion-option-button>
+					<ion-option-button ng-click="toggleAck(alarm, $event)">{{alarm.ackUser? 'Unack':'Ack'}}</ion-option-button>
+				</span>
 				<div class="bottom-fade"></div>
 			</ion-item>
 		</ion-list>

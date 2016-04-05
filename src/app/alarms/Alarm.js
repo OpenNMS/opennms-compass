@@ -2,6 +2,8 @@
 
 var OnmsEvent = require('../events/models/Event');
 var moment = require('moment');
+var removeSlashes = /^.*\//g;
+var capitalLetters = /([A-Z])/g;
 
 /**
  * @ngdoc object
@@ -67,7 +69,7 @@ function Alarm(alarm) {
    * @propertyOf Alarm
    * @returns {string} A readable title for the alarm (based on the UEI).
    */
-  self.title = self.uei.replace(/^.*\//g, '').replace(/([A-Z])/g, ' $1');
+  self.title = self.uei.replace(removeSlashes, '').replace(capitalLetters, ' $1');
   self.title = self.title.charAt(0).toUpperCase() + self.title.slice(1);
 
   /**

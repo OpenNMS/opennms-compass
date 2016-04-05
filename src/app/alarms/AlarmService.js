@@ -16,6 +16,11 @@
 	.factory('AlarmService', function($q, $log, RestService, util) {
 		$log.info('AlarmService: Initializing.');
 
+		var info = {};
+		util.onInfoUpdated(function(i) {
+			info = i;
+		});
+
 		var getAlarms = function(filter) {
 			var deferred = $q.defer();
 
@@ -23,7 +28,7 @@
 				filter = new AlarmFilter();
 			}
 
-			RestService.getXml('/alarms', filter.toParams()).then(function(results) {
+			RestService.getXml('/alarms', filter.toParams(info.numericVersion)).then(function(results) {
 				/* jshint -W069 */ /* "better written in dot notation" */
 				var ret = [];
 				if (results && results['alarms'] && results['alarms']['alarm']) {
@@ -110,7 +115,7 @@
 
 		var clear = function(alarm) {
 			var deferred = $q.defer();
-			RestService.put('/alarms/' + alarm.id + '?clear=true', {limit:0}).then(function(response) {
+			RestService.put('/alarms/' + alarm.id, {limit:0, clear:'true'}).then(function(response) {
 				util.dirty('alarms');
 				deferred.resolve(response);
 			}, function(err) {
@@ -121,7 +126,7 @@
 
 		var escalate = function(alarm) {
 			var deferred = $q.defer();
-			RestService.put('/alarms/' + alarm.id + '?escalate=true', {limit:0}).then(function(response) {
+			RestService.put('/alarms/' + alarm.id, {limit:0, escalate:'true'}).then(function(response) {
 				util.dirty('alarms');
 				deferred.resolve(response);
 			}, function(err) {
@@ -132,7 +137,7 @@
 
 		var acknowledge = function(alarm) {
 			var deferred = $q.defer();
-			RestService.put('/alarms/' + alarm.id + '?ack=true', {limit:0}).then(function(response) {
+			RestService.put('/alarms/' + alarm.id, {limit:0, ack:'true'}).then(function(response) {
 				util.dirty('alarms');
 				deferred.resolve(response);
 			}, function(err) {
@@ -143,7 +148,7 @@
 
 		var unacknowledge = function(alarm) {
 			var deferred = $q.defer();
-			RestService.put('/alarms/' + alarm.id + '?ack=false', {limit:0}).then(function(response) {
+			RestService.put('/alarms/' + alarm.id, {limit:0, ack:'false'}).then(function(response) {
 				util.dirty('alarms');
 				deferred.resolve(response);
 			}, function(err) {

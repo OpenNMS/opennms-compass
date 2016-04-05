@@ -190,6 +190,16 @@
 			$scope.modals.alarm(alarm);
 		};
 
+		$scope.canAck = function(alarm) {
+			/* eslint-disable eqeqeq */
+			if ($scope.info.numericVersion == 0.0) {
+				return false;
+			} else {
+				return true;
+			}
+			/* eslint-enable eqeqeq */
+		};
+
 		$scope.toggleAck = function(alarm, e) {
 			e.preventDefault();
 			e.stopPropagation();
@@ -219,6 +229,16 @@
 			$ionicListDelegate.closeOptionButtons();
 		};
 
+		$scope.canClear = function(alarm) {
+			/* eslint-disable eqeqeq */
+			if ($scope.info.numericVersion == 0.0 || alarm.severity === 'CLEARED') {
+				return false;
+			} else {
+				return true;
+			}
+			/* eslint-enable eqeqeq */
+		};
+
 		$scope.clear = function(alarm, e) {
 			e.preventDefault();
 			e.stopPropagation();
@@ -233,6 +253,16 @@
 				}
 			});
 			$ionicListDelegate.closeOptionButtons();
+		};
+
+		$scope.canEscalate = function(alarm) {
+			/* eslint-disable eqeqeq */
+			if ($scope.info.numericVersion == 0.0 || alarm.severity === 'CRITICAL') {
+				return false;
+			} else {
+				return true;
+			}
+			/* eslint-enable eqeqeq */
 		};
 
 		$scope.escalate = function(alarm, e) {
@@ -258,6 +288,12 @@
 			} else {
 				$scope.username = undefined;
 			}
+		});
+		$scope.info = {
+			numericVersion: 0.0
+		};
+		util.onInfoUpdated(function(i) {
+			$scope.info = i;
 		});
 
 		$scope.$on('modal.hidden', $scope.refreshAlarms);

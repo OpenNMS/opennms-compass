@@ -11,6 +11,14 @@
 
 	require('../servers/Servers');
 
+	var defaultInfo = {
+		version: '0.0.0',
+		numericVersion: 0.0,
+		displayVersion: 'Unknown',
+		packageName: 'opennms',
+		packageDescription: 'OpenNMS'
+	};
+
 	angular.module('opennms.services.Info', [
 		'ionic',
 		'rt.debounce',
@@ -18,13 +26,7 @@
 		'opennms.services.Servers',
 		'opennms.services.Util'
 	])
-	.value('info', {
-		version: '0.0.0',
-		numericVersion: 0.0,
-		displayVersion: 'Unknown',
-		packageName: 'opennms',
-		packageDescription: 'OpenNMS'
-	})
+	.value('info', angular.copy(defaultInfo))
 	.factory('Info', function($q, $rootScope, $http, $injector, $log, $window, $timeout, debounce, RestService, Servers, util) {
 		$log.info('Info: Initializing.');
 
@@ -46,22 +48,20 @@
 
 				$log.info('Info.updateInfo: Initializing.');
 
-				RestService.get('/info', {limit:0}, {Accept: 'application/json'}).then(function(response) {
+				return RestService.get('/info', {limit:0}, {Accept: 'application/json'}).then(function(response) {
 					if (angular.isString(response)) {
 						response = angular.fromJson(response);
 					}
 					onSuccess(response);
 					return response;
-				}, function(err) {
-					$log.error('Info.updateInfo: failed: ' + angular.toJson(err));
-					if (err.status === 404) {
-						return onSuccess({
-							version: '0.0.0'
-						});
-					} else {
-						return $q.reject(err);
-					}
 				});
+			}).catch(function(err) {
+				$log.warn('Info.updateInfo: failed: ' + angular.toJson(err));
+				if (err.status === 404) {
+					return onSuccess(angular.copy(defaultInfo));
+				} else {
+					return $q.reject(err);
+				}
 			});
 		});
 
