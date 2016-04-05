@@ -109,7 +109,9 @@
 			}
 		});
 
+		var lastInfo = null;
 		$rootScope.$on('opennms.info.updated', function(ev, info) {
+			lastInfo = info;
 			if (eventListeners['opennms.info.updated']) {
 				$log.debug('util.onInfoUpdated: ' + angular.toJson(info));
 				$rootScope.$evalAsync(function() {
@@ -190,6 +192,9 @@
 			},
 			onInfoUpdated: function(f) {
 				addListener('opennms.info.updated', f);
+				if (lastInfo) {
+					f(lastInfo);
+				}
 			},
 			onProductUpdated: function(f) {
 				addListener('opennms.product.updated', f);
