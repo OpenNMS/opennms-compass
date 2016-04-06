@@ -121,11 +121,7 @@ module.factory('HTTP', function($http, $injector, $log, $q, $window) {
 	};
 
 	var call = function(passedOptions) {
-		var options = angular.extend({}, defaultOptions, passedOptions);
-		angular.extend(options.headers, defaultOptions.headers);
-		if (passedOptions && passedOptions.headers) {
-			angular.extend(options.headers, passedOptions.headers);
-		}
+		var options = angular.merge({}, defaultOptions, passedOptions);
 
 		if (!ready) {
 			ready = initialize();

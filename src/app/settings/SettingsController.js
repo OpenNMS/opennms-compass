@@ -55,13 +55,12 @@
 		};
 
 		$scope.closeModal = function() {
-			if ($scope.server) {
-				$scope.server = undefined;
-			}
+			delete $scope.server;
+			delete $scope.serverError;
 			if ($scope.modal) {
 				$scope.modal.hide();
 				$scope.modal.remove();
-				$scope.modal = undefined;
+				delete $scope.modal;
 			}
 		};
 
@@ -81,6 +80,7 @@
 
 				var options = {
 					headers: {
+						Accept: '*/*',
 						Authorization: HTTP.createBasicAuthHeader(server.username, server.password)
 					}
 				};
