@@ -1,7 +1,6 @@
-<ion-view view-title="{{node.label}}" class="node-detail">
+<ion-view view-title="Node Detail" class="node-detail">
 	<ion-nav-bar class="bar-light" align-title="center">
 		<ion-nav-back-button class="button-compass button-clear" on-hold="util.dashboard('back')"></ion-nav-back-button>
-		<!-- <h1 class="title">{{node.label}}</h1> -->
 		<ion-nav-buttons side="secondary">
 			<button class="button button-compass button-clear" nav-direction="forward" ui-sref="node-resources({node: node.id})" ng-if="showGraphButton"><i class="icon ion-stats-bars"></i></button>
 		</ion-nav-buttons>
@@ -10,7 +9,11 @@
 		<ion-refresher pulling-text="Pull to Refresh..." on-refresh="refresh()"></ion-refresher>
 		<ion-list>
 			<ion-item class="item-divider item-compass">
-				Node Details
+				Node Detail
+			</ion-item>
+			<ion-item class="row item-text-wrap">
+				<div class="col col-33">Label:</div>
+				<div class="col">{{node.label}}</div>
 			</ion-item>
 			<ion-item class="row">
 				<div class="col col-33">ID:</div>
