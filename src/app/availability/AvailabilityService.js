@@ -29,7 +29,7 @@
 
 			hasAvailability = $q.defer();
 			$log.debug('AvailabilityService.checkAvailability: checking if availability service is valid.');
-			RestService.getXml('/availability').then(function() {
+			RestService.head('/availability').then(function() {
 				$log.info('AvailabilityService.checkAvailability: availability service works!');
 				done(true);
 			}, function() {

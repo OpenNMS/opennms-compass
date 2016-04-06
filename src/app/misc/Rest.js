@@ -200,6 +200,10 @@
 			return doQuery('GET', restFragment, params, headers);
 		};
 
+		var doHead = function(restFragment, params, headers) {
+			return doQuery('HEAD', restFragment, params, headers);
+		};
+
 		var doPut = function(restFragment, params, headers) {
 			var h = angular.copy(headers) || {};
 			h['Content-Type'] = 'application/x-www-form-urlencoded';
@@ -241,6 +245,7 @@
 					return json;
 				});
 			},
+			head: doHead,
 			put: doPut,
 			postXml: doPostXml
 		};
