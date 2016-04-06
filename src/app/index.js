@@ -117,7 +117,7 @@
 		$rootScope.$on('resize', handleResize);
 		$window.addEventListener('orientationchange', handleResize);
 		calculateSizes();
-		if (!$rootScope.wide) {
+		if (!$rootScope.wide && screen && screen.lockOrientation) {
 			$log.debug('Looks like we\'re on a phone-like device.  Locking orientation to portrait.');
 			screen.lockOrientation('portrait');
 		} else {
