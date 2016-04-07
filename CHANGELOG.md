@@ -1,5 +1,35 @@
 <a name="2.1.0"></a>
-# [2.1.0](https://github.com/OpenNMS/opennms-compass/compare/v2.1.0-394...v2.1.0) (2016-03-24)
+# [2.1.0](https://github.com/OpenNMS/opennms-compass/compare/v2.1.0-396...v2.1.0) (2016-04-07)
+
+
+### Bug Fixes
+
+* **alarms:** handle old OpenNMS servers that can't ack/escalate/clear properly ([6259d2e](https://github.com/OpenNMS/opennms-compass/commit/6259d2e))
+* **dashboard:** clicking on outage donut now reliably opens the outage detail ([ed8e1b1](https://github.com/OpenNMS/opennms-compass/commit/ed8e1b1))
+* **dashboard:** fix availability rendering on older OpenNMS releases ([c7b7343](https://github.com/OpenNMS/opennms-compass/commit/c7b7343))
+* **dashboard:** fix dashboard showing up on new launch ([fb29510](https://github.com/OpenNMS/opennms-compass/commit/fb29510))
+* **dashboard:** fix intermittent donut arrow layout issues ([4e67ab4](https://github.com/OpenNMS/opennms-compass/commit/4e67ab4))
+* **nodes:** clean up node detail display for long labels ([067d553](https://github.com/OpenNMS/opennms-compass/commit/067d553))
+* **nodes:** fix availability display on old OpenNMS releases ([13a49b7](https://github.com/OpenNMS/opennms-compass/commit/13a49b7))
+* **servers:** fix server-check connection ([56866b6](https://github.com/OpenNMS/opennms-compass/commit/56866b6))
+* **settings:** better title, "Add" button only on Servers page ([75d67d0](https://github.com/OpenNMS/opennms-compass/commit/75d67d0))
+* **settings:** set to default when adding/editing a server ([b138ce1](https://github.com/OpenNMS/opennms-compass/commit/b138ce1))
+* **settings:** show server name and hostname in "About" ([56395ef](https://github.com/OpenNMS/opennms-compass/commit/56395ef))
+
+### Features
+
+* **dashboard:** auto-refresh availability if "Calculating..." ([60a4824](https://github.com/OpenNMS/opennms-compass/commit/60a4824))
+* **info:** handle info query against old OpenNMS versions cleanly ([5f1487e](https://github.com/OpenNMS/opennms-compass/commit/5f1487e))
+* **settings:** test server before saving ([5330042](https://github.com/OpenNMS/opennms-compass/commit/5330042))
+
+### Performance Improvements
+
+* **dashboard:** use less bandwidth checking availability support ([122565c](https://github.com/OpenNMS/opennms-compass/commit/122565c))
+
+
+
+<a name="2.1.0-396"></a>
+# [2.1.0-396](https://github.com/OpenNMS/opennms-compass/compare/v2.1.0-394...v2.1.0-396) (2016-03-25)
 
 
 ### Bug Fixes
