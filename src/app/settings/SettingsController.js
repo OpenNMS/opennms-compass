@@ -127,7 +127,7 @@
 				updateError(err);
 				// then, try toggling SSL
 				url = new URI(server.url);
-				url.protocol(url.protocol() == 'http'? 'https':'http');
+				url.protocol(url.protocol() === 'http'? 'https':'http');
 				return tryUrl(url.toString());
 			}).catch(function(err) {
 				updateError(err);
