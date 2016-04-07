@@ -265,6 +265,19 @@
 
 			if (update.success) {
 				$scope.availability = update.contents;
+				for (var i=0, len=$scope.availability.length, section; i < len; i++) {
+					section = $scope.availability[i];
+					for (var c=0, clen=section.categories.length, category; c < clen; c++) {
+						category = section.categories[c];
+						if (category.outageText.contains('Calculating')) {
+							$log.debug('Availability is still calculating... refreshing in 5 seconds.');
+							$timeout(function() {
+								DashboardService.refreshAvailability();
+							}, 5000);
+							return;
+						}
+					}
+				}
 			} else {
 				resetAvailability();
 			}
