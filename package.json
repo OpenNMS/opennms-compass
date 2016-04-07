@@ -46,7 +46,7 @@
     "xpath": "0.0.22"
   },
   "cordovaPlugins": [
-    "com.ionic.keyboard",
+    "ionic-plugin-keyboard",
     "cordova-plugin-extension",
     "cordova-plugin-appavailability",
     "cordova-plugin-console",
@@ -96,7 +96,7 @@
     },
     {
       "platform": "ios",
-      "version": "3.9.2",
+      "version": "4.1.0",
       "locator": "ios"
     }
   ],
