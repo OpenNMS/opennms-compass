@@ -153,7 +153,7 @@ module.factory('HTTP', function($http, $injector, $log, $q, $window) {
 			}
 
 			if (cordovaHTTP) {
-				$log.debug('Making Cordova HTTP call with options:' + angular.toJson(options));
+				//$log.debug('Making Cordova HTTP call with options:' + angular.toJson(options));
 				var handleSuccess = function(response) {
 					//$log.debug('HTTP.handleSuccess: ' + angular.toJson(response.data));
 					return response;
