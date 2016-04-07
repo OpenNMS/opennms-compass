@@ -86,6 +86,10 @@ function Server(server) {
       return undefined;
     }
   };
+
+  self.getHost = function() {
+    return URI(self.url).hostname();
+  }
 }
 
 module.exports = Server;
