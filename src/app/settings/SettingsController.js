@@ -156,6 +156,7 @@
 					server.url = url;
 					/*return $q.reject('force failed');*/
 					return Servers.save(server)['finally'](function() {
+						Servers.setDefault(server);
 						$scope.closeModal();
 					});
 				}, function(err) {
