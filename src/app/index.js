@@ -153,6 +153,7 @@
 		}).finally(function() {
 			$timeout(function() {
 				util.hideSplashscreen();
+				$rootScope.$broadcast('opennms.ready');
 			}, 1000);
 		});
 

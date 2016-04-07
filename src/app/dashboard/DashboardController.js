@@ -475,13 +475,17 @@
 			}
 		});
 
+		$scope.$on('opennms.ready', $scope.refreshData);
 		$scope.$on('$destroy', function() {
 			$scope.serverPopover.then(function(popover) {
 				popover.remove();
 			}).finally(function() {
 				delete $scope.serverPopover;
 			});
+			document.removeEventListener('resume', $scope.refreshData, false);
 		});
+
+		document.addEventListener('resume', $scope.refreshData, false);
 
 		$scope.$on('$ionicView.beforeEnter', function(ev, info) {
 			/* // skip all this for now, getting weird rendering bug
