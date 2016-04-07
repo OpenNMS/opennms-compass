@@ -115,7 +115,7 @@ $severity-alarm-cleared-border: #999;
 }
 
 .bottom-fade {
-	z-index: 100;
+	z-index: $z-index-view-above;
 	height: 40px;
 	position: absolute;
 	right: 0;

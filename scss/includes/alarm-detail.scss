@@ -1,7 +1,7 @@
 .alarm-detail {
 	.item.item-divider {
 		/* make sure his borders are higher than the rows */
-		z-index: 3;
+		z-index: $z-index-view-above;
 		/* background-color: $item-divider-bg; */
 	}
 	.item {

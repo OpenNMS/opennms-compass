@@ -85,20 +85,6 @@
 		}
 		var dashboardCache = CacheFactory.get('dashboardCache');
 
-		var updateArrows = function(height) {
-			var arrowOffset = Math.round(height * 0.5) - 50;
-
-			var outageArrow = document.getElementById('outage-arrow');
-			if (outageArrow) {
-				outageArrow.style.top = arrowOffset + 'px';
-			}
-
-			var alarmArrow = document.getElementById('alarm-arrow');
-			if (alarmArrow) {
-				alarmArrow.style.top = arrowOffset + 'px';
-			}
-		};
-
 		$scope.refreshDonutSlide = function(index) {
 			$scope.currentDonutSlide = index;
 		};
@@ -466,14 +452,14 @@
 				oldDonutSize = $scope.donutSize;
 			if (wide) {
 				$scope.donutSize = Math.round(Math.min(width, height) / 2.0);
-				//$scope.donutSize = Math.round(width / 2.0);
 			} else {
 				$scope.donutSize = width;
 			}
 
-			$log.debug('Updated donuts: ' + oldDonutSize + ' -> ' + $scope.donutSize);
-			updateArrows(height);
-			updateTitles();
+			if (oldDonutSize !== $scope.donutSize) {
+				$log.debug('Updated donuts: ' + oldDonutSize + ' -> ' + $scope.donutSize);
+				updateTitles();
+			}
 		});
 
 		$scope.$on('$destroy', function() {

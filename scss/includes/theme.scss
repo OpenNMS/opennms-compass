@@ -3,7 +3,7 @@ $horizon-green: #4d9c2d;
 
 @mixin compass-theme($dark, $light) {
 	.backshift-status {
-		z-index: 10000;
+		z-index: $z-index-view-above;
 		background-color: $dark;
 		color: white;
 		border-radius: .5em;

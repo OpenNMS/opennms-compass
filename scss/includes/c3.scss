@@ -97,7 +97,7 @@
 
 /*-- Tooltip --*/
 .c3-tooltip-container {
-  z-index: 10; }
+  z-index: $z-index-view-above; }
 
 .c3-tooltip {
   border-collapse: collapse;

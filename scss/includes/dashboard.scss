@@ -4,13 +4,11 @@ $arrow-top-offset: 60px;
 $arrow-touch-padding: 20px;
 $arrow-edge-padding: 6px;
 
-$overlay-z-index: 10;
-
 $shadow-color: rgba(0,0,0,0.3);
 
 .dashboard {
 	.donut-title {
-		z-index: $overlay-z-index;
+		z-index: $z-index-view-above;
 		margin-top: -($font-size-large * 1.6);
 		font-size: $font-size-large * 2;
 		left:0;
@@ -104,8 +102,8 @@ $shadow-color: rgba(0,0,0,0.3);
 	.left-arrow {
 		position: absolute;
 		left: 0;
-		top: $arrow-top-offset;
-		z-index: $overlay-z-index;
+		bottom: 0;
+		z-index: $z-index-view-above;
 		padding-top: $arrow-touch-padding;
 		padding-left: $arrow-edge-padding;
 		padding-right: $arrow-touch-padding;
@@ -116,8 +114,8 @@ $shadow-color: rgba(0,0,0,0.3);
 	.right-arrow {
 		position: absolute;
 		right: 0;
-		top: $arrow-top-offset;
-		z-index: $overlay-z-index;
+		bottom: 0;
+		z-index: $z-index-view-above;
 		padding-top: $arrow-touch-padding;
 		padding-left: $arrow-touch-padding;
 		padding-right: $arrow-edge-padding;
