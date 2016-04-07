@@ -54,7 +54,11 @@
 								</div>
 								<div class="row">
 									<div class="col col-25">Server:</div>
-									<div class="col" ng-click="util.openServer()">{{serverURL}}</div>
+									<div class="col" ng-click="util.openServer()">{{defaultServer.name}}</div>
+								</div>
+								<div class="row">
+									<div class="col col-25">Host:</div>
+									<div class="col" ng-click="util.openServer()">{{defaultServer.getHost()}}</div>
 								</div>
 								<div class="row">
 									<div class="col col-25">User:</div>
