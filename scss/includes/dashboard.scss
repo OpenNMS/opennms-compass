@@ -22,6 +22,16 @@ $shadow-color: rgba(0,0,0,0.3);
 		top: 50%;
 		position: absolute;
 	}
+	.donut-overlay {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		z-index: $z-index-view-above + 1;
+	}
 	flot {
 		border: 0;
 		> div {
