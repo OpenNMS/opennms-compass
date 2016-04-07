@@ -3,7 +3,7 @@
 
 	var angular = require('angular'),
 		Server = require('../servers/models/Server'),
-		URL = require('url-parse');
+		URI = require('urijs');
 
 	require('../availability/AvailabilityService');
 	require('../servers/Servers');
@@ -66,7 +66,7 @@
 
 		var tryServer = function(s) {
 			var server = new Server(s);
-			var url = new URL(server.url);
+			var url = new URI(server.url);
 			var urls = [];
 
 			var tryUrl = function(url) {
@@ -93,8 +93,9 @@
 				});
 			};
 
-			if (!url.pathname.endsWith('/')) {
-				url.set('pathname', url.pathname + '/');
+
+			if (!url.pathname().endsWith('/')) {
+				url.pathname(url.pathname() + '/');
 			}
 			server.url = url.toString();
 
@@ -120,18 +121,18 @@
 			return tryUrl(server.url).catch(function(err) {
 				updateError(err);
 				// then, try with /opennms/ appended
-				url.set('pathname', url.pathname + 'opennms/');
+				url.pathname(url.pathname() + 'opennms/');
 				return tryUrl(url.toString());
 			}).catch(function(err) {
 				updateError(err);
 				// then, try toggling SSL
-				url = new URL(server.url);
-				url.set('protocol', url.protocol === 'http:'? 'https:':'http:');
+				url = new URI(server.url);
+				url.protocol(url.protocol() == 'http'? 'https':'http');
 				return tryUrl(url.toString());
 			}).catch(function(err) {
 				updateError(err);
 				// then, try the toggled with /opennms/ appended
-				url.set('pathname', url.pathname + 'opennms/');
+				url.pathname(url.pathname() + 'opennms/');
 				return tryUrl(url.toString());
 			}).catch(function(err) {
 				updateError(err);
