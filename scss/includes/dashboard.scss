@@ -32,6 +32,9 @@ $shadow-color: rgba(0,0,0,0.3);
 		bottom: 0;
 		z-index: $z-index-view-above + 1;
 	}
+	.spinner-container {
+		padding: 50px;
+	}
 	flot {
 		border: 0;
 		> div {
