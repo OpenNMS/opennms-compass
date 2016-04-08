@@ -209,29 +209,30 @@
 		$scope.refresh = function() {
 			if ($scope.node.id) {
 				showLoading();
-				NodeService.get($scope.node.id).then(function(n) {
+				return NodeService.get($scope.node.id).then(function(n) {
 					showNode(n);
 				}, function(err) {
 					err.caller = 'NodeCtrl.refresh';
 					$log.error(err.toString());
 				}).finally(function() {
 					hideLoading();
-				});
-				var showGraphButton = Capabilities.graphs();
-				if (showGraphButton) {
-					ResourceService.resources($scope.node.id).then(function(res) {
-						//$log.debug('graphs: got res ' + angular.toJson(res));
-						if (res && res.children && res.children.length > 0)  {
-							$scope.showGraphButton = true;
-						} else {
+				}).then(function() {
+					var showGraphButton = Capabilities.graphs();
+					if (showGraphButton) {
+						return ResourceService.resources($scope.node.id).then(function(res) {
+							//$log.debug('graphs: got res ' + angular.toJson(res));
+							if (res && res.children && res.children.length > 0)  {
+								$scope.showGraphButton = true;
+							} else {
+								$scope.showGraphButton = false;
+							}
+						}).catch(function(err) {
 							$scope.showGraphButton = false;
-						}
-					}).catch(function(err) {
+						});
+					} else {
 						$scope.showGraphButton = false;
-					});
-				} else {
-					$scope.showGraphButton = false;
-				}
+					}
+				});
 			}
 		};
 
@@ -248,6 +249,13 @@
 			if (timer && changedSettings && changedSettings.refreshInterval) {
 				$scope.updateData();
 			}
+		});
+		var lastServer = {};
+		util.onDefaultServerUpdated(function(defaultServer) {
+			if (lastServer.name !== defaultServer.name) {
+				resetModel();
+			}
+			lastServer = defaultServer || {};
 		});
 
 		$scope.$on('$ionicView.beforeEnter', function(ev, info) {

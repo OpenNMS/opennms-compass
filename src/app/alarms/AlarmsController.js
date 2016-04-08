@@ -4,6 +4,8 @@
 	var angular = require('angular'),
 		AlarmFilter = require('./AlarmFilter');
 
+	require('angular-debounce');
+
 	require('./AlarmService');
 
 	require('../servers/Servers');
@@ -19,6 +21,7 @@
 	angular.module('opennms.controllers.Alarms', [
 		'ionic',
 		'angularLocalStorage',
+		'rt.debounce',
 		'opennms.services.Alarms',
 		'opennms.services.Errors',
 		'opennms.services.Modals',
@@ -96,7 +99,7 @@
 		//severity.$stateful = true;
 		return severity;
 	})
-	.controller('AlarmsCtrl', function($q, $scope, $log, $timeout, $ionicListDelegate, $ionicLoading, $ionicModal, $ionicPopup, $ionicScrollDelegate, $ionicViewSwitcher, storage, util, AlarmService, Errors, Modals, Servers, severityStateTracker, severities) {
+	.controller('AlarmsCtrl', function($q, $scope, $log, $timeout, $ionicListDelegate, $ionicLoading, $ionicModal, $ionicPopup, $ionicScrollDelegate, $ionicViewSwitcher, AlarmService, debounce, Errors, Modals, Servers, severityStateTracker, severities, storage, util) {
 		$log.info('AlarmsCtrl initializing.');
 
 		var filterParams = storage.get('opennms.alarms.filterParams');
@@ -169,22 +172,14 @@
 			});
 		};
 
-		$scope.refreshAlarms = function() {
-			$timeout(function() {
-				var delegate = $ionicScrollDelegate.$getByHandle('alarms-scroll');
-				if (delegate) {
-					delegate.scrollTop();
-				}
-				$scope.filter = $scope.filter.reset();
-				$scope.getAlarms();
-			});
-		};
-
-		var doThenRefresh = function(promise) {
-			promise['finally'](function() {
-				util.dirty('alarms');
-			});
-		};
+		$scope.refreshAlarms = debounce(500, function() {
+			var delegate = $ionicScrollDelegate.$getByHandle('alarms-scroll');
+			if (delegate) {
+				delegate.scrollTop();
+			}
+			$scope.filter = $scope.filter.reset();
+			$scope.getAlarms();
+		});
 
 		$scope.openAlarm = function(alarm) {
 			$scope.modals.alarm(alarm);
@@ -288,6 +283,8 @@
 			} else {
 				$scope.username = undefined;
 			}
+			$scope.alarms = [];
+			$scope.refreshAlarms();
 		});
 		$scope.info = {
 			numericVersion: 0.0
