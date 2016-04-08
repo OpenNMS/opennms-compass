@@ -31,7 +31,7 @@
     "flot-legend": "https://github.com/RangerRick/flot-legend.git#master",
     "urijs": "^1.17.1",
     "moment": "^2.12.0",
-    "ip-address": "^5.7.0",
+    "ip-address": "^5.8.0",
     "angular-highlightjs": "^0.6.1",
     "winstore-jscompat": "https://github.com/MSOpenTech/winstore-jscompat.git",
     "angular-flot": "~0.0.16",

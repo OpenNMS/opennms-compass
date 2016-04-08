@@ -138,8 +138,8 @@
 
 			$scope.canUpdateGeolocation = Capabilities.setLocation();
 
-			var avail = EventService.node($scope.node.id).then(function(results) {
-				//$log.debug('AvailabilityService got results:',results);
+			var avail = AvailabilityService.node($scope.node.id).then(function(results) {
+				$log.debug('AvailabilityService got results:'+angular.toJson(results));
 				$scope.availability = results;
 				return results;
 			}, function(err) {

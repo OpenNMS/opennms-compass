@@ -89,7 +89,7 @@
 					<button class="button button-block button-compass" ng-click="submitCoordinates()" ng-if="canUpdateGeolocation">Set Coordinates to Current Location</button>
 				</ion-item>
 			</span>
-			<span ng-if="availability &amp;&amp; availability.length > 0 &amp;&amp; availability.availability" class="availability">
+			<span ng-if="availability &amp;&amp; availability.availability &amp;&amp; availability.ipinterfaces.length > 0" class="availability">
 				<ion-item class="item-divider item-compass">
 					Availability (Last 24 Hours)
 				</ion-item>

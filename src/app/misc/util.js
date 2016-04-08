@@ -21,12 +21,16 @@
 		'opennms.services.Servers',
 		'opennms.services.Settings'
 	])
-	.filter('ip', function() {
+	.filter('ip', function($log) {
 		return function(addr) {
 			if (addr && addr.contains(':')) {
-				var address = new Address6(addr);
-				if (address.isValid()) {
-					return address.correctForm();
+				try {
+					var address = new Address6(addr);
+					if (address.isValid()) {
+						return address.correctForm();
+					}
+				} catch(err) {
+					$log.warn('error formatting ' + addr + ': ' + err);
 				}
 			}
 			return addr;
