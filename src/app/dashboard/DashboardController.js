@@ -73,7 +73,7 @@
 			maxAge: 10 * 60 * 1000
 		});
 	})
-	.controller('DashboardCtrl', function($q, $rootScope, $scope, $injector, $interval, $log, $timeout, $state, $document, $window, $ionicLoading, $ionicPopup, $ionicPopover, $ionicSlideBoxDelegate, AlarmService, AvailabilityService, CacheFactory, DashboardService, debounce, Errors, Info, Modals, OutageService, ResourceService, Servers, util) {
+	.controller('DashboardCtrl', function($document, $injector, $interval, $ionicLoading, $ionicPopup, $ionicPopover, $ionicSlideBoxDelegate, $ionicViewSwitcher, $log, $q, $rootScope, $scope, $state, $timeout, $window, AlarmService, AvailabilityService, CacheFactory, DashboardService, debounce, Errors, Info, Modals, OutageService, ResourceService, Servers, util) {
 		$log.info('DashboardCtrl: Initializing.');
 
 		$scope.favoriteGraphsTemplate = favoriteGraphsTemplate;
@@ -84,6 +84,11 @@
 			CacheFactory.createCache('dashboardCache');
 		}
 		var dashboardCache = CacheFactory.get('dashboardCache');
+
+		$scope.goToAlarms = function() {
+			$ionicViewSwitcher.nextDirection('back');
+			$state.go('alarms');
+		};
 
 		$scope.refreshDonutSlide = function(index) {
 			$scope.currentDonutSlide = index;
