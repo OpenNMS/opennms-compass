@@ -6,8 +6,8 @@
 			<div class="col col-25">Availability</div>
 		</div>
 		<div ng-repeat="category in section.categories track by category.name" class="item row noright nobottom" style="font-size: 75%">
-			<div class="col col-50">{{category.name}}</div>
-			<div class="col col-25 pull-right" ng-class="'severity severity-' + category.outageClass.toUpperCase()">{{category.outageText}}</div>
+			<div class="col col-50 monospace">{{category.name}}</div>
+			<div class="col col-25 pull-right monospace" ng-class="'severity severity-' + category.outageClass.toUpperCase()">{{category.outageText}}</div>
 			<div class="col col-25 pull-right monospace" ng-class="'severity severity-' + category.availabilityClass.toUpperCase()">{{category.availability | number:3}}%</div>
 		</div>
 	</span>

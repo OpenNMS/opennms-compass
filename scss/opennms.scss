@@ -28,6 +28,7 @@ $modal-inset-mode-min-height:     240px;
 
 $font-family-sans-serif:          "SF UI Text Medium", "SF UI Text", "San Francisco Text", "San Francisco", system, -apple-system, -apple-system-font, "Helvetica Neue", "Roboto", "Segoe UI", sans-serif;
 $font-family-light-sans-serif:    "SF UI Text Light", "San Francisco Text Light", "San Francisco Text-Light", "San Francisco Light", "San Francisco-Light", system-light, -apple-system-light, -apple-system-font-light, "-apple-system-light", "HelveticaNeue-Light", "Roboto-Light", "Segoe UI-Light", "SF UI Text", "San Francisco", sans-serif-light;
+$font-family-monospace:           "Helvetica Neue", "HelveticaNeue", "Droid Sans", "Droid Sans Mono", "Verdana", "Trebuchet MS", monospace;
 
 /* END OVERRIDE IONIC VARIABLES HERE */
 
@@ -111,7 +112,7 @@ $severity-alarm-cleared-border: #999;
 }
 
 .monospace {
-	font-family: monospace, serif;
+	font-family: $font-family-monospace;
 }
 
 .bottom-fade {
