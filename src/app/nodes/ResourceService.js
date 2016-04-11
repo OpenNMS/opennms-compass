@@ -80,6 +80,40 @@
 					});
 				};
 
+				var deleteProperties = function(obj) {
+					for (var prop in obj) {
+						if (typeof obj[prop] === 'object') {
+							deleteProperties(obj[prop]);
+						}
+						if (obj.hasOwnProperty(prop)) {
+							delete obj[prop];
+						}
+					}
+				};
+
+				var cleanUpGraph = function() {
+					var resourceId = $scope.resourceId;
+					var graphTitle = $scope.graphModel && $scope.graphModel.title? $scope.graphModel.title : 'N/A';
+					$log.debug('Destroying graph: ' + resourceId + ' / ' + graphTitle);
+					if ($scope.graph) {
+						if ($scope.graph.destroy) {
+							$scope.graph.destroy();
+						}
+						if ($scope.graph._last) {
+							deleteProperties($scope.graph._last);
+						}
+						deleteProperties($scope.graph);
+						$scope.graph = undefined;
+					}
+				};
+
+				var cleanUp = function() {
+					cleanUpGraph();
+					delete $scope.ds;
+					delete $scope.graphModel;
+					delete $scope.range;
+				};
+
 				$scope.createGraph = function() {
 					if (!$scope.ds)                { return; }
 					if (!$scope.graphModel)        { return; }
@@ -137,8 +171,11 @@
 						height: $scope.width
 					};
 
+					cleanUpGraph();
+					/*
 					if ($scope.graph && $scope.graph.destroy) {
 						$scope.graph.destroy();
+						delete $scope.graph.element;
 						delete $scope.graph._last.graphModel;
 						delete $scope.graph._last.ds;
 						delete $scope.graph._last.range;
@@ -146,6 +183,7 @@
 						delete $scope.graph._last.height;
 						delete $scope.graph._last;
 					}
+					*/
 
 					$scope.graph = graph;
 
@@ -272,22 +310,6 @@
 				$scope.$watch('ds', function() {
 					$scope.redraw();
 				});
-
-				var cleanUp = function() {
-					var resourceId = $scope.resourceId;
-					var graphTitle = $scope.graphModel && $scope.graphModel.title? $scope.graphModel.title : 'N/A';
-					$log.debug('Destroying graph: ' + resourceId + ' / ' + graphTitle);
-					if ($scope.graph) {
-						if ($scope.graph.destroy) {
-							$scope.graph.destroy();
-						}
-						delete $scope.graph._last.ds;
-						delete $scope.graph._last.graphModel;
-						delete $scope.graph._last.range;
-						delete $scope.graph._last;
-						$scope.graph = undefined;
-					}
-				};
 
 				$scope.$on('$destroy', cleanUp);
 				element.on('$destroy', cleanUp);
