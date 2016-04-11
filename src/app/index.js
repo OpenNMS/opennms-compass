@@ -26,7 +26,7 @@
 
 	require('./misc/Analytics');
 	require('./misc/Info');
-	require('./misc/Ionic');
+	/*require('./misc/Ionic');*/
 	require('./misc/Modals');
 
 	require('./alarms/AlarmsController');

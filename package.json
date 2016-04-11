@@ -47,7 +47,6 @@
   "cordovaPlugins": [
     "ionic-plugin-keyboard",
     "cordova-plugin-extension",
-    "cordova-plugin-appavailability",
     "cordova-plugin-console",
     "cordova-plugin-datepicker",
     {
@@ -71,10 +70,6 @@
     {
       "locator": "https://github.com/RangerRick/cordova-certificate-plugin.git",
       "id": "com.raccoonfink.cordova.plugins.certificates"
-    },
-    {
-      "locator": "https://github.com/driftyco/ionic-plugins-deploy",
-      "id": "ionic-plugin-deploy"
     },
     {
       "locator": "https://github.com/OpenNMS/cordova-plugin-json-storage.git",
