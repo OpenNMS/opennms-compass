@@ -112,7 +112,7 @@
     "verbose-build": "npm run lint && npm run test && webpack --debug --colors --display-modules --display-chunks --display-error-details --display-origins --display-reasons",
     "genymotion": "ionic run -slc android",
     "android": "ionic emulate -slc android",
-    "ios": "ionic emulate -slc --address=localhost ios",
+    "ios": "ionic emulate -slc --address=localhost --target='iPhone-6s, 9.3' ios",
     "device": "ionic run --device -slc ios",
     "watch": "webpack --colors --display-error-details --watch",
     "lint": "eslint . --ext .js"
