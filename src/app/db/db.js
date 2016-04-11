@@ -65,7 +65,7 @@
 			return getPouch(dbname).get(doc._id).then(function(existing) {
 				delete doc._id;
 				delete doc._rev;
-				angular.extend(existing, doc);
+				angular.merge(existing, doc);
 				return getPouch(dbname).put(existing).then(function(response) {
 					doc._id = response.id;
 					doc._rev = response.rev;

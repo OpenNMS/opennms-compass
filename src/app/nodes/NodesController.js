@@ -2,8 +2,11 @@
 	'use strict';
 
 	var angular = require('angular');
+	require('angular-debounce');
 
 	require('./NodeService');
+
+	require('../db/db');
 
 	require('../misc/Errors');
 	require('../misc/util');
@@ -14,6 +17,8 @@
 	angular.module('opennms.controllers.Nodes', [
 		'ionic',
 		'angularLocalStorage',
+		'rt.debounce',
+		'opennms.services.DB',
 		'opennms.services.Errors',
 		'opennms.services.Nodes',
 		'opennms.services.Util'
@@ -26,7 +31,7 @@
 			controller: 'NodesCtrl'
 		});
 	})
-	.controller('NodesCtrl', function($q, $scope, $log, $timeout, $window, $state, $ionicLoading, storage, util, Errors, NodeService) {
+	.controller('NodesCtrl', function($ionicLoading, $log, $q, $scope, $state, $timeout, $window, db, debounce, Errors, NodeService, storage, util) {
 		$log.info('NodesCtrl: initializing.');
 
 		$scope.searching = false;
@@ -36,8 +41,19 @@
 		var emptyPromise = $q.when();
 		var lastSearch = emptyPromise;
 
-		$scope.updateSearch = function(searchFor) {
-			$scope.searching = true;
+		var nodesdb = db.get('nodes');
+
+		$scope.updateSearch = function(searchFor, pullToRefresh) {
+			nodesdb.get('nodelist').then(function(nodes) {
+				//$log.debug('nodelist=' + angular.toJson(nodes));
+				if (nodes && nodes.list && nodes.searchString === searchFor) {
+					$scope.nodes = nodes.list;
+				}
+			});
+
+			if (!pullToRefresh) {
+				$scope.searching = true;
+			}
 			var searchPromise = NodeService.search(searchFor);
 			searchPromise['finally'](function() {
 				$ionicLoading.hide();
@@ -45,40 +61,43 @@
 				$scope.$broadcast('scroll.refreshComplete');
 			});
 
-			searchPromise.then(function(nodes) {
+			searchPromise.then(function(ret) {
+				var nodes = [];
+				for (var n=0,len=ret.length, node; n < len; n++) {
+					node = ret[n];
+					nodes.push({
+						id: node.id,
+						foreignId: node.foreignId,
+						label: node.label,
+						displayId: node.getDisplayId()
+					});
+				}
 				Errors.clear('nodes');
 				$scope.error = false;
-				//$log.debug('Got nodes:',nodes);
+				//$log.debug('Got nodes:',ret);
 				$scope.searching = false;
 				$scope.nodes = nodes;
+				db.upsert('nodes', {
+					_id: 'nodelist',
+					list: nodes,
+					searchString: searchFor
+				});
 				if (nodes.length === 20 && angular.isUndefined(searchFor) || searchFor.trim() === '') {
 					$scope.nodes.push({id:'more'});
 				}
 			}, function(err) {
 				Errors.set('nodes', err);
 				$scope.error = true;
-				$scope.nodes = [];
+				//$scope.nodes = [];
 			});
 
 			return searchPromise;
 		};
 
-		var _delayedSearchTimeout;
-		var delayedSearch = function() {
-			if (_delayedSearchTimeout) {
-				return;
-			}
-			_delayedSearchTimeout = $timeout(function() {
-				_delayedSearchTimeout = undefined;
-				lastSearch['finally'](function() {
-					lastSearch = $scope.updateSearch($scope.searchString);
-				});
-			}, 200);
-		};
-
-		$scope.viewNode = function(node) {
-			util.hideKeyboard();
-			$state.go('node-detail', {node: node.id});
+		$scope.delayedSearch = function(){
+			lastSearch.finally(function() {
+				lastSearch = $scope.updateSearch($scope.searchString);
+			});
 		};
 
 		$scope.refreshData = function() {
@@ -86,18 +105,18 @@
 				templateUrl: loadingTemplate,
 				hideOnStateChange: true
 			});
-			$scope.updateSearch($scope.searchString);
+			$scope.delayedSearch();
 		};
 
 		$scope.$watch('searchString', function(newValue) {
 			storage.set('opennms.nodes.search-string', newValue);
-			delayedSearch();
+			$scope.delayedSearch();
 		});
 
-		util.onSettingsUpdated($scope.refreshData);
+		util.onSettingsUpdated($scope.delayedSearch);
 
 		$scope.$on('ionicView.beforeEnter', function() {
-			$scope.refreshData();
+			$scope.delayedSearch();
 		});
 	});
 

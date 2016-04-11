@@ -12,10 +12,13 @@ var angular = require('angular');
 
 require('angular-debounce');
 
+require('../db/db');
+
 require('../alarms/AlarmService');
 require('../availability/AvailabilityService');
 require('../nodes/ResourceService');
 require('../outages/OutageService');
+require('../servers/Servers');
 
 require('../misc/Errors');
 require('../misc/util');
@@ -25,24 +28,27 @@ angular.module('opennms.dashboard.Service', [
 	'rt.debounce',
 	'opennms.services.Alarms',
 	'opennms.services.Availability',
+	'opennms.services.DB',
 	'opennms.services.Errors',
 	'opennms.services.Outages',
 	'opennms.services.Resources',
+	'opennms.services.Servers',
 	'opennms.services.Util'
 ])
-.factory('DashboardService', function($log, $q, $rootScope, AlarmService, AvailabilityService, debounce, Errors, OutageService, ResourceService, util) {
+.factory('DashboardService', function($log, $q, $rootScope, AlarmService, AvailabilityService, db, debounce, Errors, OutageService, ResourceService, Servers, util) {
 	$log.info('Initializing DashboardService.');
 
-	var results = {};
+	var dashboarddb = db.get('dashboard');
+
 	var watchers = {};
 
 	var refresh = {
 		alarms: function() {
-			return AlarmService.severities().then(function(results) {
+			return AlarmService.severities().then(function(res) {
 				var severities = [], severity, total = 0;
 
-				for (var i=0, len=results.length; i < len; i++) {
-					severity = results[i];
+				for (var i=0, len=res.length; i < len; i++) {
+					severity = res[i];
 					total += severity.count;
 					severities.push({
 						label: severity.severity.capitalize(),
@@ -92,11 +98,11 @@ angular.module('opennms.dashboard.Service', [
 			});
 		},
 		outages: function() {
-			return OutageService.get().then(function(results) {
+			return OutageService.get().then(function(res) {
 				var data = {}, outages = [], outage, service, total = 0;
 
-				for (var i=0, len=results.length; i < len; i++) {
-					outage = results[i];
+				for (var i=0, len=res.length; i < len; i++) {
+					outage = res[i];
 					service = outage.monitoredService.serviceName;
 					if (!data[service]) {
 						data[service] = 1;
@@ -142,6 +148,31 @@ angular.module('opennms.dashboard.Service', [
 		}
 	};
 
+	var checkCache = function(type) {
+		$log.debug('DashboardService.checkCache(' + type + ')');
+
+		return Servers.getDefault().then(function(defaultServer) {
+			if (defaultServer) {
+				//$log.error('default server: ' + angular.toJson(defaultServer));
+				dashboarddb.get(type).then(function(res) {
+					if (res.server === defaultServer._id && res.update) {
+						//$log.error('dashboarddb.get: ' + angular.toJson(res));
+						$log.debug('DashboardService.checkCache: found cached update for ' + type);
+						var update = angular.copy(res.update);
+						update.stopSpinner = false;
+						$rootScope.$broadcast('opennms.dashboard.update.' + type, update);
+					}
+				});
+				return defaultServer._id;
+			} else {
+				return null;
+			}
+		}).catch(function() {
+			$log.debug('DashboardService.checkCache: no cached update for ' + type + ' found');
+			return null;
+		});
+	};
+
 	var doRefresh = function(type) {
 		$log.debug('DashboardService.refresh' + type.capitalize() + '()');
 
@@ -149,34 +180,41 @@ angular.module('opennms.dashboard.Service', [
 			watchers[type] = $q.defer();
 		}
 
-		var update = {
-			type: type,
-			lastUpdated: new Date()
-		};
+		return checkCache(type).then(function(server) {
+			var update = {
+				type: type,
+				lastUpdated: new Date()
+			};
 
-		return refresh[type]().then(function(result) {
-			Errors.clear('dashboard-' + type);
-			update.success = true;
-			update.contents = result;
-			return update;
-		}, function(err) {
-			Errors.set('dashboard-' + type, err);
-			update.success = false;
-			update.error = err;
-			return update;
-		}).finally(function() {
-			$rootScope.$broadcast('opennms.dashboard.update.' + type, update);
-			return update;
+			return refresh[type]().then(function(result) {
+				Errors.clear('dashboard-' + type);
+				update.success = true;
+				update.contents = result;
+				if (server) {
+					db.upsert('dashboard', {
+						_id: type,
+						update: update,
+						server: server
+					});
+				} else {
+					$log.warn('Unable to save dashboard.' + type + ' cache: no default server found.');
+				}
+				return update;
+			}, function(err) {
+				Errors.set('dashboard-' + type, err);
+				update.success = false;
+				update.error = err;
+				return update;
+			}).finally(function() {
+				$rootScope.$broadcast('opennms.dashboard.update.' + type, update);
+				return update;
+			});
 		});
 	};
 
 	var stop = function() {
 		for (var key in watchers) {
-			if (results[key]) {
-				watchers[key].resolve(results[key]);
-			} else {
-				watchers[key].reject();
-			}
+			watchers[key].reject();
 		}
 		watchers = {};
 	};

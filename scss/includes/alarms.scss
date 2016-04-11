@@ -26,4 +26,15 @@
 			border: 0;
 		}
 	}
+	.refresher {
+		display: inline;
+		z-index: $z-index-bar-above;
+		position: fixed;
+		top: $bar-height + $bar-subheader-height - 10;
+		right: 8px;
+		.spinner svg {
+			width: 16px;
+			height: 16px;
+		}
+	}
 }

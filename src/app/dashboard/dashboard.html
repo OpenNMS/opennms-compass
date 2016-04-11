@@ -12,7 +12,7 @@
 		<h3 class="title compass" ng-click="showSelectServer($event)"><span ng-if="server">{{server.name}} <i class="icon ion-arrow-down-b"></i></span></h3>
 	</ion-header-bar>
 	<ion-content padding="false" scroll="true" class="has-header" overflow-scroll="false">
-		<ion-refresher pulling-text="Pull to Refresh..." on-refresh="refreshData(true)"></ion-refresher>
+		<ion-refresher pulling-text="Pull to Refresh..." on-refresh="refreshData()"></ion-refresher>
 		<div class="header"><h3 class="title compass" ng-if="server === null" style="padding-top: 10px">No server configured.</h3></div>
 
 		<ion-slide-box on-slide-changed="refreshDonutSlide(index)" show-pager="false" delegate-handle="donut-slide-box" ng-if="!wide" class="portrait">
@@ -21,7 +21,7 @@
 				<i id="outage-arrow" class="icon ion-chevron-right right-arrow compass" ng-click="goToDonutSlide(1)" ng-class="donutClass('outages')"></i>
 				<h3 ng-if="e.hasError('dashboard-outages')" class="item item-text-wrap title error">Error: Unable to retrieve outages.<span ng-if="e.get('dashboard-outages').permissionDenied()"><br/>Permission denied.</span></h3>
 				<flot dataset="donuts.outages.data" options="donuts.outages.options" ng-if="donutVisible('outages')" ng-attr-width="{{donutSize}}" ng-attr-height="{{donutSize}}"></flot>
-				<div class="spinner-container"><ion-spinner ng-if="!donutVisible('outages')"></ion-spinner></div>
+				<!-- <div class="spinner-container" ng-if="isRefreshing('outages')"><ion-spinner></ion-spinner></div> -->
 				<div class="donut-title"></div>
 			</ion-slide>
 			<ion-slide class="alarms" ng-style="{width: donutSize, height: donutSize}">
@@ -29,7 +29,7 @@
 				<i id="alarm-arrow" class="icon ion-chevron-left left-arrow compass" ng-click="goToDonutSlide(0)" ng-class="donutClass('alarms')"></i>
 				<h3 ng-if="e.hasError('dashboard-alarms')" class="item item-text-wrap title error">Error: Unable to retrieve alarm data.<span ng-if="e.get('dashboard-alarms').permissionDenied()"><br/>Permission denied.</span></h3>
 				<flot dataset="donuts.alarms.data" options="donuts.alarms.options" ng-if="donutVisible('alarms')" ng-attr-width="{{donutSize}}" ng-attr-height="{{donutSize}}"></flot>
-				<div class="spinner-container"><ion-spinner ng-if="!donutVisible('alarms')"></ion-spinner></div>
+				<!-- <div class="spinner-container" ng-if="isRefreshing('alarms')"><ion-spinner></ion-spinner></div> -->
 				<div class="donut-title"></div>
 			</ion-slide>
 		</ion-slide-box>
@@ -38,15 +38,16 @@
 				<div class="donut-overlay" ng-click="modals.outages()"></div>
 				<h3 ng-if="e.hasError('dashboard-outages')" class="item item-text-wrap title error">Error: Unable to retrieve outages.<span ng-if="e.get('dashboard-outages').permissionDenied()"><br/>Permission denied.</span></h3>
 				<flot dataset="donuts.outages.data" options="donuts.outages.options" ng-if="donutVisible('outages')" ng-attr-width="{{donutSize}}" ng-attr-height="{{donutSize}}"></flot>
+				<!-- <div class="spinner-container" ng-if="isRefreshing('outages')"><ion-spinner></ion-spinner></div> -->
 				<div class="donut-title"></div>
 			</div>
 			<div class="alarms col col-50" ng-style="{width: donutSize, height: donutSize}">
 				<div class="donut-overlay" ng-click="goToAlarms()"></div>
 				<h3 ng-if="e.hasError('dashboard-alarms')" class="item item-text-wrap title error">Error: Unable to retrieve alarm data.<span ng-if="e.get('dashboard-alarms').permissionDenied()"><br/>Permission denied.</span></h3>
 				<flot dataset="donuts.alarms.data" options="donuts.alarms.options" ng-if="donutVisible('alarms')" ng-attr-width="{{donutSize}}" ng-attr-height="{{donutSize}}"></flot>
+				<!-- <div class="spinner-container" ng-if="isRefreshing('outages')"><ion-spinner></ion-spinner></div> -->
 				<div class="donut-title"></div>
 			</div>
-			<div class="spinner-container"><ion-spinner ng-if="!donutVisible('outages') &amp;&amp; !donutVisible('alarms')"></ion-spinner></div>
 		</div>
 
 		<ng-include src="favoriteGraphsTemplate" ng-if="favoriteGraphs &amp;&amp; favoriteGraphs.length > 0"></ng-include>

@@ -148,12 +148,12 @@ module.factory('HTTP', function($http, $injector, $log, $q, $window) {
 			}
 
 			if (basicAuth && basicAuth.header && !options.headers.hasOwnProperty('Authorization')) {
-				$log.debug('HTTP.call: setting Authorization header to ' + basicAuth.header);
+				//$log.debug('HTTP.call: setting Authorization header to ' + basicAuth.header);
 				options.headers.Authorization = basicAuth.header;
 			}
 
 			if (cordovaHTTP) {
-				//$log.debug('Making Cordova HTTP call with options:' + angular.toJson(options));
+				$log.debug('Making Cordova HTTP call with options:' + angular.toJson(options));
 				var handleSuccess = function(response) {
 					//$log.debug('HTTP.handleSuccess: ' + angular.toJson(response.data));
 					return response;

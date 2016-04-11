@@ -80,6 +80,17 @@ AlarmFilter.prototype.reset = function() {
 	return obj;
 };
 
+AlarmFilter.prototype.equals = function(that) {
+	'use strict';
+	var self = this;
+
+	return this.showAcknowledged === that.showAcknowledged
+		&& this.newestFirst      === that.newestFirst
+		&& this.limit            === that.limit
+		&& this.offset           === that.offset
+		&& this.minimumSeverity  === that.minimumSeverity;
+};
+
 AlarmFilter.prototype.next = function() {
 	'use strict';
 	var cloned = this.clone();

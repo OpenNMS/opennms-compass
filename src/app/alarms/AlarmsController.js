@@ -2,12 +2,14 @@
 	'use strict';
 
 	var angular = require('angular'),
+		Alarm = require('./Alarm'),
 		AlarmFilter = require('./AlarmFilter');
 
 	require('angular-debounce');
 
 	require('./AlarmService');
 
+	require('../db/db');
 	require('../servers/Servers');
 
 	require('../misc/Errors');
@@ -23,6 +25,7 @@
 		'angularLocalStorage',
 		'rt.debounce',
 		'opennms.services.Alarms',
+		'opennms.services.DB',
 		'opennms.services.Errors',
 		'opennms.services.Modals',
 		'opennms.services.Util',
@@ -99,8 +102,10 @@
 		//severity.$stateful = true;
 		return severity;
 	})
-	.controller('AlarmsCtrl', function($q, $scope, $log, $timeout, $ionicListDelegate, $ionicLoading, $ionicModal, $ionicPopup, $ionicScrollDelegate, $ionicViewSwitcher, AlarmService, debounce, Errors, Modals, Servers, severityStateTracker, severities, storage, util) {
+	.controller('AlarmsCtrl', function($ionicListDelegate, $ionicLoading, $ionicModal, $ionicPopup, $ionicScrollDelegate, $ionicViewSwitcher, $log, $q, $scope, $timeout, AlarmService, db, debounce, Errors, Modals, Servers, severityStateTracker, severities, storage, util) {
 		$log.info('AlarmsCtrl initializing.');
+
+		var alarmsdb = db.get('alarms');
 
 		var filterParams = storage.get('opennms.alarms.filterParams');
 		if (!filterParams) {
@@ -141,35 +146,168 @@
 			return a.id - b.id;
 		};
 
-		$scope.getAlarms = function() {
-			$ionicLoading.show({
-				templateUrl: loadingTemplate,
-				hideOnStateChange: true
+		var getCached = function(type, wrap) {
+			return Servers.getDefault().then(function(defaultServer) {
+				var currentFilter = new AlarmFilter($scope.filter).reset();
+				return alarmsdb.get(type).then(function(res) {
+					if (res && res.filter) {
+						res.filter = new AlarmFilter(res.filter).reset();
+					}
+					if (currentFilter.equals(res.filter) && res.server === defaultServer._id && res.results) {
+						res.results = angular.fromJson(res.results);
+						if (wrap) {
+							for (var i=0, len=res.results.length; i < len; i++) {
+								res.results[i] = new wrap(res.results[i]);
+							}
+						}
+						$log.debug('AlarmsController.getCached(' + type + '): returning ' + res.results.length + ' entries');
+						return res.results;
+					} else {
+						return $q.reject('no match');
+					}
+				});
+			}).catch(function(err) {
+				$log.warn('AlarmsController.getCached: ' + angular.toJson(err));
+				return $q.reject(err);
 			});
+		};
 
-			AlarmService.get($scope.filter).then(function(alarms) {
-				//$log.debug('got alarms=',alarms);
-				$scope.alarms = alarms;
-				if (!$scope.alarms) {
-					$scope.alarms = [];
-				}
-
-				Errors.clear('alarms');
-
+		var updateErrors = function() {
+			if (Errors.hasError('alarms')) {
+				$scope.error = Errors.get('alarms');
+			} else if (Errors.hasError('alarmSeverities')) {
+				$scope.error = Errors.get('alarmSeverities');
+			} else {
 				delete $scope.error;
-				$scope.$broadcast('scroll.refreshComplete');
-				$ionicLoading.hide();
-			}, function(err) {
-				Errors.set('alarms', err);
-				$scope.error = err;
-				$scope.alarms = [];
-				$scope.$broadcast('scroll.refreshComplete');
-				$ionicLoading.hide();
+			}
+		};
+
+		var setError = function(type, err) {
+			Errors.set('alarms', err);
+			updateErrors();
+			$scope.$broadcast('scroll.refreshComplete');
+			$ionicLoading.hide();
+		};
+
+		var setCached = function(type, results) {
+			return Servers.getDefault().then(function(defaultServer) {
+				var currentFilter = new AlarmFilter($scope.filter).reset();
+				return db.upsert('alarms', {
+					_id: type,
+					filter: currentFilter,
+					server: defaultServer._id,
+					results: angular.toJson(results)
+				}).then(function() {
+					Errors.clear(type);
+					updateErrors();
+					//$scope.$broadcast('scroll.refreshComplete');
+					$ionicLoading.hide();
+				});
+			});
+		}
+
+		$scope.refreshing = {
+			alarms: false,
+			alarmSeverities: false
+		};
+
+		var setRefreshing = function(type, value) {
+			// if we are hiding the ion-spinner, let it hang around a half second longer
+			$timeout(function() {
+				$scope.refreshing[type] = value;
+			}, value? 0:500);
+		};
+
+		var updateView = function(type, incoming) {
+			if (incoming && incoming.length === 0) {
+				delete $scope[type];
+				return;
+			}
+
+			var current = $scope[type] || [];
+			var newIds = incoming.map(function(alarm) {
+				return alarm.id;
+			});
+			var oldIds = current.map(function(alarm) {
+				return alarm.id;
 			});
 
-			AlarmService.severities(new AlarmFilter({limit:100,minimumSeverity:'INDETERMINATE'})).then(function(severities) {
-				$scope.legend = severities;
-			});
+			// update existing, add new
+			for (var i=0, len=incoming.length, alarm, existingIndex; i < len; i++) {
+				alarm = incoming[i];
+				existingIndex = oldIds.indexOf(alarm.id);
+				if (existingIndex >= 0) {
+					current[existingIndex] = alarm;
+				} else {
+					current.push(alarm);
+				}
+			}
+			for (var i=current.length - 1, alarm, newIndex; i >= 0; i--) {
+				alarm = current[i];
+				newIndex = newIds.indexOf(alarm.id);
+				if (newIndex === -1) {
+					current.splice(i, 1);
+				}
+			}
+
+			var sortFunc = $scope.filter.newestFirst?
+				function(a,b) {
+					a.lastEventTime.diff(b.lastEventTime);
+				} : function(a,b) {
+					b.lastEventTime.diff(a.lastEventTime);
+				};
+
+			current.sort(sortFunc);
+
+			$scope[type] = current;
+		};
+
+		$scope.getAlarms = function() {
+			if (!$scope.refreshing.alarms) {
+				setRefreshing('alarms', true);
+				getCached('alarms', Alarm).then(function(alarms) {
+					updateView('alarms', alarms);
+					//$scope.alarms = alarms;
+				}).catch(function() {
+					$ionicLoading.show({
+						templateUrl: loadingTemplate,
+						hideOnStateChange: true
+					});
+				}).finally(function() {
+					return AlarmService.get($scope.filter).then(function(alarms) {
+						setCached('alarms', alarms).then(function() {
+							updateView('alarms', alarms);
+							//$scope.alarms = alarms;
+						});
+					}).catch(function(err) {
+						setError('alarms', err);
+					}).finally(function() {
+						setRefreshing('alarms', false);
+					});
+				});
+			}
+
+			if (!$scope.refreshing.alarmSeverities) {
+				setRefreshing('alarmSeverities', true);
+				getCached('alarmSeverities').then(function(severities) {
+					$scope.legend = severities;
+				}).catch(function() {
+					$ionicLoading.show({
+						templateUrl: loadingTemplate,
+						hideOnStateChange: true
+					});
+				}).finally(function() {
+					return AlarmService.severities(new AlarmFilter({limit:100,minimumSeverity:'INDETERMINATE'})).then(function(severities) {
+						setCached('alarmSeverities', severities).then(function() {
+							$scope.legend = severities;
+						});
+					}).catch(function(err) {
+						setError('alarmSeverities', err);
+					}).finally(function() {
+						setRefreshing('alarmSeverities', false);
+					});
+				});
+			}
 		};
 
 		$scope.refreshAlarms = debounce(500, function() {
@@ -275,6 +413,14 @@
 			});
 			$ionicListDelegate.closeOptionButtons();
 		};
+
+		/*
+		$scope.$watch('alarms', function(newValue, oldValue) {
+			if (newValue) {
+				$log.error('alarms changed: ' + newValue.length + ' items');
+			}
+		});
+		*/
 
 		util.onDirty('alarms', $scope.refreshAlarms);
 		util.onDefaultServerUpdated(function(defaultServer) {

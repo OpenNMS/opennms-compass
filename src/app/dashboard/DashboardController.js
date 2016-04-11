@@ -95,7 +95,10 @@
 		};
 
 		$scope.donutVisible = function(type) {
-			return $scope.donutSize && $scope.donutSize > 0 && !Errors.hasError(type+'-chart') && $scope.donuts && $scope.donuts[type] && $scope.donuts[type].data && $scope.donuts[type].options && $scope.donuts[type].options.series;
+			if (Errors.hasError('dashboard-'+type)) {
+				return false;
+			}
+			return $scope.donutSize && $scope.donutSize > 0 && $scope.donuts && $scope.donuts[type] && $scope.donuts[type].data && $scope.donuts[type].options && $scope.donuts[type].options.series;
 		};
 
 		var shouldHideDonut = {
@@ -266,7 +269,7 @@
 		};
 
 		$scope.$on('opennms.dashboard.update.availability', function(ev, update) {
-			$log.debug('Dashboard Update Alarms: ' + (update.success? 'Success':'Failure'));
+			$log.debug('Dashboard Update Availability: ' + (update.success? 'Success':'Failure'));
 
 			if (update.success) {
 				$scope.availability = update.contents;
@@ -326,9 +329,10 @@
 			$log.info('DashboardCtrl.refreshData: refreshing data.');
 
 			var finished = function(type) {
+				$log.info('DashboardCtrl.refreshData: finished refreshing.');
 				util.hideSplashscreen();
+				refreshing = false;
 				$timeout(function() {
-					refreshing = false;
 					$ionicLoading.hide();
 					$scope.$broadcast('scroll.refreshComplete');
 				}, 50);
@@ -418,7 +422,7 @@
 				updateTitles();
 				updateTitles.flush();
 				$scope.server = server;
-				$ionicLoading.show({templateUrl: loadingTemplate, duration: 20000});
+				//$ionicLoading.show({templateUrl: loadingTemplate, duration: 20000});
 				Servers.setDefault(server);
 			};
 			return popover;
