@@ -245,7 +245,10 @@ module.factory('HTTP', function($http, $injector, $log, $q, $window) {
 
 			if (basicAuth.username && basicAuth.password) {
 				basicAuth.header = createBasicAuthHeader(basicAuth.username, basicAuth.password);
+				$http.defaults.headers.common['Authorization'] = basicAuth.header;
 			}
+		} else {
+			delete $http.defaults.headers.common['Authorization'];
 		}
 
 		return $q.when(basicAuth);

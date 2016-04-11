@@ -21,7 +21,8 @@
 	angular.module('opennms.controllers.Node', [
 		'ionic',
 		'ngCordova',
-		'leaflet-directive',
+		'nemLogging',
+		'ui-leaflet',
 		'angularLocalStorage',
 		'opennms.services.Availability',
 		'opennms.services.Capabilities',
@@ -54,11 +55,16 @@
 			}
 			return 'severity severity-INDETERMINATE';
 		};
-		$scope.leaflet = {
+
+		var leafletDefaults = {
 			markers: {},
 			center: {},
-			defaults: {}
+			defaults: {
+				tileLayer: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+			}
 		};
+
+		$scope.leaflet = angular.copy(leafletDefaults);
 
 		var timer;
 
@@ -73,11 +79,7 @@
 			$scope.alarms = undefined;
 			$scope.ipInterfaces = undefined;
 			$scope.snmpInterfaces = undefined;
-			$scope.leaflet = {
-				markers: {},
-				center: {},
-				defaults: {}
-			};
+			$scope.leaflet = angular.copy(leafletDefaults);
 		};
 
 		var showLoading = function() {
@@ -111,28 +113,28 @@
 				$scope.hasAddress = true;
 			}
 			if ($scope.address && ($scope.address.hasOwnProperty('latitude') && $scope.address.hasOwnProperty('longitude'))) {
-				$scope.leaflet.markers = {
-					node: {
+				$scope.leaflet = angular.merge({}, leafletDefaults, {
+					markers: {
+						node: {
+							lat: $scope.address.latitude,
+							lng: $scope.address.longitude,
+							focus: true,
+							draggable: false
+						}
+					}, center: {
 						lat: $scope.address.latitude,
 						lng: $scope.address.longitude,
-						focus: true,
-						draggable: false
+						zoom: 13
+					}, defaults: {
+						attributionControl: false,
+						dragging: false,
+						zoomControl: true,
+						scrollWheelZoom: false,
+						doubleClickZoom: false,
+						touchZoom: false,
+						tap: true
 					}
-				};
-				$scope.leaflet.center = {
-					lat: $scope.address.latitude,
-					lng: $scope.address.longitude,
-					zoom: 13
-				};
-				$scope.leaflet.defaults = {
-					attributionControl: false,
-					dragging: false,
-					zoomControl: true,
-					scrollWheelZoom: false,
-					doubleClickZoom: false,
-					touchZoom: false,
-					tap: true
-				};
+				});
 				//console.log('leaflet=' + angular.toJson($scope.leaflet));
 			}
 

@@ -24,7 +24,6 @@
     "version_compare": "~0.0.3",
     "x2js": "~1.2.0",
     "onmsicons": "https://github.com/OpenNMS/onmsicons.git",
-    "angular-leaflet-directive": "~0.10.0",
     "flot": "flot#~0.8.3",
     "flot-axislabels": "https://github.com/j-white/flot-axislabels.git#master",
     "flot.tooltip": "https://github.com/RangerRick/flot.tooltip.git#compass",
@@ -36,7 +35,8 @@
     "winstore-jscompat": "https://github.com/MSOpenTech/winstore-jscompat.git",
     "angular-flot": "~0.0.16",
     "pouchdb": "^5.3.1",
-    "angular-cache": "^4.5.0"
+    "angular-cache": "^4.5.0",
+    "ui-leaflet": "^1.0.0"
   },
   "devDependencies": {
     "angular-mocks": "1.5.3",
