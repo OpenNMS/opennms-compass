@@ -5,13 +5,17 @@
 	require('ngCordova');
 	require('angular-debounce');
 
+	var Node = require('./models/Node');
+	var AvailabilityNode = require('../availability/models/AvailabilityNode');
+
 	require('./NodeService');
 	require('./ResourceService');
 
-	require('../availability/AvailabilityService');
+	require('../availability/Service');
 	require('../events/EventService');
 	require('../outages/OutageService');
 
+	require('../misc/Cache');
 	require('../misc/Capabilities');
 	require('../misc/Errors');
 	require('../misc/util');
@@ -26,6 +30,7 @@
 		'nemLogging',
 		'ui-leaflet',
 		'angularLocalStorage',
+		'opennms.misc.Cache',
 		'opennms.services.Availability',
 		'opennms.services.Capabilities',
 		'opennms.services.Errors',
@@ -43,7 +48,7 @@
 			controller: 'NodeCtrl'
 		});
 	})
-	.controller('NodeCtrl', function($cordovaGeolocation, $ionicLoading, $ionicPopup, $log, $q, $scope, $timeout, $window, AvailabilityService, Capabilities, debounce, Errors, EventService, NodeService, OutageService, ResourceService, storage, util) {
+	.controller('NodeCtrl', function($cordovaGeolocation, $ionicLoading, $ionicPopup, $log, $q, $scope, $timeout, $window, AvailabilityService, Cache, Capabilities, debounce, Errors, EventService, NodeService, OutageService, ResourceService, storage, util) {
 		$log.info('NodeCtrl: initializing.');
 
 		$scope.util = util;
@@ -140,30 +145,45 @@
 
 			$scope.canUpdateGeolocation = Capabilities.setLocation();
 
+			Cache.get('node-' + $scope.nodeId + '-availability', AvailabilityNode).then(function(availability) {
+				$scope.availability = availability;
+			});
 			var avail = AvailabilityService.node($scope.nodeId).then(function(results) {
 				$log.debug('AvailabilityService got results:'+angular.toJson(results));
 				$scope.availability = results;
+				Cache.set('node-' + $scope.nodeId + '-availability', results);
 				return results;
 			}, function(err) {
 				$log.error('AvailabilityService got error:',err);
 				return err;
 			});
+
+			Cache.get('node-' + $scope.nodeId + '-events').then(function(events) {
+				$scope.events = events;
+			});
 			var ev = EventService.node($scope.nodeId, 5).then(function(results) {
 				//$log.debug('EventService got results:', results);
 				$scope.events = results;
+				Cache.set('node-' + $scope.nodeId + '-events', results);
 				return results;
 			}, function(err) {
 				$log.error('EventService got error:',err);
 				return err;
 			});
+
+			Cache.get('node-' + $scope.nodeId + '-outages').then(function(outages) {
+				$scope.outages = outages;
+			});
 			var outage = OutageService.node($scope.nodeId).then(function(results) {
 				//$log.debug('OutageService got results:', results);
 				$scope.outages = results;
+				Cache.set('node-' + $scope.nodeId + '-outages', results);
 				return results;
 			}, function(err) {
 				$log.error('OutageService got error:',err);
 				return err;
 			});
+
 			$q.all(avail, ev, outage)['finally'](function() {
 				$scope.loaded = true;
 				$scope.$broadcast('scroll.refreshComplete');
@@ -210,8 +230,13 @@
 
 		var refreshNode = function() {
 			if ($scope.nodeId) {
-				showLoading();
+				Cache.get('node-' + $scope.nodeId, Node).then(function(node) {
+					showNode(node);
+				}).catch(function(err) {
+					showLoading();
+				});
 				return NodeService.get($scope.nodeId).then(function(n) {
+					Cache.set('node-' + $scope.nodeId, n);
 					return showNode(n);
 				}, function(err) {
 					err.caller = 'NodeCtrl.refresh';
@@ -228,9 +253,13 @@
 		var checkResources = function() {
 			var showGraphButton = Capabilities.graphs();
 			if ($scope.nodeId && showGraphButton) {
+				Cache.get('node-' + $scope.nodeId + '-show-graph-button').then(function(res) {
+					$scope.showGraphButton = res;
+				});
 				return ResourceService.resources($scope.nodeId).then(function(res) {
 					//$log.debug('graphs: got res ' + angular.toJson(res));
 					$scope.showGraphButton = res && res.children && res.children.length > 0;
+					Cache.set('node-' + $scope.nodeId + '-show-graph-button', $scope.showGraphButton);
 					return $scope.showGraphButton;
 				}).catch(function(err) {
 					$scope.showGraphButton = false;
@@ -254,9 +283,6 @@
 			}
 		});
 
-		util.onDirty('alarms', function() {
-			$scope.refresh();
-		});
 		util.onInfoUpdated(function(info) {
 			$scope.showGraphButton = Capabilities.graphs();
 			$log.debug('$scope.showGraphButton = ' + $scope.showGraphButton);

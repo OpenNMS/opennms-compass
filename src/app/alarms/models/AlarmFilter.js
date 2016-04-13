@@ -1,4 +1,4 @@
-/* jshint -W069 */ /* "better written in dot notation" */
+'use strict';
 
 var severities = {
 	INDETERMINATE: 1,
@@ -11,8 +11,6 @@ var severities = {
 };
 
 function AlarmFilter(params) {
-	'use strict';
-
 	var self = this;
 
 	self.showAcknowledged = false;
@@ -41,7 +39,6 @@ function AlarmFilter(params) {
 }
 
 AlarmFilter.prototype.toParams = function(version) {
-	'use strict';
 	var self = this;
 	var params = {};
 	if (!self.showAcknowledged) {
@@ -55,6 +52,9 @@ AlarmFilter.prototype.toParams = function(version) {
 	}
 	params.limit = self.limit;
 	params.offset = self.offset;
+	if (version === undefined) {
+		version = 0.0;
+	}
 	if (self.minimumSeverity && version > 0.0) {
 		params.comparator = 'ge';
 		params.severity = self.minimumSeverity;
@@ -62,26 +62,26 @@ AlarmFilter.prototype.toParams = function(version) {
 	return params;
 };
 
+AlarmFilter.prototype.toQueryString = function(version) {
+	var ret = [];
+	var params = this.toParams(version);
+	for (var param in params) {
+		ret.push(param + '=' + encodeURIComponent(params[param]));
+	}
+	return ret.join('&');
+};
+
 AlarmFilter.prototype.clone = function() {
-	'use strict';
-	var self = this;
-	var cloned = new AlarmFilter();
-	cloned.showAcknowledged = self.showAcknowledged;
-	cloned.newestFirst = self.newestFirst;
-	cloned.limit = self.limit;
-	cloned.offset = self.offset;
-	return cloned;
+	return new AlarmFilter(this.toJSON());
 };
 
 AlarmFilter.prototype.reset = function() {
-	'use strict';
 	var obj = this.clone();
 	obj.offset = 0;
 	return obj;
 };
 
 AlarmFilter.prototype.equals = function(that) {
-	'use strict';
 	var self = this;
 
 	return this.showAcknowledged === that.showAcknowledged
@@ -92,10 +92,19 @@ AlarmFilter.prototype.equals = function(that) {
 };
 
 AlarmFilter.prototype.next = function() {
-	'use strict';
 	var cloned = this.clone();
 	cloned.offset += cloned.limit;
 	return cloned;
+};
+
+AlarmFilter.prototype.toJSON = function() {
+	return {
+		showAcknowledged: this.showAcknowledged,
+		newestFirst: this.newestFirst,
+		limit: this.limit,
+		offset: this.offset,
+		minimumSeverity: this.minimumSeverity
+	};
 };
 
 module.exports = AlarmFilter;

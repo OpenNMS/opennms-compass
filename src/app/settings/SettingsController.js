@@ -5,7 +5,7 @@
 		Server = require('../servers/models/Server'),
 		URI = require('urijs');
 
-	require('../availability/AvailabilityService');
+	require('../availability/Service');
 	require('../servers/Servers');
 	require('../settings/SettingsService');
 

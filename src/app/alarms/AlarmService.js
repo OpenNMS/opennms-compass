@@ -2,60 +2,90 @@
 	'use strict';
 
 	var angular = require('angular'),
-		Alarm = require('./Alarm'),
-		AlarmFilter = require('./AlarmFilter');
+		Alarm = require('./models/Alarm'),
+		AlarmFilter = require('./models/AlarmFilter');
 
+	require('../misc/Capabilities');
+	require('../misc/Info');
 	require('../misc/Rest');
 	require('../misc/util');
 
 	angular.module('opennms.services.Alarms', [
 		'ionic',
+		'opennms.services.Capabilities',
+		'opennms.services.Info',
 		'opennms.services.Rest',
 		'opennms.services.Util'
 	])
-	.factory('AlarmService', function($q, $log, RestService, util) {
+	.factory('AlarmService', function($q, $log, Capabilities, Info, RestService, util) {
 		$log.info('AlarmService: Initializing.');
 
-		var info = {};
+		var info = Info.getInitialized();
 		util.onInfoUpdated(function(i) {
-			info = i;
+			info = $q.when(i);
 		});
 
 		var getAlarms = function(filter) {
-			var deferred = $q.defer();
-
 			if (!filter) {
 				filter = new AlarmFilter();
 			}
 
-			RestService.getXml('/alarms', filter.toParams(info.numericVersion)).then(function(results) {
-				/* jshint -W069 */ /* "better written in dot notation" */
-				var ret = [];
-				if (results && results['alarms'] && results['alarms']['alarm']) {
-					var alarms = results['alarms']['alarm'];
-					if (!angular.isArray(alarms)) {
-						alarms = [alarms];
-					}
-					for (var i=0, len=alarms.length; i < len; i++) {
-						ret.push(new Alarm(alarms[i]));
-					}
+			return info.then(function(i) {
+				var useJson = Capabilities.useJson();
+				if (useJson) {
+					return RestService.get('/alarms', filter.toParams(i.numericVersion), {Accept: 'application/json'}).then(function(results) {
+						if (results && results['alarm']) {
+							var alarms = results['alarm'];
+							if (!angular.isArray(alarms)) {
+								alarms = [alarms];
+							}
+							for (var i=0, len = alarms.length; i < len; i++) {
+								alarms[i] = new Alarm(alarms[i], true);
+							}
+							return alarms;
+						} else {
+							$log.warn('AlarmService.getAlarms: unhandled response: ' + angular.toJson(results));
+							return [];
+						}
+					});
+				} else {
+					return RestService.getXml('/alarms', filter.toParams(i.numericVersion)).then(function(results) {
+						/* jshint -W069 */ /* "better written in dot notation" */
+						if (results && results['alarms'] && results['alarms']['_totalCount'] === '0') {
+							return [];
+						} else if (results && results['alarms'] && results['alarms']['alarm']) {
+							var alarms = results['alarms']['alarm'];
+							if (!angular.isArray(alarms)) {
+								alarms = [alarms];
+							}
+							for (var i=0, len=alarms.length; i < len; i++) {
+								alarms[i] = new Alarm(alarms[i]);
+							}
+							return alarms;
+						} else {
+							$log.warn('AlarmService.getAlarms: unhandled response: ' + angular.toJson(results));
+							return [];
+						}
+					});
 				}
-				deferred.resolve(ret);
-			}, function(err) {
+			}).catch(function(err) {
 				err.caller = 'AlarmService.getAlarms';
-				deferred.reject(err);
+				return $q.reject(err);
 			});
-			return deferred.promise;
 		};
 
 		var getAlarm = function(alarm) {
 			var deferred = $q.defer();
 
 			var alarmId;
-			if (angular.isNumber(alarm)) {
-				alarmId = alarm;
-			} else {
+			if (alarm && alarm.id) {
 				alarmId = alarm.id;
+			} else {
+				try {
+					alarmId = parseInt(alarm, 10);
+				} catch (err) {
+					$log.warn('Unsure how to handle getAlarm() on ' + angular.toJson(alarm));
+				}
 			}
 
 			if (!alarmId) {
@@ -64,6 +94,7 @@
 				return deferred.promise;
 			}
 
+			$log.debug('getAlarm('+alarmId+')');
 			RestService.getXml('/alarms/' + alarmId).then(function(results) {
 				/* jshint -W069 */ /* "better written in dot notation" */
 				var ret;

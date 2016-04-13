@@ -1,4 +1,4 @@
-/* jshint -W069 */ /* "better written in dot notation" */
+'use strict';
 
 var moment = require('moment');
 
@@ -9,8 +9,6 @@ var moment = require('moment');
  * @constructor
  */
 function AvailabilityService(svc) {
-  'use strict';
-
   var self = this;
 
   /**
@@ -41,5 +39,13 @@ function AvailabilityService(svc) {
   self.name = svc['_name'];
 
 }
+
+AvailabilityService.prototype.toJSON = function() {
+  return {
+    _id: this.id,
+    _availability: this.availability,
+    _name: this.name
+  };
+};
 
 module.exports = AvailabilityService;

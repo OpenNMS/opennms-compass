@@ -15,6 +15,10 @@
 	.factory('Capabilities', function($log, Info, util) {
 		$log.info('Capabilities: Initializing.');
 
+		var canAckAlarms = function() {
+			return Info.validateVersion('14.0.0');
+		};
+
 		var hasGraphs = function() {
 			if (Info.isMeridian()) {
 				return Info.validateVersion('2016.1.0');
@@ -31,10 +35,23 @@
 			return Info.validateVersion('15.0.2');
 		};
 
+		var useJson = function() {
+			/*
+			if (Info.isMeridian()) {
+				return Info.validateVersion('2016.1.0');
+			} else {
+				return Info.validateVersion('17.1.1');
+			}
+			*/
+			return false;
+		};
+
 		return {
+			ackAlarms: canAckAlarms,
 			graphs: hasGraphs,
 			outageSummaries: hasOutageSummaries,
-			setLocation: canSetLocation
+			setLocation: canSetLocation,
+			useJson: useJson
 		};
 	})
 	;

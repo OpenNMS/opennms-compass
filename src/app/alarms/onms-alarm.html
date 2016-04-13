@@ -1,0 +1,20 @@
+<ion-item ng-if="alarm" ng-class="getItemClass(alarm)" ng-click="openAlarm(alarm)">
+	<i ng-class="getIconClass(alarm)" title="{{alarm.severity}}"></i>
+	<!--<ion-delete-button class="ion-ios-checkmark-outline" ng-click="acknowledge(alarm)"></ion-delete-button>-->
+	<h2>{{alarm.title}}<span ng-if="alarm.severity === 'CLEARED'"> (Cleared)</span></h2>
+	<p>{{alarm.nodeLabel}}</p>
+	<div class="alarm-time">{{alarm.lastEventTime.fromNow()}}</div>
+	<p ng-bind-html="alarm.logMessage" class="message"></p>
+	<span ng-if="canAck(alarm)">
+		<ion-option-button class="clear"    ng-click="clear(alarm, $event)" ng-if="canClear(alarm)">Clear</ion-option-button>
+		<ion-option-button class="escalate" ng-click="escalate(alarm, $event)" ng-if="canEscalate(alarm)">Escalate</ion-option-button>
+		<ion-option-button class="ack"      ng-click="toggleAck(alarm, $event)">{{alarm.ackUser? 'Unack':'Ack'}}</ion-option-button>
+	</span>
+
+
+	<!--
+	<ion-item ng-class="'item item-text-wrap item-icon-right severity-' + alarm.severity" ng-repeat="alarm in alarms | severity track by alarm.id" ng-click="openAlarm(alarm)">
+		<div class="bottom-fade"></div>
+	</ion-item>
+	-->
+</ion-item>

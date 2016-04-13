@@ -65,6 +65,7 @@
 			return getPouch(dbname).get(doc._id).then(function(existing) {
 				delete doc._id;
 				delete doc._rev;
+				delete doc._deleted;
 				angular.merge(existing, doc);
 				return getPouch(dbname).put(existing).then(function(response) {
 					doc._id = response.id;
@@ -72,7 +73,7 @@
 					return doc;
 				});
 			}).catch(function(err) {
-				if (err.error && err.reason === 'missing') {
+				if (err.error && (err.reason === 'missing'||err.reason === 'deleted')) {
 					return createDoc();
 				} else {
 					$log.error('Unable to upsert ' + doc._id + ': ' + err.reason);
@@ -81,10 +82,24 @@
 			});
 		};
 
+		var remove = function(dbname, id) {
+			return getPouch(dbname).get(id).then(function(existing) {
+				return getPouch(dbname).remove(existing);
+			}).catch(function(err) {
+				if (err.error && err.reason === 'missing') {
+					return true;
+				} else {
+					$log.error('Unable to remove ' + id + ': ' + err.reason);
+					return $q.reject(err);
+				}
+			});
+		};
+
 		return {
 			get: getPouch,
 			all: allDocs,
-			upsert: upsert
+			upsert: upsert,
+			remove: remove
 		};
 	});
 

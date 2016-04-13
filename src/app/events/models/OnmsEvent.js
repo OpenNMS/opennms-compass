@@ -1,4 +1,4 @@
-/* jshint -W069 */ /* "better written in dot notation" */
+'use strict';
 
 var moment = require('moment');
 
@@ -8,10 +8,8 @@ var moment = require('moment');
  * @param {Object} event an event JSON object
  * @constructor
  */
-function Event(event) {
-  'use strict';
+function OnmsEvent(event) {
   //console.log('new Event():', event);
-
   var self = this;
 
   /**
@@ -165,20 +163,47 @@ function Event(event) {
   // XXX: convert event['parms'] into an object for parms.
   self.parms = {};
 
-  /**
-   * @description Provides a formatted severity CSS class
-   * @ngdoc method
-   * @name Event#getSeverityClass
-   * @methodOf Event
-   * @returns {string} formatted CSS class name
-   */
-  self.getSeverityClass = function() {
-    if (this.severity !== null && angular.isString(this.severity) && this.severity.length !== 0) {
-      return 'severity-'+angular.uppercase(this.severity);
-    }
-    return '';
-  };
-
 }
 
-module.exports = Event;
+/**
+ * @description Provides a formatted severity CSS class
+ * @ngdoc method
+ * @name Event#getSeverityClass
+ * @methodOf Event
+ * @returns {string} formatted CSS class name
+ */
+OnmsEvent.prototype.getSeverityClass = function() {
+  if (this.severity !== null && angular.isString(this.severity) && this.severity.length !== 0) {
+    return 'severity-'+angular.uppercase(this.severity);
+  }
+  return '';
+};
+
+OnmsEvent.prototype.toJSON = function() {
+  var ret = {
+    _id: this.id,
+    uei: this.uei,
+    nodeId: this.nodeId,
+    nodeLabel: this.nodeLabel,
+    ipAddress: this.ipAddress,
+    _severity: this.severity,
+    createTime: this.createTime,
+    time: this.time,
+    source: this.source,
+    _log: this.log,
+    _display: this.display,
+    description: this.description,
+    logMessage: this.logMessage,
+    parms: this.parms
+  };
+
+  if (this.serviceType || this.serviceName) {
+    ret.serviceType = {
+      _id: this.serviceType,
+      name: this.serviceName
+    };
+  }
+
+  return ret;
+};
+module.exports = OnmsEvent;

@@ -1,7 +1,15 @@
-/* jshint -W069 */ /* "better written in dot notation" */
+'use strict';
 
 var MonitoredService = require('./MonitoredService'),
   moment = require('moment');
+
+var nullSafe = function(str) {
+  if (str && str.trim() !== '') {
+    return str;
+  } else {
+    return undefined;
+  }
+};
 
 /**
  * @ngdoc object
@@ -10,16 +18,7 @@ var MonitoredService = require('./MonitoredService'),
  * @constructor
  */
 function Node(node) {
-  'use strict';
-
   var self = this;
-  var nullSafe = function(str) {
-    if (str && str.trim() !== '') {
-      return str;
-    } else {
-      return undefined;
-    }
-  };
 
   /**
    * @description
@@ -190,7 +189,6 @@ function Node(node) {
 }
 
 Node.prototype.getDisplayId = function() {
-  'use strict';
   var self = this;
   var ret;
 
@@ -204,7 +202,6 @@ Node.prototype.getDisplayId = function() {
 };
 
 Node.prototype.isEmpty_ = function(str) {
-  'use strict';
   if (str && str !== '') {
     return false;
   } else {
@@ -213,7 +210,6 @@ Node.prototype.isEmpty_ = function(str) {
 };
 
 Node.prototype.getAddress = function() {
-  'use strict';
   var assets, prop, ret,
     self = this;
 
@@ -241,6 +237,34 @@ Node.prototype.getAddress = function() {
     }
   }
   return undefined;
+};
+
+Node.prototype.toJSON = function() {
+  var ret = {
+    _id: this.id,
+    _foreignSource: this.foreignSource,
+    _foreignId: this.foreignId,
+    _label: this.label,
+    _type: this.type,
+    labelSource: this.labelSource,
+    assetRecord: this.assets,
+    createTime: this.createTime,
+    lastCapsdPoll: this.lastCapsdPoll,
+    sysContact: this.sysContact,
+    sysDescription: this.sysDescription,
+    sysLocation: this.sysLocation,
+    sysName: this.sysName,
+    sysObjectId: this.sysObjectId
+  };
+
+  ret.categories = this.categories.map(function(cat) {
+    return {
+      _id: cat.id,
+      _name: cat.name
+    };
+  });
+
+  return ret;
 };
 
 module.exports = Node;

@@ -1,4 +1,4 @@
-/* jshint -W069 */ /* "better written in dot notation" */
+'use strict';
 
 var AvailabilityService = require('./AvailabilityService'),
   moment = require('moment');
@@ -10,8 +10,6 @@ var AvailabilityService = require('./AvailabilityService'),
  * @constructor
  */
 function AvailabilityIpInterface(iface) {
-  'use strict';
-
   var self = this;
 
   /**
@@ -21,7 +19,7 @@ function AvailabilityIpInterface(iface) {
    * @propertyOf AvailabilityIpInterface
    * @returns {number} Interface ID
    */
-  self.id   = Number(iface['_id']);
+  self.id   = parseInt(iface['_id'], 10);
 
   /**
    * @description
@@ -57,7 +55,17 @@ function AvailabilityIpInterface(iface) {
       self.services.push(new AvailabilityService(iface.services.service[i]));
     }
   }
-
 }
+
+AvailabilityIpInterface.prototype.toJSON = function() {
+  return {
+    _id: this.id,
+    _availability: this.availability,
+    _address: this.address,
+    services: {
+      service: self.services
+    }
+  };
+};
 
 module.exports = AvailabilityIpInterface;

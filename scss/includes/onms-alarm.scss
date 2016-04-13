@@ -1,0 +1,36 @@
+.onms-alarm {
+
+	.icon.severity {
+		float: right;
+		font-size: $item-icon-font-size;
+		line-height: $item-icon-font-size;
+		height: $item-icon-font-size;
+		/*top: $item-padding;*/
+		padding: 0;
+	}
+
+	&.item-complex .item-content {
+		padding-right: $item-padding;
+
+		p {
+			color: black;
+			opacity: 0.9;
+		}
+
+		.alarm-time {
+			/*
+			width: 100%;
+			text-align: right;
+			*/
+			font-size: $font-size-small;
+			opacity: 0.85;
+		}
+	}
+
+	/*
+	.message {
+		height: 42px;
+		overflow-y: hidden !important;
+	}
+	*/
+}

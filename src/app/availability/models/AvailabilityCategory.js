@@ -1,4 +1,4 @@
-/* jshint -W069 */ /* "better written in dot notation" */
+'use strict';
 
 var moment = require('moment');
 
@@ -9,8 +9,6 @@ var moment = require('moment');
  * @constructor
  */
 function AvailabilityCategory(cat) {
-  'use strict';
-
   var self = this;
 
   /**
@@ -112,5 +110,21 @@ function AvailabilityCategory(cat) {
    */
   self.servicePercentage = parseFloat(cat['service-percentage']);
 }
+
+AvailabilityCategory.prototype.toJSON = function() {
+  return {
+    _name: this.name,
+    '_normal-threshold': this.normalThreshold,
+    '_warning-threshold': this.warningThreshold,
+    availability: this.availability,
+    'availability-class': this.availabilityClass,
+    comment: this.comment,
+    'last-updated': this.lastUpdated,
+    'outage-class': this.outageClass,
+    'outage-text': this.outageText,
+    'service-down-count': this.serviceDownCount,
+    'service-percentage': this.servicePercentage
+  };
+};
 
 module.exports = AvailabilityCategory;

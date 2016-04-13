@@ -1,21 +1,23 @@
-/* jshint -W069 */ /* "better written in dot notation" */
+'use strict';
 
-var OnmsEvent = require('../events/models/Event');
+var OnmsEvent = require('../../events/models/OnmsEvent');
 var moment = require('moment');
+var md5 = require('js-md5');
+
 var removeSlashes = /^.*\//g;
 var capitalLetters = /([A-Z])/g;
+var emptyParms = /\s+parms:\s*$/;
 
 /**
  * @ngdoc object
  * @name Alarm
  * @param {Object} alarm an alarm JSON object
+ * @param {boolean} isJson whether the alarm data structure came from JSON or XML
  * @constructor
  */
-function Alarm(alarm) {
-  'use strict';
-
+function Alarm(alarm, isJson) {
   var self = this;
-  //console.log('alarm:', alarm);
+  //console.log('alarm:' + angular.toJson(alarm));
 
   /**
    * @description
@@ -24,7 +26,7 @@ function Alarm(alarm) {
    * @propertyOf Alarm
    * @returns {number} Alarm ID
    */
-  self.id   = parseInt(alarm['_id'], 10);
+  self.id   = parseInt(alarm['_id']||-1, 10);
 
   /**
    * @description
@@ -33,7 +35,7 @@ function Alarm(alarm) {
    * @propertyOf Alarm
    * @returns {number} Number of times the alarm has triggered.
    */
-  self.count = parseInt(alarm['_count'], 10);
+  self.count = parseInt(alarm['_count']||0, 10);
 
   /**
    * @description
@@ -60,7 +62,7 @@ function Alarm(alarm) {
    * @propertyOf Alarm
    * @returns {string} Universal Event Identifier for the alarm.
    */
-  self.uei   = alarm['uei'];
+  self.uei   = alarm.uei;
 
   /**
    * @description
@@ -69,7 +71,9 @@ function Alarm(alarm) {
    * @propertyOf Alarm
    * @returns {string} A readable title for the alarm (based on the UEI).
    */
-  self.title = self.uei.replace(removeSlashes, '').replace(capitalLetters, ' $1');
+  self.title = self.uei
+    .replace(removeSlashes, '')
+    .replace(capitalLetters, ' $1');
   self.title = self.title.charAt(0).toUpperCase() + self.title.slice(1);
 
   /**
@@ -133,7 +137,7 @@ function Alarm(alarm) {
    * @propertyOf Alarm
    * @returns {string} Formatted display text to control how the alarm will appear in the browser.
    */
-  self.logMessage   = alarm['logMessage'];
+  self.logMessage   = alarm['logMessage'].replace(emptyParms, '');
 
   /**
    * @description
@@ -221,22 +225,17 @@ function Alarm(alarm) {
    * @propertyOf Alarm
    * @returns {object} The &lt;parms&gt; element for this alarm.
    */
-  self.parms   = {};
+  self.parms   = alarm['parms'];
   // alarm['parms'];
 
   /**
-   * @description Provides a formatted severity CSS class
-   * @ngdoc method
-   * @name Alarm#getSeverityClass
-   * @methodOf Alarm
-   * @returns {string} formatted CSS class name
+   * @description Provides a unique hash key for the alarm
+   * @ngdoc property
+   * @name Alarm#hash
+   * @propertyOf Alarm
+   * @returns {string} an MD5 hash for the alarm
    */
-  self.getSeverityClass = function() {
-    if (this.severity !== null && angular.isString(this.severity) && this.severity.length !== 0) {
-      return 'severity-'+angular.uppercase(this.severity);
-    }
-    return '';
-  };
+  self.hash = md5([self.id, self.uei, self.ackUser, self.type, self.firstEventTime, self.lastEventTime].join('|'));
 
   /**
    * @description
@@ -246,19 +245,65 @@ function Alarm(alarm) {
    * @returns {string} the name of this object class, used for troubleshooting and testing.
    */
   self.className = 'Alarm';
-
-  self.showCleared = function() {
-    if (self.severity === 'CLEARED') {
-      if (self.title.contains('Regained')) {
-        return false;
-      }
-      if (self.title.contains('Succeeded')) {
-        return false;
-      }
-      return true;
-    }
-    return false;
-  };
 }
+
+/**
+ * @description Provides a formatted severity CSS class
+ * @ngdoc method
+ * @name Alarm#getSeverityClass
+ * @methodOf Alarm
+ * @returns {string} formatted CSS class name
+ */
+Alarm.prototype.getSeverityClass = function() {
+  if (this.severity !== null && angular.isString(this.severity) && this.severity.length !== 0) {
+    return 'severity-'+angular.uppercase(this.severity);
+  }
+  return '';
+};
+
+/**
+ * @description Whether or not the alarm should be considered "cleared" or not
+ * @ngdoc method
+ * @name Alarm#showCleared
+ * @methodOf Alarm
+ * @returns {boolean} a true or false value if the alarm has Regained or Succeeded
+ */
+Alarm.prototype.showCleared = function() {
+  if (this.severity === 'CLEARED') {
+    if (this.title.contains('Regained')) {
+      return false;
+    }
+    if (this.title.contains('Succeeded')) {
+      return false;
+    }
+    return true;
+  }
+  return false;
+};
+
+Alarm.prototype.toJSON = function() {
+  return {
+    _id: this.id,
+    _count: this.count,
+    ackUser: this.ackUser,
+    ackTime: this.ackTime,
+    uei: this.uei,
+    _severity: this.severity,
+    _type: this.type,
+    description: this.description,
+    firstEventTime: this.firstEventTime,
+    lastEventTime: this.lastEventTime,
+    lastEvent: this.lastEvent,
+    logMessage: this.logMessage,
+    reductionKey: this.reductionKey,
+    troubleTicket: this.troubleTicketId,
+    troubleTicketState: this.troubleTicketState,
+    nodeId: this.nodeId,
+    nodeLabel: this.nodeLabel,
+    stickyMemo: this.stickyMemo,
+    journalMemo: this.journalMemo,
+    parms: this.parms
+  };
+};
 
 module.exports = Alarm;

@@ -1,4 +1,4 @@
-/* jshint -W069 */ /* "better written in dot notation" */
+'use strict';
 
 var moment = require('moment'),
   URI = require('urijs');
@@ -10,8 +10,6 @@ var moment = require('moment'),
  * @constructor
  */
 function Server(server) {
-  'use strict';
-
   var self = this;
   if (!server) {
     server = {};
@@ -71,25 +69,26 @@ function Server(server) {
    */
   self.password = server.password;
 
-  self.relativeUrl = function(segment) {
-    return self.url? URI(self.url).segment(segment).toString() : undefined;
-  };
+}
 
-  self.restUrl = function(segment) {
-    if (self.url) {
-      var url = URI(self.url).segment('rest/');
-      if (segment) {
-        url.segment(segment);
-      }
-      return url.toString();
-    } else {
-      return undefined;
+Server.prototype.relativeUrl = function(segment) {
+  return this.url? URI(this.url).segment(segment).toString() : undefined;
+};
+
+Server.prototype.restUrl = function(segment) {
+  if (this.url) {
+    var url = URI(this.url).segment('rest/');
+    if (segment) {
+      url.segment(segment);
     }
-  };
-
-  self.getHost = function() {
-    return URI(self.url).hostname();
+    return url.toString();
+  } else {
+    return undefined;
   }
+};
+
+Server.prototype.getHost = function() {
+  return URI(this.url).hostname();
 }
 
 module.exports = Server;

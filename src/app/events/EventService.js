@@ -2,7 +2,7 @@
 	'use strict';
 
 	var angular = require('angular'),
-		OnmsEvent = require('./models/Event');
+		OnmsEvent = require('./models/OnmsEvent');
 
 	require('../misc/Rest');
 

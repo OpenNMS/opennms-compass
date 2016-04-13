@@ -24,13 +24,14 @@
 					Graphs
 				</ion-item>
 			</span>
-			<span class="graphs" collection-repeat="graph in graphDefinitions track by graph.name" item-height="calculateHeight()" item-width="100%" id="graph-{{graph.name}}">
+			<!-- item-height="calculateHeight()" item-width="100%" -->
+			<span class="graphs" ng-repeat="graph in graphDefinitions track by graph.name" id="graph-{{graph.name}}">
 				<ion-item class="item item-icon-right item-divider item-compass" ng-click="toggleFavorite($event, graph)">
 					{{graph.title}}
 					<i ng-class="'icon ' + (isFavorite(graph.name)? 'ion-ios-star':'ion-ios-star-outline')"></i>
 				</ion-item>
 				<ion-item class="item item-accordion item-complex graph">
-					<onms-graph graph-def="graph" resource-id="resource.id" range="range" display="display['graph-'+graph.name]" ng-attr-width="width" ng-attr-height="width"></onms-graph>
+					<onms-graph graph-def="graph" resource-id="resource.id" range="range" display="true" ng-attr-width="width" ng-attr-height="width"></onms-graph>
 				</ion-item>
 			</span>
 		</ion-list>

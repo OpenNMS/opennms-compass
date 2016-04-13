@@ -10,22 +10,26 @@ var sortFavorites = function(a, b) {
 
 var angular = require('angular');
 
+var Alarm = require('../alarms/models/Alarm'),
+	AvailabilitySection = require('../availability/models/AvailabilitySection'),
+	Outage = require('../outages/models/Outage');
+
 require('angular-debounce');
 
-require('../db/db');
-
 require('../alarms/AlarmService');
-require('../availability/AvailabilityService');
+require('../availability/Service');
 require('../nodes/ResourceService');
 require('../outages/OutageService');
 require('../servers/Servers');
 
+require('../misc/Cache');
 require('../misc/Errors');
 require('../misc/util');
 
 angular.module('opennms.dashboard.Service', [
 	'ionic',
 	'rt.debounce',
+	'opennms.misc.Cache',
 	'opennms.services.Alarms',
 	'opennms.services.Availability',
 	'opennms.services.DB',
@@ -35,10 +39,8 @@ angular.module('opennms.dashboard.Service', [
 	'opennms.services.Servers',
 	'opennms.services.Util'
 ])
-.factory('DashboardService', function($log, $q, $rootScope, AlarmService, AvailabilityService, db, debounce, Errors, OutageService, ResourceService, Servers, util) {
+.factory('DashboardService', function($log, $q, $rootScope, AlarmService, AvailabilityService, Cache, debounce, Errors, OutageService, ResourceService, Servers, util) {
 	$log.info('Initializing DashboardService.');
-
-	var dashboarddb = db.get('dashboard');
 
 	var watchers = {};
 
@@ -148,39 +150,36 @@ angular.module('opennms.dashboard.Service', [
 		}
 	};
 
-	var checkCache = function(type) {
+	var checkCache = function(type, wrap) {
 		$log.debug('DashboardService.checkCache(' + type + ')');
 
-		return Servers.getDefault().then(function(defaultServer) {
-			if (defaultServer) {
-				//$log.error('default server: ' + angular.toJson(defaultServer));
-				dashboarddb.get(type).then(function(res) {
-					if (res.server === defaultServer._id && res.update) {
-						//$log.error('dashboarddb.get: ' + angular.toJson(res));
-						$log.debug('DashboardService.checkCache: found cached update for ' + type);
-						var update = angular.copy(res.update);
-						update.stopSpinner = false;
-						$rootScope.$broadcast('opennms.dashboard.update.' + type, update);
+		return Cache.get('dashboard-service-' + type).then(function(update) {
+			$log.debug('DashboardService.checkCache: found cached update for ' + type);
+			if (wrap) {
+				if (angular.isArray(update.contents)) {
+					for (var c=0, len=update.contents.length; c < len; c++) {
+						update.contents[c] = new wrap(update.contents[c]);
 					}
-				});
-				return defaultServer._id;
-			} else {
-				return null;
+				} else if (update.contents) {
+					update.contents = new wrap(update.contents);
+				}
 			}
+			update.stopSpinner = false;
+			$rootScope.$broadcast('opennms.dashboard.update.' + type, update);
 		}).catch(function() {
 			$log.debug('DashboardService.checkCache: no cached update for ' + type + ' found');
 			return null;
 		});
 	};
 
-	var doRefresh = function(type) {
+	var doRefresh = function(type, wrap) {
 		$log.debug('DashboardService.refresh' + type.capitalize() + '()');
 
 		if (!watchers[type]) {
 			watchers[type] = $q.defer();
 		}
 
-		return checkCache(type).then(function(server) {
+		return checkCache(type, wrap).then(function(server) {
 			var update = {
 				type: type,
 				lastUpdated: new Date()
@@ -190,15 +189,7 @@ angular.module('opennms.dashboard.Service', [
 				Errors.clear('dashboard-' + type);
 				update.success = true;
 				update.contents = result;
-				if (server) {
-					db.upsert('dashboard', {
-						_id: type,
-						update: update,
-						server: server
-					});
-				} else {
-					$log.warn('Unable to save dashboard.' + type + ' cache: no default server found.');
-				}
+				Cache.set('dashboard-service-' + type, update);
 				return update;
 			}, function(err) {
 				Errors.set('dashboard-' + type, err);
@@ -221,7 +212,7 @@ angular.module('opennms.dashboard.Service', [
 
 	return {
 		refreshAlarms: function() { doRefresh('alarms') },
-		refreshAvailability: function() { doRefresh('availability') },
+		refreshAvailability: function() { doRefresh('availability', AvailabilitySection) },
 		refreshFavorites: function() { doRefresh('favorites') },
 		refreshOutages: function() { doRefresh('outages') },
 		stop: stop

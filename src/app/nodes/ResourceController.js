@@ -89,8 +89,9 @@
 					$log.debug(graph.name + ': ' + $scope.display[id] + ' -> ' + visible);
 				}
 				$scope.display[id] = visible;
+				return $scope.display['graph-' + graph.name];
 			}
-			return true;
+			return false;
 		};
 
 		$scope.refresh = function() {

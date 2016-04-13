@@ -1,5 +1,6 @@
-/* jshint -W069 */ /* "better written in dot notation" */
+'use strict';
 
+var angular = require('angular');
 var moment = require('moment');
 
 /**
@@ -9,8 +10,6 @@ var moment = require('moment');
  * @constructor
  */
 function MonitoredService(svc) {
-  'use strict';
-
   var self = this;
 
   /**
@@ -58,5 +57,22 @@ function MonitoredService(svc) {
    */
   self.status = svc['_status'];
 }
+
+MonitoredService.prototype.toJSON = function() {
+  var ret = {
+    _id: this.id,
+    ipInterfaceId: this.ipInterfaceId,
+    _status: this.status
+  };
+
+  if (this.serviceId || this.serviceName) {
+    ret.serviceType = {
+      _id: this.serviceId,
+      name: this.serviceName
+    };
+  }
+
+  return ret;
+};
 
 module.exports = MonitoredService;

@@ -2,20 +2,20 @@
 	'use strict';
 
 	var angular = require('angular'),
-		AlarmFilter = require('../alarms/AlarmFilter'),
+		AlarmFilter = require('../alarms/models/AlarmFilter'),
 		$ = require('jquery');
 
-	require('angular-cache');
 	require('angular-debounce');
 
 	require('./Service');
 	require('../alarms/AlarmService');
-	require('../availability/AvailabilityService');
+	require('../availability/Service');
 	require('../nodes/ResourceService');
 	require('../outages/OutageService');
 	require('../servers/Servers');
 	require('../settings/SettingsService');
 
+	require('../misc/Cache');
 	require('../misc/Errors');
 	require('../misc/Info');
 	require('../misc/Modals');
@@ -44,10 +44,10 @@
 
 	angular.module('opennms.controllers.Dashboard', [
 		'ionic',
-		'angular-cache',
 		'angular-flot',
 		'rt.debounce',
 		'opennms.dashboard.Service',
+		'opennms.misc.Cache',
 		'opennms.services.Alarms',
 		'opennms.services.Availability',
 		'opennms.services.Errors',
@@ -59,7 +59,7 @@
 		'opennms.services.Settings', // for default-graph-min-range
 		'opennms.services.Util'
 	])
-	.config(function($stateProvider, CacheFactoryProvider) {
+	.config(function($stateProvider) {
 		$stateProvider
 		.state('dashboard', {
 			url: '/dashboard',
@@ -69,21 +69,14 @@
 			templateUrl: dashboardTemplate,
 			controller: 'DashboardCtrl'
 		});
-		angular.extend(CacheFactoryProvider.defaults, {
-			maxAge: 10 * 60 * 1000
-		});
 	})
-	.controller('DashboardCtrl', function($document, $injector, $interval, $ionicLoading, $ionicPopup, $ionicPopover, $ionicSlideBoxDelegate, $ionicViewSwitcher, $log, $q, $rootScope, $scope, $state, $timeout, $window, AlarmService, AvailabilityService, CacheFactory, DashboardService, debounce, Errors, Info, Modals, OutageService, ResourceService, Servers, util) {
+	.controller('DashboardCtrl', function($document, $injector, $interval, $ionicLoading, $ionicPopup, $ionicPopover, $ionicSlideBoxDelegate, $ionicViewSwitcher, $log, $q, $rootScope, $scope, $state, $timeout, $window, AlarmService, AvailabilityService, Cache, DashboardService, debounce, Errors, Info, Modals, OutageService, ResourceService, Servers, util) {
 		$log.info('DashboardCtrl: Initializing.');
 
 		$scope.favoriteGraphsTemplate = favoriteGraphsTemplate;
 		$scope.availabilityTemplate = availabilityTemplate;
 
 		$scope.donuts = {};
-		if (!CacheFactory.get('dashboardCache')) {
-			CacheFactory.createCache('dashboardCache');
-		}
-		var dashboardCache = CacheFactory.get('dashboardCache');
 
 		$scope.goToAlarms = function() {
 			$ionicViewSwitcher.nextDirection('back');
@@ -450,18 +443,16 @@
 		util.onDefaultServerUpdated(function(defaultServer) {
 			//$log.debug('DashboardController.onDefaultServerUpdated: ' + angular.toJson(defaultServer));
 			if (defaultServer && angular.isDefined(defaultServer.name)) {
-				dashboardCache.put('defaultServer', defaultServer);
+				Cache.set('dashboard-default-server', defaultServer);
 				$scope.server = defaultServer;
 				$scope.refreshData();
 			} else {
-				dashboardCache.remove('defaultServer');
+				Cache.remove('dashboard-default-server');
 				$scope.server = null;
 				$scope.resetData();
 			}
 		});
 
-		util.onDirty('alarms', DashboardService.refreshAlarms);
-		util.onDirty('outages', DashboardService.refreshOutages);
 		util.onInfoUpdated(updateLogo);
 		util.onErrorsUpdated(function(errors) {
 			$scope.errors = errors;
@@ -497,22 +488,6 @@
 		document.addEventListener('resume', $scope.refreshData, false);
 
 		$scope.$on('$ionicView.beforeEnter', function(ev, info) {
-			/* // skip all this for now, getting weird rendering bug
-			$log.debug('info=' + angular.toJson(info));
-			if (info) {
-				if (info.direction === 'back') {
-					// don't refresh if we're going back
-					return;
-				}
-				if (info.stateParams && info.stateParams.refresh === false) {
-					// also don't refresh if we've been explicitly asked not to
-					return;
-				}
-			}
-
-			// otherwise, fall through to refreshing
-			$log.debug("refreshing");
-			*/
 			$scope.refreshData();
 		});
 	});

@@ -4,10 +4,13 @@
 	var angular = require('angular');
 	require('angular-debounce');
 
+	var Node = require('./models/Node');
+
 	require('./NodeService');
 
 	require('../db/db');
 
+	require('../misc/Cache');
 	require('../misc/Errors');
 	require('../misc/util');
 
@@ -18,6 +21,7 @@
 		'ionic',
 		'angularLocalStorage',
 		'rt.debounce',
+		'opennms.misc.Cache',
 		'opennms.services.DB',
 		'opennms.services.Errors',
 		'opennms.services.Nodes',
@@ -31,7 +35,7 @@
 			controller: 'NodesCtrl'
 		});
 	})
-	.controller('NodesCtrl', function($ionicLoading, $log, $q, $scope, $state, $timeout, $window, db, debounce, Errors, NodeService, storage, util) {
+	.controller('NodesCtrl', function($ionicLoading, $log, $q, $scope, $state, $timeout, $window, Cache, db, debounce, Errors, NodeService, storage, util) {
 		$log.info('NodesCtrl: initializing.');
 
 		$scope.searching = false;
@@ -44,11 +48,8 @@
 		var nodesdb = db.get('nodes');
 
 		$scope.updateSearch = function(searchFor, pullToRefresh) {
-			nodesdb.get('nodelist').then(function(nodes) {
-				//$log.debug('nodelist=' + angular.toJson(nodes));
-				if (nodes && nodes.list && nodes.searchString === searchFor) {
-					$scope.nodes = nodes.list;
-				}
+			Cache.get('nodes-list-'+searchFor).then(function(nodes, Node) {
+				$scope.nodes = nodes;
 			});
 
 			if (!pullToRefresh) {
@@ -77,11 +78,7 @@
 				//$log.debug('Got nodes:',ret);
 				$scope.searching = false;
 				$scope.nodes = nodes;
-				db.upsert('nodes', {
-					_id: 'nodelist',
-					list: nodes,
-					searchString: searchFor
-				});
+				Cache.set('nodes-list-' + searchFor, nodes);
 				if (nodes.length === 20 && angular.isUndefined(searchFor) || searchFor.trim() === '') {
 					$scope.nodes.push({id:'more'});
 				}

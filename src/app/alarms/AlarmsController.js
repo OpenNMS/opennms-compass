@@ -2,16 +2,19 @@
 	'use strict';
 
 	var angular = require('angular'),
-		Alarm = require('./Alarm'),
-		AlarmFilter = require('./AlarmFilter');
+		Alarm = require('./models/Alarm'),
+		AlarmFilter = require('./models/AlarmFilter');
 
 	require('angular-debounce');
 
 	require('./AlarmService');
+	require('./OnmsAlarmDirective');
 
 	require('../db/db');
 	require('../servers/Servers');
 
+	require('../misc/Cache');
+	require('../misc/Capabilities');
 	require('../misc/Errors');
 	require('../misc/Modals');
 	require('../misc/util');
@@ -24,7 +27,10 @@
 		'ionic',
 		'angularLocalStorage',
 		'rt.debounce',
+		'opennms.alarms.Directive',
+		'opennms.misc.Cache',
 		'opennms.services.Alarms',
+		'opennms.services.Capabilities',
 		'opennms.services.DB',
 		'opennms.services.Errors',
 		'opennms.services.Modals',
@@ -102,7 +108,7 @@
 		//severity.$stateful = true;
 		return severity;
 	})
-	.controller('AlarmsCtrl', function($ionicListDelegate, $ionicLoading, $ionicModal, $ionicPopup, $ionicScrollDelegate, $ionicViewSwitcher, $log, $q, $scope, $timeout, AlarmService, db, debounce, Errors, Modals, Servers, severityStateTracker, severities, storage, util) {
+	.controller('AlarmsCtrl', function($ionicHistory, $ionicListDelegate, $ionicLoading, $ionicModal, $ionicPopup, $ionicScrollDelegate, $ionicViewSwitcher, $log, $q, $scope, $timeout, AlarmService, Cache, Capabilities, db, debounce, Errors, Modals, Servers, severityStateTracker, severities, storage, util) {
 		$log.info('AlarmsCtrl initializing.');
 
 		var alarmsdb = db.get('alarms');
@@ -146,32 +152,6 @@
 			return a.id - b.id;
 		};
 
-		var getCached = function(type, wrap) {
-			return Servers.getDefault().then(function(defaultServer) {
-				var currentFilter = new AlarmFilter($scope.filter).reset();
-				return alarmsdb.get(type).then(function(res) {
-					if (res && res.filter) {
-						res.filter = new AlarmFilter(res.filter).reset();
-					}
-					if (currentFilter.equals(res.filter) && res.server === defaultServer._id && res.results) {
-						res.results = angular.fromJson(res.results);
-						if (wrap) {
-							for (var i=0, len=res.results.length; i < len; i++) {
-								res.results[i] = new wrap(res.results[i]);
-							}
-						}
-						$log.debug('AlarmsController.getCached(' + type + '): returning ' + res.results.length + ' entries');
-						return res.results;
-					} else {
-						return $q.reject('no match');
-					}
-				});
-			}).catch(function(err) {
-				$log.warn('AlarmsController.getCached: ' + angular.toJson(err));
-				return $q.reject(err);
-			});
-		};
-
 		var updateErrors = function() {
 			if (Errors.hasError('alarms')) {
 				$scope.error = Errors.get('alarms');
@@ -189,20 +169,17 @@
 			$ionicLoading.hide();
 		};
 
+		var getCached = function(type, wrap) {
+			return Cache.get('alarms-' + type + '-' + $scope.filter.toQueryString(), wrap);
+		};
+
 		var setCached = function(type, results) {
-			return Servers.getDefault().then(function(defaultServer) {
-				var currentFilter = new AlarmFilter($scope.filter).reset();
-				return db.upsert('alarms', {
-					_id: type,
-					filter: currentFilter,
-					server: defaultServer._id,
-					results: angular.toJson(results)
-				}).then(function() {
-					Errors.clear(type);
-					updateErrors();
-					//$scope.$broadcast('scroll.refreshComplete');
-					$ionicLoading.hide();
-				});
+			return Cache.set('alarms-' + type + '-' + $scope.filter.toQueryString(), results).then(function() {
+			}).then(function() {
+				Errors.clear(type);
+				updateErrors();
+				//$scope.$broadcast('scroll.refreshComplete');
+				$ionicLoading.hide();
 			});
 		}
 
@@ -212,25 +189,50 @@
 		};
 
 		var setRefreshing = function(type, value) {
-			// if we are hiding the ion-spinner, let it hang around a half second longer
+			var stillRefreshing = false;
+			for (var key in $scope.refreshing) {
+				if ($scope.refreshing[key]) {
+					stillRefreshing = true;
+					break;
+				}
+			}
+			if (!stillRefreshing) {
+				$scope.$broadcast('scroll.refreshComplete');
+			}
+			// if we are hiding the ion-spinner, let it hang around a bit longer
 			$timeout(function() {
 				$scope.refreshing[type] = value;
-			}, value? 0:500);
+			}, value? 0:300);
 		};
 
+		$scope.scrollToTop = function(animate) {
+			var delegate = $ionicScrollDelegate.$getByHandle('alarms-scroll');
+			if (delegate) {
+				delegate.scrollTop(animate);
+			} else {
+				$log.warn('No alarms-scroll delegate!');
+			}
+		};
+
+		var updateCount = 0;
 		var updateView = function(type, incoming) {
+			$log.debug('updateView(' + type + ',' + (incoming && incoming.length? incoming.length : 0) + ')');
 			if (incoming && incoming.length === 0) {
-				delete $scope[type];
+				$scope[type] = [];
 				return;
 			}
 
-			var current = $scope[type] || [];
+			if (updateCount++ !== 0) {
+				//return;
+			}
+
+			var current = angular.copy($scope[type]) || [];
 			var newIds = incoming.map(function(alarm) {
 				return alarm.id;
-			});
+			}).sort();
 			var oldIds = current.map(function(alarm) {
 				return alarm.id;
-			});
+			}).sort();
 
 			// update existing, add new
 			for (var i=0, len=incoming.length, alarm, existingIndex; i < len; i++) {
@@ -257,45 +259,35 @@
 					b.lastEventTime.diff(a.lastEventTime);
 				};
 
-			current.sort(sortFunc);
+			var seen = {};
+			current = current.sort(sortFunc).filter(function(alarm) {
+				if (!seen[alarm.id]) {
+					seen[alarm.id] = true;
+					return true;
+				}
+				return false;
+			});
 
-			$scope[type] = current;
+			if (!angular.equals($scope[type], current)) {
+				$scope.scrollToTop();
+				$scope[type] = current;
+			}
+			//$scope.$broadcast('scroll.refreshComplete');
 		};
 
 		$scope.getAlarms = function() {
-			if (!$scope.refreshing.alarms) {
-				setRefreshing('alarms', true);
-				getCached('alarms', Alarm).then(function(alarms) {
-					updateView('alarms', alarms);
-					//$scope.alarms = alarms;
-				}).catch(function() {
-					$ionicLoading.show({
-						templateUrl: loadingTemplate,
-						hideOnStateChange: true
-					});
-				}).finally(function() {
-					return AlarmService.get($scope.filter).then(function(alarms) {
-						setCached('alarms', alarms).then(function() {
-							updateView('alarms', alarms);
-							//$scope.alarms = alarms;
-						});
-					}).catch(function(err) {
-						setError('alarms', err);
-					}).finally(function() {
-						setRefreshing('alarms', false);
-					});
-				});
-			}
-
 			if (!$scope.refreshing.alarmSeverities) {
 				setRefreshing('alarmSeverities', true);
 				getCached('alarmSeverities').then(function(severities) {
 					$scope.legend = severities;
-				}).catch(function() {
+				}).catch(function(err) {
+					/*
 					$ionicLoading.show({
 						templateUrl: loadingTemplate,
 						hideOnStateChange: true
 					});
+					*/
+					return $q.reject(err);
 				}).finally(function() {
 					return AlarmService.severities(new AlarmFilter({limit:100,minimumSeverity:'INDETERMINATE'})).then(function(severities) {
 						setCached('alarmSeverities', severities).then(function() {
@@ -303,126 +295,60 @@
 						});
 					}).catch(function(err) {
 						setError('alarmSeverities', err);
+						return $q.reject(err);
 					}).finally(function() {
 						setRefreshing('alarmSeverities', false);
 					});
 				});
 			}
+
+			if (!$scope.refreshing.alarms) {
+				setRefreshing('alarms', true);
+				getCached('alarms', Alarm).then(function(alarms) {
+					updateView('alarms', alarms);
+				}).catch(function(err) {
+					/*
+					$ionicLoading.show({
+						templateUrl: loadingTemplate,
+						hideOnStateChange: true
+					});
+					*/
+					return $q.reject(err);
+				}).finally(function() {
+					return AlarmService.get($scope.filter).then(function(alarms) {
+						setCached('alarms', alarms).then(function() {
+							updateView('alarms', alarms);
+						});
+					}).catch(function(err) {
+						setError('alarms', err);
+						return $q.reject(err);
+					}).finally(function() {
+						setRefreshing('alarms', false);
+					});
+				});
+			}
 		};
 
-		$scope.refreshAlarms = debounce(500, function() {
-			var delegate = $ionicScrollDelegate.$getByHandle('alarms-scroll');
-			if (delegate) {
-				delegate.scrollTop();
+		$scope.refreshImmediately = function() {
+			var resetFilter = $scope.filter.reset();
+			if (!resetFilter.equals($scope.filter)) {
+				$scope.filter = resetFilter;
 			}
-			$scope.filter = $scope.filter.reset();
 			$scope.getAlarms();
-		});
+		};
+		$scope.refreshAlarms = debounce(500, $scope.refreshImmediately);
 
 		$scope.openAlarm = function(alarm) {
 			$scope.modals.alarm(alarm);
 		};
 
-		$scope.canAck = function(alarm) {
-			/* eslint-disable eqeqeq */
-			if ($scope.info.numericVersion == 0.0) {
-				return false;
-			} else {
-				return true;
-			}
-			/* eslint-enable eqeqeq */
+		$scope.canAck = Capabilities.ackAlarms;
+
+		$scope.backToDashboard = function() {
+			$ionicViewSwitcher.nextDirection('forward');
+			$ionicHistory.goBack();
 		};
 
-		$scope.toggleAck = function(alarm, e) {
-			e.preventDefault();
-			e.stopPropagation();
-			if (alarm.ackUser) {
-				AlarmService.unacknowledge(alarm).then(undefined, function(err) {
-					if (err.permissionDenied()) {
-						$ionicPopup.alert({
-							title: 'Permission Denied',
-							template: '<p>Unable to unacknowledge alarm.</p>\n' +
-								'User "' + $scope.username + '" does not have permission to unacknowledge alarms.',
-							okType: 'button-assertive'
-						});
-					}
-				});
-			} else {
-				AlarmService.acknowledge(alarm).then(undefined, function(err) {
-					if (err.permissionDenied()) {
-						$ionicPopup.alert({
-							title: 'Permission Denied',
-							template: '<p>Unable to acknowledge alarm.</p>\n' +
-								'User "' + $scope.username + '" does not have permission to acknowledge alarms.',
-							okType: 'button-assertive'
-						});
-					}
-				});
-			}
-			$ionicListDelegate.closeOptionButtons();
-		};
-
-		$scope.canClear = function(alarm) {
-			/* eslint-disable eqeqeq */
-			if ($scope.info.numericVersion == 0.0 || alarm.severity === 'CLEARED') {
-				return false;
-			} else {
-				return true;
-			}
-			/* eslint-enable eqeqeq */
-		};
-
-		$scope.clear = function(alarm, e) {
-			e.preventDefault();
-			e.stopPropagation();
-			AlarmService.clear(alarm).then(undefined, function(err) {
-				if (err.permissionDenied()) {
-					$ionicPopup.alert({
-						title: 'Permission Denied',
-						template: '<p>Unable to clear alarm.</p>\n' +
-							'User "' + $scope.username + '" does not have permission to clear alarms.',
-						okType: 'button-assertive'
-					});
-				}
-			});
-			$ionicListDelegate.closeOptionButtons();
-		};
-
-		$scope.canEscalate = function(alarm) {
-			/* eslint-disable eqeqeq */
-			if ($scope.info.numericVersion == 0.0 || alarm.severity === 'CRITICAL') {
-				return false;
-			} else {
-				return true;
-			}
-			/* eslint-enable eqeqeq */
-		};
-
-		$scope.escalate = function(alarm, e) {
-			e.preventDefault();
-			e.stopPropagation();
-			AlarmService.escalate(alarm).then(undefined, function(err) {
-				if (err.permissionDenied()) {
-					$ionicPopup.alert({
-						title: 'Permission Denied',
-						template: '<p>Unable to escalate alarm.</p>\n' +
-							'User "' + $scope.username + '" does not have permission to escalate alarms.',
-						okType: 'button-assertive'
-					});
-				}
-			});
-			$ionicListDelegate.closeOptionButtons();
-		};
-
-		/*
-		$scope.$watch('alarms', function(newValue, oldValue) {
-			if (newValue) {
-				$log.error('alarms changed: ' + newValue.length + ' items');
-			}
-		});
-		*/
-
-		util.onDirty('alarms', $scope.refreshAlarms);
 		util.onDefaultServerUpdated(function(defaultServer) {
 			if (defaultServer && defaultServer.username) {
 				$scope.username = defaultServer.username;
@@ -439,7 +365,18 @@
 			$scope.info = i;
 		});
 
-		$scope.$on('modal.hidden', $scope.refreshAlarms);
+		$scope.$watch('filter', function(newFilter, oldFilter) {
+			if (!angular.equals(newFilter, oldFilter)) {
+				if (!newFilter.equals(oldFilter)) {
+					$log.debug('Filter has changed: ' + newFilter.toParams(0.0));
+					$scope.refreshAlarms();
+				}
+			} else {
+				$log.debug('Filter is unchanged.');
+			}
+		}, true);
+
+		/*$scope.$on('modal.hidden', $scope.refreshAlarms);*/
 		$scope.$on('$ionicView.beforeEnter', $scope.refreshAlarms);
 		$scope.$on('$destroy', function() {
 			$scope.modal.remove();

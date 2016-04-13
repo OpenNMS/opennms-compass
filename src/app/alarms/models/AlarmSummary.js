@@ -48,7 +48,7 @@ function AlarmSummary(data) {
    * @propertyOf AlarmSummary
    * @returns {*|Date} The last time an event affected alarms for the summary node.
    */
-  self.date      = data._date;
+  self.date      = moment(data._date);
 
   /**
    * @description
@@ -57,34 +57,33 @@ function AlarmSummary(data) {
    * @propertyOf AlarmSummary
    * @returns {number} The number of alarms affecting the summary node.
    */
-  self.count     = data._count;
-
-  if (typeof self.count === 'string' || self.count instanceof String) {
-    self.count = parseInt(self.count, 10);
-  }
-  
-  /*
-  if (typeof self.date === 'string' || self.date instanceof String) {
-    self.date = moment(self.date);
-  }
-  */
-
-  /**
-   * @description Helper method to get a friendly node label. It will generate
-   *              a node label based on the node ID if the nodeLabel property
-   *              is not defined or is empty.
-   * @ngdoc method
-   * @name AlarmSummary#getNodeName
-   * @methodOf AlarmSummary
-   * @returns {string} a formatted node label using the nodeLabel or the nodeId formatted into a string.
-   */
-  self.getNodeName = function() {
-    if (self.nodeLabel === undefined || self.nodeLabel === '') {
-      return 'Node ' + self.nodeId;
-    } else {
-      return self.nodeLabel;
-    }
-  };
+  self.count     = parseInt(data._count, 10);
 }
+
+/**
+ * @description Helper method to get a friendly node label. It will generate
+ *              a node label based on the node ID if the nodeLabel property
+ *              is not defined or is empty.
+ * @ngdoc method
+ * @name AlarmSummary#getNodeName
+ * @methodOf AlarmSummary
+ * @returns {string} a formatted node label using the nodeLabel or the nodeId formatted into a string.
+ */
+AlarmSummary.prototype.getNodeName = function() {
+  if (this.nodeLabel === undefined || this.nodeLabel === '') {
+    return 'Node ' + this.nodeId;
+  } else {
+    return this.nodeLabel;
+  }
+};
+
+AlarmSummary.prototype.toJSON = function() {
+  return {
+    '_node-label': this.nodeLabel,
+    _severity: this.severity,
+    _date: this.date,
+    _count: this.count
+  };
+};
 
 module.exports = AlarmSummary;

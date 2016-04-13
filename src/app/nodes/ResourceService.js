@@ -80,16 +80,17 @@
 					});
 				};
 
+				/* eslint-disable no-empty */
 				var deleteProperties = function(obj) {
 					for (var prop in obj) {
-						if (typeof obj[prop] === 'object') {
-							deleteProperties(obj[prop]);
-						}
 						if (obj.hasOwnProperty(prop)) {
-							delete obj[prop];
+							try {
+								delete obj[prop];
+							} catch(err) {}
 						}
 					}
 				};
+				/* eslint-enable no-empty */
 
 				var cleanUpGraph = function() {
 					var resourceId = $scope.resourceId;
@@ -107,12 +108,16 @@
 					}
 				};
 
+				/* eslint-disable no-empty */
 				var cleanUp = function() {
 					cleanUpGraph();
-					delete $scope.ds;
-					delete $scope.graphModel;
-					delete $scope.range;
+					try {
+						delete $scope.ds;
+						delete $scope.graphModel;
+						delete $scope.range;
+					} catch(err) {}
 				};
+				/* eslint-enable no-empty */
 
 				$scope.createGraph = function() {
 					if (!$scope.ds)                { return; }
@@ -172,18 +177,17 @@
 					};
 
 					cleanUpGraph();
-					/*
 					if ($scope.graph && $scope.graph.destroy) {
-						$scope.graph.destroy();
-						delete $scope.graph.element;
-						delete $scope.graph._last.graphModel;
-						delete $scope.graph._last.ds;
-						delete $scope.graph._last.range;
-						delete $scope.graph._last.width;
-						delete $scope.graph._last.height;
-						delete $scope.graph._last;
+						var oldGraph = $scope.graph;
+						oldGraph.destroy();
+						delete oldGraph.element;
+						delete oldGraph._last.graphModel;
+						delete oldGraph._last.ds;
+						delete oldGraph._last.range;
+						delete oldGraph._last.width;
+						delete oldGraph._last.height;
+						delete oldGraph._last;
 					}
-					*/
 
 					$scope.graph = graph;
 
@@ -312,7 +316,7 @@
 				});
 
 				$scope.$on('$destroy', cleanUp);
-				element.on('$destroy', cleanUp);
+				//element.on('$destroy', cleanUp);
 			}
 		};
 	})
