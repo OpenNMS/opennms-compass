@@ -1,12 +1,23 @@
 <a name="2.1.0"></a>
-# [2.1.0](https://github.com/OpenNMS/opennms-compass/compare/v2.1.0-397...v2.1.0) (2016-04-11)
+# [2.1.0](https://github.com/OpenNMS/opennms-compass/compare/v2.1.0-398...v2.1.0) (2016-04-14)
+
+
+### Performance Improvements
+
+* **nodes:** clean up initialization of the node detail page ([f436b4a](https://github.com/OpenNMS/opennms-compass/commit/f436b4a))
+* cleaned up caching and finally fixed refresh bugs ([4eb6239](https://github.com/OpenNMS/opennms-compass/commit/4eb6239))
+
+
+
+<a name="2.1.0-398"></a>
+# [2.1.0-398](https://github.com/OpenNMS/opennms-compass/compare/v2.1.0-397...v2.1.0-398) (2016-04-11)
 
 
 ### Bug Fixes
 
 * **dashboard:** fix consistency of numeric columns in availability (COMPASS-56) ([00c3711](https://github.com/OpenNMS/opennms-compass/commit/00c3711))
 * **nodes:** fix availability display on node detail page (COMPASS-60) ([f249820](https://github.com/OpenNMS/opennms-compass/commit/f249820))
-* **nodes:** fix loading of map images ([4827816](https://github.com/OpenNMS/opennms-compass/commit/4827816))
+* **nodes:** fix loading of map images ([d6d98c7](https://github.com/OpenNMS/opennms-compass/commit/d6d98c7))
 * **server:** clear node/alarm caches when switching servers (COMPASS-57) ([5f908f6](https://github.com/OpenNMS/opennms-compass/commit/5f908f6))
 
 ### Features
@@ -15,8 +26,8 @@
 
 ### Performance Improvements
 
-* add caching to alarms, dashboard, and node list to speed startup ([07b8614](https://github.com/OpenNMS/opennms-compass/commit/07b8614))
-* improve startup time by removing disabled plugins ([dafc88a](https://github.com/OpenNMS/opennms-compass/commit/dafc88a))
+* add caching to alarms, dashboard, and node list to speed startup ([fb04070](https://github.com/OpenNMS/opennms-compass/commit/fb04070))
+* improve startup time by removing disabled plugins ([f7e19da](https://github.com/OpenNMS/opennms-compass/commit/f7e19da))
 
 
 
