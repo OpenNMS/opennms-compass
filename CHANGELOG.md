@@ -1,5 +1,20 @@
 <a name="2.1.0"></a>
-# [2.1.0](https://github.com/OpenNMS/opennms-compass/compare/v2.1.0-398...v2.1.0) (2016-04-14)
+# [2.1.0](https://github.com/OpenNMS/opennms-compass/compare/v2.1.0-399...v2.1.0) (2016-04-14)
+
+
+### Bug Fixes
+
+* **nodes:** fix handling of upper/lower case ([ffd09ac](https://github.com/OpenNMS/opennms-compass/commit/ffd09ac))
+* **nodes:** fix some quirky refresh issues in the node page(s) ([7623d33](https://github.com/OpenNMS/opennms-compass/commit/7623d33))
+
+### Features
+
+* **alarms:** alarm list is now searchable ([2b2a86c](https://github.com/OpenNMS/opennms-compass/commit/2b2a86c))
+
+
+
+<a name="2.1.0-399"></a>
+# [2.1.0-399](https://github.com/OpenNMS/opennms-compass/compare/v2.1.0-398...v2.1.0-399) (2016-04-14)
 
 
 ### Performance Improvements
