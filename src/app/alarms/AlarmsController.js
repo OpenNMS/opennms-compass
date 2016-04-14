@@ -5,6 +5,7 @@
 		Alarm = require('./models/Alarm'),
 		AlarmFilter = require('./models/AlarmFilter');
 
+	require('ionic-filter-bar');
 	require('angular-debounce');
 
 	require('./AlarmService');
@@ -25,6 +26,7 @@
 
 	angular.module('opennms.controllers.Alarms', [
 		'ionic',
+		'jett.ionic.filter.bar',
 		'angularLocalStorage',
 		'rt.debounce',
 		'opennms.alarms.Directive',
@@ -38,13 +40,16 @@
 		'opennms.services.Servers'
 	])
 	.value('severities', {})
-	.config(function($stateProvider) {
+	.config(function($ionicFilterBarConfigProvider, $stateProvider) {
 		$stateProvider
-		.state('alarms', {
-			url: '/alarms',
-			templateUrl: alarmsTemplate,
-			controller: 'AlarmsCtrl'
-		});
+			.state('alarms', {
+				url: '/alarms',
+				templateUrl: alarmsTemplate,
+				controller: 'AlarmsCtrl'
+			});
+
+		//$ionicFilterBarConfigProvider.theme('')
+
 	})
 	.factory('severityStateTracker', function(util, severities) {
 		/* jshint -W003: true */
@@ -108,7 +113,7 @@
 		//severity.$stateful = true;
 		return severity;
 	})
-	.controller('AlarmsCtrl', function($ionicHistory, $ionicListDelegate, $ionicLoading, $ionicModal, $ionicPopup, $ionicScrollDelegate, $ionicViewSwitcher, $log, $q, $scope, $timeout, AlarmService, Cache, Capabilities, db, debounce, Errors, Modals, Servers, severityStateTracker, severities, storage, util) {
+	.controller('AlarmsCtrl', function($filter, $ionicFilterBar, $ionicHistory, $ionicListDelegate, $ionicLoading, $ionicModal, $ionicPopup, $ionicScrollDelegate, $ionicViewSwitcher, $log, $q, $scope, $timeout, AlarmService, Cache, Capabilities, db, debounce, Errors, Modals, Servers, severityStateTracker, severities, storage, util) {
 		$log.info('AlarmsCtrl initializing.');
 
 		var alarmsdb = db.get('alarms');
@@ -132,6 +137,19 @@
 				$scope.username = server.username;
 			}
 		});
+
+		var filterBarInstance;
+		$scope.titleClicked = function() {
+			filterBarInstance = $ionicFilterBar.show({
+				items: $scope.alarms,
+				debounce: true,
+				/*filter: $filter('severity'),*/
+				update: function(filteredItems, filterText) {
+					$scope.searchString = filterText;
+					$scope.alarms = filteredItems;
+				}
+			});
+		};
 
 		$scope.toggleSeverity = function(item) {
 			severityStateTracker.toggle(item.severity);

@@ -33,7 +33,8 @@ $font-family-monospace:           "Helvetica Neue", "HelveticaNeue", "Droid Sans
 /* END OVERRIDE IONIC VARIABLES HERE */
 
 @import "bower_components/ionic/scss/ionic";
-@import "includes/c3";
+@import "bower_components/ionic-filter-bar/scss/ionic.filter.bar";
+/*@import "includes/c3"; */
 
 /* OPENNMS GLOBAL COLORS */
 
