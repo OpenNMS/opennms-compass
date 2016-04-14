@@ -257,12 +257,14 @@ Node.prototype.toJSON = function() {
     sysObjectId: this.sysObjectId
   };
 
-  ret.categories = this.categories.map(function(cat) {
-    return {
-      _id: cat.id,
-      _name: cat.name
-    };
-  });
+  if (this.categories) {
+    ret.categories = this.categories.map(function(cat) {
+      return {
+        _id: cat.id,
+        _name: cat.name
+      };
+    });
+  }
 
   return ret;
 };

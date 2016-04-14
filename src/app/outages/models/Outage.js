@@ -3,6 +3,7 @@
 var MonitoredService = require('../../nodes/models/MonitoredService'),
   moment = require('moment'),
   OnmsEvent = require('../../events/models/OnmsEvent'),
+  md5 = require('js-md5'),
   angular = require('angular');
 
 /**
@@ -88,6 +89,8 @@ function Outage(outage) {
    * @returns {string} The human-readable name of the node of this alarm.
    */
   self.nodeLabel = self.serviceLostEvent.nodeLabel;
+
+  self.hash = md5([self.id, self.ipAddress, self.ifLostService, self.ifRegainedService, self.monitoredService.hash, self.serviceLostEvent.hash].join('|'));
 }
 
 /**

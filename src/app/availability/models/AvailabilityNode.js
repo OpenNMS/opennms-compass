@@ -1,6 +1,7 @@
 'use strict';
 
 var AvailabilityIpInterface = require('./AvailabilityIpInterface'),
+  md5 = require('js-md5'),
   moment = require('moment');
 
 /**
@@ -48,6 +49,8 @@ function AvailabilityNode(node) {
    */
   self.serviceDownCount = parseInt(node['_service-down-count'], 10);
 
+  var hashbits = [self.id, self.availability, self.serviceCount];
+
   /**
    * @description
    * @ngdoc property
@@ -60,10 +63,14 @@ function AvailabilityNode(node) {
     if (!angular.isArray(node.ipinterfaces.ipinterface)) {
       node.ipinterfaces.ipinterface = [node.ipinterfaces.ipinterface];
     }
-    for (var i=0, len=node.ipinterfaces.ipinterface.length; i < len; i++) {
-      self.ipinterfaces.push(new AvailabilityIpInterface(node.ipinterfaces.ipinterface[i]));
+    for (var i=0, len=node.ipinterfaces.ipinterface.length, iface; i < len; i++) {
+      iface = new AvailabilityIpInterface(node.ipinterfaces.ipinterface[i]);
+      self.ipinterfaces.push(iface);
+      hashbits.push(iface.hash);
     }
   }
+
+  self.hash = md5(hashbits.join('|'));
 }
 
 AvailabilityNode.prototype.toJSON = function() {

@@ -1,11 +1,10 @@
 'use strict';
 
-var OnmsEvent = require('../../events/models/OnmsEvent');
-var moment = require('moment');
-var md5 = require('js-md5');
+var OnmsEvent = require('../../events/models/OnmsEvent'),
+  moment = require('moment'),
+  md5 = require('js-md5'),
+  StringUtils = require('../../misc/String');
 
-var removeSlashes = /^.*\//g;
-var capitalLetters = /([A-Z])/g;
 var emptyParms = /\s+parms:\s*$/;
 
 /**
@@ -71,10 +70,7 @@ function Alarm(alarm, isJson) {
    * @propertyOf Alarm
    * @returns {string} A readable title for the alarm (based on the UEI).
    */
-  self.title = self.uei
-    .replace(removeSlashes, '')
-    .replace(capitalLetters, ' $1');
-  self.title = self.title.charAt(0).toUpperCase() + self.title.slice(1);
+  self.title = StringUtils.formatUei(self.uei);
 
   /**
    * @description

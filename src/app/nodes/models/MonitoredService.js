@@ -1,7 +1,8 @@
 'use strict';
 
-var angular = require('angular');
-var moment = require('moment');
+var angular = require('angular'),
+  md5 = require('js-md5'),
+  moment = require('moment');
 
 /**
  * @ngdoc object
@@ -24,7 +25,7 @@ function MonitoredService(svc) {
   /**
    * @description
    * @ngdoc property
-   * @name MonitoredService#ipINterfaceId
+   * @name MonitoredService#ipInterfaceId
    * @propertyOf MonitoredService
    * @returns {number} The unique ID of the IP interface this monitored service is associated with.
    */
@@ -56,6 +57,8 @@ function MonitoredService(svc) {
    * @returns {*} the monitored service status.
    */
   self.status = svc['_status'];
+
+  self.hash = md5([self.id, self.ipInterfaceId, self.serviceId, self.serviceName, self.status].join('|'));
 }
 
 MonitoredService.prototype.toJSON = function() {

@@ -1,6 +1,7 @@
 'use strict';
 
-var moment = require('moment');
+var moment = require('moment'),
+  md5 = require('js-md5');
 
 /**
  * @ngdoc object
@@ -38,6 +39,7 @@ function AvailabilityService(svc) {
    */
   self.name = svc['_name'];
 
+  self.hash = md5([self.id, self.availability, self.name].join('|'));
 }
 
 AvailabilityService.prototype.toJSON = function() {

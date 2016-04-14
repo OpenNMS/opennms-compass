@@ -296,7 +296,6 @@
 			$rootScope.$broadcast('opennms.analytics.trackEvent', category, event, label, value);
 		};
 
-
 		return {
 			dashboard: goToDashboard,
 			icon: function(severity) {

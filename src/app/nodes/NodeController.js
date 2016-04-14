@@ -7,6 +7,8 @@
 
 	var Node = require('./models/Node');
 	var AvailabilityNode = require('../availability/models/AvailabilityNode');
+	var OnmsEvent = require('../events/models/OnmsEvent');
+	var Outage = require('../outages/models/Outage');
 
 	require('./NodeService');
 	require('./ResourceService');
@@ -158,7 +160,7 @@
 				return err;
 			});
 
-			Cache.get('node-' + $scope.nodeId + '-events').then(function(events) {
+			Cache.get('node-' + $scope.nodeId + '-events', OnmsEvent).then(function(events) {
 				$scope.events = events;
 			});
 			var ev = EventService.node($scope.nodeId, 5).then(function(results) {
@@ -171,7 +173,7 @@
 				return err;
 			});
 
-			Cache.get('node-' + $scope.nodeId + '-outages').then(function(outages) {
+			Cache.get('node-' + $scope.nodeId + '-outages', Outage).then(function(outages) {
 				$scope.outages = outages;
 			});
 			var outage = OutageService.node($scope.nodeId).then(function(results) {

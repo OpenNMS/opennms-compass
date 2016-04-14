@@ -1,6 +1,8 @@
 'use strict';
 
-var moment = require('moment');
+var moment = require('moment'),
+  md5 = require('js-md5'),
+  StringUtils = require('../../misc/String');
 
 /**
  * @ngdoc object
@@ -15,8 +17,8 @@ function OnmsEvent(event) {
   /**
    * @description
    * @ngdoc property
-   * @name Event#id
-   * @propertyOf Event
+   * @name OnmsEvent#id
+   * @propertyOf OnmsEvent
    * @returns {number} Unique identifier for the event
    */
   self.id = parseInt(event['_id'], 10);
@@ -24,8 +26,8 @@ function OnmsEvent(event) {
   /**
    * @description
    * @ngdoc property
-   * @name Event#uei
-   * @propertyOf Event
+   * @name OnmsEvent#uei
+   * @propertyOf OnmsEvent
    * @returns {string} Universal Event Identifer (UEI) for this event
    */
   self.uei = event['uei'];
@@ -33,18 +35,17 @@ function OnmsEvent(event) {
   /**
    * @description
    * @ngdoc property
-   * @name Event#title
-   * @propertyOf Event
+   * @name OnmsEvent#title
+   * @propertyOf OnmsEvent
    * @returns {string} A readable title for the event (based on the UEI).
    */
-  self.title = self.uei.replace(/^.*\//g, '').replace(/([A-Z])/g, ' $1');
-  self.title = self.title.charAt(0).toUpperCase() + self.title.slice(1);
+   self.title = StringUtils.formatUei(self.uei);
 
   /**
    * @description
    * @ngdoc property
-   * @name Event#nodeId
-   * @propertyOf Event
+   * @name OnmsEvent#nodeId
+   * @propertyOf OnmsEvent
    * @returns {number} Unique integer identifier for node
    */
   self.nodeId = Number(event['nodeId']);
@@ -52,8 +53,8 @@ function OnmsEvent(event) {
   /**
    * @description
    * @ngdoc property
-   * @name Event#nodeLabel
-   * @propertyOf Event
+   * @name OnmsEvent#nodeLabel
+   * @propertyOf OnmsEvent
    * @returns {string} The human-readable name of the node of this event.
    */
   self.nodeLabel = event['nodeLabel'];
@@ -61,8 +62,8 @@ function OnmsEvent(event) {
   /**
    * @description
    * @ngdoc property
-   * @name Event#ipAddress
-   * @propertyOf Event
+   * @name OnmsEvent#ipAddress
+   * @propertyOf OnmsEvent
    * @returns {string} IP Address of node's interface
    */
   self.ipAddress = event['ipAddress'];
@@ -70,8 +71,8 @@ function OnmsEvent(event) {
   /**
    * @description
    * @ngdoc property
-   * @name Event#severity
-   * @propertyOf Event
+   * @name OnmsEvent#severity
+   * @propertyOf OnmsEvent
    * @returns {string} Severity the of event.
    */
   self.severity = event['_severity'];
@@ -79,8 +80,8 @@ function OnmsEvent(event) {
   /**
    * @description
    * @ngdoc property
-   * @name Event#createTime
-   * @propertyOf Event
+   * @name OnmsEvent#createTime
+   * @propertyOf OnmsEvent
    * @returns {*|Date} Creation time of event in database
    */
   self.createTime = moment(event['createTime']);
@@ -88,8 +89,8 @@ function OnmsEvent(event) {
   /**
    * @description
    * @ngdoc property
-   * @name Event#time
-   * @propertyOf Event
+   * @name OnmsEvent#time
+   * @propertyOf OnmsEvent
    * @returns {*|Date} The &lt;time&gt; element from the Event Data Stream DTD, which is the time the event was received by the source process.
    */
   self.time = moment(event['time']);
@@ -97,8 +98,8 @@ function OnmsEvent(event) {
   /**
    * @description
    * @ngdoc property
-   * @name Event#source
-   * @propertyOf Event
+   * @name OnmsEvent#source
+   * @propertyOf OnmsEvent
    * @returns {string} The subsystem the event originated from.
    */
   self.source = event['source'];
@@ -106,8 +107,8 @@ function OnmsEvent(event) {
   /**
    * @description
    * @ngdoc property
-   * @name Event#log
-   * @propertyOf Event
+   * @name OnmsEvent#log
+   * @propertyOf OnmsEvent
    * @returns {boolean} Whether the event was logged but not displayed.
    */
   self.log = event['_log'] === 'Y';
@@ -115,8 +116,8 @@ function OnmsEvent(event) {
   /**
    * @description
    * @ngdoc property
-   * @name Event#display
-   * @propertyOf Event
+   * @name OnmsEvent#display
+   * @propertyOf OnmsEvent
    * @returns {boolean} Whether the event was both logged and displayed.
    */
   self.display = event['_display'] === 'Y';
@@ -125,7 +126,7 @@ function OnmsEvent(event) {
    * @description
    * @ngdoc property
    * @name Event
-   * @propertyOf Event
+   * @propertyOf OnmsEvent
    * @returns {string} Free-form textual description of the event
    */
   self.description = event['description'];
@@ -133,8 +134,8 @@ function OnmsEvent(event) {
   /**
    * @description
    * @ngdoc property
-   * @name Event#logMessage
-   * @propertyOf Event
+   * @name OnmsEvent#logMessage
+   * @propertyOf OnmsEvent
    * @returns {string} Formatted display text to control how the event will appear in the browser.
    */
   self.logMessage = event['logMessage'];
@@ -145,8 +146,8 @@ function OnmsEvent(event) {
     /**
      * @description
      * @ngdoc property
-     * @name Event#serviceType
-     * @propertyOf Event
+     * @name OnmsEvent#serviceType
+     * @propertyOf OnmsEvent
      * @returns {number} Unique integer identifier of service/poller package
      */
     self.serviceType = event['serviceType']['_id'];
@@ -154,8 +155,8 @@ function OnmsEvent(event) {
     /**
      * @description
      * @ngdoc property
-     * @name Event#serviceName
-     * @propertyOf Event
+     * @name OnmsEvent#serviceName
+     * @propertyOf OnmsEvent
      * @returns {string} Human-readable name of the service
      */
     self.serviceName = event['serviceType']['name'];
@@ -163,12 +164,20 @@ function OnmsEvent(event) {
   // XXX: convert event['parms'] into an object for parms.
   self.parms = {};
 
+  /**
+   * @description Provides a unique hash key for the event
+   * @ngdoc property
+   * @name OnmsEvent#hash
+   * @propertyOf OnmsEvent
+   * @returns {string} an MD5 hash for the event
+   */
+  self.hash = md5([self.id, self.uei, self.nodeId].join('|'));
 }
 
 /**
  * @description Provides a formatted severity CSS class
  * @ngdoc method
- * @name Event#getSeverityClass
+ * @name OnmsEvent#getSeverityClass
  * @methodOf Event
  * @returns {string} formatted CSS class name
  */

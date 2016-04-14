@@ -98,12 +98,12 @@
 						<div class="col col-75">Node Availability</div>
 						<div class="monospace pull-right col">{{availability.availability | number:2}}%</div>
 					</span>
-					<span ng-repeat="iface in availability.ipinterfaces track by iface.id" class="ifaces">
+					<span ng-repeat="iface in availability.ipinterfaces track by iface.hash" class="ifaces">
 						<span class="row" ng-class="availabilityColor(iface.availability) + ' ' + ($index === (iface.availability.length-1)? 'no-bottom':'')">
 							<div class="col col-75 shift-1">{{iface.address | ip}}</div>
 							<div class="monospace pull-right col">{{iface.availability | number:2}}%</div>
 						</span>
-						<span class="row" ng-repeat="svc in iface.services track by svc.id" ng-class="availabilityColor(svc.availability) + ' ' + ($index === (iface.services.length-1)? 'no-bottom':'')">
+						<span class="row" ng-repeat="svc in iface.services track by svc.hash" ng-class="availabilityColor(svc.availability) + ' ' + ($index === (iface.services.length-1)? 'no-bottom':'')">
 							<div class="col col-75 shift-2">{{svc.name}}</div>
 							<div class="monospace pull-right col">{{svc.availability | number:2}}%</div>
 						</span>
@@ -128,7 +128,7 @@
 				<ion-item ng-if="events &amp;&amp; events.length === 0">
 					No recent events.
 				</ion-item>
-				<ion-item ng-class="'item-text-wrap item-icon-right item-remove-animate severity-' + event.severity" ng-repeat="event in events track by event.id">
+				<ion-item ng-class="'item-text-wrap item-icon-right item-remove-animate severity-' + event.severity" ng-repeat="event in events track by event.hash">
 					<span class="item-note">{{event.time.fromNow()}}</span>
 					<h2>{{event.title}}</h2>
 					<span ng-bind-html="event.description"></span>
@@ -145,7 +145,7 @@
 				<ion-item ng-if="outages &amp;&amp; outages.length === 0">
 					No recent outages.
 				</ion-item>
-				<ion-item ng-class="'item-text-wrap item-icon-right item-remove-animate severity severity-' + outage.serviceLostEvent.severity" ng-repeat="outage in outages track by outage.id">
+				<ion-item ng-class="'item-text-wrap item-icon-right item-remove-animate severity severity-' + outage.serviceLostEvent.severity" ng-repeat="outage in outages track by outage.hash">
 					<span class="item-note">{{outage.ifLostService.fromNow()}}</span>
 					<h2>{{outage.monitoredService.serviceName}} on {{outage.ipAddress}}</h2>
 					<span ng-bind-html="outage.serviceLostEvent.description"></span>

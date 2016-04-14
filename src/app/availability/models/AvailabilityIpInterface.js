@@ -1,6 +1,7 @@
 'use strict';
 
 var AvailabilityService = require('./AvailabilityService'),
+  md5 = require('js-md5'),
   moment = require('moment');
 
 /**
@@ -39,6 +40,8 @@ function AvailabilityIpInterface(iface) {
    */
   self.address = iface['_address'];
 
+  var hashbits = [self.id, self.availability, self.address];
+
   /**
    * @description
    * @ngdoc property
@@ -51,10 +54,14 @@ function AvailabilityIpInterface(iface) {
     if (!angular.isArray(iface.services.service)) {
       iface.services.service = [iface.services.service];
     }
-    for (var i=0, len=iface.services.service.length; i < len; i++) {
-      self.services.push(new AvailabilityService(iface.services.service[i]));
+    for (var i=0, len=iface.services.service.length, svc; i < len; i++) {
+      svc = new AvailabilityService(iface.services.service[i]);
+      self.services.push(svc);
+      hashbits.push(svc.hash);
     }
   }
+
+  self.hash = md5(hashbits.join('|'));
 }
 
 AvailabilityIpInterface.prototype.toJSON = function() {
