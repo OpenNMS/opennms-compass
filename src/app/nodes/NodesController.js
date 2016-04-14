@@ -47,6 +47,14 @@
 
 		var nodesdb = db.get('nodes');
 
+		var lower = function(s) {
+			if (s) {
+				return s.toLowerCase();
+			} else {
+				return s;
+			}
+		};
+
 		$scope.updateSearch = function(searchFor, pullToRefresh) {
 			Cache.get('nodes-list-'+searchFor).then(function(nodes, Node) {
 				$scope.nodes = nodes;
@@ -55,7 +63,7 @@
 			if (!pullToRefresh) {
 				$scope.searching = true;
 			}
-			var searchPromise = NodeService.search(searchFor);
+			var searchPromise = NodeService.search(lower(searchFor));
 			searchPromise['finally'](function() {
 				$ionicLoading.hide();
 				$scope.searching = false;
