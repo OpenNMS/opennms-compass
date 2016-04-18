@@ -43,42 +43,43 @@ angular.module('opennms.misc.Cache', [
 
 	var clean = function() {
 		$log.info('Cache.clean(): starting.');
-		return $q.all({
-			docs: db.all('cache'),
-			servers: Servers.all()
-		}).then(function(ret) {
-			var docs = ret.docs,
-				servers = ret.servers.map(function(server) {
-					return server._id
-				}),
-				threshold = moment().subtract(7, 'seconds'),
-				deleteme = [];
 
-			for (var i=0, len=docs.length, doc; i < len; i++) {
-				doc = docs[i];
-				if (!doc.lastUpdated || !doc.server) {
-					$log.warn('Cache.clean(): Document is messed up: ' + doc._id);
-					deleteme.push(doc);
-				} else if (moment(doc.lastUpdated).isBefore(threshold)) {
-					$log.debug('Cache.clean(): Document is old: ' + doc._id);
-					deleteme.push(doc);
-				} else if (servers.indexOf(doc.server) === -1) {
-					$log.debug('Cache.clean(): Document server is gone: ' + doc._id);
-					deleteme.push(doc);
-				}
-			}
-			if (deleteme.length > 0) {
-				return cachedb.bulkDocs(deleteme.map(function(doc) {
-					doc._deleted = true;
-					return doc;
-				}));
-			} else {
-				return [];
-			}
+		return cachedb.compact().catch(function(err) {
+			$log.warn('Cache.clean(): failed to compact database: ' + angular.toJson(err));
+			return $q.reject(err);
 		}).finally(function() {
-			cachedb.compact().catch(function(err) {
-				$log.warn('Cache.clean(): failed to compact database: ' + angular.toJson(err));
-				return $q.reject(err);
+			return $q.all({
+				docs: db.all('cache'),
+				servers: Servers.all()
+			}).then(function(ret) {
+				var docs = ret.docs,
+					servers = ret.servers.map(function(server) {
+						return server._id
+					}),
+					threshold = moment().subtract(7, 'days'),
+					deleteme = [];
+
+				for (var i=0, len=docs.length, doc; i < len; i++) {
+					doc = docs[i];
+					if (!doc.lastUpdated || !doc.server) {
+						$log.warn('Cache.clean(): Document is messed up: ' + doc._id);
+						deleteme.push(doc);
+					} else if (moment(doc.lastUpdated).isBefore(threshold)) {
+						$log.debug('Cache.clean(): Document is old: ' + doc._id);
+						deleteme.push(doc);
+					} else if (servers.indexOf(doc.server) === -1) {
+						$log.debug('Cache.clean(): Document server is gone: ' + doc._id);
+						deleteme.push(doc);
+					}
+				}
+				if (deleteme.length > 0) {
+					return cachedb.bulkDocs(deleteme.map(function(doc) {
+						doc._deleted = true;
+						return doc;
+					}));
+				} else {
+					return [];
+				}
 			}).finally(function() {
 				$log.info('Cache.clean(): finished.');
 			});
