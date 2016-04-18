@@ -7,22 +7,6 @@
 	stroke-width: 2px;
 }
 
-.onms-graph {
-	.picker {
-		font-size: $font-size-base * 0.9;
-		padding: 5px;
-		.wide {
-			font-size: $font-size-base * 2;
-		}
-	}
-	.datetime {
-		font-weight: bolder;
-		font-size: smaller;
-		border: 1px solid;
-		padding: 5px;
-	}
-}
-
 .node-resource {
 	h3.title {
 		text-align: center;

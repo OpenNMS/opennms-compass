@@ -19,6 +19,7 @@
 	require('../misc/Errors');
 	require('../misc/Info');
 	require('../misc/Modals');
+	require('../misc/OnmsGraph');
 	require('../misc/util');
 
 	var dashboardTemplate = require('ngtemplate!./dashboard.html');
@@ -48,6 +49,7 @@
 		'rt.debounce',
 		'opennms.dashboard.Service',
 		'opennms.misc.Cache',
+		'opennms.misc.OnmsGraph',
 		'opennms.services.Alarms',
 		'opennms.services.Availability',
 		'opennms.services.Errors',

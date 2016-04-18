@@ -11,6 +11,7 @@
 
 	require('../settings/SettingsService');
 
+	require('../misc/OnmsGraph');
 	require('../misc/util');
 
 	var nodeResourceTemplate = require('ngtemplate!./node-resource.html');
@@ -18,6 +19,7 @@
 	angular.module('opennms.controllers.NodeResource', [
 		'ionic',
 		'angularLocalStorage',
+		'opennms.misc.OnmsGraph',
 		'opennms.services.Nodes',
 		'opennms.services.Resources',
 		'opennms.services.Settings', // for default-graph-min-range
