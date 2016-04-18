@@ -170,9 +170,9 @@
 			}
 		};
 
-		var updateTitles = debounce(500, function() {
+		var updateDonuts = debounce(500, function() {
 			var updateTitle = function(type) {
-				$log.debug('updateTitles(' + type + ')');
+				$log.debug('updateDonuts(' + type + ')');
 				var visible, hidden;
 				if ($rootScope.wide) {
 					//$log.debug('wide is enabled');
@@ -201,6 +201,8 @@
 						}
 					}
 				}
+
+				$('.donut-overlay').height($scope.donutSize);
 				$scope.$broadcast('scroll.refreshComplete');
 			};
 
@@ -213,7 +215,7 @@
 			if ($scope.donuts && $scope.donuts.outages) {
 				$scope.donuts.outages = {};
 			}
-			updateTitles();
+			updateDonuts();
 		};
 
 		$scope.$on('opennms.dashboard.update.outages', function(ev, update) {
@@ -226,7 +228,7 @@
 					$scope.donuts.outages.options.series.pie.label.show = false;
 				}
 				hideDonut('outages', false);
-				updateTitles();
+				updateDonuts();
 			} else {
 				resetOutages();
 			}
@@ -238,7 +240,7 @@
 			if ($scope.donuts && $scope.donuts.alarms) {
 				$scope.donuts.alarms = {};
 			}
-			updateTitles();
+			updateDonuts();
 		};
 
 		$scope.$on('opennms.dashboard.update.alarms', function(ev, update) {
@@ -251,7 +253,7 @@
 					$scope.donuts.alarms.options.series.pie.label.show = false;
 				}
 				hideDonut('alarms', false);
-				updateTitles();
+				updateDonuts();
 			} else {
 				resetAlarms();
 			}
@@ -412,8 +414,8 @@
 			popover.scope.selectServer = function(server) {
 				popover.hide();
 				$scope.resetData();
-				updateTitles();
-				updateTitles.flush();
+				updateDonuts();
+				updateDonuts.flush();
 				$scope.server = server;
 				//$ionicLoading.show({templateUrl: loadingTemplate, duration: 20000});
 				Servers.setDefault(server);
@@ -471,7 +473,7 @@
 
 			if (oldDonutSize !== $scope.donutSize) {
 				$log.debug('Updated donuts: ' + oldDonutSize + ' -> ' + $scope.donutSize);
-				updateTitles();
+				updateDonuts();
 			}
 		});
 

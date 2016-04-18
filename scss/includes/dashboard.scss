@@ -28,9 +28,20 @@ $shadow-color: rgba(0,0,0,0.3);
 		height: 100%;
 		top: 0;
 		left: 0;
+		/*
 		right: 0;
 		bottom: 0;
+		*/
 		z-index: $z-index-view-above + 1;
+	}
+	.wide .donut-overlay {
+		width: 50%;
+	}
+	.wide .outages .donut-overlay {
+		left: 0;
+	}
+	.wide .alarms .donut-overlay {
+		left: 50%;
 	}
 	.spinner-container {
 		padding: 50px;
