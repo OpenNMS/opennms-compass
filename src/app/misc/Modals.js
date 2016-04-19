@@ -1,11 +1,14 @@
 (function() {
 	'use strict';
 
-	var angular = require('angular');
+	var angular = require('angular'),
+		Outage = require('../outages/models/Outage'),
+		OutageSummary = require('../outages/models/OutageSummary');
 
 	require('../../../generated/misc/BuildConfig');
 
 	require('./Analytics');
+	require('./Cache');
 	require('./Errors');
 	require('./Info');
 	require('./util');
@@ -23,6 +26,7 @@
 	angular.module('opennms.services.Modals', [
 		'ionic',
 		'ngCordova',
+		'opennms.misc.Cache',
 		'opennms.services.Alarms',
 		'opennms.services.Analytics',
 		'opennms.services.BuildConfig',
@@ -34,7 +38,7 @@
 		'opennms.services.Settings',
 		'opennms.services.Util'
 	])
-	.factory('Modals', function($q, $rootScope, $interval, $log, $ionicModal, $ionicPopup, AlarmService, Analytics, Errors, EventService, Info, OutageService, Servers, Settings, util) {
+	.factory('Modals', function($q, $rootScope, $interval, $log, $ionicModal, $ionicPopup, AlarmService, Analytics, Cache, Errors, EventService, Info, OutageService, Servers, Settings, util) {
 		$log.info('Modals: initializing.');
 
 		var $scope = $rootScope.$new();
@@ -65,7 +69,10 @@
 			var timer;
 
 			var getOutages = function(outage) {
-				OutageService.node(outage.nodeId).then(function(nodeOutages) {
+				Cache.get('modal-outages-' + outage.nodeId, Outage).then(function(nodeOutages) {
+					outage.nodeOutages = nodeOutages;
+				});
+				return OutageService.node(outage.nodeId).then(function(nodeOutages) {
 					nodeOutages.sort(function(a, b) {
 						var comp = a.ipAddress.localeCompare(b.ipAddress);
 						if (comp === 0) {
@@ -75,10 +82,13 @@
 						}
 					});
 					outage.nodeOutages = nodeOutages;
+					Cache.set('modal-outages-' + outage.nodeId, nodeOutages);
 					return nodeOutages;
-				}, function(err) {
+				}).catch(function(err) {
 					outage.nodeOutages = [];
-					return err;
+					return $q.reject(err);
+				}).finally(function() {
+					modal.scope.$broadcast('scroll.refreshComplete');
 				});
 			};
 
@@ -92,6 +102,9 @@
 
 			modal.scope.refreshOutages = function() {
 				$log.debug('Modals.outages.refreshOutages()');
+				Cache.get('modal-outages', OutageSummary).then(function(summaries) {
+					modal.scope.outages = summaries;
+				});
 				return OutageService.summaries().then(function(outages) {
 					$log.debug('Got outages: ' + outages.length);
 					var oldOutages = byId(modal.scope.outages);
@@ -104,9 +117,10 @@
 						getOutages(outages[i]);
 					}
 					modal.scope.outages = outages;
+					Cache.set('modal-outages', outages);
 					delete modal.scope.error;
 					return outages;
-				}, function(err) {
+				}).catch(function(err) {
 					$log.error('Error refreshing outages: ' + angular.toJson(err));
 					modal.scope.error = err;
 					modal.scope.outages = [];
