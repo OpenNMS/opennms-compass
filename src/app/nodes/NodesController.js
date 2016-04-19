@@ -120,8 +120,16 @@
 
 		util.onSettingsUpdated($scope.delayedSearch);
 
+		var lazyReset;
 		$scope.$on('ionicView.beforeEnter', function() {
+			$timeout.cancel(lazyReset);
 			$scope.delayedSearch();
+		});
+		$scope.$on('ionicView.afterLeave', function() {
+			lazyReset = $timeout(function() {
+				$scope.searching = false;
+				$scope.nodes = [];
+			}, 10000);
 		});
 	});
 

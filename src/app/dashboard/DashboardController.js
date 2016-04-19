@@ -352,8 +352,8 @@
 		});
 
 		$scope.resetData = function() {
-			$log.debug('Resetting Data.');
-			$scope.server = null;
+			$log.debug('DashboardCtrl.resetData()');
+			//$scope.server = null;
 			resetAvailability();
 			resetOutages();
 			resetAlarms();
@@ -491,8 +491,13 @@
 
 		document.addEventListener('resume', $scope.refreshData, false);
 
+		var lazyReset;
 		$scope.$on('$ionicView.beforeEnter', function(ev, info) {
+			$timeout.cancel(lazyReset);
 			$scope.refreshData();
+		});
+		$scope.$on('$ionicView.afterLeave', function(ev) {
+			lazyReset = $timeout($scope.resetData, 10000);
 		});
 	});
 
