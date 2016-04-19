@@ -1,7 +1,10 @@
 'use strict';
 
+require('./Queue');
+
 var module = angular.module('opennms.util.HTTP', [
-	'ng'
+	'ng',
+	'opennms.misc.Queue'
 ]);
 
 ionic.Platform.ready(function() {
@@ -87,7 +90,7 @@ ionic.Platform.ready(function() {
 	}
 });
 
-module.factory('HTTP', function($http, $injector, $interval, $log, $q, $window) {
+module.factory('HTTP', function($http, $injector, $interval, $log, $q, $window, Queue) {
 	//var requestTimeout = parseInt($injector.get('config.request.timeout'), 10) * 1000;
 	var requestTimeout = 10000;
 	var enableCachebusting = false;
@@ -186,6 +189,7 @@ module.factory('HTTP', function($http, $injector, $interval, $log, $q, $window) 
 		});
 	};
 
+	/*
 	var requests = [];
 	var inFlight = 0;
 	var maxRequests = 4;
@@ -229,6 +233,18 @@ module.factory('HTTP', function($http, $injector, $interval, $log, $q, $window) 
 	};
 
 	var requestQueue = $interval(checkQueue, 200);
+	*/
+
+	var httpQueue = Queue.create({
+		name: 'HTTP',
+		maxRequests: 4
+	});
+
+	var queuedCall = function(options) {
+		return httpQueue.add(function queueAdd() {
+			return call(options);
+		});
+	};
 
 	var get = function(url, options) {
 		if (!options) {
@@ -236,7 +252,9 @@ module.factory('HTTP', function($http, $injector, $interval, $log, $q, $window) 
 		}
 		options.method = 'GET';
 		options.url = url;
-		return queue(options);
+		return httpQueue.add(function callGet() {
+			return call(options);
+		});
 	};
 
 	var del = function(url, options) {
@@ -245,7 +263,9 @@ module.factory('HTTP', function($http, $injector, $interval, $log, $q, $window) 
 		}
 		options.method = 'DELETE';
 		options.url = url;
-		return queue(options);
+		return httpQueue.add(function callDelete() {
+			return call(options);
+		});
 	};
 
 	var post = function(url, options) {
@@ -254,7 +274,9 @@ module.factory('HTTP', function($http, $injector, $interval, $log, $q, $window) 
 		}
 		options.method = 'POST';
 		options.url = url;
-		return queue(options);
+		return httpQueue.add(function callPost() {
+			return call(options);
+		});
 	};
 
 	var put = function(url, options) {
@@ -263,7 +285,9 @@ module.factory('HTTP', function($http, $injector, $interval, $log, $q, $window) 
 		}
 		options.method = 'PUT';
 		options.url = url;
-		return queue(options);
+		return httpQueue.add(function callPut() {
+			return call(options);
+		});
 	};
 
 	var createBasicAuthHeader = function(username, password) {
@@ -303,7 +327,7 @@ module.factory('HTTP', function($http, $injector, $interval, $log, $q, $window) 
 		del: del,
 		post: post,
 		put: put,
-		call: queue,
+		call: queuedCall,
 		callImmediately: call,
 		createBasicAuthHeader: createBasicAuthHeader,
 		getBasicAuth: getBasicAuth,
