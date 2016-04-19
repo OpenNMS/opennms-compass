@@ -25,7 +25,6 @@
 	require('./misc/String');
 
 	require('./misc/Analytics');
-	require('./misc/Cache');
 	require('./misc/Info');
 	/*require('./misc/Ionic');*/
 	require('./misc/Modals');
@@ -48,7 +47,6 @@
 		'ionic',
 		'ngCordova',
 		'rt.debounce',
-		'opennms.misc.Cache',
 		'opennms.services.BuildConfig',
 		'opennms.services.Analytics',
 		'opennms.services.Info',
@@ -96,9 +94,7 @@
 			toolbarposition:'top'
 		});
 	})
-	.run(function($rootScope, $http, $log, $templateCache, $timeout, $window, $ionicPlatform, $ionicPopup, Cache, debounce, Info, /*IonicService, */ Modals, Servers, util) {
-		Cache.clean();
-
+	.run(function($rootScope, $http, $log, $templateCache, $timeout, $window, $ionicPlatform, $ionicPopup, debounce, Info, /*IonicService, */ Modals, Servers, util) {
 		var calculateSizes = function() {
 			$rootScope.width  = angular.element($window).width();
 			$rootScope.height = angular.element($window).height();

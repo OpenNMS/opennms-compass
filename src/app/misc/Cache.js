@@ -22,6 +22,7 @@ angular.module('opennms.misc.Cache', [
 
 	var cachedb = db.get('cache');
 
+	var ready = $q.defer();
 	var defaultServer = $q.defer();
 	Servers.getDefault().then(function(d) {
 		defaultServer.resolve(d);
@@ -43,6 +44,9 @@ angular.module('opennms.misc.Cache', [
 
 	var clean = function() {
 		$log.info('Cache.clean(): starting.');
+		var oldReady = ready;
+		var newReady = $q.defer();
+		ready = newReady;
 
 		return cachedb.compact().catch(function(err) {
 			$log.warn('Cache.clean(): failed to compact database: ' + angular.toJson(err));
@@ -82,13 +86,18 @@ angular.module('opennms.misc.Cache', [
 				}
 			}).finally(function() {
 				$log.info('Cache.clean(): finished.');
+				oldReady.resolve(true);
+				newReady.resolve(true);
 			});
 		});
 	};
 
+	clean();
+
 	var get = function(query, wrap) {
 		query = getQuery(query);
-		return defaultServer.promise.then(function(server) {
+		return $q.all({defaultServer: defaultServer.promise, ready: ready.promise}).then(function(ret) {
+			var server = ret.defaultServer;
 			return cachedb.get(server._id + '-' + query.id).then(function(res) {
 				for (var key in query) {
 					if (key === 'id') {
@@ -122,7 +131,8 @@ angular.module('opennms.misc.Cache', [
 
 	var set = function(query, results) {
 		query = getQuery(query);
-		return defaultServer.promise.then(function(server) {
+		return $q.all({defaultServer: defaultServer.promise, ready: ready.promise}).then(function(ret) {
+			var server = ret.defaultServer;
 			var data = {
 				_id: server._id + '-' + query.id,
 				results: angular.toJson(results),
@@ -146,7 +156,8 @@ angular.module('opennms.misc.Cache', [
 
 	var remove = function(query) {
 		query = getQuery(query);
-		return defaultServer.promise.then(function(server) {
+		return $q.all({defaultServer: defaultServer.promise, ready: ready.promise}).then(function(ret) {
+			var server = ret.defaultServer;
 			return db.remove('cache', server._id + '-' + query.id);
 		});
 	};
