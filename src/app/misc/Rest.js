@@ -168,7 +168,7 @@
 				return Settings.restLimit();
 			}).then(function(restLimit) {
 				var myparams = angular.extend({}, { limit: restLimit }, params);
-				if (myparams.limit === 0) {
+				if (myparams.limit === 0 || myparams.limit === null) {
 					delete myparams.limit;
 				}
 				return myparams;
