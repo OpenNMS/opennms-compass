@@ -159,7 +159,7 @@ module.factory('HTTP', function($http, $injector, $interval, $log, $q, $window) 
 					return response;
 				};
 				var handleError = function(err) {
-					$log.error('HTTP.handleError: ' + angular.toJson(err));
+					$log.error('HTTP.handleError: ' + options.url + ': ' + angular.toJson(err));
 					return $q.reject(err);
 				};
 
