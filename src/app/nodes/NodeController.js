@@ -151,7 +151,7 @@
 				$scope.availability = availability;
 			});
 			var avail = AvailabilityService.node($scope.nodeId).then(function(results) {
-				$log.debug('AvailabilityService got results:'+angular.toJson(results));
+				if (__DEVELOPMENT__) { $log.debug('AvailabilityService got results:'+angular.toJson(results)); }
 				$scope.availability = results;
 				Cache.set('node-' + $scope.nodeId + '-availability', results);
 				return results;

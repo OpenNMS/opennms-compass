@@ -114,7 +114,7 @@ angular.module('opennms.misc.Cache', [
 				$log.debug('Cache.get(' + query.id + '): match.');
 				return res.results;
 			}).catch(function(err) {
-				$log.debug('Cache.get(' + query.id + '): no match: ' + angular.toJson(err));
+				if (__DEVELOPMENT__) { $log.debug('Cache.get(' + query.id + '): no match: ' + angular.toJson(err)); }
 				return $q.reject(err);
 			});
 		});

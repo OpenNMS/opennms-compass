@@ -153,7 +153,7 @@ module.factory('HTTP', function($http, $injector, $interval, $log, $q, $window) 
 			}
 
 			if (cordovaHTTP) {
-				$log.debug('Making Cordova HTTP call with options:' + angular.toJson(options));
+				if (__DEVELOPMENT__) { $log.debug('Making Cordova HTTP call with options:' + angular.toJson(options)); }
 				var handleSuccess = function(response) {
 					//$log.debug('HTTP.handleSuccess: ' + angular.toJson(response.data));
 					return response;
@@ -180,7 +180,7 @@ module.factory('HTTP', function($http, $injector, $interval, $log, $q, $window) 
 					return $q.reject('Unknown method: ' + options.method);
 				}
 			} else {
-				$log.debug('Making Angular HTTP call with options:' + angular.toJson(options));
+				if (__DEVELOPMENT__) { $log.debug('Making Angular HTTP call with options:' + angular.toJson(options)); }
 				return $http(options);
 			}
 		});

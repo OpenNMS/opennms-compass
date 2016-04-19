@@ -191,7 +191,7 @@
 				});
 
 			}, function(err) {
-				$log.debug('Rest.doQuery: failed: ' + angular.toJson(err));
+				if (__DEVELOPMENT__) { $log.debug('Rest.doQuery: failed: ' + angular.toJson(err)); }
 				return $q.reject(err);
 			});
 		};

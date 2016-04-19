@@ -131,7 +131,7 @@
 		$scope.showAck = false;
 		$scope.severities = severities;
 
-		$log.debug('alarm filter: ' + angular.toJson($scope.filter));
+		if (__DEVELOPMENT__) { $log.debug('alarm filter: ' + angular.toJson($scope.filter)); }
 		Servers.getDefault().then(function(server) {
 			if (server && server.username) {
 				$scope.username = server.username;

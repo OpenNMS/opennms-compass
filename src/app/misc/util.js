@@ -38,22 +38,22 @@
 	})
 	.factory('UtilEventBroadcaster', function($rootScope, $log) {
 		var markDirty = function(type) {
-			$log.debug('util.markDirty: ' + type);
+			if (__DEVELOPMENT__) { $log.debug('util.markDirty: ' + type); }
 			$rootScope.$broadcast('opennms.dirty', type);
 		};
 
 		var defaultServerUpdated = function(server) {
-			$log.debug('util.defaultServerUpdated: ' + angular.toJson(server));
+			if (__DEVELOPMENT__) { $log.debug('util.defaultServerUpdated: ' + angular.toJson(server)); }
 			$rootScope.$broadcast('opennms.servers.defaultUpdated', server);
 		};
 
 		var serversUpdated = function(newServers, oldServers) {
-			$log.debug('util.serversUpdated: ' + angular.toJson(newServers));
+			if (__DEVELOPMENT__) { $log.debug('util.serversUpdated: ' + angular.toJson(newServers)); }
 			$rootScope.$broadcast('opennms.servers.updated', newServers, oldServers);
 		};
 
 		var serverRemoved = function(server) {
-			$log.debug('util.serversUpdated: ' + server.name);
+			if (__DEVELOPMENT__) { $log.debug('util.serversUpdated: ' + server.name); }
 			$rootScope.$broadcast('opennms.servers.removed', server);
 		};
 
@@ -96,7 +96,7 @@
 
 			for (var i=0, len=types.length; i < len; i++) {
 				if (eventListeners['opennms.dirty'] && eventListeners['opennms.dirty'][types[i]]) {
-					$log.debug('util.onDirty: ' + types[i]);
+					if (__DEVELOPMENT__) { $log.debug('util.onDirty: ' + types[i]); }
 					handleType(eventListeners['opennms.dirty'][types[i]]);
 				}
 			}
@@ -104,7 +104,7 @@
 
 		$rootScope.$on('opennms.errors.updated', function(ev, errors) {
 			if (eventListeners['opennms.errors.updated']) {
-				$log.debug('util.onErrorsUpdated: ' + angular.toJson(errors));
+				if (__DEVELOPMENT__) { $log.debug('util.onErrorsUpdated: ' + angular.toJson(errors)); }
 				$rootScope.$evalAsync(function() {
 					for (var i=0, len=eventListeners['opennms.errors.updated'].length; i < len; i++) {
 						eventListeners['opennms.errors.updated'][i](errors);
@@ -117,7 +117,7 @@
 		$rootScope.$on('opennms.info.updated', function(ev, info) {
 			lastInfo = info;
 			if (eventListeners['opennms.info.updated']) {
-				$log.debug('util.onInfoUpdated: ' + angular.toJson(info));
+				if (__DEVELOPMENT__) { $log.debug('util.onInfoUpdated: ' + angular.toJson(info)); }
 				$rootScope.$evalAsync(function() {
 					for (var i=0, len=eventListeners['opennms.info.updated'].length; i < len; i++) {
 						eventListeners['opennms.info.updated'][i](info);
@@ -128,7 +128,7 @@
 
 		$rootScope.$on('opennms.product.updated', function(ev, product) {
 			if (eventListeners['opennms.product.updated']) {
-				$log.debug('util.onProductUpdated: ' + product.id);
+				if (__DEVELOPMENT__) { $log.debug('util.onProductUpdated: ' + product.id); }
 				$rootScope.$evalAsync(function() {
 					for (var i=0, len=eventListeners['opennms.product.updated'].length; i < len; i++) {
 						eventListeners['opennms.product.updated'][i](product);
@@ -139,7 +139,7 @@
 
 		$rootScope.$on('opennms.servers.defaultUpdated', function(ev, server) {
 			if (eventListeners['opennms.servers.defaultUpdated']) {
-				$log.debug('util.onDefaultServerUpdated: ' + angular.toJson(server));
+				if (__DEVELOPMENT__) { $log.debug('util.onDefaultServerUpdated: ' + angular.toJson(server)); }
 				$rootScope.$evalAsync(function() {
 					for (var i=0, len=eventListeners['opennms.servers.defaultUpdated'].length; i < len; i++) {
 						eventListeners['opennms.servers.defaultUpdated'][i](server);
@@ -150,7 +150,7 @@
 
 		$rootScope.$on('opennms.servers.updated', function(ev, newServers, oldServers) {
 			if (eventListeners['opennms.servers.updated']) {
-				$log.debug('util.onServersUpdated: ' + angular.toJson(newServers));
+				if (__DEVELOPMENT__) { $log.debug('util.onServersUpdated: ' + angular.toJson(newServers)); }
 				$rootScope.$evalAsync(function() {
 					for (var i=0, len=eventListeners['opennms.servers.updated'].length; i < len; i++) {
 						eventListeners['opennms.servers.updated'][i](newServers, oldServers);
@@ -161,7 +161,7 @@
 
 		$rootScope.$on('opennms.servers.removed', function(ev, server) {
 			if (eventListeners['opennms.servers.removed']) {
-				$log.debug('util.onServerRemoved: ' + server.name);
+				if (__DEVELOPMENT__) { $log.debug('util.onServerRemoved: ' + server.name); }
 				$rootScope.$evalAsync(function() {
 					for (var i=0, len=eventListeners['opennms.servers.removed'].length; i < len; i++) {
 						eventListeners['opennms.servers.removed'][i](server);
@@ -172,7 +172,7 @@
 
 		$rootScope.$on('opennms.settings.updated', function(ev, newSettings, oldSettings, changedSettings) {
 			if (eventListeners['opennms.settings.updated']) {
-				$log.debug('util.onSettingsUpdated: ' + angular.toJson(changedSettings));
+				if (__DEVELOPMENT__) { $log.debug('util.onSettingsUpdated: ' + angular.toJson(changedSettings)); }
 				$rootScope.$evalAsync(function() {
 					for (var i=0, len=eventListeners['opennms.settings.updated'].length; i < len; i++) {
 						eventListeners['opennms.settings.updated'][i](newSettings, oldSettings, changedSettings);
@@ -282,7 +282,7 @@
 		var openServer = function() {
 			Servers.getDefault().then(function(server) {
 				if (server) {
-					$log.debug('util.openServer: ' + server.url);
+					if (__DEVELOPMENT__) { $log.debug('util.openServer: ' + server.url); }
 					$cordovaInAppBrowser.open(server.url, '_blank');
 				} else {
 					$log.debug('util.openServer: no server defined');

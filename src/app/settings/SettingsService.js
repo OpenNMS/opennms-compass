@@ -105,7 +105,7 @@
 					settings.defaultServerId = defaultServerId;
 				}
 
-				$log.debug('Settings._loadSettings: ' + angular.toJson(settings));
+				if (__DEVELOPMENT__) { $log.debug('Settings._loadSettings: ' + angular.toJson(settings)); }
 				return settings;
 			});
 		};
@@ -216,15 +216,17 @@
 					c = angular.toJson(changedSettings);
 
 				if (c === '{}') {
-					//$log.debug('Settings.saveSettings: settings are unchanged.');
-					return oldSettings;
+					//if (__DEVELOPMENT__) { $log.debug('Settings.saveSettings: settings are unchanged.'); }
+ 					return oldSettings;
 				} else {
 					$log.debug('Settings.saveSettings: settings have changed.  Updating.');
-					/*
-					$log.debug('Settings.saveSettings: Old Settings: ' + o);
-					$log.debug('Settings.saveSettings: New Settings: ' + n);
-					*/
-					$log.debug('Settings.saveSettings: Changed Settings: ' + c);
+					if (__DEVELOPMENT__) {
+						/*
+						$log.debug('Settings.saveSettings: Old Settings: ' + o);
+						$log.debug('Settings.saveSettings: New Settings: ' + n);
+						*/
+						$log.debug('Settings.saveSettings: Changed Settings: ' + angular.toJson(c));
+					}
 
 					return storeSettings(newSettings).then(function(stored) {
 						/*

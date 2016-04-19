@@ -133,9 +133,11 @@
 				newServers.sort(_sortServers);
 				servers = angular.copy(newServers);
 				if (force === true || !angular.equals(oldServers, newServers)) {
-					$log.debug('Servers._checkServersUpdated: server list has changed.');
-					$log.debug('old: ' + angular.toJson(oldServers));
-					$log.debug('new: ' + angular.toJson(newServers));
+					if (__DEVELOPMENT__) {
+						$log.debug('Servers._checkServersUpdated: server list has changed.');
+						$log.debug('old: ' + angular.toJson(oldServers));
+						$log.debug('new: ' + angular.toJson(newServers));
+					}
 					UtilEventBroadcaster.serversUpdated(newServers, oldServers);
 				}
 				return checkDefaultServerUpdated().then(function() {
@@ -186,14 +188,14 @@
 
 			return serversDB.get(server._id).then(function(doc) {
 				angular.extend(doc, server);
-				$log.debug('_saveServer: updating: ' + angular.toJson(doc));
+				if (__DEVELOPMENT__) { $log.debug('_saveServer: updating: ' + angular.toJson(doc)); }
 				return serversDB.put(doc).then(function(result) {
 					doc._rev = result.rev;
 					return doc;
 				});
 			}).catch(function(err) {
 				if (err.error && err.reason === 'missing') {
-					$log.debug('_saveServer: saving: ' + angular.toJson(server));
+					if (__DEVELOPMENT__) { $log.debug('_saveServer: saving: ' + angular.toJson(server)); }
 					return serversDB.put(server).then(function(result) {
 						server._rev = result.rev;
 						return server;
@@ -217,7 +219,7 @@
 				} else {
 					$log.info('Servers.init: no server names found, attempting to upgrade old settings.');
 					return Settings.get().then(function(settings) {
-						$log.debug('Servers.init: settings = ' + angular.toJson(settings));
+						if (__DEVELOPMENT__) { $log.debug('Servers.init: settings = ' + angular.toJson(settings)); }
 						if (settings.server !== undefined && settings.username !== undefined && settings.password !== undefined) {
 							var server = new Server({
 								name: URI(settings.server).hostname(),
@@ -225,7 +227,7 @@
 								username: settings.username,
 								password: settings.password
 							});
-							$log.debug('Servers.init: saving default server: ' + angular.toJson(server, true));
+							if (__DEVELOPMENT__) { $log.debug('Servers.init: saving default server: ' + angular.toJson(server, true)); }
 							return _saveServer(server);
 						} else {
 							$log.debug('Servers.init: No servers configured.');

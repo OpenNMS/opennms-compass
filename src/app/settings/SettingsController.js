@@ -88,7 +88,7 @@
 				return HTTP.get(alarmUrl, options).then(function(res) {
 					return url;
 				}).catch(function(err) {
-					$log.debug('ServerModal.tryServer: Failed to get ' + alarmUrl + ': ' + angular.toJson(err));
+					$log.error('ServerModal.tryServer: Failed to get ' + alarmUrl + ': ' + angular.toJson(err));
 					return $q.reject(err);
 				});
 			};
@@ -150,7 +150,7 @@
 		$scope.saveServer = function() {
 			var server = $scope.server;
 			$scope.serverError = undefined;
-			$log.debug('ServerModal.save: Saving server: ' + angular.toJson(server));
+			if (__DEVELOPMENT__) { $log.debug('ServerModal.save: Saving server: ' + angular.toJson(server)); }
 			if (server && server.name && server.url) {
 				return tryServer(server).then(function(url) {
 					server.url = url;
