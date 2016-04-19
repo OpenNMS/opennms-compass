@@ -33,14 +33,24 @@
 		var current = $q.defer();
 
 		var doUpdate = function(data) {
-			//$log.debug('info success=' + angular.toJson(data));
-			data.numericVersion = parseFloat(data.version.replace('^(\\d+\\.\\d+).*$', '$1'));
-			var info = $injector.get('info');
-			angular.extend(info, data);
-			current.resolve(info);
+			var existingPromise = current;
 			current = $q.defer();
-			current.resolve(info);
-			$rootScope.$broadcast('opennms.info.updated', info);
+
+			data.numericVersion = parseFloat(data.version.replace('^(\\d+\\.\\d+).*$', '$1'));
+			var newInfo = $injector.get('info');
+			var existingInfo = angular.copy(newInfo);
+
+			angular.extend(newInfo, data);
+
+			existingPromise.resolve(newInfo);
+			current.resolve(newInfo);
+
+			if (angular.equals(newInfo, existingInfo)) {
+				$log.debug('Info.doUpdate(): update triggered but info has not changed.');
+			} else {
+				$log.debug('Info.doUpdate(): update triggered and info has changed: broadcasting.');
+				$rootScope.$broadcast('opennms.info.updated', newInfo);
+			}
 			return data;
 		};
 
