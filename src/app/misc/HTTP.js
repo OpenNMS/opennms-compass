@@ -191,9 +191,9 @@ module.factory('HTTP', function($http, $injector, $interval, $log, $q, $window) 
 	var maxRequests = 4;
 	var queueWait = 200; // milliseconds
 
-	var printQueueStats = function() {
+	var printQueueStats = function(force) {
 		var req = requests.length;
-		if (inFlight === 0 && req === 0) {
+		if (!force && inFlight === 0 && req === 0) {
 			return;
 		}
 		$log.debug('HTTP queue: ' + inFlight + ' in-flight, ' + req + ' pending');
@@ -215,6 +215,9 @@ module.factory('HTTP', function($http, $injector, $interval, $log, $q, $window) 
 			request[0].reject(err);
 		}).finally(function() {
 			inFlight--;
+			if (inFlight === 0) {
+				printQueueStats(true);
+			}
 		});
 	};
 
