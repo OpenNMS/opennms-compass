@@ -321,6 +321,10 @@
 			if (refreshing) {
 				return;
 			}
+			if (!$scope.visible) {
+				$log.warn('DashboardController.refreshData(): view is not currently visible, skipping refresh.');
+				return;
+			}
 			refreshing = true;
 
 			$log.info('DashboardCtrl.refreshData: refreshing data.');
@@ -446,6 +450,11 @@
 
 		util.onDefaultServerUpdated(function(defaultServer) {
 			//$log.debug('DashboardController.onDefaultServerUpdated: ' + angular.toJson(defaultServer));
+			if (angular.equals(defaultServer, $scope.server)) {
+				$log.debug('DashboardController.defaultServerUpdated: server is unchanged.');
+				return;
+			}
+
 			if (defaultServer && angular.isDefined(defaultServer.name)) {
 				Cache.set('dashboard-default-server', defaultServer);
 				$scope.server = defaultServer;
@@ -493,11 +502,16 @@
 
 		var lazyReset;
 		$scope.$on('$ionicView.beforeEnter', function(ev, info) {
+			$scope.visible = true;
 			$timeout.cancel(lazyReset);
 			$scope.refreshData();
 		});
 		$scope.$on('$ionicView.afterLeave', function(ev) {
-			lazyReset = $timeout($scope.resetData, 10000);
+			$scope.visible = false;
+			lazyReset = $timeout(function() {
+				$log.debug('DashboardController: view is stale, resetting data.');
+				$scope.resetData();
+			}, 10000);
 		});
 	});
 
