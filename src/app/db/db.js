@@ -63,14 +63,20 @@
 			}
 
 			return getPouch(dbname).get(doc._id).then(function(existing) {
-				delete doc._id;
-				delete doc._rev;
-				delete doc._deleted;
-				angular.merge(existing, doc);
-				return getPouch(dbname).put(existing).then(function(response) {
+				var newdoc = angular.copy(doc);
+				delete newdoc._id;
+				delete newdoc._rev;
+				delete newdoc._deleted;
+				var updated = angular.merge({}, existing, newdoc);
+				return getPouch(dbname).put(updated).then(function(response) {
 					doc._id = response.id;
 					doc._rev = response.rev;
 					return doc;
+				}).catch(function(err) {
+					if (err.name === 'conflict') {
+						$log.debug('Conflict occurs attempting to upsert doc._id=' + existing._id + ', doc._rev=' + existing._rev);
+					}
+					return $q.reject(err);
 				});
 			}).catch(function(err) {
 				if (err.error && (err.reason === 'missing'||err.reason === 'deleted')) {
