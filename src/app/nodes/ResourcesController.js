@@ -23,7 +23,7 @@
 			controller: 'NodeResourcesCtrl'
 		});
 	})
-	.controller('NodeResourcesCtrl', function($q, $scope, $log, ResourceService, util) {
+	.controller('NodeResourcesCtrl', function($log, $q, $scope, $timeout, ResourceService, util) {
 		$log.info('NodeResourcesCtrl: initializing.');
 
 		var sortFunction = function(a,b) {
@@ -69,26 +69,21 @@
 			$scope.resources = [];
 		};
 
+		var lazyReset;
 		$scope.$on('$ionicView.beforeEnter', function(ev, info) {
-			$log.info('NodeResourcesCtrl: entering node view.');
+			$timeout.cancel(lazyReset);
 			if (info && info.stateParams && info.stateParams.node) {
 				var nodeId = parseInt(info.stateParams.node, 10);
 				$scope.nodeId = nodeId;
 			} else {
 				$log.error('NodeResourcesCtrl: unable to determine node from view.');
 			}
-			if (info && info.direction === 'forward') {
-				$scope.refresh();
-			}
+			$scope.refresh();
 		});
-
-		$scope.$on('$ionicView.afterLeave', function(ev, info) {
-			if (info && info.direction === 'forward') {
-				// we're going deeper, keep the model in memory
-			} else if (info) {
-				$log.debug('NodeResourcesCtrl: leaving node view; cleaning up.');
+		$scope.$on('$ionicView.afterLeave', function() {
+			lazyReset = $timeout(function() {
 				resetModel();
-			}
+			}, 10000);
 		});
 	});
 

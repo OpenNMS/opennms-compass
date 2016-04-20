@@ -5,30 +5,48 @@ var angular = require('angular'),
 	moment = require('moment'),
 	RestError = require('../misc/RestError');
 
-require('../servers/Servers');
+require('angular-debounce');
 
-require('../misc/HTTP');
-require('../misc/Rest');
+require('./HTTP');
+require('./Queue');
+require('./Rest');
+
+require('../servers/Servers');
 
 var onmsGraphTemplate = require('ngtemplate!./onms-graph.html');
 
 angular.module('opennms.misc.OnmsGraph', [
 	'ionic',
+	'rt.debounce',
+	'opennms.misc.Queue',
 	'opennms.services.Rest',
 	'opennms.services.Servers',
 	'opennms.util.HTTP'
 ])
-.directive('onmsGraph', function($log, $timeout, $window, $injector, HTTP, RestService, Servers) {
+.directive('onmsGraph', function($injector, $log, $q, $rootScope, $timeout, $window, debounce, HTTP, Queue, RestService, Servers) {
+	var invalidCharacters = /[^a-zA-Z0-9]+/g;
+
+	var graphQueue = Queue.create({
+		name: 'OnmsGraph',
+		maxRequests: 2
+	});
+
 	var getWidth = function() {
 		return $window.innerWidth;
 	};
-	var getHeight = function() {
+	var getHeight = function getHeight() {
 		if ($window.orientation % 180 === 0) {
 			return $window.innerWidth;
 		} else {
 			return $window.innerHeight - 140;
 		}
 	};
+
+	var queue = function queue(cb, description) {
+		$log.debug('queue: queueing ' + description);
+		return graphQueue.add(cb);
+	};
+
 	return {
 		scope: {
 			resourceId: '=',
@@ -38,12 +56,12 @@ angular.module('opennms.misc.OnmsGraph', [
 		},
 		replace: true,
 		templateUrl: onmsGraphTemplate,
-		link: function($scope, element, attrs) {
+		link: function linkOnmsGraph($scope, element, attrs) {
+			$scope.dirty = false;
+
 			$scope.width = getWidth();
 			$scope.height = getWidth();
-			if ($scope.display === undefined) {
-				$scope.display = true;
-			}
+			$scope.last = {};
 
 			var minDate = moment().subtract($injector.get('default-graph-min-range'), 'milliseconds').toDate();
 			$scope.editDate = function(type) {
@@ -84,10 +102,21 @@ angular.module('opennms.misc.OnmsGraph', [
 			};
 			/* eslint-enable no-empty */
 
+			var getGraphId = function() {
+				if ($scope.graphModel && $scope.graphModel.title) {
+					return ($scope.resourceId + '|' + $scope.graphModel.title).replace(invalidCharacters, '.');
+				} else {
+					return null;
+				}
+			};
+
+			var getGraphDescription = function() {
+				return $scope.resourceId + ' / ' + ($scope.graphModel && $scope.graphModel.title? $scope.graphModel.title : 'N/A');
+			};
+
 			var cleanUpGraph = function() {
 				var resourceId = $scope.resourceId;
-				var graphTitle = $scope.graphModel && $scope.graphModel.title? $scope.graphModel.title : 'N/A';
-				$log.debug('Destroying graph: ' + resourceId + ' / ' + graphTitle);
+				$log.debug('Destroying graph: ' + getGraphDescription());
 				if ($scope.graph) {
 					if ($scope.graph.destroy) {
 						$scope.graph.destroy();
@@ -112,108 +141,118 @@ angular.module('opennms.misc.OnmsGraph', [
 			/* eslint-enable no-empty */
 
 			$scope.createGraph = function() {
-				if (!$scope.ds)                { return; }
-				if (!$scope.graphModel)        { return; }
-				if (!$scope.graphModel.series) { return; }
-				if (!$scope.graphModel.title)  { return; }
-				if (!$scope.range)             { return; }
-				if (!$scope.range.start)       { return; }
-				if (!$scope.range.end)         { return; }
+				return queue($scope.renderGraph, getGraphDescription());
+			};
 
-				if ($scope.graph && $scope.graph._last) {
-					if ($scope.graph._last.ds         === $scope.ds &&
-						$scope.graph._last.graphModel === $scope.graphModel &&
-						$scope.graph._last.width      === $scope.width &&
-						$scope.graph._last.height     === $scope.height &&
-						angular.equals($scope.graph._last.range, $scope.range)) {
-						$log.debug('Graph is unchanged since last render.  Skipping.');
-						return;
-					}
-				}
+			$scope.renderGraph = function() {
+				$log.debug('OnmsGraph.renderGraph(): called.');
+				if (!$scope.ds)                { return $q.when(); }
+				if (!$scope.graphModel)        { return $q.when(); }
+				if (!$scope.graphModel.series) { return $q.when(); }
+				if (!$scope.graphModel.title)  { return $q.when(); }
+				if (!$scope.range)             { return $q.when(); }
+				if (!$scope.range.start)       { return $q.when(); }
+				if (!$scope.range.end)         { return $q.when(); }
+
+				$log.debug('OnmsGraph.renderGraph(): rendering.');
+
+				var description = getGraphDescription();
 
 				var onmsGraphElement = angular.element(element).find('.graph').first();
 				onmsGraphElement.width($scope.width);
 				onmsGraphElement.height($scope.width);
 
-				//var graph = new Backshift.Graph.DC({
-				var graph = new Backshift.Graph.Flot({
-					element: onmsGraphElement[0],
-					start: $scope.range.start.getTime(),
-					end: $scope.range.end.getTime(),
-					width: $scope.width,
-					height: $scope.width,
-					interactive: false,
-					dataSource: $scope.ds,
-					model: $scope.graphModel,
-					exportIconSizeRatio: 0,
-					beginOnRender: false,
-					zoom: false,
-					xaxisFont: {
-						size: 10,
-						family: 'sans-serif'
-					},
-					yaxisFont: {
-						size: 10,
-						family: 'sans-serif'
-					},
-					legendFontSize: 16,
-					ticks: 4
-				});
-
-				graph._last = {
-					ds: $scope.ds,
-					graphModel: $scope.graphModel,
-					range: angular.copy($scope.range),
-					width: $scope.width,
-					height: $scope.width
-				};
-
-				cleanUpGraph();
-				if ($scope.graph && $scope.graph.destroy) {
-					var oldGraph = $scope.graph;
-					oldGraph.destroy();
-					delete oldGraph.element;
-					delete oldGraph._last.graphModel;
-					delete oldGraph._last.ds;
-					delete oldGraph._last.range;
-					delete oldGraph._last.width;
-					delete oldGraph._last.height;
-					delete oldGraph._last;
+				if ($scope.dirty) {
+					$log.debug('OnmsGraph.renderGraph(): graph dependencies have changed, re-rendering.');
+					if ($scope.graph) {
+						$scope.graph.destroy();
+					}
+					$scope.graph = undefined;
+					$scope.dirty = false;
 				}
 
-				$scope.graph = graph;
+				var deferred = $q.defer();
 
-				$log.debug('Displaying graph: ' + $scope.resourceId + ' / ' + $scope.graphModel.title);
-				$timeout(function() {
-					graph.render();
-					if ($scope.display) {
-						graph.begin();
-					} else {
-						graph.onQuerySuccess();
+				if ($scope.graph) {
+					$log.debug('Graph exists: ' + description);
+					$scope.graph.onAfterQuery = function() {
+						deferred.resolve(true);
 					}
+				} else {
+					$log.debug('Rendering graph: ' + description);
+
+					$scope.graph = new Backshift.Graph.Flot({
+						element: onmsGraphElement[0],
+						start: $scope.range.start.getTime(),
+						end: $scope.range.end.getTime(),
+						width: $scope.width,
+						height: $scope.width,
+						interactive: false,
+						dataSource: $scope.ds,
+						model: $scope.graphModel,
+						exportIconSizeRatio: 0,
+						beginOnRender: false,
+						zoom: false,
+						xaxisFont: {
+							size: 10,
+							family: 'sans-serif'
+						},
+						yaxisFont: {
+							size: 10,
+							family: 'sans-serif'
+						},
+						legendFontSize: 16,
+						ticks: 4
+					});
+
+					$scope.graph.onAfterQuery = function() {
+						deferred.resolve(true);
+					}
+					$scope.graph.render();
+				}
+
+				/*
+				$scope.graph.dataSource            = $scope.ds;
+				$scope.graph.model                 = $scope.model || {};
+				$scope.graph.model.metrics         = $scope.graph.model.metrics || {};
+				$scope.graph.model.series          = $scope.graph.model.series || {};
+				$scope.graph.model.printStatements = $scope.graph.model.printStatements || {};
+				*/
+				$scope.graph.start                 = $scope.range.start.getTime();
+				$scope.graph.end                   = $scope.range.end.getTime();
+
+				if ($scope.display) {
+					$log.debug('OnmsGraph.renderGraph(): graph.begin(): ' + description);
+					$scope.graph.begin();
+				} else {
+					$log.debug('OnmsGraph.renderGraph(): graph.onQuerySuccess(): ' + description);
+					$scope.graph.onQuerySuccess();
+					deferred.resolve(true);
+				}
+
+				return deferred.promise.then(function() {
 					$scope.$broadcast('scroll.refreshComplete');
+					return true;
 				});
-			};
-
-			$scope.redraw = function() {
-				$scope.dirty = true;
-				$timeout(function() {
-					if ($scope.dirty) {
-						$scope.dirty = false;
-						$scope.createGraph();
-					}
-				}, 50);
 			};
 
 			$scope.refresh = function() {
-				if ($scope.graph) {
-					if ($scope.display) {
-						$scope.graph.begin();
-					} else {
-						$scope.graph.cancel();
+				$log.debug('OnmsGraph.refresh()');
+				var description = getGraphDescription();
+				return $scope.createGraph().finally(function() {
+					if ($scope.graph) {
+						if ($scope.display) {
+							$log.debug('OnmsGraph.refresh(): graph.begin(): ' + description);
+							$scope.graph.begin();
+						} else {
+							$log.debug('OnmsGraph.refresh(): graph.cancel(): ' + description);
+							$scope.graph.cancel();
+						}
 					}
-				}
+				});
 			};
+
+			$scope.redraw = debounce(100, $scope.refresh);
 
 			$scope.$watch('range', function(newRange, oldRange) {
 				var startDate = moment(newRange && newRange.start? newRange.start : 0),
@@ -230,31 +269,60 @@ angular.module('opennms.misc.OnmsGraph', [
 				$scope.redraw();
 			}, true);
 
-			$scope.$watchGroup(['width', 'height'], $scope.redraw);
-			$scope.$watch('display', $scope.refresh);
+			var redrawDirty = debounce(100, $scope.redraw);
+			var setDirtyAndRedraw = function(updated, previous, type) {
+				if (angular.isArray(updated)) {
+					for (var i=0, len=updated.length; i < len; i++) {
+						if (previous[i] && !angular.equals(previous[i], updated[i])) {
+							$log.debug('OnmsGraph: dirty' + (type? ': ' + type : ''));
+							$scope.dirty = true;
+							redrawDirty();
+							return;
+						}
+					}
+				} else {
+					if (previous && !angular.equals(previous, updated)) {
+						$log.debug('OnmsGraph: dirty' + (type? ': ' + type : ''));
+						$scope.dirty = true;
+						redrawDirty();
+					}
+				}
+			};
+
+			$scope.$watchGroup(['width', 'height'], function(newValue, oldValue) {
+				setDirtyAndRedraw(newValue, oldValue, 'width/height');
+			});
+			$scope.$watch('display', function(newValue, oldValue) {
+				setDirtyAndRedraw(newValue, oldValue, 'display');
+				$scope.redraw();
+			});
 
 			$scope.$on('resize', function(ev, info) {
+				$log.debug('OnmsGraph: dirty: resize');
 				$scope.width = info.width;
 				$scope.height = info.height;
 			});
 
-			$scope.$watch('graphDef', function(graphDef) {
-				if (graphDef && $scope.resourceId) {
+			$scope.$watchGroup(['graphDef', 'resourceId'], function(watched) {
+				if (watched[0] && watched[1]) {
+					$log.debug('OnmsGraph: dirty: graphDef/resourceId');
 					$scope.rrdGraphConverter = new Backshift.Utilities.RrdGraphConverter({
-						graphDef: graphDef,
-						resourceId: $scope.resourceId
+						graphDef: watched[0],
+						resourceId: watched[1]
 					});
 				}
 			});
 
 			$scope.$watch('rrdGraphConverter', function(rrdGraphConverter) {
 				if (rrdGraphConverter && rrdGraphConverter.model) {
+					$log.debug('OnmsGraph: dirty: rrdGraphConverter');
 					$scope.graphModel = rrdGraphConverter.model;
 				}
 			});
 
 			$scope.$watch('graphModel', function(graphModel) {
 				if (graphModel && graphModel.metrics) {
+					$log.debug('OnmsGraph: dirty: graphModel');
 					Servers.getDefault().then(function(server) {
 						if (server) {
 							var options = {
@@ -298,17 +366,19 @@ angular.module('opennms.misc.OnmsGraph', [
 							};
 
 							$scope.ds = new Backshift.DataSource.OpenNMS(options);
+						} else {
+							$log.warn('OnmsGraph: graphModel has changed, but server is unknown!');
 						}
 					});
 				}
 			});
 
-			$scope.$watch('ds', function() {
-				$scope.redraw();
+			$scope.$on('opennms.refreshGraphs', $scope.redraw);
+			$scope.$watch('ds', function(newDs, oldDs) {
+				setDirtyAndRedraw(newDs, oldDs, 'ds');
 			});
 
 			$scope.$on('$destroy', cleanUp);
-			//element.on('$destroy', cleanUp);
 		}
 	};
 });

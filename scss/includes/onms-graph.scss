@@ -1,16 +1,19 @@
 .onms-graph {
-	.picker {
+	>.graph {
+		margin: 5px;
+	}
+	>.picker {
+		margin: 5px;
 		font-size: $font-size-base * 0.9;
-		padding: 5px;
 		.wide {
 			font-size: $font-size-base * 2;
 		}
-	}
-	.datetime {
-		font-weight: bolder;
-		font-size: smaller;
-		border: 1px solid;
-		padding: 5px;
+		.datetime {
+			border: 1px solid;
+			padding: 5px;
+			font-weight: bolder;
+			font-size: smaller;
+		}
 	}
 }
 

@@ -189,55 +189,9 @@ module.factory('HTTP', function($http, $injector, $interval, $log, $q, $window, 
 		});
 	};
 
-	/*
-	var requests = [];
-	var inFlight = 0;
-	var maxRequests = 4;
-	var queueWait = 200; // milliseconds
-
-	var printQueueStats = function(force) {
-		var req = requests.length;
-		if (!force && inFlight === 0 && req === 0) {
-			return;
-		}
-		$log.debug('HTTP queue: ' + inFlight + ' in-flight, ' + req + ' pending');
-	};
-
-	var queue = function(options) {
-		//$log.debug('HTTP queueing request: '+ angular.toJson(options));
-		var deferred = $q.defer();
-		requests.push([deferred, options]);
-		return deferred.promise;
-	};
-
-	var execute = function(request) {
-		//$log.info('HTTP.execute: request=' + angular.toJson(request));
-		inFlight++;
-		call(request[1]).then(function(res) {
-			request[0].resolve(res);
-		}).catch(function(err) {
-			request[0].reject(err);
-		}).finally(function() {
-			inFlight--;
-			if (inFlight === 0) {
-				printQueueStats(true);
-			}
-		});
-	};
-
-	var checkQueue = function() {
-		printQueueStats();
-		while (requests.length > 0 && inFlight < maxRequests) {
-			execute(requests.shift());
-		}
-	};
-
-	var requestQueue = $interval(checkQueue, 200);
-	*/
-
 	var httpQueue = Queue.create({
 		name: 'HTTP',
-		maxRequests: 4
+		maxRequests: 6
 	});
 
 	var queuedCall = function(options) {

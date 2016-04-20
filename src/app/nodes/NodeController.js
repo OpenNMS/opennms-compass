@@ -282,6 +282,8 @@
 				}).finally(function() {
 					hideLoading();
 				});
+			} else {
+				$log.debug('NodeCtrl: no node ID');
 			}
 		});
 
@@ -300,8 +302,9 @@
 			$scope.refresh();
 		});
 
+		var lazyReset;
 		$scope.$on('$ionicView.beforeEnter', function(ev, info) {
-			$log.info('NodeCtrl: entering node view.');
+			$timeout.cancel(lazyReset);
 			if (info && info.stateParams && info.stateParams.node) {
 				var nodeId = parseInt(info.stateParams.node, 10);
 				$scope.nodeId = nodeId;
@@ -310,14 +313,10 @@
 			}
 			$scope.refresh();
 		});
-
-		$scope.$on('$ionicView.afterLeave', function(ev, info) {
-			if (info.direction === 'forward') {
-				// we're going to the resources, keep the model in memory
-			} else {
-				$log.debug('NodeCtrl: leaving node view; cleaning up.');
+		$scope.$on('$ionicView.afterLeave', function() {
+			lazyReset = $timeout(function() {
 				resetModel();
-			}
+			}, 10000);
 		});
 	});
 

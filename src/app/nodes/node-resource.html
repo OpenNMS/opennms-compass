@@ -3,7 +3,7 @@
 		<ion-nav-back-button class="button-compass button-clear" on-hold="util.dashboard('back')"></ion-nav-back-button>
 	</ion-nav-bar>
 	<ion-content delegate-handle="node-resources-scroll" scroll="true" overflow-scroll="false">
-		<ion-refresher pulling-text="Pull to Refresh..." on-refresh="refresh()"></ion-refresher>
+		<ion-refresher pulling-text="Pull to Refresh..." on-refresh="refreshGraphs()"></ion-refresher>
 		<ion-list>
 			<ion-item class="item-text-wrap"><h3 class="title compass">{{resource.label? (resource.label + ' (1-Hour)'):''}}</h3></ion-item>
 			<span ng-if="children &amp;&amp; children.length &gt; 0">
@@ -25,13 +25,13 @@
 				</ion-item>
 			</span>
 			<!-- item-height="calculateHeight()" item-width="100%" -->
-			<span class="graphs" ng-repeat="graph in graphDefinitions track by graph.name" id="graph-{{graph.name}}">
+			<span class="graphs" ng-repeat="graph in graphDefinitions track by graph.name" ng-style="{height: width + 90, width: '100%'}" id="graph-{{graph.name}}">
 				<ion-item class="item item-icon-right item-divider item-compass" ng-click="toggleFavorite($event, graph)">
 					{{graph.title}}
 					<i ng-class="'icon ' + (isFavorite(graph.name)? 'ion-ios-star':'ion-ios-star-outline')"></i>
 				</ion-item>
 				<ion-item class="item item-accordion item-complex graph">
-					<onms-graph graph-def="graph" resource-id="resource.id" range="range" display="true" ng-attr-width="width" ng-attr-height="width"></onms-graph>
+					<onms-graph graph-def="graph" resource-id="resource.id" range="range" display="true"  ng-attr-width="width" ng-attr-height="width"></onms-graph>
 				</ion-item>
 			</span>
 		</ion-list>
