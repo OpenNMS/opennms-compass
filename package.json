@@ -14,8 +14,8 @@
     "cordova-android": "*",
     "cordova-config-utils": "^2.2.1",
     "css-loader": "^0.23.1",
-    "eslint": "^1.10.3",
-    "eslint-friendly-formatter": "^1.2.2",
+    "eslint": "^2.8.0",
+    "eslint-friendly-formatter": "^2.0.3",
     "eslint-loader": "^1.3.0",
     "exports-loader": "^0.6.3",
     "expose-loader": "^0.7.1",
@@ -27,8 +27,10 @@
     "jshint": "*",
     "jshint-stylish": "*",
     "libxmljs": "^0.17.1",
-    "lodash": "^4.10.0",
+    "lodash": "^4.11.1",
+    "lodash.merge": "^4.3.5",
     "lodash.padstart": "^4.4.0",
+    "lodash.repeat": "^4.0.2",
     "merge2": "*",
     "ng-annotate-webpack-plugin": "^0.1.2",
     "ngtemplate-loader": "^1.3.1",
@@ -37,12 +39,12 @@
     "sass-loader": "^3.2.0",
     "script-loader": "^0.6.1",
     "shelljs": "^0.6.0",
-    "style-loader": "^0.13.0",
+    "style-loader": "^0.13.1",
     "url-loader": "^0.5.7",
-    "webpack": "^1.12.15",
+    "webpack": "^1.13.0",
     "xcode": "^0.8.4",
     "xmldom": "^0.1.22",
-    "xpath": "0.0.22"
+    "xpath": "0.0.23"
   },
   "cordovaPlugins": [
     "ionic-plugin-keyboard",
@@ -80,7 +82,8 @@
       "id": "com.raccoonfink.cordova.plugins.http"
     },
     "cordova-plugin-screen-orientation",
-    "cordova-plugin-crosswalk-webview"
+    "cordova-plugin-crosswalk-webview",
+    "cordova-plugin-chrome-apps-system-memory"
   ],
   "cordovaPlatforms": [
     {
@@ -90,7 +93,7 @@
     },
     {
       "platform": "ios",
-      "version": "4.1.0",
+      "version": "4.1.1",
       "locator": "ios"
     }
   ],
