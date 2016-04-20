@@ -1,5 +1,27 @@
 <a name="2.1.0"></a>
-# [2.1.0](https://github.com/OpenNMS/opennms-compass/compare/v2.1.0-399...v2.1.0) (2016-04-14)
+# [2.1.0](https://github.com/OpenNMS/opennms-compass/compare/v2.1.0-400...v2.1.0) (2016-04-20)
+
+
+### Bug Fixes
+
+* **dashboard:** fix clicking outage donut on wide (ipad) mode ([7e1a116](https://github.com/OpenNMS/opennms-compass/commit/7e1a116))
+* **graphs:** check for graphing support before attempting graphs ([c6c19e4](https://github.com/OpenNMS/opennms-compass/commit/c6c19e4))
+* **graphs:** info/capability now checks available memory for graphing ([c7cb32c](https://github.com/OpenNMS/opennms-compass/commit/c7cb32c))
+* **rest:** handle null limit properly ([be9bdc5](https://github.com/OpenNMS/opennms-compass/commit/be9bdc5))
+* **settings:** fix display of capabilities in "About"; add graphing ([03ee192](https://github.com/OpenNMS/opennms-compass/commit/03ee192))
+
+### Performance Improvements
+
+* **outages:** add caching to the outage summary popup ([1d6063f](https://github.com/OpenNMS/opennms-compass/commit/1d6063f))
+* avoid extra string manipulation in production mode ([5ee5fb3](https://github.com/OpenNMS/opennms-compass/commit/5ee5fb3))
+* **rest:** use new bounded queue for concurrent requests ([29901ee](https://github.com/OpenNMS/opennms-compass/commit/29901ee))
+* more performance cleanups and huge memory reduction in graphs ([d9cbfde](https://github.com/OpenNMS/opennms-compass/commit/d9cbfde))
+* reduce memory usage when navigating away from dashboard or node list ([2f61b4c](https://github.com/OpenNMS/opennms-compass/commit/2f61b4c))
+
+
+
+<a name="2.1.0-400"></a>
+# [2.1.0-400](https://github.com/OpenNMS/opennms-compass/compare/v2.1.0-399...v2.1.0-400) (2016-04-14)
 
 
 ### Bug Fixes
