@@ -16,7 +16,8 @@
 		numericVersion: 0.0,
 		displayVersion: 'Unknown',
 		packageName: 'opennms',
-		packageDescription: 'OpenNMS'
+		packageDescription: 'OpenNMS',
+		memory: 1000000000
 	};
 
 	angular.module('opennms.services.Info', [
@@ -32,26 +33,44 @@
 
 		var current = $q.defer();
 
+		var getMemory = function() {
+			var deferred = $q.defer();
+			if ($window && $window.chrome && $window.chrome.system && $window.chrome.system.memory) {
+				$window.chrome.system.memory.getInfo(function(res) {
+					deferred.resolve(res.capacity || defaultInfo.memory);
+				});
+			} else {
+				deferred.resolve(defaultInfo.memory); // *shrug* you're on your own
+			}
+			return deferred.promise;
+		};
+
 		var doUpdate = function(data) {
 			var existingPromise = current;
 			current = $q.defer();
 
 			data.numericVersion = parseFloat(data.version.replace('^(\\d+\\.\\d+).*$', '$1'));
-			var newInfo = $injector.get('info');
-			var existingInfo = angular.copy(newInfo);
 
-			angular.extend(newInfo, data);
+			getMemory().then(function(memory) {
+				var newInfo = $injector.get('info');
+				var existingInfo = angular.copy(newInfo);
 
-			existingPromise.resolve(newInfo);
-			current.resolve(newInfo);
+				angular.extend(newInfo, data);
+				if (memory) {
+					newInfo.memory = memory;
+				}
 
-			if (angular.equals(newInfo, existingInfo)) {
-				$log.debug('Info.doUpdate(): update triggered but info has not changed.');
-			} else {
-				$log.debug('Info.doUpdate(): update triggered and info has changed: broadcasting.');
-				$rootScope.$broadcast('opennms.info.updated', newInfo);
-			}
-			return data;
+				existingPromise.resolve(newInfo);
+				current.resolve(newInfo);
+
+				if (angular.equals(newInfo, existingInfo)) {
+					$log.debug('Info.doUpdate(): update triggered but info has not changed.');
+				} else {
+					$log.debug('Info.doUpdate(): update triggered and info has changed: broadcasting.');
+					$rootScope.$broadcast('opennms.info.updated', newInfo);
+				}
+			});
+			return current.promise;
 		};
 
 		var updateInfo = debounce(500, function() {
