@@ -65,7 +65,7 @@
 									<div class="col">{{username}}</div>
 								</div>
 							</ion-item>
-							<span ng-if="serverName !== undefined">
+							<span ng-if="defaultServer">
 								<ion-item class="item-divider item-compass">
 									OpenNMS Server Information
 								</ion-item>
@@ -79,23 +79,53 @@
 										<div class="col">{{info.version === '0.0.0'? 'Unknown':info.version}}</div>
 									</div>
 								</ion-item>
-								<ion-item class="item-text-wrap severity-WARNING" ng-if="info.version === '0.0.0'">Your OpenNMS does not support reporting server version information.</ion-item>
-								<ion-item class="item-text-wrap" ng-if="hasAvailability">Your OpenNMS server supports the Availability API.</ion-item>
-								<ion-item class="item-text-wrap severity-WARNING" ng-if="!hasAvailability">Your OpenNMS server does not support the Availability API. Dashboard availability by category requires Meridian 2015 or Horizon 15.0.2.</ion-item>
-								<ion-item class="item-text-wrap" ng-if="canSetLocation">Your OpenNMS server
-								supports updating node geolocation information.</ion-item>
-								<ion-item class="item-text-wrap severity-WARNING" ng-if="!canSetLocation">Your OpenNMS server
-								does not support updating node geolocation information.  Updating node coordinates
-								requires Meridian 2015 or Horizon 15.0.2.</ion-item>
+								<ion-item class="item-text-wrap item-icon-left" ng-if="info.version === '0.0.0'">
+									<i class="icon ion-alert-circled"></i>
+									Your OpenNMS does not support reporting server version information.
+								</ion-item>
+								<ion-item class="item-text-wrap item-icon-left" ng-if="hasAvailability">
+									<i class="icon ion-checkmark-circled severity severity-NORMAL"></i>
+									Your OpenNMS server supports displaying category availability.
+								</ion-item>
+								<ion-item class="item-text-wrap item-icon-left" ng-if="!hasAvailability">
+									<i class="icon ion-alert-circled severity severity-WARNING"></i>
+									Your OpenNMS server does not support displaying category availability. Dashboard availability by category requires Meridian 2015 or Horizon 15.0.2.
+								</ion-item>
+								<ion-item class="item-text-wrap item-icon-left" ng-if="capabilities.setLocation">
+									<i class="icon ion-checkmark-circled severity severity-NORMAL"></i>
+									Your OpenNMS server supports updating node geolocation information.
+								</ion-item>
+								<ion-item class="item-text-wrap item-icon-left" ng-if="!capabilities.setLocation">
+									<i class="icon ion-alert-circled severity severity-WARNING"></i>
+									Your OpenNMS server does not support updating node geolocation information.  Updating node coordinates requires Meridian 2015 or Horizon 15.0.2.
+								</ion-item>
+								<ion-item class="item-text-wrap item-icon-left" ng-if="capabilities.graphs">
+									<i class="icon ion-checkmark-circled severity severity-NORMAL"></i>
+									Your OpenNMS server supports the measurements API used for graphing.
+								</ion-item>
+								<ion-item class="item-text-wrap item-icon-left" ng-if="!capabilities.graphs">
+									<i class="icon ion-alert-circled severity severity-WARNING"></i>
+									Your device or OpenNMS server does not support graphing.  The measurements API used for graphing requires Meridian 2016 or Horizon 16 or later.  Additionally, Compass only supports graphing on devices with 1GB of memory or higher.
+								</ion-item>
+								<ion-item class="item-text-wrap item-icon-left" ng-if="capabilities.ackAlarms">
+									<i class="icon ion-checkmark-circled severity severity-NORMAL"></i>
+									Your OpenNMS server supports acknowledging, escalating, and clearing alarms.
+								</ion-item>
+								<ion-item class="item-text-wrap item-icon-left" ng-if="!capabilities.ackAlarms">
+									<i class="icon ion-alert-circled severity severity-WARNING"></i>
+									Your OpenNMS server does not support acknowledging, escalating, or clearing alarms through the Compass app.  The Ack API requires Meridian 2015 or Horizon 14.
+								</ion-item>
 							</span>
-							<span ng-if="errors &amp;&amp; errors.length &gt; 0">
+							<span ng-if="getErrors().length &gt; 0">
 								<ion-item class="item-divider item-assertive row">
 									<div class="col col-50">Errors</div>
 									<div class="col col-50 pull-right" ng-click="clearErrors()">Clear</div>
 								</ion-item>
-								<ion-item ng-repeat="error in errors" class="row item-text-wrap">
-									<span class="col col-25">{{formatType(error.type)}}</span>
-									<span class="col col-75">{{getErrorMessage(error)}}</span>
+								<ion-item ng-repeat="error in getErrors()" class="row item-text-wrap">
+									<dl>
+										<dt>{{formatType(error.type)}}</dt>
+										<dd>{{getErrorMessage(error)}}</dd>
+									</dl>
 								</ion-item>
 							</span>
 						</ion-list>

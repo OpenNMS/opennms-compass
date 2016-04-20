@@ -2,6 +2,7 @@
 	'use strict';
 
 	var angular = require('angular'),
+		CapabilityError = require('../misc/CapabilityError'),
 		Server = require('../servers/models/Server'),
 		URI = require('urijs');
 
@@ -235,7 +236,7 @@
 			});
 			$scope.errors = Errors.get();
 			$scope.info = Info.get();
-			$scope.canSetLocation = Capabilities.setLocation();
+			$scope.capabilities = Capabilities.get();
 			AvailabilityService.supported().then(function(isSupported) {
 				$scope.hasAvailability = isSupported;
 			}).finally(function() {
@@ -277,6 +278,15 @@
 			Errors.reset();
 		};
 
+		$scope.getErrors = function() {
+			if (!$scope.errors) {
+				return [];
+			}
+			return $scope.errors.filter(function(error) {
+				return !(error.message instanceof CapabilityError) && error.message.constructor.name !== 'CapabilityError';
+			});
+		};
+
 		$scope.isDefaultServer = function(server) {
 			return server && $scope.defaultServer && server._id === $scope.defaultServer._id;
 		};
@@ -295,7 +305,7 @@
 
 		util.onInfoUpdated(function() {
 			$scope.info = Info.get();
-			$scope.canSetLocation = Capabilities.setLocation();
+			$scope.capabilities = Capabilities.get();
 			$scope.$broadcast('scroll.refreshComplete');
 		});
 		util.onSettingsUpdated(function() {
