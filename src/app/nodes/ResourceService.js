@@ -4,23 +4,26 @@
 	var angular = require('angular'),
 		Backshift = require('backshift/dist/backshift.onms'),
 		moment = require('moment'),
+		CapabilityError = require('../misc/CapabilityError'),
 		RestError = require('../misc/RestError');
 
 	require('../db/db');
 	require('../servers/Servers');
 
+	require('../misc/Capabilities');
 	require('../misc/Rest');
 	require('../misc/util');
 
 	angular.module('opennms.services.Resources', [
 		'ionic',
 		'uuid4',
+		'opennms.services.Capabilities',
 		'opennms.services.DB',
 		'opennms.services.Rest',
 		'opennms.services.Servers',
 		'opennms.services.Util'
 	])
-	.factory('ResourceService', function($q, $rootScope, $log, uuid4, RestService, Servers, db, util) {
+	.factory('ResourceService', function($q, $rootScope, $log, Capabilities, uuid4, RestService, Servers, db, util) {
 		$log.info('ResourceService: Initializing.');
 
 		var _graphs = {};
@@ -31,6 +34,12 @@
 				fields: ['time', 'server', 'username']
 			}
 		});
+
+		var hasGraphs = Capabilities.graphs();
+		util.onInfoUpdated(function() {
+			hasGraphs = Capabilities.graphs();
+		});
+
 		var findFavorites = function(options) {
 			var fields = Object.keys(options.selector);
 			// $log.debug('findFavorites: fields=' + fields);
@@ -51,6 +60,9 @@
 			}
 		};
 		var getResourcesForNode = function(nodeId) {
+			if (!hasGraphs) {
+				return $q.reject(new CapabilityError('graphs'));
+			}
 			return RestService.get('/resources/fornode/' + nodeId, {}, {Accept: 'application/json'}).then(function(res) {
 				//$log.debug('ResourceService.getResourcesForNode: res=' + angular.toJson(res));
 				var ret = {
@@ -72,6 +84,9 @@
 		};
 
 		var getResource = function(resourceId) {
+			if (!hasGraphs) {
+				return $q.reject(new CapabilityError('graphs'));
+			}
 			return RestService.get('/resources/' + encodeURIComponent(resourceId), {}, {Accept: 'application/json'}).then(function(res) {
 				if (res.children && res.children.resource) {
 					if (angular.isArray(res.children.resource)) {
@@ -87,6 +102,9 @@
 		};
 
 		var getGraphNames = function(resourceId) {
+			if (!hasGraphs) {
+				return $q.reject(new CapabilityError('graphs'));
+			}
 			return RestService.get('/graphs/for/' + encodeURIComponent(resourceId), {}, {Accept: 'application/json'}).then(function(res) {
 				if (res.name) {
 					if (angular.isArray(res.name)) {
@@ -101,6 +119,9 @@
 		};
 
 		var getGraph = function(graph) {
+			if (!hasGraphs) {
+				return $q.reject(new CapabilityError('graphs'));
+			}
 			if (!_graphs.hasOwnProperty(graph)) {
 				_graphs[graph] = RestService.get('/graphs/' + graph, {}, {Accept: 'application/json'});
 			}
@@ -142,6 +163,9 @@
 		};
 
 		var getFavorites = function() {
+			if (!hasGraphs) {
+				return $q.reject(new CapabilityError('graphs'));
+			}
 			//$log.debug('ResourceService.getFavorites()');
 			return _getServer('getFavorites').then(function(server) {
 				return findFavorites({
@@ -168,6 +192,9 @@
 		};
 
 		var getFavorite = function(resourceId, graphName) {
+			if (!hasGraphs) {
+				return $q.reject(new CapabilityError('graphs'));
+			}
 			//$log.debug('ResourceService.getFavorite(' + resourceId + ',' + graphName + ')');
 			return _getServer('getFavorite').then(function(server) {
 				return findFavorites({
@@ -193,6 +220,9 @@
 		};
 
 		var addFavorite = function(resourceId, graphName, nodeId, nodeLabel) {
+			if (!hasGraphs) {
+				return $q.reject(new CapabilityError('graphs'));
+			}
 			return _getServer('addFavorite').then(function(server) {
 				var favorite = {
 					_id: uuid4.generate(),
@@ -218,6 +248,9 @@
 		};
 
 		var removeFavorite = function(resourceId, graphName) {
+			if (!hasGraphs) {
+				return $q.reject(new CapabilityError('graphs'));
+			}
 			//$log.debug('ResourceService.removeFavorite(' + resourceId + ',' + graphName + ')');
 			return _getServer('removeFavorite').then(function(server) {
 				return findFavorites({

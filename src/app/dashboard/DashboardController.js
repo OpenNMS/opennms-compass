@@ -16,6 +16,7 @@
 	require('../settings/SettingsService');
 
 	require('../misc/Cache');
+	require('../misc/Capabilities');
 	require('../misc/Errors');
 	require('../misc/Info');
 	require('../misc/Modals');
@@ -52,6 +53,7 @@
 		'opennms.misc.OnmsGraph',
 		'opennms.services.Alarms',
 		'opennms.services.Availability',
+		'opennms.services.Capabilities',
 		'opennms.services.Errors',
 		'opennms.services.Info',
 		'opennms.services.Modals',
@@ -72,13 +74,18 @@
 			controller: 'DashboardCtrl'
 		});
 	})
-	.controller('DashboardCtrl', function($document, $injector, $interval, $ionicLoading, $ionicPopup, $ionicPopover, $ionicSlideBoxDelegate, $ionicViewSwitcher, $log, $q, $rootScope, $scope, $state, $timeout, $window, AlarmService, AvailabilityService, Cache, DashboardService, debounce, Errors, Info, Modals, OutageService, ResourceService, Servers, util) {
+	.controller('DashboardCtrl', function($document, $injector, $interval, $ionicLoading, $ionicPopup, $ionicPopover, $ionicSlideBoxDelegate, $ionicViewSwitcher, $log, $q, $rootScope, $scope, $state, $timeout, $window, AlarmService, AvailabilityService, Cache, Capabilities, DashboardService, debounce, Errors, Info, Modals, OutageService, ResourceService, Servers, util) {
 		$log.info('DashboardCtrl: Initializing.');
 
 		$scope.favoriteGraphsTemplate = favoriteGraphsTemplate;
 		$scope.availabilityTemplate = availabilityTemplate;
 
 		$scope.donuts = {};
+
+		$scope.supportsGraphs = Capabilities.graphs();
+		util.onInfoUpdated(function() {
+			$scope.supportsGraphs = Capabilities.graphs();
+		});
 
 		$scope.goToAlarms = function() {
 			$ionicViewSwitcher.nextDirection('back');

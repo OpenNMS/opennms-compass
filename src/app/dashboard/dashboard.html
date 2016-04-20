@@ -50,7 +50,7 @@
 			</div>
 		</div>
 
-		<ng-include src="favoriteGraphsTemplate" ng-if="favoriteGraphs &amp;&amp; favoriteGraphs.length > 0"></ng-include>
+		<ng-include src="favoriteGraphsTemplate" ng-if="supportsGraphs &amp;&amp; favoriteGraphs &amp;&amp; favoriteGraphs.length > 0"></ng-include>
 		<ng-include src="availabilityTemplate" ng-if="availability &amp;&amp; availability.length > 0"></ng-include>
 	</ion-content>
 	<ion-footer-bar class="bar-light">
