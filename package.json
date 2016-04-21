@@ -83,8 +83,11 @@
     },
     "cordova-plugin-screen-orientation",
     "cordova-plugin-crosswalk-webview",
-    "cordova-plugin-chrome-apps-system-memory",
-    "cordova-plugin-sqlite-2"
+    "cordova-plugin-sqlite-2",
+    {
+      "locator": "https://github.com/RangerRick/cordova-plugin-chrome-apps-system-memory.git#master",
+      "id": "cordova-plugin-chrome-apps-system-memory"
+    }
   ],
   "cordovaPlatforms": [
     {
