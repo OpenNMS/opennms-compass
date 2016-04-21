@@ -4,6 +4,7 @@ var angular = require('angular');
 
 var defaultInterval = 500;
 var defaultMaxRequests = 4;
+var defaultTimeout = 20000;
 
 angular.module('opennms.misc.Queue', [])
 .factory('Queue', function AngularQueue($interval, $log, $q, $rootScope) {
@@ -13,11 +14,12 @@ angular.module('opennms.misc.Queue', [])
 
 	function printQueueStats(queue, force) {
 		if (!__DEVELOPMENT__) { return; }
-		var req = queue.requests.length;
-		if (!force && queue.inFlight === 0 && req === 0) {
+		var pendinglen = queue.pending.length,
+			flightlen = queue.inFlight.length;
+		if (!force && pendinglen === 0 && flightlen === 0) {
 			return;
 		}
-		$log.debug('Queue.'+queue.name+': ' + queue.inFlight + ' in-flight, ' + req + ' pending');
+		$log.debug('Queue.'+queue.name+': ' + flightlen + ' in-flight, ' + pendinglen + ' pending');
 	}
 
 	function printQueuesStats(force) {
@@ -29,7 +31,9 @@ angular.module('opennms.misc.Queue', [])
 
 	function execute(request) {
 		//$log.info('HTTP.execute: request=' + angular.toJson(request));
-		request.queue.inFlight++;
+		request.started = Date.now();
+		$log.debug('Queue.' + request.queue.name + ': executing, latency=' + (request.started - request.added) + 'ms.');
+		request.queue.inFlight.push(request);
 		return $q.when(request.callback()).then(function(res) {
 			request.deferred.resolve(res);
 			return request.deferred.promise;
@@ -37,7 +41,7 @@ angular.module('opennms.misc.Queue', [])
 			request.deferred.reject(err);
 			return request.deferred.promise;
 		}).finally(function() {
-			request.queue.inFlight--;
+			request.queue.inFlight.remove(request);
 			printQueueStats(request.queue, true);
 		});
 	}
@@ -46,8 +50,18 @@ angular.module('opennms.misc.Queue', [])
 		printQueuesStats();
 		for (var i=0, len=queues.length, queue; i < len; i++) {
 			queue = queues[i];
-			while (queue.requests.length > 0 && queue.inFlight < queue.maxRequests) {
-				execute(queue.requests.shift());
+			var threshold = Date.now() - queue.timeout;
+			for (var f=queue.inFlight.length - 1, inFlight; f >= 0; f--) {
+				inFlight = queue.inFlight[f];
+				if (inFlight && inFlight.started < threshold) {
+					$log.warn('request timed out; this should not happen');
+					inFlight.deferred.reject('timed out');
+					delete queue.inFlight[f];
+				}
+			}
+			while (queue.pending.length > 0 && queue.inFlight.length < queue.maxRequests) {
+				var request = queue.pending.shift();
+				execute(request);
 			}
 		}
 	}
@@ -85,17 +99,19 @@ angular.module('opennms.misc.Queue', [])
 	function Queue(options) {
 		this.options = angular.copy(options || {});
 		this.name = options.name || Date.now();
-		this.requests = [];
-		this.inFlight = 0;
+		this.pending = [];
+		this.inFlight = [];
 		this.maxRequests = this.options.maxRequests || defaultMaxRequests;
+		this.timeout = this.options.timeout || defaultTimeout;
 	}
 	Queue.prototype.add = function addToQueue(callback) {
 		var self = this,
 			deferred = $q.defer();
-		self.requests.push({
+		self.pending.push({
 			queue: self,
 			deferred: deferred,
-			callback: callback
+			callback: callback,
+			added: Date.now()
 		});
 		return deferred.promise;
 	};
