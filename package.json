@@ -83,7 +83,8 @@
     },
     "cordova-plugin-screen-orientation",
     "cordova-plugin-crosswalk-webview",
-    "cordova-plugin-chrome-apps-system-memory"
+    "cordova-plugin-chrome-apps-system-memory",
+    "cordova-plugin-sqlite-2"
   ],
   "cordovaPlatforms": [
     {
