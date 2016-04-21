@@ -28,7 +28,7 @@ angular.module('opennms.misc.OnmsGraph', [
 
 	var graphQueue = Queue.create({
 		name: 'OnmsGraph',
-		maxRequests: 2
+		maxRequests: 1
 	});
 
 	var getWidth = function() {
@@ -51,8 +51,10 @@ angular.module('opennms.misc.OnmsGraph', [
 		scope: {
 			resourceId: '=',
 			graphDef: '=',
-			range: '=range',
-			display: '=display'
+			range: '=',
+			shouldDisplay: '=display',
+			shouldRender: '=render',
+			shouldShowDates: '=showDates'
 		},
 		replace: true,
 		templateUrl: onmsGraphTemplate,
@@ -146,6 +148,7 @@ angular.module('opennms.misc.OnmsGraph', [
 
 			$scope.renderGraph = function() {
 				$log.debug('OnmsGraph.renderGraph(): called.');
+
 				if (!$scope.ds)                { return $q.when(); }
 				if (!$scope.graphModel)        { return $q.when(); }
 				if (!$scope.graphModel.series) { return $q.when(); }
@@ -221,7 +224,7 @@ angular.module('opennms.misc.OnmsGraph', [
 				$scope.graph.start                 = $scope.range.start.getTime();
 				$scope.graph.end                   = $scope.range.end.getTime();
 
-				if ($scope.display) {
+				if ($scope.shouldDisplay && $scope.shouldRender) {
 					$log.debug('OnmsGraph.renderGraph(): graph.begin(): ' + description);
 					$scope.graph.begin();
 				} else {
@@ -231,6 +234,10 @@ angular.module('opennms.misc.OnmsGraph', [
 				}
 
 				return deferred.promise.then(function() {
+					$rootScope.$broadcast('opennms.graph.rendered', {
+						resourceId: $scope.resourceId,
+						graph: $scope.graphDef
+					});
 					$scope.$broadcast('scroll.refreshComplete');
 					return true;
 				});
@@ -241,7 +248,7 @@ angular.module('opennms.misc.OnmsGraph', [
 				var description = getGraphDescription();
 				return $scope.createGraph().finally(function() {
 					if ($scope.graph) {
-						if ($scope.display) {
+						if ($scope.shouldDisplay && $scope.shouldRender) {
 							$log.debug('OnmsGraph.refresh(): graph.begin(): ' + description);
 							$scope.graph.begin();
 						} else {
@@ -292,9 +299,8 @@ angular.module('opennms.misc.OnmsGraph', [
 			$scope.$watchGroup(['width', 'height'], function(newValue, oldValue) {
 				setDirtyAndRedraw(newValue, oldValue, 'width/height');
 			});
-			$scope.$watch('display', function(newValue, oldValue) {
-				setDirtyAndRedraw(newValue, oldValue, 'display');
-				$scope.redraw();
+			$scope.$watchGroup(['shouldDisplay', 'shouldRender', 'shouldShowDates'], function(newValue, oldValue) {
+				setDirtyAndRedraw(newValue, oldValue, 'display/render/showDates');
 			});
 
 			$scope.$on('resize', function(ev, info) {

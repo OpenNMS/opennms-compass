@@ -1,6 +1,6 @@
 <div class="onms-graph">
 	<div class="graph"></div>
-	<div class="row picker">
+	<div class="row picker" ng-if="shouldShowDates">
 		<div class="col datepicker" style="text-align: left" ng-click="editDate('start')">
 			Start: <span class="datetime">{{range.start | date : 'short' }} <i class="icon ion-clock"></i></span>
 		</div>

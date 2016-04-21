@@ -3,7 +3,6 @@
 
 	var angular = require('angular'),
 		moment = require('moment'),
-		Backshift = require('backshift/dist/backshift.onms'),
 		$ = require('jquery');
 
 	require('./NodeService');
@@ -36,8 +35,11 @@
 	.controller('NodeResourceCtrl', function($q, $scope, $injector, $log, $timeout, $ionicScrollDelegate, $window, NodeService, ResourceService, util) {
 		$log.info('NodeResourceCtrl: initializing.');
 		$scope.util = util;
+		$scope.shouldRender = false;
+		$scope.ready = {};
 
 		var defaultRange = $injector.get('default-graph-range');
+		//var defaultRange = 60 * 60 * 1000;
 
 		var findElementById = function(id) {
 			var elm, scrollEl, position = 0;
@@ -126,6 +128,7 @@
 					for (var i=0, len=graphs.length; i < len; i++) {
 						p.push(ResourceService.graph(graphs[i]));
 					}
+					$scope.ready = {};
 					return $q.all(p).then(function(graphDefs) {
 						$scope.graphDefinitions = graphDefs;
 						if (graphDefs && graphDefs.length && graphDefs.length > 0) {
@@ -192,6 +195,35 @@
 			$scope.children = [];
 			$scope.node = {};
 		};
+
+		$scope.$on('opennms.graph.rendered', function(ev, info) {
+			$scope.ready[info.graph.name]++;
+
+			var ready = Object.keys($scope.ready).sort();
+			var graphs = $scope.graphDefinitions.map(function(def) {
+				return def.name;
+			}).sort();
+
+			var gdlen = $scope.graphDefinitions.length;
+
+			var difference = ready.filter(function(name) {
+				return graphs.indexOf(name) === -1;
+			}).concat(graphs.filter(function(name) {
+				return ready.indexOf(name) === -1;
+			}));
+
+			if (gdlen > 0 && difference.length === 0) {
+				if ($scope.shouldRender === false) {
+					$scope.shouldRender = true;
+					$scope.$broadcast('opennms.refreshGraphs');
+				}
+			} else {
+				$scope.shouldRender = false;
+			}
+		});
+
+		util.onInfoUpdated($scope.refreshGraphs);
+		util.onDefaultServerUpdated($scope.refreshGraphs);
 
 		var lazyReset;
 		$scope.$on('$ionicView.beforeEnter', function(ev, info) {
