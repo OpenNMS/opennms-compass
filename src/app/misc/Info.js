@@ -16,7 +16,7 @@
 		numericVersion: 0.0,
 		displayVersion: 'Unknown',
 		packageName: 'opennms',
-		packageDescription: 'OpenNMS',
+		packageDescription: 'OpenNMS Horizon',
 		memory: 1000000000
 	};
 
@@ -58,6 +58,9 @@
 				angular.extend(newInfo, data);
 				if (memory) {
 					newInfo.memory = memory;
+				}
+				if (newInfo.packageDescription === 'OpenNMS' && newInfo.version !== '0.0.0') {
+					newInfo.packageDescription = 'OpenNMS Horizon';
 				}
 
 				existingPromise.resolve(newInfo);
@@ -104,19 +107,24 @@
 		util.onServersUpdated(updateInfo);
 		$timeout(updateInfo);
 
+		function validateVersion(version) {
+			return VersionCompare.gte($injector.get('info').version, version);
+		}
+		function get() {
+			return $injector.get('info');
+		}
+		function getInitialized() {
+			return current.promise;
+		}
+		function isMeridian() {
+			return get().packageName === 'meridian';
+		}
+
 		return {
-			get: function() {
-				return $injector.get('info');
-			},
-			getInitialized: function() {
-				return current.promise;
-			},
-			validateVersion: function(version) {
-				return VersionCompare.gte($injector.get('info').version, version);
-			},
-			isMeridian: function() {
-				return $injector.get('info').packageName === 'meridian';
-			}
+			get: get,
+			getInitialized: getInitialized,
+			validateVersion: validateVersion,
+			isMeridian: isMeridian
 		};
 	})
 	;
