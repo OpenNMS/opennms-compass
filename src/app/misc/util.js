@@ -64,7 +64,7 @@
 			serverRemoved: serverRemoved
 		};
 	})
-	.factory('UtilEventHandler', function($rootScope, $log) {
+	.factory('UtilEventHandler', function($ionicHistory, $log, $rootScope) {
 		var eventListeners = {
 		};
 
@@ -181,6 +181,25 @@
 			}
 		});
 
+		document.addEventListener('lowMemory', function() {
+			if (eventListeners['opennms.low-memory']) {
+				var currentView = $ionicHistory.currentView();
+				if (__DEVELOPMENT__) { $log.debug('util.onLowMemory: current view is: ' + currentView.stateName); }
+				$rootScope.$evalAsync(function() {
+					for (var i=0, len=eventListeners['opennms.low-memory'].length, listener, stateName, callback; i < len; i++) {
+						listener = eventListeners['opennms.low-memory'][i];
+						stateName = listener[0];
+						callback = listener[1];
+						if (currentView.stateName === stateName) {
+							$log.debug('util.onLowMemory: skipping currently active ' + stateName);
+						} else {
+							callback(currentView);
+						}
+					}
+				});
+			}
+		});
+
 		return {
 			onDirty: function(type, f) {
 				if (!eventListeners['opennms.dirty']) {
@@ -214,6 +233,9 @@
 			},
 			onSettingsUpdated: function(f) {
 				addListener('opennms.settings.updated', f);
+			},
+			onLowMemory: function(stateName, f) {
+				addListener('opennms.low-memory', [stateName, f]);
 			}
 		};
 	})
@@ -326,7 +348,8 @@
 			onServersUpdated: UtilEventHandler.onServersUpdated,
 			onDefaultServerUpdated: UtilEventHandler.onDefaultServerUpdated,
 			onServerRemoved: UtilEventHandler.onServerRemoved,
-			onSettingsUpdated: UtilEventHandler.onSettingsUpdated
+			onSettingsUpdated: UtilEventHandler.onSettingsUpdated,
+			onLowMemory: UtilEventHandler.onLowMemory
 		};
 	});
 

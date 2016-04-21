@@ -12,6 +12,7 @@
 
 	require('../settings/SettingsService');
 
+	require('../misc/Capabilities');
 	require('../misc/OnmsGraph');
 	require('../misc/util');
 
@@ -22,6 +23,7 @@
 		'angularLocalStorage',
 		'rt.debounce',
 		'opennms.misc.OnmsGraph',
+		'opennms.services.Capabilities',
 		'opennms.services.Nodes',
 		'opennms.services.Resources',
 		'opennms.services.Settings', // for default-graph-min-range
@@ -35,7 +37,7 @@
 			controller: 'NodeResourceCtrl'
 		});
 	})
-	.controller('NodeResourceCtrl', function($q, $scope, $injector, $log, $timeout, $ionicScrollDelegate, $window, debounce, NodeService, ResourceService, util) {
+	.controller('NodeResourceCtrl', function($q, $scope, $injector, $log, $timeout, $ionicScrollDelegate, $window, Capabilities, debounce, NodeService, ResourceService, util) {
 		$log.info('NodeResourceCtrl: initializing.');
 		$scope.util = util;
 		$scope.shouldRender = false;
@@ -193,7 +195,7 @@
 			}
 		};
 
-		var resetModel = function() {
+		var resetData = function() {
 			$scope.graphDefinitions = [];
 			$scope.children = [];
 			$scope.node = {};
@@ -208,12 +210,7 @@
 			}).sort();
 
 			var gdlen = $scope.graphDefinitions.length;
-
-			var difference = ready.filter(function(name) {
-				return graphs.indexOf(name) === -1;
-			}).concat(graphs.filter(function(name) {
-				return ready.indexOf(name) === -1;
-			}));
+			var difference = ready.difference(graphs);
 
 			if (gdlen > 0 && difference.length === 0) {
 				if ($scope.shouldRender === false) {
@@ -228,6 +225,11 @@
 		var delayedRefresh = debounce(500, $scope.refreshGraphs);
 		util.onInfoUpdated(delayedRefresh);
 		util.onDefaultServerUpdated(delayedRefresh);
+
+		util.onLowMemory('node-resource', function(currentView) {
+			$log.debug('NodeResourceCtrl: resetting data because of low memory.');
+			resetData();
+		});
 
 		var lazyReset;
 		$scope.$on('$ionicView.beforeEnter', function(ev, info) {
@@ -247,11 +249,15 @@
 			$scope.refreshGraphs();
 		});
 		$scope.$on('$ionicView.afterLeave', function() {
-			lazyReset = $timeout(function() {
-				if (__DEVELOPMENT__) { $log.debug('info=' + angular.toJson(info)); }
-				$log.debug('NodeResourceCtrl: leaving node resource view; cleaning up.');
-				resetModel();
-			}, 10000);
+			if (Capabilities.lowMemory()) {
+				resetData();
+			} else {
+				lazyReset = $timeout(function() {
+					if (__DEVELOPMENT__) { $log.debug('info=' + angular.toJson(info)); }
+					$log.debug('NodeResourceCtrl: leaving node resource view; cleaning up.');
+					resetData();
+				}, 10000);
+			}
 		});
 	});
 

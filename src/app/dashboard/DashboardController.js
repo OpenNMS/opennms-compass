@@ -362,14 +362,14 @@
 			});
 		});
 
-		$scope.resetData = function() {
+		function resetData() {
 			$log.debug('DashboardCtrl.resetData()');
 			//$scope.server = null;
 			resetAvailability();
 			resetOutages();
 			resetAlarms();
 			resetFavorites();
-		};
+		}
 
 		$scope.unfavorite = function(favorite) {
 			var graphTitle = $scope.graphs && $scope.graphs[favorite.graphName]? $scope.graphs[favorite.graphName].title : 'graph';
@@ -426,7 +426,7 @@
 		}).then(function(popover) {
 			popover.scope.selectServer = function(server) {
 				popover.hide();
-				$scope.resetData();
+				resetData();
 				updateDonuts();
 				updateDonuts.flush();
 				$scope.server = server;
@@ -469,7 +469,7 @@
 			} else {
 				Cache.remove('dashboard-default-server');
 				$scope.server = null;
-				$scope.resetData();
+				resetData();
 			}
 		});
 
@@ -507,6 +507,11 @@
 
 		document.addEventListener('resume', $scope.refreshData, false);
 
+		util.onLowMemory('dashboard', function(currentView) {
+			$log.debug('DashboardCtrl: resetting data because of low memory.');
+			resetData();
+		});
+
 		var lazyReset;
 		$scope.$on('$ionicView.beforeEnter', function(ev, info) {
 			$scope.visible = true;
@@ -517,7 +522,7 @@
 			$scope.visible = false;
 			lazyReset = $timeout(function() {
 				$log.debug('DashboardController: view is stale, resetting data.');
-				$scope.resetData();
+				resetData();
 			}, 10000);
 		});
 	});

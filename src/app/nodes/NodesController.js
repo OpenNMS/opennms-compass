@@ -8,9 +8,8 @@
 
 	require('./NodeService');
 
-	require('../db/db');
-
 	require('../misc/Cache');
+	require('../misc/Capabilities');
 	require('../misc/Errors');
 	require('../misc/util');
 
@@ -22,7 +21,7 @@
 		'angularLocalStorage',
 		'rt.debounce',
 		'opennms.misc.Cache',
-		'opennms.services.DB',
+		'opennms.services.Capabilities',
 		'opennms.services.Errors',
 		'opennms.services.Nodes',
 		'opennms.services.Util'
@@ -35,7 +34,7 @@
 			controller: 'NodesCtrl'
 		});
 	})
-	.controller('NodesCtrl', function($ionicLoading, $log, $q, $scope, $state, $timeout, $window, Cache, db, debounce, Errors, NodeService, storage, util) {
+	.controller('NodesCtrl', function($ionicLoading, $log, $q, $scope, $state, $timeout, $window, Cache, Capabilities, debounce, Errors, NodeService, storage, util) {
 		$log.info('NodesCtrl: initializing.');
 
 		$scope.searching = false;
@@ -44,8 +43,6 @@
 		$scope.nodes = [];
 		var emptyPromise = $q.when();
 		var lastSearch = emptyPromise;
-
-		var nodesdb = db.get('nodes');
 
 		var lower = function(s) {
 			if (s) {
@@ -113,12 +110,21 @@
 			$scope.delayedSearch();
 		};
 
+		function resetData() {
+			$scope.searching = false;
+			$scope.nodes = [];
+		}
+
 		$scope.$watch('searchString', function(newValue) {
 			storage.set('opennms.nodes.search-string', newValue);
 			$scope.delayedSearch();
 		});
 
 		util.onSettingsUpdated($scope.delayedSearch);
+		util.onLowMemory('nodes', function(currentView) {
+			$log.debug('NodesCtrl: resetting data because of low memory.');
+			resetData();
+		});
 
 		var lazyReset;
 		$scope.$on('$ionicView.beforeEnter', function() {
@@ -126,10 +132,11 @@
 			$scope.delayedSearch();
 		});
 		$scope.$on('$ionicView.afterLeave', function() {
-			lazyReset = $timeout(function() {
-				$scope.searching = false;
-				$scope.nodes = [];
-			}, 10000);
+			if (Capabilities.lowMemory()) {
+				resetData();
+			} else {
+				lazyReset = $timeout(resetData, 10000);
+			}
 		});
 	});
 

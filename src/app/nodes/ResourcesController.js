@@ -5,13 +5,33 @@
 
 	require('./ResourceService');
 
+	require('../misc/Capabilities');
 	require('../misc/util');
 
 	var nodeResourcesTemplate = require('ngtemplate!./node-resources.html');
 
+	var sortResources = function(a,b) {
+		//$log.debug('sortResources: a=' + angular.toJson(a));
+		//$log.debug('sortResources: b=' + angular.toJson(b));
+		if (a.typeLabel) {
+			if (b.typeLabel) {
+				return a.typeLabel.localeCompare(b.typeLabel);
+			} else {
+				return -1;
+			}
+		} else {
+			if (b.typeLabel) {
+				return 1;
+			} else {
+				return 0;
+			}
+		}
+	};
+
 	angular.module('opennms.controllers.NodeResources', [
 		'ionic',
 		'angularLocalStorage',
+		'opennms.services.Capabilities',
 		'opennms.services.Resources',
 		'opennms.services.Util'
 	])
@@ -23,26 +43,8 @@
 			controller: 'NodeResourcesCtrl'
 		});
 	})
-	.controller('NodeResourcesCtrl', function($log, $q, $scope, $timeout, ResourceService, util) {
+	.controller('NodeResourcesCtrl', function($log, $q, $scope, $timeout, Capabilities, ResourceService, util) {
 		$log.info('NodeResourcesCtrl: initializing.');
-
-		var sortFunction = function(a,b) {
-			//$log.debug('sortFunction: a=' + angular.toJson(a));
-			//$log.debug('sortFunction: b=' + angular.toJson(b));
-			if (a.typeLabel) {
-				if (b.typeLabel) {
-					return a.typeLabel.localeCompare(b.typeLabel);
-				} else {
-					return -1;
-				}
-			} else {
-				if (b.typeLabel) {
-					return 1;
-				} else {
-					return 0;
-				}
-			}
-		};
 
 		$scope.util = util;
 		$scope.refresh = function() {
@@ -51,7 +53,7 @@
 				ResourceService.resources($scope.nodeId).then(function(ret) {
 					$scope.resourceLabel = ret.label;
 					var children = ret.children;
-					children.sort(sortFunction);
+					children.sort(sortResources);
 					$scope.resources = ResourceService.withDividers(children);
 				}, function(err) {
 					$log.error('NodeResources.refresh: failed: ' + angular.toJson(err));
@@ -65,9 +67,14 @@
 			}
 		};
 
-		var resetModel = function() {
+		var resetData = function() {
 			$scope.resources = [];
 		};
+
+		util.onLowMemory('node-resources', function(currentView) {
+			$log.debug('NodeResourcesCtrl: resetting data because of low memory.');
+			resetData();
+		});
 
 		var lazyReset;
 		$scope.$on('$ionicView.beforeEnter', function(ev, info) {
@@ -81,9 +88,11 @@
 			$scope.refresh();
 		});
 		$scope.$on('$ionicView.afterLeave', function() {
-			lazyReset = $timeout(function() {
-				resetModel();
-			}, 10000);
+			if (Capabilities.lowMemory()) {
+				resetData();
+			} else {
+				lazyReset = $timeout(resetData, 10000);
+			}
 		});
 	});
 

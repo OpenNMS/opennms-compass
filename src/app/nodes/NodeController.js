@@ -75,7 +75,7 @@
 
 		$scope.leaflet = angular.copy(leafletDefaults);
 
-		var resetModel = function() {
+		var resetData = function() {
 			$scope.loaded = false;
 			$scope.node = {};
 			$scope.canUpdateGeolocation = false;
@@ -296,10 +296,14 @@
 		var lastServer = {};
 		util.onDefaultServerUpdated(function(defaultServer) {
 			if (lastServer.name !== defaultServer.name) {
-				resetModel();
+				resetData();
 			}
 			lastServer = defaultServer || {};
 			$scope.refresh();
+		});
+		util.onLowMemory('node-detail', function(currentView) {
+			$log.debug('NodeCtrl: resetting data because of low memory.');
+			resetData();
 		});
 
 		var lazyReset;
@@ -314,9 +318,11 @@
 			$scope.refresh();
 		});
 		$scope.$on('$ionicView.afterLeave', function() {
-			lazyReset = $timeout(function() {
-				resetModel();
-			}, 10000);
+			if (Capabilities.lowMemory()) {
+				resetData();
+			} else {
+				lazyReset = $timeout(resetData, 10000);
+			}
 		});
 	});
 
