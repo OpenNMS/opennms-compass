@@ -28,7 +28,7 @@ angular.module('opennms.misc.OnmsGraph', [
 
 	var graphQueue = Queue.create({
 		name: 'OnmsGraph',
-		maxRequests: 1
+		maxRequests: 2
 	});
 
 	var getWidth = function() {
@@ -179,7 +179,9 @@ angular.module('opennms.misc.OnmsGraph', [
 				if ($scope.graph) {
 					$log.debug('Graph exists: ' + description);
 					$scope.graph.onAfterQuery = function() {
-						deferred.resolve(true);
+						$rootScope.$evalAsync(function() {
+							deferred.resolve(true);
+						});
 					}
 				} else {
 					$log.debug('Rendering graph: ' + description);
@@ -209,43 +211,69 @@ angular.module('opennms.misc.OnmsGraph', [
 					});
 
 					$scope.graph.onAfterQuery = function() {
-						deferred.resolve(true);
+						$rootScope.$evalAsync(function() {
+							deferred.resolve(true);
+						});
 					}
 					$scope.graph.render();
+					$scope.graph._last = {};
 				}
 
-				/*
-				$scope.graph.dataSource            = $scope.ds;
-				$scope.graph.model                 = $scope.model || {};
-				$scope.graph.model.metrics         = $scope.graph.model.metrics || {};
-				$scope.graph.model.series          = $scope.graph.model.series || {};
-				$scope.graph.model.printStatements = $scope.graph.model.printStatements || {};
-				*/
-				$scope.graph.start                 = $scope.range.start.getTime();
-				$scope.graph.end                   = $scope.range.end.getTime();
+				var newStart = $scope.range.start.getTime();
+				var newEnd   = $scope.range.end.getTime();
+
+				if (angular.equals($scope.graph._last.start,         newStart) &&
+					angular.equals($scope.graph._last.end,           newEnd) &&
+					angular.equals($scope.graph._last.shouldDisplay, $scope.shouldDisplay) &&
+					angular.equals($scope.graph._last.shouldRender,  $scope.shouldRender) &&
+					angular.equals($scope.graph._last.size,          $scope.width) &&
+					angular.equals($scope.graph._last.ds,            $scope.ds) &&
+					angular.equals($scope.graph._last.graphModel,    $scope.graphModel)
+				) {
+					$log.warn('OnmsGraph.renderGraph(): graph inputs are unchanged.');
+					deferred.resolve(true);
+					$scope.$broadcast('scroll.refreshComplete');
+					return;
+				} else {
+					$log.warn('OnmsGraph.renderGraph(): graph inputs are changed.');
+				}
 
 				if ($scope.shouldDisplay && $scope.shouldRender) {
 					$log.debug('OnmsGraph.renderGraph(): graph.begin(): ' + description);
 					$scope.graph.begin();
 				} else {
 					$log.debug('OnmsGraph.renderGraph(): graph.onQuerySuccess(): ' + description);
-					$scope.graph.onQuerySuccess();
+					$scope.graph.cancel();
+					//$scope.graph.onQuerySuccess();
 					deferred.resolve(true);
 				}
 
 				return deferred.promise.then(function() {
+					$scope.graph._last = {
+						start: newStart,
+						end: newEnd,
+						shouldDisplay: $scope.shouldDisplay,
+						shouldRender: $scope.shouldRender,
+						size: $scope.width,
+						ds: $scope.ds,
+						graphModel: $scope.graphModel
+					};
 					$rootScope.$broadcast('opennms.graph.rendered', {
 						resourceId: $scope.resourceId,
 						graph: $scope.graphDef
 					});
 					$scope.$broadcast('scroll.refreshComplete');
 					return true;
+				}).catch(function(err) {
+					return $q.reject(err);
 				});
 			};
 
 			$scope.refresh = function() {
 				$log.debug('OnmsGraph.refresh()');
 				var description = getGraphDescription();
+				return $scope.createGraph();
+				/*
 				return $scope.createGraph().finally(function() {
 					if ($scope.graph) {
 						if ($scope.shouldDisplay && $scope.shouldRender) {
@@ -257,6 +285,7 @@ angular.module('opennms.misc.OnmsGraph', [
 						}
 					}
 				});
+				*/
 			};
 
 			$scope.redraw = debounce(100, $scope.refresh);
@@ -276,14 +305,13 @@ angular.module('opennms.misc.OnmsGraph', [
 				$scope.redraw();
 			}, true);
 
-			var redrawDirty = debounce(100, $scope.redraw);
 			var setDirtyAndRedraw = function(updated, previous, type) {
 				if (angular.isArray(updated)) {
 					for (var i=0, len=updated.length; i < len; i++) {
 						if (previous[i] && !angular.equals(previous[i], updated[i])) {
 							$log.debug('OnmsGraph: dirty' + (type? ': ' + type : ''));
 							$scope.dirty = true;
-							redrawDirty();
+							$scope.redraw();
 							return;
 						}
 					}
@@ -291,7 +319,7 @@ angular.module('opennms.misc.OnmsGraph', [
 					if (previous && !angular.equals(previous, updated)) {
 						$log.debug('OnmsGraph: dirty' + (type? ': ' + type : ''));
 						$scope.dirty = true;
-						redrawDirty();
+						$scope.redraw();
 					}
 				}
 			};
@@ -300,7 +328,8 @@ angular.module('opennms.misc.OnmsGraph', [
 				setDirtyAndRedraw(newValue, oldValue, 'width/height');
 			});
 			$scope.$watchGroup(['shouldDisplay', 'shouldRender', 'shouldShowDates'], function(newValue, oldValue) {
-				setDirtyAndRedraw(newValue, oldValue, 'display/render/showDates');
+				//setDirtyAndRedraw(newValue, oldValue, 'display/render/showDates');
+				$scope.redraw();
 			});
 
 			$scope.$on('resize', function(ev, info) {

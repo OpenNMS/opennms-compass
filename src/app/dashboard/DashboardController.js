@@ -21,6 +21,7 @@
 	require('../misc/Info');
 	require('../misc/Modals');
 	require('../misc/OnmsGraph');
+	require('../misc/Queue');
 	require('../misc/util');
 
 	var dashboardTemplate = require('ngtemplate!./dashboard.html');
@@ -51,6 +52,7 @@
 		'opennms.dashboard.Service',
 		'opennms.misc.Cache',
 		'opennms.misc.OnmsGraph',
+		'opennms.misc.Queue',
 		'opennms.services.Alarms',
 		'opennms.services.Availability',
 		'opennms.services.Capabilities',
@@ -74,7 +76,7 @@
 			controller: 'DashboardCtrl'
 		});
 	})
-	.controller('DashboardCtrl', function($document, $injector, $interval, $ionicLoading, $ionicPopup, $ionicPopover, $ionicSlideBoxDelegate, $ionicViewSwitcher, $log, $q, $rootScope, $scope, $state, $timeout, $window, AlarmService, AvailabilityService, Cache, Capabilities, DashboardService, debounce, Errors, Info, Modals, OutageService, ResourceService, Servers, util) {
+	.controller('DashboardCtrl', function($document, $injector, $interval, $ionicLoading, $ionicPopup, $ionicPopover, $ionicSlideBoxDelegate, $ionicViewSwitcher, $log, $q, $rootScope, $scope, $state, $timeout, $window, AlarmService, AvailabilityService, Cache, Capabilities, DashboardService, debounce, Errors, Info, Modals, OutageService, Queue, ResourceService, Servers, util) {
 		$log.info('DashboardCtrl: Initializing.');
 
 		$scope.favoriteGraphsTemplate = favoriteGraphsTemplate;
@@ -394,7 +396,9 @@
 		};
 
 		$scope.refreshGraphSlide = function(index) {
-			$scope.currentGraphSlide = index;
+			if (index !== $scope.currentGraphSlide) {
+				$scope.currentGraphSlide = index;
+			}
 		};
 
 		$scope.shouldRenderGraph = function(index) {
