@@ -5,6 +5,8 @@
 		moment = require('moment'),
 		$ = require('jquery');
 
+	require('angular-debounce');
+
 	require('./NodeService');
 	require('./ResourceService');
 
@@ -18,6 +20,7 @@
 	angular.module('opennms.controllers.NodeResource', [
 		'ionic',
 		'angularLocalStorage',
+		'rt.debounce',
 		'opennms.misc.OnmsGraph',
 		'opennms.services.Nodes',
 		'opennms.services.Resources',
@@ -32,7 +35,7 @@
 			controller: 'NodeResourceCtrl'
 		});
 	})
-	.controller('NodeResourceCtrl', function($q, $scope, $injector, $log, $timeout, $ionicScrollDelegate, $window, NodeService, ResourceService, util) {
+	.controller('NodeResourceCtrl', function($q, $scope, $injector, $log, $timeout, $ionicScrollDelegate, $window, debounce, NodeService, ResourceService, util) {
 		$log.info('NodeResourceCtrl: initializing.');
 		$scope.util = util;
 		$scope.shouldRender = false;
@@ -222,8 +225,9 @@
 			}
 		});
 
-		util.onInfoUpdated($scope.refreshGraphs);
-		util.onDefaultServerUpdated($scope.refreshGraphs);
+		var delayedRefresh = debounce(500, $scope.refreshGraphs);
+		util.onInfoUpdated(delayedRefresh);
+		util.onDefaultServerUpdated(delayedRefresh);
 
 		var lazyReset;
 		$scope.$on('$ionicView.beforeEnter', function(ev, info) {
