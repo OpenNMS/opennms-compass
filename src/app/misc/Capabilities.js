@@ -18,9 +18,16 @@ angular.module('opennms.services.Capabilities', [
 		return Info.validateVersion('14.0.0');
 	}
 
+	function hasLowMemory() {
+		return Info.get().memory < 1000000000;
+	}
+
 	function hasGraphs() {
-		if (Info.get().memory < 1000000000) {
-			return false;
+		if (hasLowMemory()) {
+			// in development, allow low-memory devices to graph, for testing
+			if (!__DEVELOPMENT__) {
+				return false;
+			}
 		}
 		if (Info.isMeridian()) {
 			return Info.validateVersion('2016.1.0');
@@ -50,6 +57,7 @@ angular.module('opennms.services.Capabilities', [
 
 	function getAll() {
 		return {
+			lowMemory: hasLowMemory(),
 			ackAlarms: canAckAlarms(),
 			graphs: hasGraphs(),
 			outageSummaries: hasOutageSummaries(),
@@ -59,6 +67,7 @@ angular.module('opennms.services.Capabilities', [
 
 	return {
 		get: getAll,
+		lowMemory: hasLowMemory,
 		ackAlarms: canAckAlarms,
 		graphs: hasGraphs,
 		outageSummaries: hasOutageSummaries,
