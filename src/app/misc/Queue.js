@@ -95,6 +95,11 @@ angular.module('opennms.misc.Queue', [])
 		queues.push(q);
 		return q;
 	}
+	function get(name) {
+		return queues.filter(function(queue) {
+			return queue.name === name;
+		})[0];
+	}
 
 	function Queue(options) {
 		this.options = angular.copy(options || {});
@@ -115,6 +120,13 @@ angular.module('opennms.misc.Queue', [])
 		});
 		return deferred.promise;
 	};
+	Queue.prototype.clear = function clear() {
+		var len = this.pending.length;
+		if (len > 0) {
+			$log.debug('Queue.' + this.name + ': clearing ' + len + ' entries.');
+			this.pending = [];
+		}
+	};
 
 	start();
 
@@ -132,6 +144,7 @@ angular.module('opennms.misc.Queue', [])
 			interval = int;
 		},
 		create: create,
+		get: get,
 		start: start,
 		stop: stop
 	};
