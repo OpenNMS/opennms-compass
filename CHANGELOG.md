@@ -1,5 +1,21 @@
 <a name="2.1.0"></a>
-# [2.1.0](https://github.com/OpenNMS/opennms-compass/compare/v2.1.0-400...v2.1.0) (2016-04-20)
+# [2.1.0](https://github.com/OpenNMS/opennms-compass/compare/v2.1.0-401...v2.1.0) (2016-04-21)
+
+
+### Features
+
+* add low-memory handling ([13c1327](https://github.com/OpenNMS/opennms-compass/commit/13c1327))
+
+### Performance Improvements
+
+* **graphs:** avoid rerenders ([198662f](https://github.com/OpenNMS/opennms-compass/commit/198662f))
+* **graphs:** incrementally render after all graphs have initialized ([a49c6e2](https://github.com/OpenNMS/opennms-compass/commit/a49c6e2))
+* **ios:** use SQLite2 plugin rather than webSQL (this will reset servers & favorites) ([1644289](https://github.com/OpenNMS/opennms-compass/commit/1644289))
+
+
+
+<a name="2.1.0-401"></a>
+# [2.1.0-401](https://github.com/OpenNMS/opennms-compass/compare/v2.1.0-400...v2.1.0-401) (2016-04-20)
 
 
 ### Bug Fixes
