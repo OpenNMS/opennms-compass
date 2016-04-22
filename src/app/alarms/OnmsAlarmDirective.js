@@ -95,7 +95,10 @@ angular.module('opennms.alarms.Directive', [
 				e.preventDefault();
 				e.stopPropagation();
 				if (alarm.ackUser) {
+					var oldAckUser = alarm.ackUser;
+					alarm.ackUser = undefined;
 					AlarmService.unacknowledge(alarm).catch(function(err) {
+						alarm.ackUser = oldAckUser;
 						if (err.permissionDenied()) {
 							$ionicPopup.alert({
 								title: 'Permission Denied',
@@ -106,7 +109,9 @@ angular.module('opennms.alarms.Directive', [
 						}
 					});
 				} else {
+					alarm.ackUser = 'unknown';
 					AlarmService.acknowledge(alarm).catch(function(err) {
+						alarm.ackUser = undefined;
 						if (err.permissionDenied()) {
 							$ionicPopup.alert({
 								title: 'Permission Denied',
@@ -132,7 +137,10 @@ angular.module('opennms.alarms.Directive', [
 			$scope.clear = function(alarm, e) {
 				e.preventDefault();
 				e.stopPropagation();
+				var oldSeverity = alarm.severity;
+				alarm.severity = 'CLEARED';
 				AlarmService.clear(alarm).catch(function(err) {
+					alarm.severity = oldSeverity;
 					if (err.permissionDenied()) {
 						$ionicPopup.alert({
 							title: 'Permission Denied',
