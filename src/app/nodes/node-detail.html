@@ -1,6 +1,14 @@
-<ion-view view-title="Node Detail" class="node-detail">
+<style>
+	.node-detail .spinner.spinner-main svg {
+		width: 16px;
+		height: 16px;
+		float: right;
+	}
+</style>
+<ion-view class="node-detail">
 	<ion-nav-bar class="bar-light" align-title="center">
 		<ion-nav-back-button class="button-compass button-clear" on-hold="util.dashboard('back')"></ion-nav-back-button>
+		<ion-nav-title>Node Detail</ion-nav-title>
 		<ion-nav-buttons side="secondary">
 			<button class="button button-compass button-clear" nav-direction="forward" ui-sref="node-resources({node: node.id})" ng-if="showGraphButton"><i class="icon ion-stats-bars"></i></button>
 		</ion-nav-buttons>
@@ -9,7 +17,7 @@
 		<ion-refresher pulling-text="Pull to Refresh..." on-refresh="refresh()"></ion-refresher>
 		<ion-list>
 			<ion-item class="item-divider item-compass">
-				Node Detail
+				Node Detail <ion-spinner ng-if="loading" class="spinner-stable spinner-main"></ion-spinner>
 			</ion-item>
 			<ion-item class="row item-text-wrap">
 				<div class="col col-33">Label:</div>
@@ -31,7 +39,7 @@
 				<ion-item class="item-divider item-compass">
 					SNMP Attributes
 				</ion-item>
-				<ion-item class="row item-text-wrap"><div class="col"><ion-spinner></ion-spinner></div></ion-item>
+				<ion-item class="row item-text-wrap"><div class="col"><ion-spinner class="spinner-compass"></ion-spinner></div></ion-item>
 				<!--
 				<ion-item class="row item-text-wrap"><div class="col">&nbsp;</div></ion-item>
 				<ion-item class="row item-text-wrap"><div class="col">&nbsp;</div></ion-item>

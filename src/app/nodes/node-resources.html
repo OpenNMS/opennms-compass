@@ -1,10 +1,15 @@
-<ion-view view-title="{{resourceLabel}}" class="node-resources">
+<ion-view class="node-resources">
 	<ion-nav-bar class="bar-light" align-title="center">
 		<ion-nav-back-button class="button-compass button-clear" on-hold="util.dashboard('back')"></ion-nav-back-button>
+		<ion-nav-title>Node Resources</ion-nav-title>
+		<ion-nav-buttons side="secondary">
+			<button class="button button-compass button-clear" ng-if="loading"><ion-spinner class="spinner-compass"></ion-spinner></button>
+		</ion-nav-buttons>
 	</ion-nav-bar>
 	<ion-content delegate-handle="node-resources-scroll">
 		<ion-refresher pulling-text="Pull to Refresh..." on-refresh="refresh()"></ion-refresher>
 		<ion-list>
+			<ion-item class="item-divider item-text-wrap" style="font-size: larger">{{resourceLabel}}</ion-item>
 			<span ng-repeat="resource in resources track by resource.id">
 				<ion-item ng-if="resource.isDivider" class="item-divider item-compass">
 					{{resource.id}}

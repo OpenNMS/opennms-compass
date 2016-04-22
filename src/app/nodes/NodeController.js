@@ -53,6 +53,7 @@
 	.controller('NodeCtrl', function($cordovaGeolocation, $ionicLoading, $ionicPopup, $log, $q, $scope, $timeout, $window, AvailabilityService, Cache, Capabilities, debounce, Errors, EventService, NodeService, OutageService, ResourceService, storage, util) {
 		$log.info('NodeCtrl: initializing.');
 
+		$scope.loading = false;
 		$scope.util = util;
 		$scope.availabilityColor = function(value) {
 			if (value >= 99.99) {
@@ -90,15 +91,11 @@
 		};
 
 		var showLoading = function() {
-			/*
-			$ionicLoading.show({
-				templateUrl: loadingTemplate,
-				hideOnStateChange: true,
-			});
-*/
+			$scope.loading = true;
 		};
 
 		var hideLoading = function() {
+			$scope.loading = false;
 			$ionicLoading.hide();
 		};
 

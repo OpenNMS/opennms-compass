@@ -1,6 +1,7 @@
-<ion-view view-title="{{node.label}}" class="node-resource" cache-view="false">
+<ion-view class="node-resource" cache-view="false">
 	<ion-nav-bar class="bar-light" align-title="center">
 		<ion-nav-back-button class="button-compass button-clear" on-hold="util.dashboard('back')"></ion-nav-back-button>
+		<ion-nav-title>{{node.label}}</ion-nav-title>
 	</ion-nav-bar>
 	<ion-content delegate-handle="node-resources-scroll" scroll="true" overflow-scroll="false">
 		<ion-refresher pulling-text="Pull to Refresh..." on-refresh="refreshGraphs()"></ion-refresher>

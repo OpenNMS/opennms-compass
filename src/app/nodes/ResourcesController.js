@@ -5,14 +5,13 @@
 
 	require('./ResourceService');
 
+	require('../misc/Cache');
 	require('../misc/Capabilities');
 	require('../misc/util');
 
 	var nodeResourcesTemplate = require('ngtemplate!./node-resources.html');
 
 	var sortResources = function(a,b) {
-		//$log.debug('sortResources: a=' + angular.toJson(a));
-		//$log.debug('sortResources: b=' + angular.toJson(b));
 		if (a.typeLabel) {
 			if (b.typeLabel) {
 				return a.typeLabel.localeCompare(b.typeLabel);
@@ -31,6 +30,7 @@
 	angular.module('opennms.controllers.NodeResources', [
 		'ionic',
 		'angularLocalStorage',
+		'opennms.misc.Cache',
 		'opennms.services.Capabilities',
 		'opennms.services.Resources',
 		'opennms.services.Util'
@@ -43,22 +43,34 @@
 			controller: 'NodeResourcesCtrl'
 		});
 	})
-	.controller('NodeResourcesCtrl', function($log, $q, $scope, $timeout, Capabilities, ResourceService, util) {
+	.controller('NodeResourcesCtrl', function($log, $q, $scope, $timeout, Cache, Capabilities, ResourceService, util) {
 		$log.info('NodeResourcesCtrl: initializing.');
 
+		$scope.loading = false;
 		$scope.util = util;
 		$scope.refresh = function() {
 			$log.info('NodeResources.refresh: refreshing: ' + $scope.nodeId);
 			if ($scope.nodeId) {
+				Cache.get('node-resources-' + $scope.nodeId).then(function(ret) {
+					$scope.resourceLabel = ret.resourceLabel;
+					$scope.resources = ret.resources;
+				}).catch(function() {
+					$scope.loading = true;
+				});
 				ResourceService.resources($scope.nodeId).then(function(ret) {
 					$scope.resourceLabel = ret.label;
 					var children = ret.children;
 					children.sort(sortResources);
 					$scope.resources = ResourceService.withDividers(children);
+					return Cache.set('node-resources-' + $scope.nodeId, {
+						resourceLabel: $scope.resourceLabel,
+						resources: $scope.resources
+					});
 				}, function(err) {
 					$log.error('NodeResources.refresh: failed: ' + angular.toJson(err));
 					return $q.reject(err);
 				}).finally(function() {
+					$scope.loading = false;
 					$scope.$broadcast('scroll.refreshComplete');
 				});
 			} else {
