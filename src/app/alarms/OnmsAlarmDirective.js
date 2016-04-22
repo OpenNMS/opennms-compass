@@ -30,12 +30,6 @@ angular.module('opennms.alarms.Directive', [
 	'opennms.services.Modals',
 	'opennms.services.Servers',
 	'opennms.services.Util'
-	/*
-	'angularLocalStorage',
-	'rt.debounce',
-	'opennms.services.DB',
-	'opennms.services.Errors',
-	*/
 ])
 .directive('onmsAlarm', function($ionicListDelegate, $ionicPopup, $log, AlarmService, Capabilities, Info, Modals, Servers, util) {
 	var username,
@@ -101,7 +95,7 @@ angular.module('opennms.alarms.Directive', [
 				e.preventDefault();
 				e.stopPropagation();
 				if (alarm.ackUser) {
-					AlarmService.unacknowledge(alarm).then(undefined, function(err) {
+					AlarmService.unacknowledge(alarm).catch(function(err) {
 						if (err.permissionDenied()) {
 							$ionicPopup.alert({
 								title: 'Permission Denied',
@@ -112,7 +106,7 @@ angular.module('opennms.alarms.Directive', [
 						}
 					});
 				} else {
-					AlarmService.acknowledge(alarm).then(undefined, function(err) {
+					AlarmService.acknowledge(alarm).catch(function(err) {
 						if (err.permissionDenied()) {
 							$ionicPopup.alert({
 								title: 'Permission Denied',
@@ -138,7 +132,7 @@ angular.module('opennms.alarms.Directive', [
 			$scope.clear = function(alarm, e) {
 				e.preventDefault();
 				e.stopPropagation();
-				AlarmService.clear(alarm).then(undefined, function(err) {
+				AlarmService.clear(alarm).catch(function(err) {
 					if (err.permissionDenied()) {
 						$ionicPopup.alert({
 							title: 'Permission Denied',
@@ -163,7 +157,7 @@ angular.module('opennms.alarms.Directive', [
 			$scope.escalate = function(alarm, e) {
 				e.preventDefault();
 				e.stopPropagation();
-				AlarmService.escalate(alarm).then(undefined, function(err) {
+				AlarmService.escalate(alarm).catch(function(err) {
 					if (err.permissionDenied()) {
 						$ionicPopup.alert({
 							title: 'Permission Denied',

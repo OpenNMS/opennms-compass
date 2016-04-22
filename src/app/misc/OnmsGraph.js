@@ -230,12 +230,9 @@ angular.module('opennms.misc.OnmsGraph', [
 					angular.equals($scope.graph._last.ds,            $scope.ds) &&
 					angular.equals($scope.graph._last.graphModel,    $scope.graphModel)
 				) {
-					$log.warn('OnmsGraph.renderGraph(): graph inputs are unchanged.');
 					deferred.resolve(true);
 					$scope.$broadcast('scroll.refreshComplete');
 					return;
-				} else {
-					$log.warn('OnmsGraph.renderGraph(): graph inputs are changed.');
 				}
 
 				if ($scope.shouldDisplay && $scope.shouldRender) {
