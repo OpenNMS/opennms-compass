@@ -318,6 +318,10 @@
 			$rootScope.$broadcast('opennms.analytics.trackEvent', category, event, label, value);
 		};
 
+		function getSeverities() {
+			return Object.keys(colors);
+		}
+
 		return {
 			dashboard: goToDashboard,
 			icon: function(severity) {
@@ -328,12 +332,13 @@
 				severity = severity? severity.toUpperCase() : 'INDETERMINATE';
 				return colors[severity] || colors.INDETERMINATE;
 			},
-			severities: function() {
-				var ret = [];
-				for (var sev in colors) {
-					ret.push(sev);
+			severities: getSeverities,
+			nextSeverity: function(severity) {
+				if (!severity) {
+					return severity;
 				}
-				return ret;
+				var severities = getSeverities();
+				return severities[Math.min(severities.length-1, severities.indexOf(severity.toUpperCase()) + 1)];
 			},
 			showKeyboard: showKeyboard,
 			hideKeyboard: hideKeyboard,
