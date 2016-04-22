@@ -1,5 +1,20 @@
 <a name="2.1.0"></a>
-# [2.1.0](https://github.com/OpenNMS/opennms-compass/compare/v2.1.0-401...v2.1.0) (2016-04-21)
+# [2.1.0](https://github.com/OpenNMS/opennms-compass/compare/v2.1.0-402...v2.1.0) (2016-04-22)
+
+
+### Features
+
+* **alarms:** quicker feedback in the UI on changes ([468509f](https://github.com/OpenNMS/opennms-compass/commit/468509f))
+* **util:** create method for escalating an alarm ([15a27cf](https://github.com/OpenNMS/opennms-compass/commit/15a27cf))
+
+### Performance Improvements
+
+* **ios:** enable WKWebView engine ([d9c2d71](https://github.com/OpenNMS/opennms-compass/commit/d9c2d71))
+
+
+
+<a name="2.1.0-402"></a>
+# [2.1.0-402](https://github.com/OpenNMS/opennms-compass/compare/v2.1.0-401...v2.1.0-402) (2016-04-21)
 
 
 ### Features
