@@ -56,7 +56,7 @@ angular.module('opennms.misc.Queue', [])
 				if (inFlight && inFlight.started < threshold) {
 					$log.warn('request timed out; this should not happen');
 					inFlight.deferred.reject('timed out');
-					delete queue.inFlight[f];
+					queue.inFlight.remove(inFlight);
 				}
 			}
 			while (queue.pending.length > 0 && queue.inFlight.length < queue.maxRequests) {
