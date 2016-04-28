@@ -1,15 +1,26 @@
 <a name="2.1.0"></a>
-# [2.1.0](https://github.com/OpenNMS/opennms-compass/compare/v2.1.0-402...v2.1.0) (2016-04-22)
+# [2.1.0](https://github.com/OpenNMS/opennms-compass/compare/v2.1.0-403...v2.1.0) (2016-04-28)
+
+
+### Bug Fixes
+
+* **queue:** fix a timeout issue in the queue ([00d6e48](https://github.com/OpenNMS/opennms-compass/commit/00d6e48))
+
+
+
+<a name="2.1.0-403"></a>
+# [2.1.0-403](https://github.com/OpenNMS/opennms-compass/compare/v2.1.0-402...v2.1.0-403) (2016-04-22)
 
 
 ### Features
 
-* **alarms:** quicker feedback in the UI on changes ([468509f](https://github.com/OpenNMS/opennms-compass/commit/468509f))
-* **util:** create method for escalating an alarm ([15a27cf](https://github.com/OpenNMS/opennms-compass/commit/15a27cf))
+* **alarms:** quicker feedback in the UI on changes ([65d74f0](https://github.com/OpenNMS/opennms-compass/commit/65d74f0))
+* **nodes:** add more loading indicators for slower devices/connections ([4bd626f](https://github.com/OpenNMS/opennms-compass/commit/4bd626f))
+* **util:** create method for escalating an alarm ([abc266c](https://github.com/OpenNMS/opennms-compass/commit/abc266c))
 
 ### Performance Improvements
 
-* **ios:** enable WKWebView engine ([d9c2d71](https://github.com/OpenNMS/opennms-compass/commit/d9c2d71))
+* **ios:** enable WKWebView engine ([1ca7a3d](https://github.com/OpenNMS/opennms-compass/commit/1ca7a3d))
 
 
 
