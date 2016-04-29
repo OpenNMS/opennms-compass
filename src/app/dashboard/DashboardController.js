@@ -398,6 +398,7 @@
 		$scope.refreshGraphSlide = function(index) {
 			if (index !== $scope.currentGraphSlide) {
 				$scope.currentGraphSlide = index;
+				$rootScope.$broadcast('opennms.refreshGraphs');
 			}
 		};
 
