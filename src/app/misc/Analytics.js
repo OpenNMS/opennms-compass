@@ -8,14 +8,22 @@
 
 	require('../settings/SettingsService');
 
+	var dimensions = {
+		version: 'dimension1',
+		major_version: 'dimension2',
+		build: 'dimension3',
+		opennms_version: 'dimension4',
+		opennms_type: 'dimension5'
+	};
+
 	angular.module('opennms.services.Analytics', [
 		'ionic',
 		'ngCordova',
 		'opennms.services.Settings'
 	])
-	.factory('Analytics', ['$rootScope', '$log', '$window', '$cordovaGoogleAnalytics', 'Settings',
+	.factory('Analytics', ['$injector', '$log', '$rootScope', '$window', '$cordovaGoogleAnalytics', 'Settings',
 		'config.build.analyticsIdAndroid', 'config.build.analyticsIdIos', 'config.build.analyticsIdOther',
-		function($rootScope, $log, $window, $cordovaGoogleAnalytics, Settings,
+		function($injector, $log, $rootScope, $window, $cordovaGoogleAnalytics, Settings,
 		androidAnalyticsId, iosAnalyticsId, otherAnalyticsId) {
 
 		$log.info('Analytics: Initializing.');
@@ -31,7 +39,9 @@
 		}
 
 		if ($window && $window.analytics) {
-			$cordovaGoogleAnalytics.debugMode();
+			if (__DEVELOPMENT__) {
+				$cordovaGoogleAnalytics.debugMode();
+			}
 			if (ionic.Platform.isIOS() && iosAnalyticsId) {
 				$cordovaGoogleAnalytics.startTrackerWithId(iosAnalyticsId);
 			} else if (ionic.Platform.isAndroid() && androidAnalyticsId) {
@@ -41,6 +51,22 @@
 			}
 			Settings.uuid().then(function(uuid) {
 				$cordovaGoogleAnalytics.setUserId(uuid);
+			});
+
+			var version = $injector.get('config.build.version');
+			if (version) {
+				var build = $injector.get('config.build.build');
+				var numericVersion = parseFloat(version.replace('^(\\d+\\.\\d+).*$', '$1'));
+				//$cordovaGoogleAnalytics.addCustomDimension(dimensions.version, version);
+				$cordovaGoogleAnalytics.addCustomDimension(dimensions.major_version, numericVersion);
+				$cordovaGoogleAnalytics.addCustomDimension(dimensions.build, build);
+			}
+
+			$rootScope.$on('opennms.info.updated', function(ev, info) {
+				if (info.numericVersion > 0) {
+					$cordovaGoogleAnalytics.addCustomDimension(dimensions.opennms_version, info.version);
+					$cordovaGoogleAnalytics.addCustomDimension(dimensions.opennms_platform, info.packageName);
+				}
 			});
 
 			$rootScope.$on('opennms.analytics.trackEvent', function(ev, category, name, label, value) {
