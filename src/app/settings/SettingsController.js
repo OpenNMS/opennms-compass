@@ -29,7 +29,7 @@
 		'opennms.services.Util',
 		'opennms.util.HTTP'
 	])
-	.factory('ServerModal', function($ionicModal, $log, $q, $rootScope, HTTP, Servers, Settings) {
+	.factory('ServerModal', function($ionicModal, $log, $q, $rootScope, HTTP, Servers, Settings, util) {
 		var $scope = $rootScope.$new();
 
 		$scope.openModal = function(server) {
@@ -47,7 +47,13 @@
 				focusFirstInput: false
 			}).then(function(modal) {
 				$scope.modal = modal;
-				modal.show();
+				modal.show().then(function() {
+					if ($scope.adding) {
+						util.trackView('settings-add-server');
+					} else {
+						util.trackView('settings-edit-server');
+					}
+				});
 				return modal;
 			}, function(err) {
 				$log.error('ServerModal.open: failed: ' + angular.toJson(err));
@@ -179,6 +185,17 @@
 	.controller('SettingsCtrl', function($scope, $log, $timeout, $window, $filter, $ionicListDelegate, $ionicPlatform, $ionicPopup, ServerModal, AvailabilityService, Capabilities, Errors, Info, Servers, Settings, util) {
 		$log.info('Settings initializing.');
 		$scope.util = util;
+
+		$scope.tabSelected = function(tab) {
+			if (tab === 'servers') {
+				$scope.hideAddButton = false;
+			} else if (tab === 'about') {
+				$scope.hideAddButton = true;
+			}
+			if ($scope.visible) {
+				util.trackView('settings-' + tab);
+			}
+		};
 
 		$scope.addServer = function() {
 			ServerModal.open().then(function() {
@@ -333,7 +350,13 @@
 		});
 		util.onInfoUpdated(init);
 
-		$scope.$on('modal.shown', init);
+		$scope.$on('modal.shown', function() {
+			$scope.visible = true;
+			init();
+		});
+		$scope.$on('modal.hidden', function() {
+			$scope.visible = false;
+		});
 	});
 
 }());

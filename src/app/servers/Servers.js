@@ -12,6 +12,8 @@
 	require('../events/EventService');
 	require('../settings/SettingsService');
 
+	var serverTypeMatch = new RegExp('^([Hh][Tt][Tt][Pp][Ss]?):');
+
 	angular.module('opennms.services.Servers', [
 		'ionic',
 		'ngCordova',
@@ -119,7 +121,10 @@
 				defaultServer = newDefaultServer;
 				if (!angular.equals(oldDefaultServer, newDefaultServer)) {
 					UtilEventBroadcaster.defaultServerUpdated(newDefaultServer);
-					//UtilEventBroadcaster.dirty('all');
+					var match = serverTypeMatch.exec(newDefaultServer.url);
+					if (match && match.length > 0) {
+						$rootScope.$broadcast('opennms.analytics.trackEvent', 'settings', 'serverType', 'Server Type', match[0]);
+					}
 				}
 				return defaultServer;
 			});

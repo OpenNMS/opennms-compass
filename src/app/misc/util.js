@@ -239,7 +239,7 @@
 			}
 		};
 	})
-	.factory('util', function($rootScope, $log, $state, $window, $cordovaInAppBrowser, $ionicHistory, $ionicPlatform, $ionicViewSwitcher, Servers, Settings, UtilEventBroadcaster, UtilEventHandler) {
+	.factory('util', function($cordovaInAppBrowser, $ionicHistory, $ionicPlatform, $ionicViewSwitcher, $log, $rootScope, $state, $window, Analytics, Servers, Settings, UtilEventBroadcaster, UtilEventHandler) {
 		$log.info('util: Initializing.');
 
 		$ionicPlatform.ready(function() {
@@ -314,9 +314,12 @@
 			});
 		};
 
-		var trackEvent = function(category, event, label, value) {
-			$rootScope.$broadcast('opennms.analytics.trackEvent', category, event, label, value);
-		};
+		function trackEvent(category, event, label, value) {
+			Analytics.trackEvent(category, event, label, value);
+		}
+		function trackView(viewName) {
+			Analytics.trackView(viewName);
+		}
 
 		function getSeverities() {
 			return Object.keys(colors);
@@ -345,6 +348,7 @@
 			hideSplashscreen: hideSplashscreen,
 			openServer: openServer,
 			trackEvent: trackEvent,
+			trackView: trackView,
 			dirty: UtilEventBroadcaster.dirty,
 			onDirty: UtilEventHandler.onDirty,
 			onErrorsUpdated: UtilEventHandler.onErrorsUpdated,

@@ -171,7 +171,6 @@
 				return $q.reject('Settings.saveSettings: ERROR: no settings provided.');
 			}
 
-			var serverTypeMatch = new RegExp('^([Hh][Tt][Tt][Pp][Ss]?):');
 			var changedSettings = {};
 
 			if (isEmpty(settings.defaultServerId)) {
@@ -229,14 +228,6 @@
 					}
 
 					return storeSettings(newSettings).then(function(stored) {
-						/*
-						if (changedSettings.server) {
-							var match = serverTypeMatch.exec(changedSettings.server);
-							if (match && match.length > 0) {
-								$rootScope.$broadcast('opennms.analytics.trackEvent', 'settings', 'serverType', 'Server Type', match[0]);
-							}
-						}
-						*/
 						$rootScope.$broadcast('opennms.settings.updated', newSettings, oldSettings, changedSettings);
 						return stored;
 					}, function(err) {

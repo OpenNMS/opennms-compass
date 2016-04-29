@@ -20,7 +20,17 @@
 
 		$log.info('Analytics: Initializing.');
 
-		if ($window.plugins && $window.plugins.analytics) {
+		function trackView(viewName) {
+			$log.debug('Analytics.trackView: view=' + viewName);
+			$cordovaGoogleAnalytics.trackView(viewName);
+		}
+
+		function trackEvent(category, name, label, value) {
+			$log.debug('Analytics.trackEvent: category=' + category + ', name=' + name + ', label=' + label + ', value=' + value);
+			$cordovaGoogleAnalytics.trackEvent(category, name, label, value);
+		}
+
+		if ($window && $window.analytics) {
 			$cordovaGoogleAnalytics.debugMode();
 			if (ionic.Platform.isIOS() && iosAnalyticsId) {
 				$cordovaGoogleAnalytics.startTrackerWithId(iosAnalyticsId);
@@ -34,21 +44,20 @@
 			});
 
 			$rootScope.$on('opennms.analytics.trackEvent', function(ev, category, name, label, value) {
-				$cordovaGoogleAnalytics.trackEvent(category, name, label, value);
+				trackEvent(category, name, label, value);
+			});
+
+			$rootScope.$on('opennms.analytics.trackView', function(ev, viewName) {
+				trackView(viewName);
 			});
 
 			$rootScope.$on('$ionicView.enter', function(ev, view) {
-				$cordovaGoogleAnalytics.trackView(view.stateName);
+				trackView(view.stateName);
 			});
 		}
 
-		var trackView = function(viewName) {
-			if ($window.plugins && $window.plugins.analytics) {
-				$cordovaGoogleAnalytics.trackView(viewName);
-			}
-		};
-
 		return {
+			trackEvent: trackEvent,
 			trackView: trackView
 		};
 	}]);

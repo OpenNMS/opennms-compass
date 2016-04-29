@@ -7,7 +7,6 @@
 
 	require('../../../generated/misc/BuildConfig');
 
-	require('./Analytics');
 	require('./Cache');
 	require('./Errors');
 	require('./Info');
@@ -28,7 +27,6 @@
 		'ngCordova',
 		'opennms.misc.Cache',
 		'opennms.services.Alarms',
-		'opennms.services.Analytics',
 		'opennms.services.BuildConfig',
 		'opennms.services.Errors',
 		'opennms.services.Events',
@@ -38,7 +36,7 @@
 		'opennms.services.Settings',
 		'opennms.services.Util'
 	])
-	.factory('Modals', function($q, $rootScope, $interval, $log, $ionicModal, $ionicPopup, AlarmService, Analytics, Cache, Errors, EventService, Info, OutageService, Servers, Settings, util) {
+	.factory('Modals', function($q, $rootScope, $interval, $log, $ionicModal, $ionicPopup, AlarmService, Cache, Errors, EventService, Info, OutageService, Servers, Settings, util) {
 		$log.info('Modals: initializing.');
 
 		var $scope = $rootScope.$new();
@@ -144,7 +142,7 @@
 			modal.scope.show = function() {
 				modal.scope.outages = [];
 				modal.scope.refreshOutages().then(function() {
-					Analytics.trackView('outages');
+					util.trackView('outages');
 					modal.show();
 				});
 			};
@@ -249,7 +247,7 @@
 			modal.scope.show = function(alarm) {
 				modal.scope.alarm = alarm;
 				startRefresh();
-				Analytics.trackView('alarm-detail');
+				util.trackView('alarm-detail');
 				modal.show();
 			};
 			modal.scope.hide = function() {
@@ -272,7 +270,7 @@
 			modal.scope.show = function(launchAdd) {
 				//$scope.launchAddServer = launchAdd;
 				modal.scope.launchAddServer = launchAdd;
-				Analytics.trackView('settings');
+				util.trackView('settings');
 				modal.show();
 			};
 			modal.scope.hide = function() {

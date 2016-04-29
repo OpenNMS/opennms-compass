@@ -1,7 +1,7 @@
 <ion-modal-view class="settings" ng-controller="SettingsCtrl">
 	<ion-content scroll="false">
 		<ion-tabs class="tabs-compass tabs-icon-left" ng-keypress="handleKey($event)">
-			<ion-tab title="Servers" icon-on="ion-ios-gear" icon-off="ion-ios-gear-outline" scroll="true" on-select="hideAddButton = false" on-deselect="hideAddButton = true">
+			<ion-tab title="Servers" icon-on="ion-ios-gear" icon-off="ion-ios-gear-outline" scroll="true" on-select="tabSelected('servers')">
 				<ion-view class="servers">
 					<ion-header-bar class="bar-light">
 						<div class="buttons">
@@ -33,7 +33,7 @@
 					</ion-content>
 				</ion-view>
 			</ion-tab>
-			<ion-tab title="About" icon-on="ion-ios-information" icon-off="ion-ios-information-outline">
+			<ion-tab title="About" icon-on="ion-ios-information" icon-off="ion-ios-information-outline" on-select="tabSelected('about')">
 				<ion-view class="errors">
 					<ion-header-bar class="bar-light">
 						<div class="buttons">
