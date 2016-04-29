@@ -24,30 +24,48 @@
 
 		var defaultRestLimit = 100;
 		var defaultRefreshInterval = 10000;
+		var defaultSettings = {
+			enableAnalytics: true
+		};
 
 		var settingsDB = db.get(DB_NAME);
-		var findSettings = function(options) {
-			return settingsDB.createIndex({
-				index: {
-					fields: Object.keys(options.selector)
+		var getAllSettings = function() {
+			return db.all(DB_NAME).then(function(docs) {
+				return docs.filter(function(doc) {
+					return doc.setting;
+				});
+			}).then(function(docs) {
+				var ret = {};
+				for (var i=0, len=docs.length, doc; i < len; i++) {
+					doc = docs[i];
+					ret[doc._id] = doc.value;
 				}
-			}).then(function() {
-				return settingsDB.find(options);
+				return ret;
 			});
 		};
 
 		var _get = function(key) {
-			return findSettings({
-				selector: {key: key}
-			}).then(function(result) {
-				if (result && result.docs && result.docs.length === 1) {
-					return result.docs[0].value;
-				} else {
-					return null;
-				}
+			return settingsDB.get(key).then(function(doc) {
+				return doc.value;
 			}).catch(function(err) {
-				return null;
+				if (err.status === 404) {
+					return undefined;
+				} else {
+					return $q.reject(err);
+				}
 			});
+		};
+
+		var _set = function(key, value) {
+			return db.upsert(DB_NAME, {
+				_id: key,
+				setting: true,
+				value: value
+			});
+		};
+
+		var _remove = function(key) {
+			return db.remove(DB_NAME, key);
 		};
 
 		var isEmpty = function(v) {
@@ -76,18 +94,20 @@
 			}
 			delete saveme.defaultServerId;
 
-			return settingsDB.get('settings').then(function(existing) {
-				saveme._id = existing._id;
-				saveme._rev = existing._rev;
-				return settingsDB.put(saveme);
-			}).catch(function(err) {
-				if (err.status === 404) {
-					return settingsDB.post(saveme);
+			var promises = [];
+			for (var key in saveme) {
+				if (saveme[key] === undefined) {
+					promises.push(_remove(key));
 				} else {
-					return $q.reject(err);
+					promises.push(_set(key, saveme[key]))
 				}
-			}).then(function(res) {
+			}
+
+			return $q.all(promises).then(function() {
 				return settings;
+			}).catch(function(err) {
+				$log.warn('Failed to save settings: ' + angular.toJson(err));
+				return $q.reject(err);
 			});
 		};
 
@@ -98,11 +118,22 @@
 		};
 
 		var _loadSettings = function() {
-			return settingsDB.get('settings').then(function(settings) {
+			return getAllSettings().then(function(settings) {
+				return settings;
+			}).catch(function(err) {
+				if (err.status === 404) {
+					return angular.copy(defaultSettings);
+				} else {
+					return $q.reject(err);
+				}
+			}).then(function(settings) {
 				var defaultServerId = storage.get('opennms.default-server-id');
 
 				if (!isEmpty(defaultServerId)) {
 					settings.defaultServerId = defaultServerId;
+				}
+				if (settings.enableAnalytics === undefined || settings.enableAnalytics === null) {
+					settings.enableAnalytics = true;
 				}
 
 				if (__DEVELOPMENT__) { $log.debug('Settings._loadSettings: ' + angular.toJson(settings)); }
@@ -119,7 +150,8 @@
 				} else {
 					return settings;
 				}
-			}, function(err) {
+			}).catch(function(err) {
+				$log.warn('Unable to get settings: ' + angular.toJson(err));
 				return {};
 			});
 		};
@@ -143,7 +175,11 @@
 				if (!oldSettings.refreshInterval) {
 					oldSettings.refreshInterval = defaultRefreshInterval;
 				}
+				if (!oldSettings.hasOwnProperty('enableAnalytics')) {
+					oldSettings.enableAnalytics = true;
+				}
 
+				var promises = [];
 				if (!isEmpty(oldSettings)) {
 					var keys = Object.keys(oldSettings);
 					for (var i=0, len=keys.length, key, value; i < len; i++) {
@@ -156,13 +192,20 @@
 									value = null;
 								}
 							}
-							settingsDB.post({key:key,value:value});
+							if (value !== undefined && value !== null) {
+								promises.push(_set(key, value));
+							}
 						}
 					}
 				}
-				storage.remove('opennms.settings');
 
-				return ready.resolve(true);
+				return $q.all(promises).catch(function(err) {
+					$log.warn('Failed to convert old settings: ' + angular.toJson(err));
+					return $q.reject(err);
+				}).finally(function() {
+					storage.remove('opennms.settings');
+					return ready.resolve(true);
+				});
 			});
 		};
 
@@ -183,7 +226,11 @@
 				delete settings.password;
 			}
 
-			if (angular.isUndefined(settings.refreshInterval) || settings.refreshInterval === 'undefined') {
+			if (settings.enableAnalytics === undefined || settings.enableAnalytics === null) {
+				settings.enableAnalytics = true;
+			}
+
+			if (isEmpty(settings.refreshInterval) || settings.refreshInterval === 'undefined') {
 				settings.refreshInterval = undefined;
 			} else {
 				settings.refreshInterval =  parseInt(settings.refreshInterval, 10);
@@ -255,7 +302,7 @@
 
 		var _getRestLimit = function() {
 			return _get('restLimit').then(function(restLimit) {
-				if (angular.isUndefined(restLimit)) {
+				if (isEmpty(restLimit)) {
 					return defaultRestLimit;
 				} else {
 					return restLimit;
@@ -275,9 +322,27 @@
 			return $q.when($injector.get('config.build.build'));
 		};
 
+		function _isAnalyticsEnabled() {
+			return _get('enableAnalytics');
+		}
+
+		function _enableAnalytics() {
+			return getSettings().then(function(settings) {
+				settings.enableAnalytics = true;
+				return saveSettings(settings);
+			});
+		}
+
+		function _disableAnalytics() {
+			return getSettings().then(function(settings) {
+				settings.enableAnalytics = false;
+				return saveSettings(settings);
+			});
+		}
+
 		var _refreshInterval = function() {
 			return _get('refreshInterval').then(function(refreshInterval) {
-				if (angular.isUndefined(refreshInterval)) {
+				if (isEmpty(refreshInterval)) {
 					return defaultRefreshInterval;
 				} else {
 					return refreshInterval;
@@ -293,6 +358,9 @@
 			refreshInterval: _refreshInterval,
 			restLimit: _getRestLimit,
 			uuid: _uuid,
+			isAnalyticsEnabled: _isAnalyticsEnabled,
+			enableAnalytics: _enableAnalytics,
+			disableAnalytics: _disableAnalytics,
 			version: _version,
 			build: _build
 		};
