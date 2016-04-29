@@ -248,12 +248,12 @@
 			}
 			$scope.refreshGraphs();
 		});
-		$scope.$on('$ionicView.afterLeave', function() {
+		$scope.$on('$ionicView.afterLeave', function(ev, info) {
 			if (Capabilities.lowMemory()) {
 				resetData();
 			} else {
 				lazyReset = $timeout(function() {
-					if (__DEVELOPMENT__) { $log.debug('info=' + angular.toJson(info)); }
+					if (__DEVELOPMENT__) { $log.debug('ResourceController.afterLeave: info=' + angular.toJson(info)); }
 					$log.debug('NodeResourceCtrl: leaving node resource view; cleaning up.');
 					resetData();
 				}, 10000);

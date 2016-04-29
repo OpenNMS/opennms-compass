@@ -11,15 +11,6 @@ require('../misc/Info');
 require('../misc/Modals');
 require('../misc/util');
 
-/*
-require('angular-debounce');
-
-require('../db/db');
-require('../servers/Servers');
-
-require('../misc/Errors');
-*/
-
 var itemTemplate = require('ngtemplate!./onms-alarm.html');
 
 angular.module('opennms.alarms.Directive', [
