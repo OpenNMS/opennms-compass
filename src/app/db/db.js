@@ -90,9 +90,14 @@
 
 		var remove = function(dbname, id) {
 			return getPouch(dbname).get(id).then(function(existing) {
-				return getPouch(dbname).remove(existing);
+				if (!existing._deleted) {
+					return getPouch(dbname).remove(existing);
+				} else {
+					// already deleted
+					return true;
+				}
 			}).catch(function(err) {
-				if (err.error && err.reason === 'missing') {
+				if (err.status === 404 || err.error && err.reason === 'missing') {
 					return true;
 				} else {
 					$log.error('Unable to remove ' + id + ': ' + err.reason);
