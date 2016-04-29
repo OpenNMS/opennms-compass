@@ -1,19 +1,19 @@
 <ion-modal-view class="settings" ng-controller="SettingsCtrl">
 	<ion-content scroll="false">
 		<ion-tabs class="tabs-compass tabs-icon-left" ng-keypress="handleKey($event)">
-			<ion-tab title="Servers" icon-on="ion-ios-gear" icon-off="ion-ios-gear-outline" scroll="true" on-select="tabSelected('servers')">
+			<ion-tab title="Settings" icon-on="ion-ios-gear" icon-off="ion-ios-gear-outline" scroll="true" on-select="tabSelected('servers')">
 				<ion-view class="servers">
 					<ion-header-bar class="bar-light">
 						<div class="buttons">
 							<button class="button button-compass button-clear" ng-click="hide()">Close</button>
 						</div>
-						<h1 class="title">Servers</h1>
+						<h1 class="title">Settings</h1>
 						<div class="buttons">
 							<button class="button button-compass button-clear" ng-click="addServer()" ng-if="!hideAddButton">Add</button>
 						</div>
 					</ion-header-bar>
 					<ion-content scroll="true">
-						<ion-list show-delete="showDelete" show-reorder="false" can-swipe="true" delegate-handle="server-list">
+						<ion-list show-delete="showDelete" show-reorder="false" can-swipe="true" delegate-handle="settings-list">
 							<ion-item class="item item-divider">Servers</ion-item>
 							<ion-item ng-repeat="server in servers track by server.name" class="item item-icon-left item-icon-right compass" ng-click="selectServer(server)">
 								<i ng-class="'icon ' + (isDefaultServer(server)? 'ion-checkmark':'')"></i>
@@ -28,6 +28,26 @@
 									<!-- <i class="icon ion-trash-a"></i> -->
 									Delete
 								</ion-option-button>
+							</ion-item>
+							<ion-item class="item item-divider">General</ion-item>
+							<ion-item class="item item-text-wrap about-analytics">
+								<p>Compass collects anonymized data about how you use the app:</p>
+								<ul>
+									<li>the OpenNMS version you are connecting to</li>
+									<li>whether it is OpenNMS Horizon or Meridian</li>
+									<li>your Compass version and build</li>
+									<li>which parts of Compass (dashboard, alarms, outages, graphs) you use most</li>
+								</ul>
+								<p>You may opt out by enabling this switch.</p>
+							</ion-item>
+							<ion-item class="item item-text-wrap item-toggle">
+								Analytics Opt Out
+								<label class="toggle toggle-compass">
+									<input type="checkbox" ng-model="analyticsCheckbox.enabled">
+									<div class="track">
+										<div class="handle"></div>
+									</div>
+								</label>
 							</ion-item>
 						</ion-list>
 					</ion-content>

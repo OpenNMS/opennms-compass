@@ -16,4 +16,22 @@
 			right: 0;
 		}
 	}
+
+	.item {
+		p {
+			color: black;
+			opacity: 1;
+			font-size: $font-size-large;
+			padding-top: 10px;
+			padding-bottom: 10px;
+		}
+		ol, ul {
+			padding-left: 20px;
+			list-style: disc outside none;
+			li {
+				color: black;
+				opacity: 1;
+			}
+		}
+	}
 }

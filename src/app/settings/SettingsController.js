@@ -6,6 +6,8 @@
 		Server = require('../servers/models/Server'),
 		URI = require('urijs');
 
+	require('angular-debounce');
+
 	require('../availability/Service');
 	require('../servers/Servers');
 	require('../settings/SettingsService');
@@ -20,6 +22,7 @@
 
 	angular.module('opennms.controllers.Settings', [
 		'ionic',
+		'rt.debounce',
 		'opennms.services.Availability',
 		'opennms.services.Capabilities',
 		'opennms.services.Errors',
@@ -182,9 +185,10 @@
 			close: $scope.closeModal
 		};
 	})
-	.controller('SettingsCtrl', function($scope, $log, $timeout, $window, $filter, $ionicListDelegate, $ionicPlatform, $ionicPopup, ServerModal, AvailabilityService, Capabilities, Errors, Info, Servers, Settings, util) {
+	.controller('SettingsCtrl', function($filter, $ionicListDelegate, $ionicPlatform, $ionicPopup, $log, $scope, $timeout, $window, AvailabilityService, debounce, Capabilities, Errors, Info, ServerModal, Servers, Settings, util) {
 		$log.info('Settings initializing.');
 		$scope.util = util;
+		$scope.analyticsCheckbox = {};
 
 		$scope.tabSelected = function(tab) {
 			if (tab === 'servers') {
@@ -199,14 +203,14 @@
 
 		$scope.addServer = function() {
 			ServerModal.open().then(function() {
-				$ionicListDelegate.$getByHandle('server-list').closeOptionButtons();
+				$ionicListDelegate.$getByHandle('settings-list').closeOptionButtons();
 			});
 		};
 
 		$scope.editServer = function(server) {
 			server.originalName = server.name;
 			ServerModal.open(server).then(function() {
-				$ionicListDelegate.$getByHandle('server-list').closeOptionButtons();
+				$ionicListDelegate.$getByHandle('settings-list').closeOptionButtons();
 			});
 		};
 
@@ -217,7 +221,7 @@
 		};
 
 		$scope.selectServer = function(server) {
-			$ionicListDelegate.$getByHandle('server-list').closeOptionButtons();
+			$ionicListDelegate.$getByHandle('settings-list').closeOptionButtons();
 			$scope.defaultServer = server;
 			$log.debug('SettingsCtrl.selectServer: ' + server.name);
 			Servers.setDefault(server);
@@ -230,8 +234,8 @@
 			});
 		};
 
-		var init = function() {
-			$log.debug('SettingsCtrl.init(): ' + $scope.launchAddServer);
+		var init = debounce(200, function() {
+			$log.debug('SettingsCtrl.init(): ' + !!$scope.launchAddServer);
 			initDefaultServer();
 			Servers.all().then(function(servers) {
 				if ($scope.launchAddServer) {
@@ -242,8 +246,9 @@
 				}
 				$scope.servers = servers;
 			});
-			Settings.get().then(function(settings) {
-				$scope.settings = settings;
+			Settings.get().then(function(s) {
+				$scope.settings = s;
+				$scope.analyticsCheckbox = { enabled: !s.enableAnalytics };
 			});
 			Settings.version().then(function(version) {
 				$scope.version = version;
@@ -259,8 +264,7 @@
 			}).finally(function() {
 				$scope.$broadcast('scroll.refreshComplete');
 			});
-		};
-		init();
+		});
 
 		$scope.save = function() {
 			Settings.set($scope.settings);
@@ -320,14 +324,26 @@
 			}
 		};
 
+		$scope.$watch('analyticsCheckbox', function(newSetting, oldSetting) {
+			if (oldSetting !== undefined && oldSetting.enabled !== undefined) {
+				$log.debug('SettingsCtrl: opt out of analytics: ' + oldSetting.enabled + ' -> ' + newSetting.enabled);
+				if (newSetting.enabled) {
+					Settings.disableAnalytics();
+				} else {
+					Settings.enableAnalytics();
+				}
+			}
+		}, true);
+
 		util.onInfoUpdated(function() {
 			$scope.info = Info.get();
 			$scope.capabilities = Capabilities.get();
 			$scope.$broadcast('scroll.refreshComplete');
-		});
-		util.onSettingsUpdated(function() {
 			init();
 		});
+
+		util.onSettingsUpdated(init);
+
 		util.onDefaultServerUpdated(function(newDefault) {
 			$scope.defaultServer = newDefault;
 			$scope.$broadcast('scroll.refreshComplete');
@@ -344,11 +360,11 @@
 				$scope.$broadcast('scroll.refreshComplete');
 			});
 		});
+
 		util.onErrorsUpdated(function() {
 			$scope.errors = Errors.get();
 			$scope.$broadcast('scroll.refreshComplete');
 		});
-		util.onInfoUpdated(init);
 
 		$scope.$on('modal.shown', function() {
 			$scope.visible = true;
