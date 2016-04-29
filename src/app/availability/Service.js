@@ -5,20 +5,23 @@
 		AvailabilityNode = require('./models/AvailabilityNode'),
 		AvailabilitySection = require('./models/AvailabilitySection');
 
+	require('angular-debounce');
+
 	require('../misc/Rest');
 	require('../misc/util');
 
 	angular.module('opennms.services.Availability', [
 		'ionic',
+		'rt.debounce',
 		'opennms.services.Rest',
 		'opennms.services.Util'
 	])
-	.factory('AvailabilityService', function($q, $rootScope, $log, RestService, util) {
+	.factory('AvailabilityService', function($log, $q, $rootScope, debounce, RestService, util) {
 		$log.info('AvailabilityService: Initializing.');
 
 		var hasAvailability;
 
-		var checkAvailability = function() {
+		var checkAvailability = debounce(300, function() {
 			var oldAvailability = hasAvailability;
 			var done = function(value) {
 				if (oldAvailability) {
@@ -36,7 +39,7 @@
 				$log.info('AvailabilityService.checkAvailability: availability service does not work. :(');
 				done(false);
 			});
-		};
+		});
 
 		var isSupported = function() {
 			return hasAvailability.promise;
