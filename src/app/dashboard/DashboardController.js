@@ -465,6 +465,7 @@
 		util.onDefaultServerUpdated(function(defaultServer) {
 			//$log.debug('DashboardController.onDefaultServerUpdated: ' + angular.toJson(defaultServer));
 			if ($scope.server && defaultServer && defaultServer._id && defaultServer._id === $scope.server._id) {
+				$scope.server.name = defaultServer.name;
 				$log.debug('DashboardController.defaultServerUpdated: server is unchanged.');
 				return;
 			}
