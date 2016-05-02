@@ -147,9 +147,6 @@ $shadow-color: rgba(0,0,0,0.3);
 		font-size: ($arrow-touch-padding * 2);
 		line-height: ($arrow-touch-padding * 2);
 	}
-	ion-content div.scroll {
-		padding-bottom: $bar-height;
-	}
 	.settings-button {
 		position: fixed;
 		padding-right: 0;
