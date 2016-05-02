@@ -235,6 +235,9 @@ angular.module('opennms.misc.OnmsGraph', [
 					return;
 				}
 
+				$scope.graph.start = newStart;
+				$scope.graph.end = newEnd;
+
 				if ($scope.shouldDisplay && $scope.shouldRender) {
 					$log.debug('OnmsGraph.renderGraph(): graph.begin(): ' + description);
 					$scope.graph.begin();
