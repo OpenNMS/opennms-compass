@@ -1,5 +1,27 @@
 <a name="2.1.0"></a>
-# [2.1.0](https://github.com/OpenNMS/opennms-compass/compare/v2.1.0-403...v2.1.0) (2016-04-28)
+# [2.1.0](https://github.com/OpenNMS/opennms-compass/compare/v2.1.0-404...v2.1.0) (2016-05-02)
+
+
+### Bug Fixes
+
+* **analytics:** fix view tracking ([ad39e34](https://github.com/OpenNMS/opennms-compass/commit/ad39e34))
+* **dashboard:** fix refresh on server change ([37cdf4c](https://github.com/OpenNMS/opennms-compass/commit/37cdf4c))
+* **dashboard:** update name in UI when server name is changed ([250e7f2](https://github.com/OpenNMS/opennms-compass/commit/250e7f2))
+* **db:** handle already-removed documents ([2c9a069](https://github.com/OpenNMS/opennms-compass/commit/2c9a069))
+* **graphs:** ensure a graph refresh when navigating favorite graphs ([7d255f7](https://github.com/OpenNMS/opennms-compass/commit/7d255f7))
+* **graphs:** fix refresh when date ranges are modified ([e48a71a](https://github.com/OpenNMS/opennms-compass/commit/e48a71a))
+* **nodes:** fix undefined reference in a debug log ([6450d97](https://github.com/OpenNMS/opennms-compass/commit/6450d97))
+
+### Features
+
+* **analytics:** make it possible to opt-out of analytics ([3825196](https://github.com/OpenNMS/opennms-compass/commit/3825196))
+* **analytics:** track build, major version, opennms version, opennms platform ([9c8aa4c](https://github.com/OpenNMS/opennms-compass/commit/9c8aa4c))
+* **dashboard:** remove footer to use more of the vertical space for the dashboard ([1344180](https://github.com/OpenNMS/opennms-compass/commit/1344180))
+
+
+
+<a name="2.1.0-404"></a>
+# [2.1.0-404](https://github.com/OpenNMS/opennms-compass/compare/v2.1.0-403...v2.1.0-404) (2016-04-28)
 
 
 ### Bug Fixes
