@@ -431,12 +431,14 @@
 		}).then(function(popover) {
 			popover.scope.selectServer = function(server) {
 				popover.hide();
-				resetData();
-				updateDonuts();
-				updateDonuts.flush();
-				$scope.server = server;
-				//$ionicLoading.show({templateUrl: loadingTemplate, duration: 20000});
-				Servers.setDefault(server);
+				if ($scope.server && $scope.server._id !== server._id) {
+					resetData();
+					updateDonuts();
+					updateDonuts.flush();
+					//$scope.server = server;
+					//$ionicLoading.show({templateUrl: loadingTemplate, duration: 20000});
+					Servers.setDefault(server);
+				}
 			};
 			return popover;
 		});
@@ -462,7 +464,7 @@
 
 		util.onDefaultServerUpdated(function(defaultServer) {
 			//$log.debug('DashboardController.onDefaultServerUpdated: ' + angular.toJson(defaultServer));
-			if (angular.equals(defaultServer, $scope.server)) {
+			if ($scope.server && defaultServer && defaultServer._id && defaultServer._id === $scope.server._id) {
 				$log.debug('DashboardController.defaultServerUpdated: server is unchanged.');
 				return;
 			}
