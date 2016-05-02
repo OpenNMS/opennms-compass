@@ -9,7 +9,9 @@
 		</ion-nav-buttons>
 	</ion-nav-bar>
 	<ion-header-bar class="bar bar-header bar-subheader">
-		<h3 class="title compass" ng-click="showSelectServer($event)"><span ng-if="server">{{server.name}} <i class="icon ion-arrow-down-b"></i></span></h3>
+		<h3 class="title compass" ng-click="showSelectServer($event)">
+			<span ng-if="server">{{server.name}} <i class="icon ion-arrow-down-b"></i></span>
+		</h3>
 	</ion-header-bar>
 	<ion-content padding="false" scroll="true" class="has-header" overflow-scroll="false">
 		<ion-refresher pulling-text="Pull to Refresh..." on-refresh="refreshData()"></ion-refresher>
@@ -53,7 +55,5 @@
 		<ng-include src="favoriteGraphsTemplate" ng-if="supportsGraphs &amp;&amp; favoriteGraphs &amp;&amp; favoriteGraphs.length > 0"></ng-include>
 		<ng-include src="availabilityTemplate" ng-if="availability &amp;&amp; availability.length > 0"></ng-include>
 	</ion-content>
-	<ion-footer-bar class="bar-light">
-		<button class="button button-compass button-clear pull-right" ng-click="modals.settings()"><i class="icon ion-gear-a"></i></button>
-	</ion-footer-bar>
+	<button class="button button-compass button-clear settings-button" ng-click="modals.settings()"><i class="icon ion-gear-a"></i></button>
 </ion-view>
