@@ -89,4 +89,12 @@ Server.prototype.getHost = function() {
   return URI(this.url).hostname();
 }
 
+Server.prototype.equals = function(that) {
+  return that &&
+    this.url      === that.url &&
+    this.username === that.username &&
+    this.password === that.password &&
+    this._id      === that._id;
+}
+
 module.exports = Server;
