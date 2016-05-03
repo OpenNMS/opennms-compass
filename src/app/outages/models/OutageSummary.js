@@ -69,9 +69,9 @@ function OutageSummary(data) {
 OutageSummary.prototype.getNodeName = function() {
   if (this.nodeLabel === undefined || this.nodeLabel.trim() === '') {
     return 'Node ' + this.nodeId;
-  } else {
-    return this.nodeLabel;
   }
+
+  return this.nodeLabel;
 };
 
 OutageSummary.prototype.toJSON = function() {

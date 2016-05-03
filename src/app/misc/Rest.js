@@ -99,8 +99,9 @@
 			});
 		};
 
-		var getUrl = function(restFragment) {
-			$log.debug('RestService.getUrl: restFragment='+restFragment);
+		var getUrl = function(_restFragment) {
+			$log.debug('RestService.getUrl: restFragment='+_restFragment);
+			var restFragment = _restFragment || '';
 
 			var getUrlForServer = function(server) {
 				var restURL = server? server.restUrl() : undefined;
@@ -108,15 +109,15 @@
 				if (restURL) {
 					var uri = URI(restURL);
 					if (restFragment.startsWith('/')) {
-						restFragment = restFragment.slice(1);
+						restFragment = restFragment.slice(1); // eslint-disable-line no-magic-numbers
 					}
 					uri.segment(restFragment);
 					//$log.debug('RestService.getUrl: returning=' + uri.toString());
 					return uri.toString();
-				} else {
-					//$log.debug('RestService.getUrl: returning=undefined');
-					return undefined;
 				}
+
+				//$log.debug('RestService.getUrl: returning=undefined');
+				return undefined;
 			};
 
 			return ready.promise.then(function() {
@@ -130,14 +131,14 @@
 						return updateAuthorization().then(function() {
 							return getUrlForServer(server);
 						});
-					} else {
-						//$log.debug('Rest.getUrl: current server is unchanged: ' + server._id);
-						return getUrlForServer(server);
 					}
-				} else {
-					$log.warn('Rest.getUrl: current server is unset');
-					return undefined;
+
+					//$log.debug('Rest.getUrl: current server is unchanged: ' + server._id);
+					return getUrlForServer(server);
 				}
+
+				$log.warn('Rest.getUrl: current server is unset');
+				return undefined;
 			});
 		};
 
@@ -147,29 +148,25 @@
 			}).join('&');
 		};
 
-		var doQuery = function(method, restFragment, params, headers) {
-			if (!params) {
-				params = {};
-			}
-			if (!headers) {
-				headers = {};
-			}
+		var doQuery = function(method, restFragment, _params, _headers) {
+			var params = _params || {};
+			var headers = _headers || {};
 
 			var url;
 			return Servers.getDefault().then(function(server) {
 				//$log.debug('Rest.doQuery: ' + method + ' ' + restFragment + ': isServerConfigured=' + serverConfigured);
 				if (server) {
 					return getUrl(restFragment);
-				} else {
-					return $q.reject(new RestError(restFragment, undefined, 0, 'Server information is not complete.'));
 				}
+
+				return $q.reject(new RestError(restFragment, undefined, 0, 'Server information is not complete.')); // eslint-disable-line no-magic-numbers
 			}).then(function(u) {
 				//$log.debug('Rest.doQuery: ' + method + ' ' + restFragment + ': url=' + u);
 				url = u;
 				return Settings.restLimit();
 			}).then(function(restLimit) {
 				var myparams = angular.extend({}, { limit: restLimit }, params);
-				if (myparams.limit === 0 || myparams.limit === null) {
+				if (myparams.limit === 0 || myparams.limit === null) { // eslint-disable-line no-magic-numbers
 					delete myparams.limit;
 				}
 				return myparams;
@@ -234,9 +231,9 @@
 					}
 					if (json !== undefined) {
 						return json;
-					} else {
-						return data;
 					}
+
+					return data;
 				});
 			},
 			getXml: function(restFragment, params, headers) {

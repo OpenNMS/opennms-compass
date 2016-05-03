@@ -5,10 +5,22 @@
 	require('ngCordova');
 	require('angular-debounce');
 
+	var Constants = require('../misc/Constants');
 	var Node = require('./models/Node');
 	var AvailabilityNode = require('../availability/models/AvailabilityNode');
 	var OnmsEvent = require('../events/models/OnmsEvent');
 	var Outage = require('../outages/models/Outage');
+
+	var SEVERITY_THRESHOLD_NORMAL = 99.99,
+		SEVERITY_THRESHOLD_WARNING = 97,
+		SEVERITY_THRESHOLD_CRITICAL = 0;
+
+	var NODE_EVENTS_LIMIT = 5;
+
+	var GEOLOCATION_TIMEOUT = 5000,
+		GEOLOCATION_SIGFIG = 6;
+
+	var REFRESH_DEBOUNCE = 500;
 
 	require('./NodeService');
 	require('./ResourceService');
@@ -56,11 +68,11 @@
 		$scope.loading = false;
 		$scope.util = util;
 		$scope.availabilityColor = function(value) {
-			if (value >= 99.99) {
+			if (value >= SEVERITY_THRESHOLD_NORMAL) {
 				return 'severity severity-NORMAL';
-			} else if (value >= 97) {
+			} else if (value >= SEVERITY_THRESHOLD_WARNING) {
 				return 'severity severity-WARNING';
-			} else if (value >= 0) {
+			} else if (value >= SEVERITY_THRESHOLD_CRITICAL) {
 				return 'severity severity-CRITICAL';
 			}
 			return 'severity severity-INDETERMINATE';
@@ -160,7 +172,7 @@
 			Cache.get('node-' + $scope.nodeId + '-events', OnmsEvent).then(function(events) {
 				$scope.events = events;
 			});
-			var ev = EventService.node($scope.nodeId, 5).then(function(results) {
+			var ev = EventService.node($scope.nodeId, NODE_EVENTS_LIMIT).then(function(results) {
 				//$log.debug('EventService got results:', results);
 				$scope.events = results;
 				Cache.set('node-' + $scope.nodeId + '-events', results);
@@ -183,7 +195,7 @@
 				return err;
 			});
 
-			$q.all(avail, ev, outage)['finally'](function() {
+			$q.all(avail, ev, outage).finally(function() {
 				$scope.loaded = true;
 				$scope.$broadcast('scroll.refreshComplete');
 			});
@@ -199,11 +211,11 @@
 
 		$scope.submitCoordinates = function() {
 			$cordovaGeolocation.getCurrentPosition({
-				timeout: 5000,
+				timeout: GEOLOCATION_TIMEOUT,
 				enableHighAccuracy: true
 			}).then(function(position) {
-				var longitude = position.coords.longitude.toFixed(6);
-				var latitude = position.coords.latitude.toFixed(6);
+				var longitude = position.coords.longitude.toFixed(GEOLOCATION_SIGFIG);
+				var latitude = position.coords.latitude.toFixed(GEOLOCATION_SIGFIG);
 				$ionicPopup.confirm({
 					title: 'Update Coordinates?',
 					template: 'Update <strong>' + $scope.node.label + '</strong> to latitude ' + latitude + ' and longitude ' + longitude + '?',
@@ -244,9 +256,9 @@
 				}).finally(function() {
 					hideLoading();
 				});
-			} else {
-				return $q.when();
 			}
+
+			return $q.when();
 		};
 
 		var checkResources = function() {
@@ -257,20 +269,20 @@
 				});
 				return ResourceService.resources($scope.nodeId).then(function(res) {
 					//$log.debug('graphs: got res ' + angular.toJson(res));
-					$scope.showGraphButton = res && res.children && res.children.length > 0;
+					$scope.showGraphButton = res && res.children && res.children.length > 0; // eslint-disable-line no-magic-numbers
 					Cache.set('node-' + $scope.nodeId + '-show-graph-button', $scope.showGraphButton);
 					return $scope.showGraphButton;
 				}).catch(function(err) {
 					$scope.showGraphButton = false;
 					return $scope.showGraphButton;
 				});
-			} else {
-				$scope.showGraphButton = false;
-				return $q.when($scope.showGraphButton);
 			}
+
+			$scope.showGraphButton = false;
+			return $q.when($scope.showGraphButton);
 		};
 
-		$scope.refresh = debounce(500, function() {
+		$scope.refresh = debounce(REFRESH_DEBOUNCE, function() {
 			if ($scope.nodeId) {
 				showLoading();
 				$q.all({
@@ -318,7 +330,7 @@
 			if (Capabilities.lowMemory()) {
 				resetData();
 			} else {
-				lazyReset = $timeout(resetData, 10000);
+				lazyReset = $timeout(resetData, Constants.DEFAULT_TIMEOUT);
 			}
 		});
 	});

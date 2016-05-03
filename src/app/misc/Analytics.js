@@ -103,8 +103,10 @@
 				return;
 			}
 			for (var listener in listeners) {
-				$log.info('Analytics.deInit: Deinitializing analytics tracker: ' + listener);
-				listeners[listener]();
+				if ({}.hasOwnProperty.call(listeners, listener)) {
+					$log.info('Analytics.deInit: Deinitializing analytics tracker: ' + listener);
+					listeners[listener]();
+				}
 			}
 		}
 

@@ -5,6 +5,11 @@
 		moment = require('moment'),
 		$ = require('jquery');
 
+	var Constants = require('../misc/Constants'),
+		TOP_POSITION = 0,
+		GRAPH_HEIGHT_EXTRA = 90,
+		DEFAULT_PAUSE = 500;
+
 	require('angular-debounce');
 
 	require('./NodeService');
@@ -46,31 +51,34 @@
 		var defaultRange = $injector.get('default-graph-range');
 		//var defaultRange = 60 * 60 * 1000;
 
+		/* eslint-disable no-magic-numbers */
 		var findElementById = function(id) {
 			var elm, scrollEl, position = 0;
 			elm = document.getElementById(id);
 			if (elm) {
-					scrollEl = angular.element(elm);
-					while (scrollEl) {
-							if (scrollEl.hasClass('scroll-content')) {
-									break;
-							}
-							var offsetTop = scrollEl[0].offsetTop,
-									scrollTop = scrollEl[0].scrollTop,
-									clientTop = scrollEl[0].clientTop;
-							position += offsetTop - scrollTop + clientTop;
-							scrollEl = scrollEl.parent();
+				scrollEl = angular.element(elm);
+				while (scrollEl) {
+					if (scrollEl.hasClass('scroll-content')) {
+						break;
 					}
-					$log.debug('offset='+position);
-					if (position < 10) {
-							return 0;
-					}
-					return position;
-			} else {
-					$log.error('can\'t find element ' + id);
+					var offsetTop = scrollEl[0].offsetTop,
+						scrollTop = scrollEl[0].scrollTop,
+						clientTop = scrollEl[0].clientTop;
+					position += offsetTop - scrollTop + clientTop;
+					scrollEl = scrollEl.parent();
+				}
+				$log.debug('offset='+position);
+				if (position < 10) {
 					return 0;
+				}
+
+				return position;
 			}
+
+			$log.error('can\'t find element ' + id);
+			return 0;
 		};
+		/* eslint-enable no-magic-numbers */
 
 		$scope.favorites = {};
 		$scope.range = {
@@ -86,7 +94,7 @@
 
 		$scope.calculateHeight = function(graph) {
 			//$scope.shouldDisplay(graph);
-			return $scope.width + 90;
+			return $scope.width + GRAPH_HEIGHT_EXTRA;
 		};
 
 		$scope.shouldDisplay = function(graph) {
@@ -136,7 +144,7 @@
 					$scope.ready = {};
 					return $q.all(p).then(function(graphDefs) {
 						$scope.graphDefinitions = graphDefs;
-						if (graphDefs && graphDefs.length && graphDefs.length > 0) {
+						if (graphDefs && graphDefs.length && graphDefs.length > 0) { // eslint-disable-line no-magic-numbers
 							$scope.shown = graphDefs[0];
 						}
 					});
@@ -190,8 +198,8 @@
 					$scope.$broadcast('scroll.refreshComplete');
 					var position = findElementById('graph-' + graph.name);
 					$log.debug('Found element position: ' + position);
-					$ionicScrollDelegate.$getByHandle('node-resources-scroll').scrollTo(0, position, true);
-				}, 500);
+					$ionicScrollDelegate.$getByHandle('node-resources-scroll').scrollTo(TOP_POSITION, position, true);
+				}, DEFAULT_PAUSE);
 			}
 		};
 
@@ -212,7 +220,7 @@
 			var gdlen = $scope.graphDefinitions.length;
 			var difference = ready.difference(graphs);
 
-			if (gdlen > 0 && difference.length === 0) {
+			if (gdlen > 0 && difference.length === 0) { // eslint-disable-line no-magic-numbers
 				if ($scope.shouldRender === false) {
 					$scope.shouldRender = true;
 					$scope.$broadcast('opennms.refreshGraphs');
@@ -222,7 +230,7 @@
 			}
 		});
 
-		var delayedRefresh = debounce(500, $scope.refreshGraphs);
+		var delayedRefresh = debounce(DEFAULT_PAUSE, $scope.refreshGraphs);
 		util.onInfoUpdated(delayedRefresh);
 		util.onDefaultServerUpdated(delayedRefresh);
 
@@ -256,7 +264,7 @@
 					if (__DEVELOPMENT__) { $log.debug('ResourceController.afterLeave: info=' + angular.toJson(info)); }
 					$log.debug('NodeResourceCtrl: leaving node resource view; cleaning up.');
 					resetData();
-				}, 10000);
+				}, Constants.DEFAULT_TIMEOUT);
 			}
 		});
 	});

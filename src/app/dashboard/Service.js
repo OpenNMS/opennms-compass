@@ -2,7 +2,7 @@
 
 var sortFavorites = function(a, b) {
 	var ret = a.nodeLabel.localeCompare(b.nodeLabel);
-	if (ret === 0) {
+	if (ret === 0) { // eslint-disable-line no-magic-numbers
 		ret = a.graphName.localeCompare(b.graphName);
 	}
 	return ret;
@@ -13,6 +13,8 @@ var angular = require('angular');
 var Alarm = require('../alarms/models/Alarm'),
 	AvailabilitySection = require('../availability/models/AvailabilitySection'),
 	Outage = require('../outages/models/Outage');
+
+var MAX_OUTAGES = 50;
 
 require('angular-debounce');
 
@@ -59,7 +61,7 @@ angular.module('opennms.dashboard.Service', [
 					});
 				}
 
-				if (total === 0) {
+				if (total === 0) { // eslint-disable-line no-magic-numbers
 					severities.push({
 						label: ' ',
 						data: 1,
@@ -115,7 +117,7 @@ angular.module('opennms.dashboard.Service', [
 				}
 
 				for (service in data) {
-					if (data.hasOwnProperty(service) && data[service]) {
+					if ({}.hasOwnProperty.call(data, service) && data[service]) {
 						outages.push({
 							label: service,
 							data: data[service]
@@ -124,17 +126,17 @@ angular.module('opennms.dashboard.Service', [
 				}
 				outages.sort(function(a, b) {
 					var ret = b.data - a.data;
-					if (ret === 0) {
+					if (ret === 0) { // eslint-disable-line no-magic-numbers
 						return a.label.localeCompare(b.label);
-					} else {
-						return ret;
 					}
+
+					return ret;
 				});
-				if (outages.length > 50) {
-					outages.length = 50;
+				if (outages.length > MAX_OUTAGES) {
+					outages.length = MAX_OUTAGES;
 				}
 
-				if (total === 0) {
+				if (total === 0) { // eslint-disable-line no-magic-numbers
 					outages.push({
 						label: ' ',
 						data: 1,
@@ -205,7 +207,9 @@ angular.module('opennms.dashboard.Service', [
 
 	var stop = function() {
 		for (var key in watchers) {
-			watchers[key].reject();
+			if ({}.hasOwnProperty.call(watchers, key)) {
+				watchers[key].reject();
+			}
 		}
 		watchers = {};
 	};

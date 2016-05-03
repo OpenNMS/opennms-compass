@@ -55,9 +55,9 @@
 		var _sortFunction = function(a,b) {
 			if (a.typeLabel && b.typeLabel) {
 				return a.typeLabel.localeCompare(b.typeLabel);
-			} else {
-				return 0;
 			}
+
+			return 0; // eslint-disable-line no-magic-numbers
 		};
 		var getResourcesForNode = function(nodeId) {
 			if (!hasGraphs) {
@@ -109,12 +109,12 @@
 				if (res.name) {
 					if (angular.isArray(res.name)) {
 						return res.name;
-					} else {
-						return [res.name];
 					}
-				} else {
-					return [];
+
+					return [res.name];
 				}
+
+				return [];
 			});
 		};
 
@@ -128,12 +128,10 @@
 			return _graphs[graph];
 		};
 
-		var withDividers = function(resources) {
+		var withDividers = function(_resources) {
+			var resources = _resources || [];
 			if (resources && !angular.isArray(resources)) {
 				resources = [resources];
-			}
-			if (!resources) {
-				resources = [];
 			}
 			resources.sort(_sortFunction);
 
@@ -156,9 +154,9 @@
 			return Servers.getDefault().then(function(server) {
 				if (server && angular.isDefined(server._id) && angular.isDefined(server.username)) {
 					return server;
-				} else {
-					return $q.reject('ResourceService.' + caller + ': Unable to determine default server.');
 				}
+
+				return $q.reject('ResourceService.' + caller + ': Unable to determine default server.');
 			});
 		};
 
@@ -181,9 +179,9 @@
 					//$log.debug('ResourceService.getFavorites(): result=' + angular.toJson(result));
 					if (result && result.docs) {
 						return result.docs;
-					} else {
-						return [];
 					}
+
+					return [];
 				}).catch(function(err) {
 					$log.error('ResourceService.getFavorites(): err=' + angular.toJson(err));
 					return $q.reject(err);
@@ -205,13 +203,15 @@
 						graphName: graphName
 					}
 				}).then(function(result) {
+					/* eslint-disable no-magic-numbers */
 					//$log.debug('ResourceService.getFavorite(' + resourceId + ',' + graphName + '): result=' + angular.toJson(result));
 					if (result && result.docs && result.docs.length === 1) {
 						return result.docs[0];
-					} else {
-						$log.error('getFavorite(' + resourceId + ',' + graphName + '): failed result: ' + angular.toJson(result));
-						return undefined;
 					}
+					/* eslint-enable no-magic-numbers */
+
+					$log.error('getFavorite(' + resourceId + ',' + graphName + '): failed result: ' + angular.toJson(result));
+					return undefined;
 				}).catch(function(err) {
 					$log.error('ResourceService.getFavorite('+resourceId+','+graphName+'): err=' + angular.toJson(err));
 					return $q.reject(err);
@@ -262,12 +262,14 @@
 					}
 				}).then(function(result) {
 					//$log.debug('ResourceService.removeFavorite(' + resourceId + ',' + graphName + '): result=' + angular.toJson(result));
+					/* eslint-disable no-magic-numbers */
 					if (result && result.docs && result.docs.length === 1) {
 						return favoritesDB.remove(result.docs[0]);
-					} else {
-						$log.error('removeFavorite: unhandled result: ' + angular.toJson(result));
-						return $q.reject(result);
 					}
+					/* eslint-enable no-magic-numbers */
+
+					$log.error('removeFavorite: unhandled result: ' + angular.toJson(result));
+					return $q.reject(result);
 				}).catch(function(err) {
 					$log.error('ResourceService.removeFavorite(' + resourceId + ',' + graphName + ') failed: err=' + angular.toJson(err));
 					return $q.reject(err);
@@ -283,14 +285,16 @@
 					username: server.username
 				}
 			}).then(function(result) {
+				/* eslint-disable no-magic-numbers */
 				if (result && result.docs && result.docs.length > 0) {
 					for (var i=0, len=result.docs.length; i < len; i++) {
 						result.docs[i]._deleted = true;
 					}
 					return favoritesDB.bulkDocs(result.docs);
-				} else {
-					return undefined;
 				}
+				/* eslint-enable no-magic-numbers */
+
+				return undefined;
 			});
 		});
 

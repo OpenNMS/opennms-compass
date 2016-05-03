@@ -3,6 +3,8 @@
 var angular = require('angular'),
 	VersionCompare = require('version_compare');
 
+var Constants = require('./Constants');
+
 require('./Info');
 require('./util');
 
@@ -19,7 +21,7 @@ angular.module('opennms.services.Capabilities', [
 	}
 
 	function hasLowMemory() {
-		return Info.get().memory < 1000000000;
+		return Info.get().memory < Constants.MEMORY_THRESHOLD;
 	}
 
 	function hasGraphs() {
@@ -31,9 +33,9 @@ angular.module('opennms.services.Capabilities', [
 		}
 		if (Info.isMeridian()) {
 			return Info.validateVersion('2016.1.0');
-		} else {
-			return Info.validateVersion('16.0.0');
 		}
+
+		return Info.validateVersion('16.0.0');
 	}
 
 	function hasOutageSummaries() {
@@ -48,9 +50,9 @@ angular.module('opennms.services.Capabilities', [
 		/*
 		if (Info.isMeridian()) {
 			return Info.validateVersion('2016.1.0');
-		} else {
-			return Info.validateVersion('17.1.1');
 		}
+
+		return Info.validateVersion('17.1.1');
 		*/
 		return false;
 	}

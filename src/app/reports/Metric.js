@@ -21,7 +21,7 @@ function Metric(metric) {
    * @propertyOf Metric
    * @returns {number} Metric Resource ID
    */
-  self.resourceid   = metric['resourceId'];
+  self.resourceid   = metric.resourceId;
 
   /**
    * @description
@@ -30,7 +30,7 @@ function Metric(metric) {
    * @propertyOf Metric
    * @returns {number} Metric Resource Label
    */
-  self.resourceLabel   = metric['resourceLabel'];
+  self.resourceLabel   = metric.resourceLabel;
 
   /**
    * @description
@@ -39,7 +39,7 @@ function Metric(metric) {
    * @propertyOf Metric
    * @returns {number} Metric Resource Type Name
    */
-  self.typeName   = metric['typeName'];
+  self.typeName   = metric.typeName;
 
   /**
    * @description
@@ -48,7 +48,7 @@ function Metric(metric) {
    * @propertyOf Metric
    * @returns {number} Metric Resource Type Label
    */
-  self.typeLabel   = metric['typeLabel'];
+  self.typeLabel   = metric.typeLabel;
 
   /**
    * @description

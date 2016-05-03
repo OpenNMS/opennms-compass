@@ -20,7 +20,7 @@ function AvailabilityIpInterface(iface) {
    * @propertyOf AvailabilityIpInterface
    * @returns {number} Interface ID
    */
-  self.id   = parseInt(iface['_id'], 10);
+  self.id   = parseInt(iface._id, 10);
 
   /**
    * @description
@@ -29,7 +29,7 @@ function AvailabilityIpInterface(iface) {
    * @propertyOf AvailabilityIpInterface
    * @returns {number} Interface's availability (as a percentage)
    */
-  self.availability = parseFloat(iface['_availability']);
+  self.availability = parseFloat(iface._availability);
 
   /**
    * @description
@@ -38,7 +38,7 @@ function AvailabilityIpInterface(iface) {
    * @propertyOf AvailabilityIpInterface
    * @returns {string} The IP address of the interface.
    */
-  self.address = iface['_address'];
+  self.address = iface._address;
 
   var hashbits = [self.id, self.availability, self.address];
 

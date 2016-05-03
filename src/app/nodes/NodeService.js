@@ -4,6 +4,8 @@
 	var angular = require('angular'),
 		Node = require('./models/Node');
 
+	var Constants = require('../misc/Constants');
+
 	require('../misc/Info');
 	require('../misc/Rest');
 
@@ -77,7 +79,7 @@
 			}, function(err) {
 				if (err.toString().contains('request was redirected')) {
 					deferred.resolve(true);
-				} else if (err.status === 400 || err.status === 0) {
+				} else if (err.status === Constants.HTTP_BAD_REQUEST || err.status === 0) { // eslint-disable-line no-magic-numbers
 					deferred.resolve(true);
 				} else {
 					err.caller = 'NodeService.setLocation';

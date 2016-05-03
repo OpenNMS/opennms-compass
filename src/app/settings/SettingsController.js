@@ -6,6 +6,8 @@
 		Server = require('../servers/models/Server'),
 		URI = require('urijs');
 
+	var Constants = require('../misc/Constants');
+
 	require('angular-debounce');
 
 	require('../availability/Service');
@@ -80,7 +82,6 @@
 			var urls = [];
 
 			var tryUrl = function(url) {
-				var q = this;
 				if (url === undefined) {
 					return $q.reject('No URLs worked.  :(');
 				}
@@ -111,15 +112,15 @@
 
 			var errorStatus;
 			var updateError = function(err) {
-				if (errorStatus === 401) {
+				if (errorStatus === Constants.HTTP_UNAUTHORIZED) {
 					// leave unchanged, 401 should be displayed because we got a valid URL, but wrong password
 					return;
-				} else if (err.status === 401) {
+				} else if (err.status === Constants.HTTP_UNAUTHORIZED) {
 					// update, 401 is more important
-					errorStatus = 401;
-				} else if (errorStatus !== 404 && err.status === 404) {
+					errorStatus = Constants.HTTP_UNAUTHORIZED;
+				} else if (errorStatus !== Constants.HTTP_NOT_FOUND && err.status === Constants.HTTP_NOT_FOUND) {
 					// update, valid protocol but invalid URL
-					errorStatus = 404;
+					errorStatus = Constants.HTTP_NOT_FOUND;
 				} else if (errorStatus === undefined) {
 					// no existing status, so update
 					errorStatus = err.status;
@@ -148,8 +149,8 @@
 				updateError(err);
 
 				switch(errorStatus) {
-					case 401: return $q.reject('invalid username or password');
-					case 404: return $q.reject('server exists, but URL is invalid');
+					case Constants.HTTP_UNAUTHORIZED: return $q.reject('invalid username or password');
+					case Constants.HTTP_NOT_FOUND: return $q.reject('server exists, but URL is invalid');
 					default: return $q.reject('unknown error');
 				}
 			}).finally(function() {
@@ -165,19 +166,20 @@
 				return tryServer(server).then(function(url) {
 					server.url = url;
 					/*return $q.reject('force failed');*/
-					return Servers.save(server)['finally'](function() {
+					return Servers.save(server).finally(function() {
 						Servers.setDefault(server);
 						$scope.closeModal();
 					});
-				}, function(err) {
+				}).catch(function(err) {
 					$scope.serverError = err;
 					$log.warn('Server check failed: ' + angular.toJson(err));
 					return $q.reject(err);
 				});
-			} else {
-				$log.warn('Server did not have a name or URL!');
-				$scope.closeModal();
 			}
+
+			$log.warn('Server did not have a name or URL!');
+			$scope.closeModal();
+			return $q.reject('Server did not have a name or URL!');
 		};
 
 		return {
@@ -234,13 +236,13 @@
 			});
 		};
 
-		var init = debounce(200, function() {
-			$log.debug('SettingsCtrl.init(): ' + !!$scope.launchAddServer);
+		var init = debounce(200, function() { // eslint-disable-line no-magic-numbers
+			$log.debug('SettingsCtrl.init(): ' + Boolean($scope.launchAddServer));
 			initDefaultServer();
 			Servers.all().then(function(servers) {
 				if ($scope.launchAddServer) {
 					$scope.launchAddServer = false;
-					if (servers.length === 0) {
+					if (servers.length === 0) { // eslint-disable-line no-magic-numbers
 						$scope.addServer();
 					}
 				}
@@ -278,7 +280,7 @@
 				var ret = '';
 				for (var i=0, len=chunks.length; i < len; i++) {
 					ret += chunks[i].capitalize();
-					if (i+1 !== chunks.length) {
+					if (i+1 !== chunks.length) { // eslint-disable-line no-magic-numbers
 						ret += ' ';
 					}
 				}
@@ -290,9 +292,8 @@
 		$scope.getErrorMessage = function(error) {
 			if (error.message && error.message.toString) {
 				return error.message.toString();
-			} else {
-				return error.message;
 			}
+			return error.message;
 		};
 
 		$scope.clearErrors = function() {
@@ -313,11 +314,11 @@
 		};
 
 		$scope.getRefreshInterval = function() {
-			return Math.round(parseInt($scope.settings.refreshInterval, 10)/1000);
+			return Math.round(parseInt($scope.settings.refreshInterval, 10)/Constants.MILLIS);
 		};
 
 		$scope.handleKey = function(ev) {
-			if (ev.which === 13) {
+			if (ev.which === Constants.KEY_ENTER) {
 				util.hideKeyboard();
 				ev.preventDefault();
 				ev.stopPropagation();

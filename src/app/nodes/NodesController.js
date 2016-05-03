@@ -4,6 +4,7 @@
 	var angular = require('angular');
 	require('angular-debounce');
 
+	var Constants = require('../misc/Constants');
 	var Node = require('./models/Node');
 
 	require('./NodeService');
@@ -12,6 +13,8 @@
 	require('../misc/Capabilities');
 	require('../misc/Errors');
 	require('../misc/util');
+
+	var MAX_NODE_LIST_LENGTH = 20;
 
 	var nodesTemplate = require('ngtemplate!./nodes.html');
 	var loadingTemplate = require('ngtemplate!../misc/loading.html');
@@ -47,9 +50,9 @@
 		var lower = function(s) {
 			if (s) {
 				return s.toLowerCase();
-			} else {
-				return s;
 			}
+
+			return s;
 		};
 
 		$scope.updateSearch = function(searchFor, pullToRefresh) {
@@ -61,7 +64,7 @@
 				$scope.searching = true;
 			}
 			var searchPromise = NodeService.search(lower(searchFor));
-			searchPromise['finally'](function() {
+			searchPromise.finally(function() {
 				$ionicLoading.hide();
 				$scope.searching = false;
 				$scope.$broadcast('scroll.refreshComplete');
@@ -84,7 +87,7 @@
 				$scope.searching = false;
 				$scope.nodes = nodes;
 				Cache.set('nodes-list-' + searchFor, nodes);
-				if (nodes.length === 20 && (angular.isUndefined(searchFor) || searchFor.trim() === '')) {
+				if (nodes.length === MAX_NODE_LIST_LENGTH && (angular.isUndefined(searchFor) || searchFor.trim() === '')) {
 					$scope.nodes.push({id:'more'});
 				}
 			}, function(err) {
@@ -135,7 +138,7 @@
 			if (Capabilities.lowMemory()) {
 				resetData();
 			} else {
-				lazyReset = $timeout(resetData, 10000);
+				lazyReset = $timeout(resetData, Constants.DEFAULT_TIMEOUT);
 			}
 		});
 	});

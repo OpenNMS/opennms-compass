@@ -53,7 +53,7 @@
 			if (a && b) {
 				return a.name.localeCompare(b.name);
 			}
-			return 0;
+			return 0; // eslint-disable-line no-magic-numbers
 		};
 
 		var _toServer = function(server) {
@@ -67,9 +67,8 @@
 				return server;
 			} else if (server instanceof Server) {
 				return server;
-			} else {
-				return new Server(server);
 			}
+			return new Server(server);
 		};
 
 		var getServers = function() {
@@ -86,12 +85,14 @@
 		var getDefaultServer = function() {
 			var onFailure = function() {
 				return getServers().then(function(servers) {
+					/* eslint-disable no-magic-numbers */
 					if (servers.length > 0) {
 						Settings.setDefaultServerId(servers[0]._id);
 						return _toServer(servers[0]);
-					} else {
-						return undefined;
 					}
+					/* eslint-enable no-magic-numbers */
+
+					return undefined;
 				});
 			};
 
@@ -103,14 +104,14 @@
 						}).catch(function(err) {
 							if (err.error && err.reason === 'missing') {
 								return onFailure();
-							} else {
-								$log.error('Failed to get server ' + serverId + ': ' + angular.toJson(err));
-								return $q.reject(err);
 							}
+
+							$log.error('Failed to get server ' + serverId + ': ' + angular.toJson(err));
+							return $q.reject(err);
 						});
-					} else {
-						return onFailure();
 					}
+
+					return onFailure();
 				});
 			});
 		};
@@ -122,8 +123,8 @@
 				if (!angular.equals(oldDefaultServer, newDefaultServer)) {
 					UtilEventBroadcaster.defaultServerUpdated(newDefaultServer);
 					var match = serverTypeMatch.exec(newDefaultServer.url);
-					if (match && match.length > 0) {
-						$rootScope.$broadcast('opennms.analytics.trackEvent', 'settings', 'serverType', 'Server Type', match[0]);
+					if (match && match.length > 0) { // eslint-disable-line no-magic-numbers
+						$rootScope.$broadcast('opennms.analytics.trackEvent', 'settings', 'serverType', 'Server Type', match[0]); // eslint-disable-line no-magic-numbers
 					}
 				}
 				return defaultServer;
@@ -131,7 +132,7 @@
 		};
 
 		var _checkServersUpdated = function(force, count) {
-			//$log.error('Servers._checkServersUpdated: ' + (count || 0));
+			//$log.error('Servers._checkServersUpdated: ' + (count || 0)); // eslint-disable-line no-magic-numbers
 			var oldServers = angular.copy(servers);
 			oldServers.sort(_sortServers);
 			return getServers().then(function(newServers) {
@@ -185,11 +186,11 @@
 			});
 		};
 
-		var _saveServer = function(server) {
+		var _saveServer = function(_server) {
+			var server = angular.fromJson(angular.toJson(_server));
 			if (!server._id) {
 				server._id = uuid4.generate();
 			}
-			server = angular.fromJson(angular.toJson(server));
 
 			return serversDB.get(server._id).then(function(doc) {
 				angular.extend(doc, server);
@@ -208,10 +209,10 @@
 						$log.error('Failed to save ' + server.name + ': ' + angular.toJson(err));
 						return $q.reject(err);
 					});
-				} else {
-					$log.error('Failed to get server ' + server.name + ' (' + server._id + '): ' + angular.toJson(err));
-					return $q.reject(err);
 				}
+
+				$log.error('Failed to get server ' + server.name + ' (' + server._id + '): ' + angular.toJson(err));
+				return $q.reject(err);
 			}).finally(function() {
 				checkServersUpdated();
 			});
@@ -219,30 +220,30 @@
 
 		var init = function() {
 			return fetchServerNames().then(function(names) {
-				if (names.length > 0) {
+				if (names.length > 0) { // eslint-disable-line no-magic-numbers
 					return names;
-				} else {
-					$log.info('Servers.init: no server names found, attempting to upgrade old settings.');
-					return Settings.get().then(function(settings) {
-						if (__DEVELOPMENT__) { $log.debug('Servers.init: settings = ' + angular.toJson(settings)); }
-						if (settings.server !== undefined && settings.username !== undefined && settings.password !== undefined) {
-							var server = new Server({
-								name: URI(settings.server).hostname(),
-								url: settings.server,
-								username: settings.username,
-								password: settings.password
-							});
-							if (__DEVELOPMENT__) { $log.debug('Servers.init: saving default server: ' + angular.toJson(server, true)); }
-							return _saveServer(server);
-						} else {
-							$log.debug('Servers.init: No servers configured.');
-							return $q.reject('No servers configured.');
-						}
-					}, function(err) {
-						$log.info('Servers.init: No settings found.');
-						return $q.reject(err);
-					});
 				}
+
+				$log.info('Servers.init: no server names found, attempting to upgrade old settings.');
+				return Settings.get().then(function(settings) {
+					if (__DEVELOPMENT__) { $log.debug('Servers.init: settings = ' + angular.toJson(settings)); }
+					if (settings.server !== undefined && settings.username !== undefined && settings.password !== undefined) {
+						var server = new Server({
+							name: URI(settings.server).hostname(),
+							url: settings.server,
+							username: settings.username,
+							password: settings.password
+						});
+						if (__DEVELOPMENT__) { $log.debug('Servers.init: saving default server: ' + angular.toJson(server, true)); }
+						return _saveServer(server);
+					}
+
+					$log.debug('Servers.init: No servers configured.');
+					return $q.reject('No servers configured.');
+				}, function(err) {
+					$log.info('Servers.init: No settings found.');
+					return $q.reject(err);
+				});
 			}).then(function() {
 				ready.resolve(true);
 				return ready.promise;
@@ -262,9 +263,9 @@
 		var setDefaultServer = function(server) {
 			if (server && server._id) {
 				return Settings.setDefaultServerId(server._id);
-			} else {
-				return $q.reject('Not sure how to handle server "'+server+'"');
 			}
+
+			return $q.reject('Not sure how to handle server "'+server+'"');
 		};
 
 		var saveServer = function(server) {
@@ -282,10 +283,10 @@
 								UtilEventBroadcaster.serverRemoved(server);
 								return server;
 							});
-						} else {
-							UtilEventBroadcaster.serverRemoved(server);
-							return server;
 						}
+
+						UtilEventBroadcaster.serverRemoved(server);
+						return server;
 					});
 				});
 			}).finally(function() {
@@ -295,12 +296,8 @@
 
 		var isServerConfigured = function() {
 			return getDefaultServer().then(function(server) {
-				if (server && server.name) {
-					return true;
-				} else {
-					return false;
-				}
-			}, function(err) {
+				return server && server.name;
+			}).catch(function(err) {
 				return false;
 			});
 		};

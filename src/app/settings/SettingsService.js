@@ -6,6 +6,8 @@
 	var angular = require('angular'),
 		moment = require('moment');
 
+	var Constants = require('../misc/Constants');
+
 	require('../../../generated/misc/BuildConfig');
 
 	require('../db/db');
@@ -17,13 +19,11 @@
 		'opennms.services.BuildConfig',
 		'opennms.services.DB'
 	])
-	.value('default-graph-min-range', 30 * 24 * 60 * 60 * 1000) // 1 month
-	.value('default-graph-range', 24 * 60 * 60 * 1000) // 1 day
+	.value('default-graph-min-range', Constants.DEFAULT_GRAPH_MIN_RANGE)
+	.value('default-graph-range', Constants.DEFAULT_GRAPH_RANGE)
 	.factory('Settings', function($q, $rootScope, $injector, $log, storage, db, uuid4) {
 		var $scope = $rootScope.$new();
 
-		var defaultRestLimit = 100;
-		var defaultRefreshInterval = 10000;
 		var defaultSettings = {
 			enableAnalytics: true
 		};
@@ -48,11 +48,10 @@
 			return settingsDB.get(key).then(function(doc) {
 				return doc.value;
 			}).catch(function(err) {
-				if (err.status === 404) {
+				if (err.status === Constants.HTTP_NOT_FOUND) {
 					return undefined;
-				} else {
-					return $q.reject(err);
 				}
+				return $q.reject(err);
 			});
 		};
 
@@ -69,7 +68,7 @@
 		};
 
 		var isEmpty = function(v) {
-			return !!(angular.isUndefined(v) || v === '' || v === 'undefined' || v === null);
+			return Boolean(angular.isUndefined(v) || v === '' || v === 'undefined' || v === null);
 		};
 
 		var ready = $q.defer();
@@ -121,11 +120,10 @@
 			return getAllSettings().then(function(settings) {
 				return settings;
 			}).catch(function(err) {
-				if (err.status === 404) {
+				if (err.status === Constants.HTTP_NOT_FOUND) {
 					return angular.copy(defaultSettings);
-				} else {
-					return $q.reject(err);
 				}
+				return $q.reject(err);
 			}).then(function(settings) {
 				var defaultServerId = storage.get('opennms.default-server-id');
 
@@ -147,9 +145,8 @@
 			}).then(function(settings) {
 				if (isEmpty(settings)) {
 					return $q.reject('No settings found.');
-				} else {
-					return settings;
 				}
+				return settings;
 			}).catch(function(err) {
 				$log.warn('Unable to get settings: ' + angular.toJson(err));
 				return {};
@@ -160,7 +157,7 @@
 			$log.info('Settings.init: Initializing.');
 
 			return db.all(DB_NAME).then(function(docs) {
-				if (docs.length > 0) {
+				if (docs.length > 0) {  //eslint-disable-line no-magic-numbers
 					return ready.resolve(true);
 				}
 
@@ -170,10 +167,10 @@
 					oldSettings.uuid = uuid4.generate();
 				}
 				if (!oldSettings.restLimit) {
-					oldSettings.restLimit = defaultRestLimit;
+					oldSettings.restLimit = Constants.DEFAULT_REST_LIMIT;
 				}
 				if (!oldSettings.refreshInterval) {
-					oldSettings.refreshInterval = defaultRefreshInterval;
+					oldSettings.refreshInterval = Constants.DEFAULT_REFRESH_INTERVAL;
 				}
 				if (!oldSettings.hasOwnProperty('enableAnalytics')) {
 					oldSettings.enableAnalytics = true;
@@ -239,12 +236,10 @@
 				}
 			}
 
-			return getSettings().then(function(oldSettings) {
-				var newSettings = angular.copy(settings), prop;
-
-				if (!oldSettings) {
-					oldSettings = {};
-				}
+			return getSettings().then(function(_oldSettings) {
+				var oldSettings = _oldSettings || {},
+					newSettings = angular.copy(settings),
+					prop;
 
 				for (prop in newSettings) {
 					if (newSettings.hasOwnProperty(prop) && newSettings[prop] !== oldSettings[prop]) {
@@ -264,26 +259,26 @@
 				if (c === '{}') {
 					//if (__DEVELOPMENT__) { $log.debug('Settings.saveSettings: settings are unchanged.'); }
  					return oldSettings;
-				} else {
-					$log.debug('Settings.saveSettings: settings have changed.  Updating.');
-					if (__DEVELOPMENT__) {
-						/*
-						$log.debug('Settings.saveSettings: Old Settings: ' + o);
-						$log.debug('Settings.saveSettings: New Settings: ' + n);
-						*/
-						$log.debug('Settings.saveSettings: Changed Settings: ' + angular.toJson(c));
-					}
+ 				}
 
-					return storeSettings(newSettings).then(function(stored) {
-						$rootScope.$broadcast('opennms.settings.updated', newSettings, oldSettings, changedSettings);
-						return stored;
-					}, function(err) {
-						$log.error('SettingsService.saveSettings: Failed to save settings: ' + angular.toJson(err));
-						if (err.message) {
-							$log.error(err.message);
-						}
-					});
+				$log.debug('Settings.saveSettings: settings have changed.  Updating.');
+				if (__DEVELOPMENT__) {
+					/*
+					$log.debug('Settings.saveSettings: Old Settings: ' + o);
+					$log.debug('Settings.saveSettings: New Settings: ' + n);
+					*/
+					$log.debug('Settings.saveSettings: Changed Settings: ' + angular.toJson(c));
 				}
+
+				return storeSettings(newSettings).then(function(stored) {
+					$rootScope.$broadcast('opennms.settings.updated', newSettings, oldSettings, changedSettings);
+					return stored;
+				}, function(err) {
+					$log.error('SettingsService.saveSettings: Failed to save settings: ' + angular.toJson(err));
+					if (err.message) {
+						$log.error(err.message);
+					}
+				});
 			});
 		};
 
@@ -303,10 +298,9 @@
 		var _getRestLimit = function() {
 			return _get('restLimit').then(function(restLimit) {
 				if (isEmpty(restLimit)) {
-					return defaultRestLimit;
-				} else {
-					return restLimit;
+					return Constants.DEFAULT_REST_LIMIT;
 				}
+				return restLimit;
 			});
 		};
 
@@ -344,9 +338,8 @@
 			return _get('refreshInterval').then(function(refreshInterval) {
 				if (isEmpty(refreshInterval)) {
 					return defaultRefreshInterval;
-				} else {
-					return refreshInterval;
 				}
+				return refreshInterval;
 			});
 		};
 

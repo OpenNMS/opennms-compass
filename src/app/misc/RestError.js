@@ -1,4 +1,5 @@
 var moment = require('moment');
+var Constants = require('./Constants');
 
 /**
  * @ngdoc object
@@ -64,13 +65,13 @@ function RestError(url, data, status, statusText, time) {
 
 RestError.prototype.permissionDenied = function() {
   'use strict';
-  return this.status === 401 || this.status === 403;
+  return this.status === Constants.HTTP_UNAUTHORIZED || this.status === Constants.HTTP_FORBIDDEN;
 };
 
 RestError.prototype.toString = function() {
   'use strict';
   var self = this, ret = 'Error ';
-  if (self.status && self.status > 0) {
+  if (self.status && self.status > 0) { // eslint-disable-line no-magic-numbers
     ret += this.status + ' ';
   }
   ret += 'requesting URL ' + self.url + ': ';

@@ -4,6 +4,7 @@ bin/
 bower_components/
 couchdb/
 engine/
+generated/
 hooks/
 node_modules/
 platforms/

@@ -72,9 +72,9 @@ function AlarmSummary(data) {
 AlarmSummary.prototype.getNodeName = function() {
   if (this.nodeLabel === undefined || this.nodeLabel === '') {
     return 'Node ' + this.nodeId;
-  } else {
-    return this.nodeLabel;
   }
+
+  return this.nodeLabel;
 };
 
 AlarmSummary.prototype.toJSON = function() {

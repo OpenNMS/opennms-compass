@@ -10,6 +10,8 @@ var severities = {
 	CRITICAL: 7
 };
 
+var Constants = require('../../misc/Constants');
+
 function AlarmFilter(params) {
 	var self = this;
 
@@ -38,7 +40,7 @@ function AlarmFilter(params) {
 	}
 }
 
-AlarmFilter.prototype.toParams = function(version) {
+AlarmFilter.prototype.toParams = function(_version) {
 	var self = this;
 	var params = {};
 	if (!self.showAcknowledged) {
@@ -52,10 +54,9 @@ AlarmFilter.prototype.toParams = function(version) {
 	}
 	params.limit = self.limit;
 	params.offset = self.offset;
-	if (version === undefined) {
-		version = 0.0;
-	}
-	if (self.minimumSeverity && version > 0.0) {
+
+	var version = _version === undefined? Constants.OPENNMS_UNKNOWN_VERSION : _version;
+	if (self.minimumSeverity && version > Constants.OPENNMS_UNKNOWN_VERSION) {
 		params.comparator = 'ge';
 		params.severity = self.minimumSeverity;
 	}
@@ -66,7 +67,9 @@ AlarmFilter.prototype.toQueryString = function(version) {
 	var ret = [];
 	var params = this.toParams(version);
 	for (var param in params) {
-		ret.push(param + '=' + encodeURIComponent(params[param]));
+		if ({}.hasOwnProperty.call(params, param)) {
+			ret.push(param + '=' + encodeURIComponent(params[param]));
+		}
 	}
 	return ret.join('&');
 };

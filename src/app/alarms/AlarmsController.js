@@ -5,6 +5,8 @@
 		Alarm = require('./models/Alarm'),
 		AlarmFilter = require('./models/AlarmFilter');
 
+	var Constants = require('../misc/Constants');
+
 	require('ionic-filter-bar');
 	require('angular-debounce');
 
@@ -23,6 +25,8 @@
 	var alarmsTemplate = require('ngtemplate!./alarms.html');
 	var filterTemplate = require('ngtemplate!./alarm-filter.html');
 	var loadingTemplate = require('ngtemplate!../misc/loading.html');
+
+	var REFRESH_DELAY = 500;
 
 	angular.module('opennms.controllers.Alarms', [
 		'ionic',
@@ -90,7 +94,9 @@
 		function all() {
 			var ret = {};
 			for (var sev in severities) {
-				ret[sev] = get(sev);
+				if ({}.hasOwnProperty.call(severities, key)) {
+					ret[sev] = get(sev);
+				}
 			}
 			return ret;
 		}
@@ -105,9 +111,9 @@
 				return alarms.filter(function(alarm) {
 					return severities[alarm.severity];
 				});
-			} else {
-				return alarms;
 			}
+
+			return alarms;
 		}
 
 		//severity.$stateful = true;
@@ -120,7 +126,7 @@
 
 		var filterParams = storage.get('opennms.alarms.filterParams');
 		if (!filterParams) {
-			filterParams = {limit:100};
+			filterParams = {limit:Constants.DEFAULT_REST_LIMIT};
 		}
 
 		$scope.modals = Modals;
@@ -220,7 +226,7 @@
 			// if we are hiding the ion-spinner, let it hang around a bit longer
 			$timeout(function() {
 				$scope.refreshing[type] = value;
-			}, value? 0:300);
+			}, value? 0:REFRESH_DELAY); // eslint-disable-line no-magic-numbers
 		};
 
 		$scope.scrollToTop = function(animate) {
@@ -234,13 +240,13 @@
 
 		var updateCount = 0;
 		var updateView = function(type, incoming) {
-			$log.debug('updateView(' + type + ',' + (incoming && incoming.length? incoming.length : 0) + ')');
-			if (incoming && incoming.length === 0) {
+			$log.debug('updateView(' + type + ',' + (incoming && incoming.length? incoming.length : 0) + ')'); // eslint-disable-line no-magic-numbers
+			if (incoming && incoming.length === 0) { // eslint-disable-line no-magic-numbers
 				$scope[type] = [];
 				return;
 			}
 
-			if (updateCount++ !== 0) {
+			if (updateCount++ !== 0) { // eslint-disable-line no-magic-numbers
 				//return;
 			}
 
@@ -256,19 +262,23 @@
 			for (var i=0, len=incoming.length, alarm, existingIndex; i < len; i++) {
 				alarm = incoming[i];
 				existingIndex = oldIds.indexOf(alarm.id);
-				if (existingIndex >= 0) {
+				if (existingIndex >= 0) { // eslint-disable-line no-magic-numbers
 					current[existingIndex] = alarm;
 				} else {
 					current.push(alarm);
 				}
 			}
-			for (var i=current.length - 1, alarm, newIndex; i >= 0; i--) {
-				alarm = current[i];
-				newIndex = newIds.indexOf(alarm.id);
+
+			// remove any that do not exist anymore
+			/* eslint-disable no-magic-numbers */
+			for (var r=current.length - 1, existingAlarm, newIndex; r >= 0; r--) {
+				existingAlarm = current[r];
+				newIndex = newIds.indexOf(existingAlarm.id);
 				if (newIndex === -1) {
-					current.splice(i, 1);
+					current.splice(r, 1);
 				}
 			}
+			/* eslint-enable no-magic-numbers */
 
 			var sortFunc = $scope.filter.newestFirst?
 				function(a,b) {
@@ -354,7 +364,7 @@
 			}
 			$scope.getAlarms();
 		};
-		$scope.refreshAlarms = debounce(500, $scope.refreshImmediately);
+		$scope.refreshAlarms = debounce(REFRESH_DELAY, $scope.refreshImmediately);
 
 		$scope.openAlarm = function(alarm) {
 			$scope.modals.alarm(alarm);
@@ -377,7 +387,7 @@
 			$scope.refreshAlarms();
 		});
 		$scope.info = {
-			numericVersion: 0.0
+			numericVersion: Constants.OPENNMS_UNKNOWN_VERSION
 		};
 		util.onInfoUpdated(function(i) {
 			$scope.info = i;
@@ -386,7 +396,7 @@
 		$scope.$watch('filter', function(newFilter, oldFilter) {
 			if (!angular.equals(newFilter, oldFilter)) {
 				if (!newFilter.equals(oldFilter)) {
-					$log.debug('Filter has changed: ' + newFilter.toParams(0.0));
+					$log.debug('Filter has changed: ' + newFilter.toParams(Constants.OPENNMS_UNKNOWN_VERSION));
 					$scope.refreshAlarms();
 				}
 			} else {

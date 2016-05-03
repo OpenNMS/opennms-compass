@@ -21,7 +21,7 @@ function Report(report) {
    * @propertyOf Report
    * @returns {number} The unique report ID
    */
-  self.id = Number(report['_id']);
+  self.id = Number(report._id);
 
   /**
    * @description
@@ -30,9 +30,9 @@ function Report(report) {
    * @propertyOf Report
    * @returns {string} Report Title
    */
-  self.title = report['_label'];
+  self.title = report._label;
 
-  if (report['_show_graphtype_button']) {
+  if (report._show_graphtype_button) {
     /**
      * @description
      * @ngdoc property
@@ -40,10 +40,10 @@ function Report(report) {
      * @propertyOf Report
      * @returns {boolean} True the report should show a button to override the graph type.
      */
-    self.graphtype_button = report['_show_graphtype_button'];
+    self.graphtype_button = report._show_graphtype_button;
   }
 
-  if (report['_show_timespan_button']) {
+  if (report._show_timespan_button) {
     /**
      * @description
      * @ngdoc property
@@ -51,10 +51,10 @@ function Report(report) {
      * @propertyOf Report
      * @returns {boolean} True the report should show a button to override the timespan.
      */
-    self.timespan_button = report['_show_timespan_button'];
+    self.timespan_button = report._show_timespan_button;
   }
 
-  if (report['_graphs_per_line']) {
+  if (report._graphs_per_line) {
     /**
      * @description
      * @ngdoc property
@@ -62,7 +62,7 @@ function Report(report) {
      * @propertyOf Report
      * @returns {number} The number of graphs to display per row.
      */
-    self.graphsPerLine = report['_graphs_per_line'];
+    self.graphsPerLine = report._graphs_per_line;
   }
 
   /**
@@ -73,14 +73,14 @@ function Report(report) {
    * @returns {array} An array of graphs to display.
    */
   self.graphs = [];
-  if (report['kscGraph']) {
+  if (report.kscGraph) {
     //console.log('graphs: ', report['kscGraph']);
-    if (angular.isArray(report['kscGraph'])) {
-      report['kscGraph'].map(function(graph) {
-        self.graphs.push(new ReportGraph(graph));
-      });
+    if (angular.isArray(report.kscGraph)) {
+      for (var i=0, len=report.kscGraph.length; i < len; i++) {
+        self.graphs.push(new ReportGraph(report.kscGraph[i]));
+      }
     } else {
-      self.graphs.push(new ReportGraph(report['kscGraph']));
+      self.graphs.push(new ReportGraph(report.kscGraph));
     }
   }
 

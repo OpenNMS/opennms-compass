@@ -131,7 +131,7 @@ module.factory('HTTP', function($http, $injector, $interval, $log, $q, $window, 
 		}
 
 		return ready.then(function(cordovaHTTP) {
-			if (options.url.indexOf('http') !== 0) {
+			if (options.url.indexOf('http') !== 0) { // eslint-disable-line no-magic-numbers
 				return $q.reject(options.url + ' is not a valid URL!');
 			}
 
@@ -178,14 +178,15 @@ module.factory('HTTP', function($http, $injector, $interval, $log, $q, $window, 
 					return cordovaHTTP.post(options.url, options.params, options.headers).then(handleSuccess, handleError);
 				} else if (options.method === 'DELETE') {
 					return cordovaHTTP.delete(options.url, options.params, options.headers).then(handleSuccess, handleError);
-				} else {
-					$log.error('HTTP: Unknown method: ' + options.method);
-					return $q.reject('Unknown method: ' + options.method);
 				}
-			} else {
-				if (__DEVELOPMENT__) { $log.debug('Making Angular HTTP call with options:' + angular.toJson(options)); }
-				return $http(options);
+
+				$log.error('HTTP: Unknown method: ' + options.method);
+				return $q.reject('Unknown method: ' + options.method);
 			}
+
+			// No cordovaHTTP, fall through to Angular
+			if (__DEVELOPMENT__) { $log.debug('Making Angular HTTP call with options:' + angular.toJson(options)); }
+			return $http(options);
 		});
 	};
 
@@ -200,10 +201,8 @@ module.factory('HTTP', function($http, $injector, $interval, $log, $q, $window, 
 		});
 	};
 
-	var get = function(url, options) {
-		if (!options) {
-			options = {};
-		}
+	var get = function(url, _options) {
+		var options = _options || {};
 		options.method = 'GET';
 		options.url = url;
 		return httpQueue.add(function callGet() {
@@ -211,10 +210,8 @@ module.factory('HTTP', function($http, $injector, $interval, $log, $q, $window, 
 		});
 	};
 
-	var del = function(url, options) {
-		if (!options) {
-			options = {};
-		}
+	var del = function(url, _options) {
+		var options = _options || {};
 		options.method = 'DELETE';
 		options.url = url;
 		return httpQueue.add(function callDelete() {
@@ -222,10 +219,8 @@ module.factory('HTTP', function($http, $injector, $interval, $log, $q, $window, 
 		});
 	};
 
-	var post = function(url, options) {
-		if (!options) {
-			options = {};
-		}
+	var post = function(url, _options) {
+		var options = _options || {};
 		options.method = 'POST';
 		options.url = url;
 		return httpQueue.add(function callPost() {
@@ -233,10 +228,8 @@ module.factory('HTTP', function($http, $injector, $interval, $log, $q, $window, 
 		});
 	};
 
-	var put = function(url, options) {
-		if (!options) {
-			options = {};
-		}
+	var put = function(url, _options) {
+		var options = _options || {};
 		options.method = 'PUT';
 		options.url = url;
 		return httpQueue.add(function callPut() {
@@ -267,10 +260,10 @@ module.factory('HTTP', function($http, $injector, $interval, $log, $q, $window, 
 
 			if (basicAuth.username && basicAuth.password) {
 				basicAuth.header = createBasicAuthHeader(basicAuth.username, basicAuth.password);
-				$http.defaults.headers.common['Authorization'] = basicAuth.header;
+				$http.defaults.headers.common.Authorization = basicAuth.header;
 			}
 		} else {
-			delete $http.defaults.headers.common['Authorization'];
+			delete $http.defaults.headers.common.Authorization;
 		}
 
 		return $q.when(basicAuth);

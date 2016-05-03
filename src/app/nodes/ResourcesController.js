@@ -2,6 +2,7 @@
 	'use strict';
 
 	var angular = require('angular');
+	var Constants = require('../misc/Constants');
 
 	require('./ResourceService');
 
@@ -11,6 +12,7 @@
 
 	var nodeResourcesTemplate = require('ngtemplate!./node-resources.html');
 
+	/* eslint-disable no-else-return, no-magic-numbers */
 	var sortResources = function(a,b) {
 		if (a.typeLabel) {
 			if (b.typeLabel) {
@@ -26,6 +28,7 @@
 			}
 		}
 	};
+	/* eslint-enable no-else-return, no-magic-numbers */
 
 	angular.module('opennms.controllers.NodeResources', [
 		'ionic',
@@ -103,7 +106,7 @@
 			if (Capabilities.lowMemory()) {
 				resetData();
 			} else {
-				lazyReset = $timeout(resetData, 10000);
+				lazyReset = $timeout(resetData, Constants.DEFAULT_TIMEOUT);
 			}
 		});
 	});

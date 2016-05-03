@@ -22,7 +22,7 @@ function Outage(outage) {
    * @propertyOf Outage
    * @returns {number} The unique outage ID
    */
-  self.id = parseInt(outage['_id'], 10);
+  self.id = parseInt(outage._id, 10);
 
   /**
    * @description
@@ -31,7 +31,7 @@ function Outage(outage) {
    * @propertyOf Outage
    * @returns {string} IP Address of node's interface
    */
-  self.ipAddress = outage['ipAddress'];
+  self.ipAddress = outage.ipAddress;
 
   /**
    * @description
@@ -40,9 +40,9 @@ function Outage(outage) {
    * @propertyOf Outage
    * @returns {*|Date} The time the service was lost.
    */
-  self.ifLostService = moment(outage['_ifLostService']);
+  self.ifLostService = moment(outage._ifLostService);
 
-  if (outage['_ifRegainedService']) {
+  if (outage._ifRegainedService) {
     /**
      * @description
      * @ngdoc property
@@ -50,7 +50,7 @@ function Outage(outage) {
      * @propertyOf Outage
      * @returns {*|Date} The time the service was regained. Property is undefined if the service hasn't been regained.
      */
-    self.ifRegainedService = moment(outage['_ifRegainedService']);
+    self.ifRegainedService = moment(outage._ifRegainedService);
   }
 
   /**
@@ -60,7 +60,7 @@ function Outage(outage) {
    * @propertyOf Outage
    * @returns {MonitoredService} The monitored service related to this outage.
    */
-  self.monitoredService = new MonitoredService(outage['monitoredService']);
+  self.monitoredService = new MonitoredService(outage.monitoredService);
 
   /**
    * @description
@@ -69,7 +69,7 @@ function Outage(outage) {
    * @propertyOf Outage
    * @returns {Event} The event that was emitted when the service was lost.
    */
-  self.serviceLostEvent = new OnmsEvent(outage['serviceLostEvent']);
+  self.serviceLostEvent = new OnmsEvent(outage.serviceLostEvent);
   //self.node = new Node(self.nodeId);
 
   /**
@@ -105,9 +105,9 @@ function Outage(outage) {
 Outage.prototype.getNodeName = function() {
   if (this.nodeLabel === undefined || this.nodeLabel === '') {
     return 'Node ' + this.nodeId;
-  } else {
-    return this.nodeLabel;
   }
+
+  return this.nodeLabel;
 };
 
 /**
@@ -118,7 +118,7 @@ Outage.prototype.getNodeName = function() {
  * @returns {string} formatted CSS class name
  */
 Outage.prototype.getSeverityClass = function() {
-  if (this.serviceLostEvent.severity !== null && angular.isString(this.serviceLostEvent.severity) && this.serviceLostEvent.severity.length !== 0) {
+  if (this.serviceLostEvent.severity !== null && angular.isString(this.serviceLostEvent.severity) && this.serviceLostEvent.severity.length !== 0) { // eslint-disable-line no-magic-numbers
     return 'severity-'+angular.uppercase(this.serviceLostEvent.severity);
   }
   return '';

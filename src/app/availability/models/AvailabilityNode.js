@@ -20,7 +20,7 @@ function AvailabilityNode(node) {
    * @propertyOf AvailabilityNode
    * @returns {number} Node ID
    */
-  self.id   = parseInt(node['_id'], 10);
+  self.id   = parseInt(node._id, 10);
 
   /**
    * @description
@@ -29,7 +29,7 @@ function AvailabilityNode(node) {
    * @propertyOf AvailabilityNode
    * @returns {number} Node's availability (as a percentage)
    */
-  self.availability = parseFloat(node['_availability']);
+  self.availability = parseFloat(node._availability);
 
   /**
    * @description

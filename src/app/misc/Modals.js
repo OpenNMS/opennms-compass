@@ -73,11 +73,11 @@
 				return OutageService.node(outage.nodeId).then(function(nodeOutages) {
 					nodeOutages.sort(function(a, b) {
 						var comp = a.ipAddress.localeCompare(b.ipAddress);
-						if (comp === 0) {
+						if (comp === 0) { // eslint-disable-line no-magic-numbers
 							return a.monitoredService.serviceName.localeCompare(b.monitoredService.serviceName);
-						} else {
-							return comp;
 						}
+
+						return comp;
 					});
 					outage.nodeOutages = nodeOutages;
 					Cache.set('modal-outages-' + outage.nodeId, nodeOutages);
@@ -167,7 +167,7 @@
 			modal.scope.updateAlarmData = function() {
 				if (modal.scope.alarm && modal.scope.alarm.id) {
 					var promise = AlarmService.alarm(modal.scope.alarm.id);
-					promise['finally'](function() {
+					promise.finally(function() {
 						modal.scope.$broadcast('scroll.refreshComplete');
 					});
 					promise.then(function(alarm) {

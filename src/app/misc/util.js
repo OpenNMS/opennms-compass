@@ -328,12 +328,12 @@
 		return {
 			dashboard: goToDashboard,
 			icon: function(severity) {
-				severity = severity? severity.toUpperCase() : 'INDETERMINATE';
-				return icons[severity] || icons.INDETERMINATE;
+				var _severity = severity? severity.toUpperCase() : 'INDETERMINATE';
+				return icons[_severity] || icons.INDETERMINATE;
 			},
 			color: function(severity) {
-				severity = severity? severity.toUpperCase() : 'INDETERMINATE';
-				return colors[severity] || colors.INDETERMINATE;
+				var _severity = severity? severity.toUpperCase() : 'INDETERMINATE';
+				return colors[_severity] || colors.INDETERMINATE;
 			},
 			severities: getSeverities,
 			nextSeverity: function(severity) {
@@ -341,7 +341,7 @@
 					return severity;
 				}
 				var severities = getSeverities();
-				return severities[Math.min(severities.length-1, severities.indexOf(severity.toUpperCase()) + 1)];
+				return severities[Math.min(severities.length-1, severities.indexOf(severity.toUpperCase()) + 1)]; // eslint-disable-line no-magic-numbers
 			},
 			showKeyboard: showKeyboard,
 			hideKeyboard: hideKeyboard,

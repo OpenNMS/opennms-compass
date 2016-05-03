@@ -20,7 +20,7 @@ function MonitoredService(svc) {
    * @propertyOf MonitoredService
    * @returns {number} The unique service ID
    */
-  self.id = svc['_id'];
+  self.id = svc._id;
 
   /**
    * @description
@@ -29,7 +29,7 @@ function MonitoredService(svc) {
    * @propertyOf MonitoredService
    * @returns {number} The unique ID of the IP interface this monitored service is associated with.
    */
-  self.ipInterfaceId = svc['ipInterfaceId'];
+  self.ipInterfaceId = svc.ipInterfaceId;
 
   /**
    * @description
@@ -38,7 +38,7 @@ function MonitoredService(svc) {
    * @propertyOf MonitoredService
    * @returns {number} The unique ID of the service type this monitored service is of.
    */
-  self.serviceId = svc['serviceType']['_id'];
+  self.serviceId = svc.serviceType._id;
 
   /**
    * @description
@@ -47,7 +47,7 @@ function MonitoredService(svc) {
    * @propertyOf MonitoredService
    * @returns {string} The human-readable name of the service type this monitored service is of.
    */
-  self.serviceName = svc['serviceType']['name'];
+  self.serviceName = svc.serviceType.name;
 
   /**
    * @description
@@ -56,7 +56,7 @@ function MonitoredService(svc) {
    * @propertyOf MonitoredService
    * @returns {*} the monitored service status.
    */
-  self.status = svc['_status'];
+  self.status = svc._status;
 
   self.hash = md5([self.id, self.ipInterfaceId, self.serviceId, self.serviceName, self.status].join('|'));
 }

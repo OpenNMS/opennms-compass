@@ -38,14 +38,14 @@
 		var getErrors = function(type) {
 			if (type) {
 				return _errors[type];
-			} else {
-				return getErrorsAsArray();
 			}
+
+			return getErrorsAsArray();
 		};
 		var resetErrors = function() {
 			var oldErrors = getErrors();
 			_errors = {};
-			if (oldErrors.length > 0) {
+			if (oldErrors.length > 0) { // eslint-disable-line no-magic-numbers
 				$rootScope.$broadcast('opennms.errors.updated', getErrorsAsArray());
 			}
 		};
@@ -58,9 +58,9 @@
 			hasError: function(type) {
 				if (_errors[type]) {
 					return true;
-				} else {
-					return false;
 				}
+
+				return false;
 			}
 		};
 	});

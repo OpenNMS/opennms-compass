@@ -16,7 +16,7 @@ angular.module('opennms.misc.Queue', [])
 		if (!__DEVELOPMENT__) { return; }
 		var pendinglen = queue.pending.length,
 			flightlen = queue.inFlight.length;
-		if (!force && pendinglen === 0 && flightlen === 0) {
+		if (!force && pendinglen === 0 && flightlen === 0) { // eslint-disable-line no-magic-numbers
 			return;
 		}
 		$log.debug('Queue.'+queue.name+': ' + flightlen + ' in-flight, ' + pendinglen + ' pending');
@@ -52,7 +52,7 @@ angular.module('opennms.misc.Queue', [])
 		for (var i=0, len=queues.length, queue; i < len; i++) {
 			queue = queues[i];
 			var threshold = Date.now() - queue.timeout;
-			for (var f=queue.inFlight.length - 1, inFlight; f >= 0; f--) {
+			for (var f=queue.inFlight.length - 1, inFlight; f >= 0; f--) { // eslint-disable-line no-magic-numbers
 				inFlight = queue.inFlight[f];
 				if (inFlight && inFlight.started < threshold) {
 					$log.warn('request timed out; this should not happen' + (inFlight.name? ': ' + inFlight.name : ''));
@@ -60,7 +60,7 @@ angular.module('opennms.misc.Queue', [])
 					queue.inFlight.remove(inFlight);
 				}
 			}
-			while (queue.pending.length > 0 && queue.inFlight.length < queue.maxRequests) {
+			while (queue.pending.length > 0 && queue.inFlight.length < queue.maxRequests) { // eslint-disable-line no-magic-numbers
 				var request = queue.pending.shift();
 				execute(request);
 			}
@@ -126,26 +126,26 @@ angular.module('opennms.misc.Queue', [])
 	Queue.prototype.cancel = function(name) {
 		var ret = [];
 
-		var self = this,
-			len = self.pending.length;
-		for (var i=0, pending; i < len; i++) {
+		var self = this;
+
+		for (var i=0, len = self.pending.length, pending; i < len; i++) {
 			pending = self.pending[i];
 			if (pending && pending.name !== undefined && pending.name === name) {
-				ret.push(self.pending.splice(i, 1)[0]);
+				ret.push(self.pending.splice(i, 1)[0]); // eslint-disable-line no-magic-numbers
 			}
 		}
-		for (var i=0, len = ret.length; i < len; i++) {
-			self.pending.remove(ret[i]);
+		for (var j=0, retlen = ret.length; j < retlen; j++) {
+			self.pending.remove(ret[j]);
 		}
 
 		if (__DEVELOPMENT__) {
-			if (ret.length > 0) {
+			if (ret.length > 0) { // eslint-disable-line no-magic-numbers
 				$log.debug('Queue.' + this.name + ': removed: ' + ret.map(function(pending) {
 					if (pending) {
 						return pending.name;
-					} else {
-						return 'unknown';
 					}
+
+					return 'unknown';
 				}));
 			}
 		}
@@ -153,7 +153,7 @@ angular.module('opennms.misc.Queue', [])
 	};
 	Queue.prototype.clear = function clear() {
 		var len = this.pending.length;
-		if (len > 0) {
+		if (len > 0) { // eslint-disable-line no-magic-numbers
 			$log.debug('Queue.' + this.name + ': clearing ' + len + ' entries.');
 			this.pending = [];
 		}

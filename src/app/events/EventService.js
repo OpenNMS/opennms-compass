@@ -4,6 +4,8 @@
 	var angular = require('angular'),
 		OnmsEvent = require('./models/OnmsEvent');
 
+	var Constants = require('../misc/Constants');
+
 	require('../misc/Rest');
 
 	angular.module('opennms.services.Events', [
@@ -17,7 +19,7 @@
 			var deferred = $q.defer();
 
 			var params = {
-				limit: limit||10,
+				limit: limit||Constants.DEFAULT_REST_EVENT_LIMIT,
 				'node.id': nodeId,
 				orderBy: 'eventTime',
 				order: 'desc'

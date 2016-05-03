@@ -5,6 +5,8 @@
 		AlarmFilter = require('../alarms/models/AlarmFilter'),
 		$ = require('jquery');
 
+	var Constants = require('../misc/Constants');
+
 	require('angular-debounce');
 
 	require('./Service');
@@ -40,6 +42,10 @@
 		'MAJOR',
 		'CRITICAL'
 	];
+
+	var SHORT_DELAY = 50,
+		REFRESH_DELAY = 500,
+		AVAILABILITY_REFRESH_DELAY = 5000;
 
 	var sortAlarmData = function(a, b) {
 		return severityOrder.indexOf(b.label.toUpperCase()) - severityOrder.indexOf(a.label.toUpperCase());
@@ -102,7 +108,7 @@
 			if (Errors.hasError('dashboard-'+type)) {
 				return false;
 			}
-			return $scope.donutSize && $scope.donutSize > 0 && $scope.donuts && $scope.donuts[type] && $scope.donuts[type].data && $scope.donuts[type].options && $scope.donuts[type].options.series;
+			return $scope.donutSize && $scope.donutSize > 0 && $scope.donuts && $scope.donuts[type] && $scope.donuts[type].data && $scope.donuts[type].options && $scope.donuts[type].options.series; // eslint-disable-line no-magic-numbers
 		};
 
 		var shouldHideDonut = {
@@ -114,24 +120,22 @@
 			if (value === true) {
 				shouldHideDonut[type] = true;
 			} else {
-				setTimeout(function() {
+				$timeout(function() {
 					shouldHideDonut[type] = false;
-				}, 50);
+				}, SHORT_DELAY);
 			}
 		};
 
 		$scope.donutClass = function(type) {
 			if (shouldHideDonut[type]) {
 				return 'invisible';
-			} else {
-				return '';
 			}
+
+			return '';
 		};
 
-		var updateLogo = function(info) {
-			if (!info) {
-				info = Info.get();
-			}
+		var updateLogo = function(_info) {
+			var info = _info? _info : Info.get();
 			if (info.packageName === 'meridian') {
 				$scope.logo = 'images/meridian.svg';
 			} else {
@@ -181,7 +185,7 @@
 			}
 		};
 
-		var updateDonuts = debounce(500, function() {
+		var updateDonuts = debounce(REFRESH_DELAY, function() {
 			var updateTitle = function(type) {
 				$log.debug('updateDonuts(' + type + ')');
 				var visible, hidden;
@@ -235,7 +239,7 @@
 			if (update.success) {
 				$scope.donuts.outages = update.contents;
 				$scope.donuts.outages.options = angular.copy(flotOptions);
-				if ($scope.donuts.outages.total === 0) {
+				if ($scope.donuts.outages.total === 0) { // eslint-disable-line no-magic-numbers
 					$scope.donuts.outages.options.series.pie.label.show = false;
 				}
 				hideDonut('outages', false);
@@ -260,7 +264,7 @@
 			if (update.success) {
 				$scope.donuts.alarms = update.contents;
 				$scope.donuts.alarms.options = angular.copy(flotOptions);
-				if ($scope.donuts.alarms.total === 0) {
+				if ($scope.donuts.alarms.total === 0) { // eslint-disable-line no-magic-numbers
 					$scope.donuts.alarms.options.series.pie.label.show = false;
 				}
 				hideDonut('alarms', false);
@@ -287,7 +291,7 @@
 							$log.debug('Availability is still calculating... refreshing in 5 seconds.');
 							$timeout(function() {
 								DashboardService.refreshAvailability();
-							}, 5000);
+							}, AVAILABILITY_REFRESH_DELAY);
 							return;
 						}
 					}
@@ -326,7 +330,7 @@
 
 
 		var refreshing = false;
-		$scope.refreshData = debounce(500, function() {
+		$scope.refreshData = debounce(REFRESH_DELAY, function() {
 			if (refreshing) {
 				return;
 			}
@@ -345,20 +349,20 @@
 				$timeout(function() {
 					$ionicLoading.hide();
 					$scope.$broadcast('scroll.refreshComplete');
-				}, 50);
+				}, SHORT_DELAY);
 			};
 
 			$q.when($scope.server).then(function(server) {
-				if (server) {
-					return $q.all([
-						DashboardService.refreshAvailability(),
-						DashboardService.refreshOutages(),
-						DashboardService.refreshAlarms(),
-						DashboardService.refreshFavorites()
-					]);
-				} else {
+				if (!server) {
 					return $q.reject('No server configured.');
 				}
+
+				return $q.all([
+					DashboardService.refreshAvailability(),
+					DashboardService.refreshOutages(),
+					DashboardService.refreshAlarms(),
+					DashboardService.refreshFavorites()
+				]);
 			}).finally(function() {
 				finished();
 			});
@@ -380,18 +384,18 @@
 				template: 'Remove ' + graphTitle + ' from favorites?',
 				okType: 'button-compass'
 			}).then(function(confirmed) {
-				if (confirmed) {
-					var favoriteIndex = $scope.favoriteGraphs.indexOf(favorite);
-					if (favoriteIndex >= 0) {
-						$scope.favoriteGraphs = [];
-						$ionicSlideBoxDelegate.$getByHandle('graph-slide-box').update();
-					}
-					return ResourceService.unfavorite(favorite.resourceId, favorite.graphName).finally(function() {
-						return DashboardService.refreshFavorites();
-					});
-				} else {
+				if (!confirmed) {
 					return $q.reject('Canceled favorite removal.');
 				}
+
+				var favoriteIndex = $scope.favoriteGraphs.indexOf(favorite);
+				if (favoriteIndex >= 0) { // eslint-disable-line no-magic-numbers
+					$scope.favoriteGraphs = [];
+					$ionicSlideBoxDelegate.$getByHandle('graph-slide-box').update();
+				}
+				return ResourceService.unfavorite(favorite.resourceId, favorite.graphName).finally(function() {
+					return DashboardService.refreshFavorites();
+				});
 			});
 		};
 
@@ -404,7 +408,7 @@
 
 		$scope.shouldRenderGraph = function(index) {
 			//return $scope.currentGraphSlide === index;
-			return $scope.currentGraphSlide >= index - 2 && $scope.currentGraphSlide <= index + 2;
+			return $scope.currentGraphSlide >= index - 2 && $scope.currentGraphSlide <= index + 2; // eslint-disable-line no-magic-numbers
 		};
 
 		$scope.goToDonutSlide = function(slide) {
@@ -436,7 +440,7 @@
 					updateDonuts();
 					updateDonuts.flush();
 					//$scope.server = server;
-					//$ionicLoading.show({templateUrl: loadingTemplate, duration: 20000});
+					//$ionicLoading.show({templateUrl: loadingTemplate, duration: 20000}); // eslint-disable-line no-magic-numbers
 					Servers.setDefault(server);
 				}
 			};
@@ -492,7 +496,7 @@
 				wide   = dims[2],
 				oldDonutSize = $scope.donutSize;
 			if (wide) {
-				$scope.donutSize = Math.round(Math.min(width, height) / 2.0);
+				$scope.donutSize = Math.round(Math.min(width, height) / 2.0); // eslint-disable-line no-magic-numbers
 			} else {
 				$scope.donutSize = width;
 			}
@@ -531,7 +535,7 @@
 			lazyReset = $timeout(function() {
 				$log.debug('DashboardController: view is stale, resetting data.');
 				resetData();
-			}, 10000);
+			}, Constants.DEFAULT_TIMEOUT);
 		});
 	});
 

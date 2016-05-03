@@ -13,6 +13,9 @@ require('./Rest');
 
 require('../servers/Servers');
 
+var HEADER_PADDING = 140;
+var REFRESH_DELAY = 100;
+
 var onmsGraphTemplate = require('ngtemplate!./onms-graph.html');
 
 angular.module('opennms.misc.OnmsGraph', [
@@ -35,11 +38,11 @@ angular.module('opennms.misc.OnmsGraph', [
 		return $window.innerWidth;
 	};
 	var getHeight = function getHeight() {
-		if ($window.orientation % 180 === 0) {
+		if ($window.orientation % 180 === 0) { // eslint-disable-line no-magic-numbers
 			return $window.innerWidth;
-		} else {
-			return $window.innerHeight - 140;
 		}
+
+		return $window.innerHeight - HEADER_PADDING;
 	};
 
 	var queue = function queue(cb, description) {
@@ -107,9 +110,9 @@ angular.module('opennms.misc.OnmsGraph', [
 			var getGraphId = function() {
 				if ($scope.graphModel && $scope.graphModel.title) {
 					return ($scope.resourceId + '|' + $scope.graphModel.title).replace(invalidCharacters, '.');
-				} else {
-					return null;
 				}
+
+				return null;
 			};
 
 			var getGraphDescription = function() {
@@ -235,7 +238,7 @@ angular.module('opennms.misc.OnmsGraph', [
 					// graph is unchanged
 					deferred.resolve(true);
 					$scope.$broadcast('scroll.refreshComplete');
-					return;
+					return deferred.promise;
 				}
 
 				// cancel any in-flight renderings since we're doing one fresh
@@ -282,8 +285,9 @@ angular.module('opennms.misc.OnmsGraph', [
 				return $scope.createGraph();
 			};
 
-			$scope.redraw = debounce(100, $scope.refresh);
+			$scope.redraw = debounce(REFRESH_DELAY, $scope.refresh);
 
+			/* eslint-disable no-magic-numbers */
 			$scope.$watch('range', function(newRange, oldRange) {
 				var startDate = moment(newRange && newRange.start? newRange.start : 0),
 					endDate = moment(newRange && newRange.end? newRange.end : 0);
@@ -298,6 +302,7 @@ angular.module('opennms.misc.OnmsGraph', [
 				}
 				$scope.redraw();
 			}, true);
+			/* eslint-enable no-magic-numbers */
 
 			var setDirtyAndRedraw = function(updated, previous, type) {
 				if (angular.isArray(updated)) {

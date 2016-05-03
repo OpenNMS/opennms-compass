@@ -21,7 +21,7 @@ function ReportGraph(graph) {
    * @propertyOf ReportGraph
    * @returns {string} ReportGraph Title
    */
-  self.title = graph['_title'];
+  self.title = graph._title;
 
   /**
    * @description
@@ -30,7 +30,7 @@ function ReportGraph(graph) {
    * @propertyOf ReportGraph
    * @returns {string} The graph type
    */
-  self.type = graph['_graphtype'];
+  self.type = graph._graphtype;
 
   /**
    * @description
@@ -39,7 +39,7 @@ function ReportGraph(graph) {
    * @propertyOf ReportGraph
    * @returns {string} The graph resource id
    */
-  self.resourceId = graph['_resourceId'];
+  self.resourceId = graph._resourceId;
 
   /**
    * @description
@@ -48,7 +48,7 @@ function ReportGraph(graph) {
    * @propertyOf ReportGraph
    * @returns {string} The graph timespan
    */
-  self.timespan = graph['_timespan'];
+  self.timespan = graph._timespan;
 
   var OK = re.exec(self.resourceId);
   if (OK) {
@@ -59,7 +59,7 @@ function ReportGraph(graph) {
      * @propertyOf ReportGraph
      * @returns {number} Node id
      */
-    self.nodeId = Number(OK[1]);
+    self.nodeId = Number(OK[1]); // eslint-disable-line no-magic-numbers
 
     /**
      * @description
@@ -68,7 +68,7 @@ function ReportGraph(graph) {
      * @propertyOf ReportGraph
      * @returns {string} The resource type
      */
-    self.resourceType = OK[2];
+    self.resourceType = OK[2]; // eslint-disable-line no-magic-numbers
 
     /**
      * @description
@@ -77,7 +77,7 @@ function ReportGraph(graph) {
      * @propertyOf ReportGraph
      * @returns {string} The resource index
      */
-    self.resourceIndex = OK[3];
+    self.resourceIndex = OK[3]; // eslint-disable-line no-magic-numbers
 
   }
 }

@@ -1,3 +1,5 @@
+/* eslint-disable no-extend-native, no-magic-numbers, no-void */
+
 if (typeof Array.prototype.filter !== 'function') {
 	Array.prototype.filter = function(fun/*, thisArg*/) {
 		'use strict';
@@ -56,3 +58,5 @@ if (typeof Array.prototype.remove !== 'function') {
 		return this;
 	}
 }
+
+/* eslint-enable no-extend-native, no-magic-numbers, no-void */

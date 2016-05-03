@@ -4,6 +4,8 @@
 	var angular = require('angular'),
 		VersionCompare = require('version_compare');
 
+	var Constants = require('./Constants');
+
 	require('angular-debounce');
 
 	require('./Rest');
@@ -11,13 +13,15 @@
 
 	require('../servers/Servers');
 
+	var UPDATE_DELAY = 500;
+
 	var defaultInfo = {
 		version: '0.0.0',
-		numericVersion: 0.0,
+		numericVersion: Constants.OPENNMS_UNKNOWN_VERSION,
 		displayVersion: 'Unknown',
 		packageName: 'opennms',
 		packageDescription: 'OpenNMS Horizon',
-		memory: 1000000000
+		memory: Constants.MEMORY_THRESHOLD
 	};
 
 	angular.module('opennms.services.Info', [
@@ -76,29 +80,27 @@
 			return current.promise;
 		};
 
-		var updateInfo = debounce(500, function() {
-			Servers.getDefault().then(function(server) {
+		var updateInfo = debounce(UPDATE_DELAY, function() {
+			return Servers.getDefault().then(function(server) {
 				if (!server) {
 					$log.debug('Info.updateInfo: skipping update, server is not configured yet.');
-					return;
+					return $q.when();
 				}
 
 				$log.info('Info.updateInfo: Initializing.');
 
-				return RestService.get('/info', {limit:0}, {Accept: 'application/json'}).then(function(response) {
-					if (angular.isString(response)) {
-						response = angular.fromJson(response);
-					}
+				return RestService.get('/info', {limit:0}, {Accept: 'application/json'}).then(function(_response) {
+					var response = angular.isString(_response)? angular.fromJson(_response) : _response;
 					doUpdate(response);
 					return response;
 				});
 			}).catch(function(err) {
 				$log.warn('Info.updateInfo: failed: ' + angular.toJson(err));
-				if (err.status === 404) {
+				if (err.status === Constants.HTTP_NOT_FOUND) {
 					return doUpdate(angular.copy(defaultInfo));
-				} else {
-					return $q.reject(err);
 				}
+
+				return $q.reject(err);
 			});
 		});
 

@@ -7,6 +7,8 @@
 	require('pouchdb-find/dist/pouchdb.find.min');
 	require('angular-pouchdb');
 
+	var Constants = require('../misc/Constants');
+
 	angular.module('opennms.services.DB', [
 		'ionic',
 		'pouchdb',
@@ -32,20 +34,20 @@
 		};
 
 		var noindexes = function(entry) {
-			return entry.id.indexOf('_design') !== 0;
+			return entry.id.indexOf('_design') !== 0; // eslint-disable-line no-magic-numbers
 		};
 
 		var allDocs = function(dbname) {
 			return getPouch(dbname).allDocs({
 				include_docs: true
 			}).then(function(docs) {
-				if (docs.total_rows > 0) {
+				if (docs.total_rows > 0) { // eslint-disable-line no-magic-numbers
 					return docs.rows.filter(noindexes).map(function(row) {
 						return row.doc;
 					});
-				} else {
-					return [];
 				}
+
+				return [];
 			});
 		};
 
@@ -81,10 +83,10 @@
 			}).catch(function(err) {
 				if (err.error && (err.reason === 'missing'||err.reason === 'deleted')) {
 					return createDoc();
-				} else {
-					$log.error('Unable to upsert ' + doc._id + ': ' + err.reason);
-					return $q.reject(err);
 				}
+
+				$log.error('Unable to upsert ' + doc._id + ': ' + err.reason);
+				return $q.reject(err);
 			});
 		};
 
@@ -92,17 +94,17 @@
 			return getPouch(dbname).get(id).then(function(existing) {
 				if (!existing._deleted) {
 					return getPouch(dbname).remove(existing);
-				} else {
-					// already deleted
-					return true;
 				}
+
+				// already deleted
+				return true;
 			}).catch(function(err) {
-				if (err.status === 404 || err.error && err.reason === 'missing') {
+				if (err.status === Constants.HTTP_NOT_FOUND || err.error && err.reason === 'missing') {
 					return true;
-				} else {
-					$log.error('Unable to remove ' + id + ': ' + err.reason);
-					return $q.reject(err);
 				}
+
+				$log.error('Unable to remove ' + id + ': ' + err.reason);
+				return $q.reject(err);
 			});
 		};
 

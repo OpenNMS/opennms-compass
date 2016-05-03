@@ -24,6 +24,8 @@
 	require('./misc/Array');
 	require('./misc/String');
 
+	var Constants = require('./misc/Constants');
+
 	require('./misc/Analytics');
 	require('./misc/Info');
 	/*require('./misc/Ionic');*/
@@ -40,8 +42,8 @@
 	require('./servers/Servers');
 	require('./misc/util');
 
-	var templates = {
-	};
+	var RESIZE_DELAY = 100,
+		READY_DELAY = 1000;
 
 	angular.module('opennms.Main', [
 		'ionic',
@@ -81,7 +83,7 @@
 			toolbarposition:'top'
 		});
 
-		$ionicConfigProvider.views.maxCache(20);
+		$ionicConfigProvider.views.maxCache(Constants.MAX_CACHED_VIEWS);
 		$ionicConfigProvider.views.forwardCache(true);
 		$ionicConfigProvider.views.swipeBackEnabled(false);
 		$ionicConfigProvider.tabs.position('bottom');
@@ -94,7 +96,8 @@
 			toolbarposition:'top'
 		});
 	})
-	.run(function($rootScope, $http, $log, $templateCache, $timeout, $window, $ionicPlatform, $ionicPopup, debounce, Info, /*IonicService, */ Modals, Servers, util) {
+	.run(function($rootScope, $http, $log, $timeout, $window, $ionicPlatform, $ionicPopup, debounce, Info, /*IonicService, */ Modals, Servers, util) {
+		/* eslint-disable no-magic-numbers */
 		var calculateSizes = function() {
 			$rootScope.width  = angular.element($window).width();
 			$rootScope.height = angular.element($window).height();
@@ -111,7 +114,9 @@
 
 			$log.debug('main.handleResize complete: width=' + $rootScope.width + ', height=' + $rootScope.height + ', wide=' + $rootScope.wide);
 		};
-		var handleResize = debounce(100, calculateSizes);
+		/* eslint-enable no-magic-numbers */
+
+		var handleResize = debounce(RESIZE_DELAY, calculateSizes);
 
 		$rootScope.$on('resize', handleResize);
 		$window.addEventListener('orientationchange', handleResize);
@@ -123,10 +128,8 @@
 			$log.debug('Looks like we\'re on a tablet-like device.');
 		}
 
-		var updateTheme = function(info) {
-			if (!info) {
-				info = Info.get();
-			}
+		var updateTheme = function(_info) {
+			var info = _info? _info : Info.get();
 			if (info.packageName === 'meridian') {
 				$rootScope.themeType = 'meridian';
 			} else {
@@ -140,10 +143,10 @@
 			$log.debug('main: default server: ' + (server? server.name : 'unknown'));
 			if (server && server.name) {
 				return true;
-			} else {
-				Modals.settings(true);
-				return false;
 			}
+
+			Modals.settings(true);
+			return false;
 		}, function(err) {
 			$log.error('Failed to get default server: ' + angular.toJson(err));
 			return Modals.settings(true).then(function() {
@@ -153,7 +156,7 @@
 			$timeout(function() {
 				util.hideSplashscreen();
 				$rootScope.$broadcast('opennms.ready');
-			}, 1000);
+			}, READY_DELAY);
 		});
 
 		$log.info('Ionic is ready.');

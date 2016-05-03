@@ -4,6 +4,8 @@ var angular = require('angular'),
 	Alarm = require('./models/Alarm'),
 	AlarmFilter = require('./models/AlarmFilter');
 
+var Constants = require('../misc/Constants');
+
 require('./AlarmService');
 
 require('../misc/Capabilities');
@@ -117,12 +119,7 @@ angular.module('opennms.alarms.Directive', [
 			};
 
 			$scope.canClear = function(alarm) {
-				if (info.numericVersion === 0.0 || alarm.severity === 'CLEARED') {
-					return false;
-				} else {
-					return true;
-				}
-				/* eslint-enable eqeqeq */
+				return info.numericVersion != Constants.OPENNMS_UNKNOWN_VERSION && alarm.severity !== 'CLEARED'; // eslint-disable-line eqeqeq
 			};
 
 			$scope.clear = function(alarm, e) {
@@ -145,12 +142,7 @@ angular.module('opennms.alarms.Directive', [
 			};
 
 			$scope.canEscalate = function(alarm) {
-				if (info.numericVersion === 0.0 || alarm.severity === 'CRITICAL') {
-					return false;
-				} else {
-					return true;
-				}
-				/* eslint-enable eqeqeq */
+				return info.numericVersion != Constants.OPENNMS_UNKNOWN_VERSION && alarm.severity !== 'CRITICAL'; // eslint-disable-line eqeqeq
 			};
 
 			$scope.escalate = function(alarm, e) {

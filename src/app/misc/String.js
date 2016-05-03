@@ -1,8 +1,6 @@
 'use strict';
 
-var removeSlashes = /^.*\//g;
-var capitalLetters = /([A-Z])/g;
-
+/* eslint-disable no-extend-native, no-magic-numbers */
 if (typeof String.prototype.capitalize !== 'function') {
 	String.prototype.capitalize = function capitalize() {
 		'use strict';
@@ -27,6 +25,10 @@ if (typeof String.prototype.contains !== 'function') {
 		return comparator === undefined? true : this.toLowerCase().indexOf(comparator.toLowerCase()) > -1;
 	};
 }
+/* eslint-enable no-extend-native, no-magic-numbers */
+
+var removeSlashes = /^.*\//g;
+var capitalLetters = /([A-Z])/g;
 
 function StringUtils() {
 }
@@ -41,7 +43,7 @@ StringUtils.prototype.formatUei = function formatUei(uei) {
 		ret = ret.replace(capitalLetters, ' $1');
 	}
 
-	return ret.charAt(0).toUpperCase() + ret.slice(1);
+	return ret.charAt(0).toUpperCase() + ret.slice(1); // eslint-disable-line no-magic-numbers
 };
 
 module.exports = new StringUtils();

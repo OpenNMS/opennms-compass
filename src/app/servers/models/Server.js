@@ -10,10 +10,8 @@ var moment = require('moment'),
  * @constructor
  */
 function Server(server) {
-  var self = this;
-  if (!server) {
-    server = {};
-  }
+  var self = this,
+    _server = server || {};
 
   /**
    * @description
@@ -22,7 +20,7 @@ function Server(server) {
    * @propertyOf Server
    * @returns {string} Unique Identifier
    */
-  self._id = server._id;
+  self._id = _server._id;
 
   /**
    * @description
@@ -31,7 +29,7 @@ function Server(server) {
    * @propertyOf Server
    * @returns {string} Revision
    */
-  self._rev = server._rev;
+  self._rev = _server._rev;
 
   /**
    * @description
@@ -40,7 +38,7 @@ function Server(server) {
    * @propertyOf Server
    * @returns {string} Server Name
    */
-  self.name = server.name;
+  self.name = _server.name;
 
   /**
    * @description
@@ -49,7 +47,7 @@ function Server(server) {
    * @propertyOf Server
    * @returns {string} The root URL of the server.
    */
-  self.url = server.url;
+  self.url = _server.url;
 
   /**
    * @description
@@ -58,7 +56,7 @@ function Server(server) {
    * @propertyOf Server
    * @returns {string} The username used to connect to the server.
    */
-  self.username = server.username;
+  self.username = _server.username;
 
   /**
    * @description
@@ -67,7 +65,7 @@ function Server(server) {
    * @propertyOf Server
    * @returns {string} The password used to connect to the server.
    */
-  self.password = server.password;
+  self.password = _server.password;
 
 }
 
@@ -82,9 +80,9 @@ Server.prototype.restUrl = function(segment) {
       url.segment(segment);
     }
     return url.toString();
-  } else {
-    return undefined;
   }
+
+  return undefined;
 };
 
 Server.prototype.getHost = function() {

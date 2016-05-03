@@ -7,6 +7,9 @@ var OnmsEvent = require('../../events/models/OnmsEvent'),
 
 var emptyParms = /\s+parms:\s*$/;
 
+var DEFAULT_ALARM_ID = -1;
+var DEFAULT_ALARM_COUNT = 0;
+
 /**
  * @ngdoc object
  * @name Alarm
@@ -25,7 +28,7 @@ function Alarm(alarm, isJson) {
    * @propertyOf Alarm
    * @returns {number} Alarm ID
    */
-  self.id   = parseInt(alarm['_id']||-1, 10);
+  self.id   = parseInt(alarm._id||DEFAULT_ALARM_ID, 10);
 
   /**
    * @description
@@ -34,7 +37,7 @@ function Alarm(alarm, isJson) {
    * @propertyOf Alarm
    * @returns {number} Number of times the alarm has triggered.
    */
-  self.count = parseInt(alarm['_count']||0, 10);
+  self.count = parseInt(alarm._count||DEFAULT_ALARM_ID, 10);
 
   /**
    * @description
@@ -43,7 +46,7 @@ function Alarm(alarm, isJson) {
    * @propertyOf Alarm
    * @returns {string} User that acknowledged the alarm.
    */
-  self.ackUser = alarm['ackUser'];
+  self.ackUser = alarm.ackUser;
 
   /**
    * @description
@@ -52,7 +55,7 @@ function Alarm(alarm, isJson) {
    * @propertyOf Alarm
    * @returns {string} The time the alarm was acknowledged.
    */
-  self.ackTime = alarm['ackTime']? moment(alarm['ackTime']) : undefined;
+  self.ackTime = alarm.ackTime? moment(alarm.ackTime) : undefined;
 
   /**
    * @description
@@ -79,7 +82,7 @@ function Alarm(alarm, isJson) {
    * @propertyOf Alarm
    * @returns {string} Severity the of alarm.
    */
-  self.severity   = alarm['_severity'];
+  self.severity   = alarm._severity;
 
   /**
    * @description
@@ -88,7 +91,7 @@ function Alarm(alarm, isJson) {
    * @propertyOf Alarm
    * @returns {number} Alarm type ID, see {@link http://www.opennms.org/wiki/Configuring_alarms#Alarm_Types alarm types}
    */
-  self.type   = parseInt(alarm['_type'], 10);
+  self.type   = parseInt(alarm._type, 10);
 
   /**
    * @description
@@ -97,7 +100,7 @@ function Alarm(alarm, isJson) {
    * @propertyOf Alarm
    * @returns {string} The description of the alarm
    */
-  self.description   = alarm['description'];
+  self.description   = alarm.description;
 
   /**
    * @description
@@ -106,7 +109,7 @@ function Alarm(alarm, isJson) {
    * @propertyOf Alarm
    * @returns {*|Date} The first time an event was reduced by this alarm
    */
-  self.firstEventTime   = moment(alarm['firstEventTime']);
+  self.firstEventTime   = moment(alarm.firstEventTime);
 
   /**
    * @description
@@ -115,7 +118,7 @@ function Alarm(alarm, isJson) {
    * @propertyOf Alarm
    * @returns {*|Date} The last time an event was reduced by this alarm
    */
-  self.lastEventTime   = moment(alarm['lastEventTime']);
+  self.lastEventTime   = moment(alarm.lastEventTime);
 
   /**
    * @description
@@ -124,7 +127,7 @@ function Alarm(alarm, isJson) {
    * @propertyOf Alarm
    * @returns {Event} The last event to be reduced by this alarm
    */
-  self.lastEvent   = new OnmsEvent(alarm['lastEvent']);
+  self.lastEvent   = new OnmsEvent(alarm.lastEvent);
 
   /**
    * @description
@@ -133,7 +136,7 @@ function Alarm(alarm, isJson) {
    * @propertyOf Alarm
    * @returns {string} Formatted display text to control how the alarm will appear in the browser.
    */
-  self.logMessage   = alarm['logMessage'].replace(emptyParms, '');
+  self.logMessage   = alarm.logMessage.replace(emptyParms, '');
 
   /**
    * @description
@@ -142,7 +145,7 @@ function Alarm(alarm, isJson) {
    * @propertyOf Alarm
    * @returns {string} Reduction key for this alarm
    */
-  self.reductionKey   = alarm['reductionKey'];
+  self.reductionKey   = alarm.reductionKey;
 
   /**
    * @description
@@ -151,7 +154,7 @@ function Alarm(alarm, isJson) {
    * @propertyOf Alarm
    * @returns {string} The trouble ticket ID associated with this alarm, if any.
    */
-  self.troubleTicketId = alarm['troubleTicket'];
+  self.troubleTicketId = alarm.troubleTicket;
 
   /**
    * @description
@@ -160,7 +163,7 @@ function Alarm(alarm, isJson) {
    * @propertyOf Alarm
    * @returns {string} The trouble ticket state, if any.
    */
-  self.troubleTicketState = alarm['troubleTicketState'];
+  self.troubleTicketState = alarm.troubleTicketState;
 
   /**
    * @description
@@ -169,7 +172,7 @@ function Alarm(alarm, isJson) {
    * @propertyOf Alarm
    * @returns {number} Unique integer identifier for node
    */
-  self.nodeId   = parseInt(alarm['nodeId'], 10);
+  self.nodeId   = parseInt(alarm.nodeId, 10);
 
   /**
    * @description
@@ -178,7 +181,7 @@ function Alarm(alarm, isJson) {
    * @propertyOf Alarm
    * @returns {string} The human-readable name of the node of this alarm.
    */
-  self.nodeLabel   = alarm['nodeLabel'];
+  self.nodeLabel   = alarm.nodeLabel;
 
   /**
    * @description
@@ -187,7 +190,7 @@ function Alarm(alarm, isJson) {
    * @propertyOf Alarm
    * @returns {object} The sticky memo associated with this alarm.
    */
-  self.stickyMemo = alarm['stickyMemo'];
+  self.stickyMemo = alarm.stickyMemo;
   if (self.stickyMemo) {
     if (self.stickyMemo.updated) {
       self.stickyMemo.updated = moment(self.stickyMemo.updated);
@@ -204,7 +207,7 @@ function Alarm(alarm, isJson) {
    * @propertyOf Alarm
    * @returns {object} The journal (reduction key) memo associated with this alarm.
    */
-  self.journalMemo = alarm['reductionKeyMemo'];
+  self.journalMemo = alarm.reductionKeyMemo;
   if (self.journalMemo) {
     if (self.journalMemo.updated) {
       self.journalMemo.updated = moment(self.journalMemo.updated);
@@ -221,8 +224,8 @@ function Alarm(alarm, isJson) {
    * @propertyOf Alarm
    * @returns {object} The &lt;parms&gt; element for this alarm.
    */
-  self.parms   = alarm['parms'];
-  // alarm['parms'];
+  self.parms   = alarm.parms;
+  // alarm.parms;
 
   /**
    * @description Provides a unique hash key for the alarm
@@ -251,7 +254,7 @@ function Alarm(alarm, isJson) {
  * @returns {string} formatted CSS class name
  */
 Alarm.prototype.getSeverityClass = function() {
-  if (this.severity !== null && angular.isString(this.severity) && this.severity.length !== 0) {
+  if (this.severity !== null && angular.isString(this.severity) && this.severity.length !== 0) { // eslint-disable-line no-magic-numbers
     return 'severity-'+angular.uppercase(this.severity);
   }
   return '';

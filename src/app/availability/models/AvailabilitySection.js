@@ -20,7 +20,7 @@ function AvailabilitySection(section) {
    * @propertyOf AvailabilitySection
    * @returns {string} Section name
    */
-  self.name   = section['_name'];
+  self.name   = section._name;
 
   /**
    * @description

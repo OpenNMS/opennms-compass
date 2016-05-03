@@ -18,7 +18,7 @@ function AvailabilityCategory(cat) {
    * @propertyOf AvailabilityCategory
    * @returns {string} Category name
    */
-  self.name = cat['_name'];
+  self.name = cat._name;
 
   /**
    * @description

@@ -10,6 +10,8 @@
 	require('../misc/Rest');
 	require('../misc/util');
 
+	var CHECK_AVAILABILITY_DELAY = 300;
+
 	angular.module('opennms.services.Availability', [
 		'ionic',
 		'rt.debounce',
@@ -21,7 +23,7 @@
 
 		var hasAvailability;
 
-		var checkAvailability = debounce(300, function() {
+		var checkAvailability = debounce(CHECK_AVAILABILITY_DELAY, function() {
 			var oldAvailability = hasAvailability;
 			var newAvailability = $q.defer();
 
@@ -49,26 +51,26 @@
 
 		var getAvailability = function() {
 			return isSupported().then(function(canDo) {
-				if (canDo) {
-					return RestService.getXml('/availability').then(function(results) {
-						/* jshint -W069 */ /* "better written in dot notation" */
-						var ret = [];
-
-						if (results && results.availability && results.availability.section) {
-							var sections = results.availability.section;
-							if (!angular.isArray(sections)) {
-								sections = [sections];
-							}
-							for (var i=0, len=sections.length; i < len; i++) {
-								ret.push(new AvailabilitySection(sections[i]));
-							}
-						}
-
-						return ret;
-					});
-				} else {
+				if (!canDo) {
 					return [];
 				}
+
+				return RestService.getXml('/availability').then(function(results) {
+					/* jshint -W069 */ /* "better written in dot notation" */
+					var ret = [];
+
+					if (results && results.availability && results.availability.section) {
+						var sections = results.availability.section;
+						if (!angular.isArray(sections)) {
+							sections = [sections];
+						}
+						for (var i=0, len=sections.length; i < len; i++) {
+							ret.push(new AvailabilitySection(sections[i]));
+						}
+					}
+
+					return ret;
+				});
 			}, function(err) {
 				err.caller = 'AvailabilityService.getAvailability';
 				return $q.reject(err);
@@ -77,12 +79,12 @@
 
 		var getCategory = function(category) {
 			return isSupported().then(function(canDo) {
-				if (canDo) {
-					var url = '/availability/' + encodeURIComponent(category);
-					return RestService.getXml(url);
-				} else {
+				if (!canDo) {
 					return [];
 				}
+
+				var url = '/availability/' + encodeURIComponent(category);
+				return RestService.getXml(url);
 			}, function(err) {
 				err.caller = 'AvailabilityService.getCategory';
 				return $q.reject(err);
@@ -91,12 +93,12 @@
 
 		var getNodes = function(category) {
 			return isSupported().then(function(canDo) {
-				if (canDo) {
-					var url = '/availability/' + encodeURIComponent(category) + '/nodes';
-					return RestService.getXml(url);
-				} else {
+				if (!canDo) {
 					return [];
 				}
+
+				var url = '/availability/' + encodeURIComponent(category) + '/nodes';
+				return RestService.getXml(url);
 			}, function(err) {
 				err.caller = 'AvailabilityService.getNodes';
 				return $q.reject(err);
@@ -105,22 +107,22 @@
 
 		var getNode = function(node) {
 			return isSupported().then(function(canDo) {
-				if (canDo) {
-					var nodeId = node;
-					if (!angular.isNumber(node)) {
-						nodeId = node.id;
-					}
-					var url = '/availability/nodes/' + nodeId;
-					return RestService.getXml(url).then(function(results) {
-						if (results && results.node) {
-							return new AvailabilityNode(results.node);
-						} else {
-							return undefined;
-						}
-					});
-				} else {
+				if (!canDo) {
 					return undefined;
 				}
+
+				var nodeId = node;
+				if (!angular.isNumber(node)) {
+					nodeId = node.id;
+				}
+				var url = '/availability/nodes/' + nodeId;
+				return RestService.getXml(url).then(function(results) {
+					if (results && results.node) {
+						return new AvailabilityNode(results.node);
+					}
+
+					return undefined;
+				});
 			}, function(err) {
 				err.caller = 'AvailabilityService.getNode';
 				return $q.reject(err);

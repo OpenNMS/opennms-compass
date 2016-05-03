@@ -65,10 +65,10 @@
 						cancelType: 'button-default',
 						okType: 'button-compass'
 					});
-				} else {
-					return false;
 				}
-			}, function(err) {
+
+				return false;
+			}).catch(function(err) {
 				$log.error('Ionic.promptForUpdates: failed: ' + angular.toJson(err));
 				return false;
 			});

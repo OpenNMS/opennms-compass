@@ -4,6 +4,8 @@ var angular = require('angular'),
 	moment = require('moment'),
 	VersionCompare = require('version_compare');
 
+var Constants = require('./Constants');
+
 require('../db/db');
 require('../servers/Servers');
 
@@ -35,9 +37,9 @@ angular.module('opennms.misc.Cache', [
 
 	var getQuery = function(query) {
 		if (!(typeof query === 'object')) {
-			query = {
+			return {
 				id: query
-			}
+			};
 		}
 		return query;
 	};
@@ -60,7 +62,7 @@ angular.module('opennms.misc.Cache', [
 					servers = ret.servers.map(function(server) {
 						return server._id
 					}),
-					threshold = moment().subtract(7, 'days'),
+					threshold = moment().subtract(Constants.DEFAULT_CACHE_LIMIT_DAYS, 'days'),
 					deleteme = [];
 
 				for (var i=0, len=docs.length, doc; i < len; i++) {
@@ -71,19 +73,19 @@ angular.module('opennms.misc.Cache', [
 					} else if (moment(doc.lastUpdated).isBefore(threshold)) {
 						$log.debug('Cache.clean(): Document is old: ' + doc._id);
 						deleteme.push(doc);
-					} else if (servers.indexOf(doc.server) === -1) {
+					} else if (servers.indexOf(doc.server) === -1) { // eslint-disable-line no-magic-numbers
 						$log.debug('Cache.clean(): Document server is gone: ' + doc._id);
 						deleteme.push(doc);
 					}
 				}
-				if (deleteme.length > 0) {
+				if (deleteme.length > 0) { // eslint-disable-line no-magic-numbers
 					return cachedb.bulkDocs(deleteme.map(function(doc) {
 						doc._deleted = true;
 						return doc;
 					}));
-				} else {
-					return [];
 				}
+
+				return [];
 			}).finally(function() {
 				$log.info('Cache.clean(): finished.');
 				oldReady.resolve(true);
@@ -94,8 +96,8 @@ angular.module('opennms.misc.Cache', [
 
 	clean();
 
-	var get = function(query, wrap) {
-		query = getQuery(query);
+	var get = function(_query, wrap) {
+		var query = getQuery(_query);
 		return $q.all({defaultServer: defaultServer.promise, ready: ready.promise}).then(function(ret) {
 			var server = ret.defaultServer;
 			return cachedb.get(server._id + '-' + query.id).then(function(res) {
@@ -111,12 +113,17 @@ angular.module('opennms.misc.Cache', [
 				res.results = angular.fromJson(res.results);
 				//$log.debug('get(' + query.id +'): ' + angular.toJson(res));
 				if (wrap) {
-					if (angular.isArray(res.results)) {
-						for (var i=0, len=res.results.length; i < len; i++) {
-							res.results[i] = new wrap(res.results[i]);
+					try {
+						if (angular.isArray(res.results)) {
+							for (var i=0, len=res.results.length; i < len; i++) {
+								res.results[i] = new wrap(res.results[i]);
+							}
+						} else {
+							res.results = new wrap(res.results);
 						}
-					} else {
-						res.results = new wrap(res.results);
+					} catch(err) {
+						$log.error('Cache.get(' + query.id + '): Failed to wrap: ' + err);
+						return $q.reject(err);
 					}
 				}
 				//$log.debug('get(' + query.id +'): ' + angular.toJson(res));
@@ -129,8 +136,8 @@ angular.module('opennms.misc.Cache', [
 		});
 	};
 
-	var set = function(query, results) {
-		query = getQuery(query);
+	var set = function(_query, results) {
+		var query = getQuery(_query);
 		return $q.all({defaultServer: defaultServer.promise, ready: ready.promise}).then(function(ret) {
 			var server = ret.defaultServer;
 			var data = {
@@ -154,8 +161,8 @@ angular.module('opennms.misc.Cache', [
 		});
 	};
 
-	var remove = function(query) {
-		query = getQuery(query);
+	var remove = function(_query) {
+		var query = getQuery(_query);
 		return $q.all({defaultServer: defaultServer.promise, ready: ready.promise}).then(function(ret) {
 			var server = ret.defaultServer;
 			return db.remove('cache', server._id + '-' + query.id);

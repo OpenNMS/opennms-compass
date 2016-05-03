@@ -25,17 +25,15 @@
 			info = $q.when(i);
 		});
 
-		var getAlarms = function(filter) {
-			if (!filter) {
-				filter = new AlarmFilter();
-			}
+		var getAlarms = function(_filter) {
+			var filter = _filter || new AlarmFilter();
 
 			return info.then(function(i) {
 				var useJson = Capabilities.useJson();
 				if (useJson) {
 					return RestService.get('/alarms', filter.toParams(i.numericVersion), {Accept: 'application/json'}).then(function(results) {
-						if (results && results['alarm']) {
-							var alarms = results['alarm'];
+						if (results && results.alarm) {
+							var alarms = results.alarm;
 							if (!angular.isArray(alarms)) {
 								alarms = [alarms];
 							}
@@ -43,31 +41,32 @@
 								alarms[i] = new Alarm(alarms[i], true);
 							}
 							return alarms;
-						} else {
-							$log.warn('AlarmService.getAlarms: unhandled response: ' + angular.toJson(results));
-							return [];
 						}
-					});
-				} else {
-					return RestService.getXml('/alarms', filter.toParams(i.numericVersion)).then(function(results) {
-						/* jshint -W069 */ /* "better written in dot notation" */
-						if (results && results['alarms'] && results['alarms']['_totalCount'] === '0') {
-							return [];
-						} else if (results && results['alarms'] && results['alarms']['alarm']) {
-							var alarms = results['alarms']['alarm'];
-							if (!angular.isArray(alarms)) {
-								alarms = [alarms];
-							}
-							for (var i=0, len=alarms.length; i < len; i++) {
-								alarms[i] = new Alarm(alarms[i]);
-							}
-							return alarms;
-						} else {
-							$log.warn('AlarmService.getAlarms: unhandled response: ' + angular.toJson(results));
-							return [];
-						}
+
+						$log.warn('AlarmService.getAlarms: unhandled response: ' + angular.toJson(results));
+						return [];
 					});
 				}
+
+				// no JSON, parse the XML version
+				return RestService.getXml('/alarms', filter.toParams(i.numericVersion)).then(function(results) {
+					/* jshint -W069 */ /* "better written in dot notation" */
+					if (results && results.alarms && results.alarms._totalCount === '0') {
+						return [];
+					} else if (results && results.alarms && results.alarms.alarm) {
+						var alarms = results.alarms.alarm;
+						if (!angular.isArray(alarms)) {
+							alarms = [alarms];
+						}
+						for (var i=0, len=alarms.length; i < len; i++) {
+							alarms[i] = new Alarm(alarms[i]);
+						}
+						return alarms;
+					}
+
+					$log.warn('AlarmService.getAlarms: unhandled response: ' + angular.toJson(results));
+					return [];
+				});
 			}).catch(function(err) {
 				err.caller = 'AlarmService.getAlarms';
 				return $q.reject(err);
@@ -98,8 +97,8 @@
 			RestService.getXml('/alarms/' + alarmId).then(function(results) {
 				/* jshint -W069 */ /* "better written in dot notation" */
 				var ret;
-				if (results && results['alarm']) {
-					ret = new Alarm(results['alarm']);
+				if (results && results.alarm) {
+					ret = new Alarm(results.alarm);
 				}
 				deferred.resolve(ret);
 			}, function(err) {
@@ -109,8 +108,8 @@
 			return deferred.promise;
 		};
 
-		var getSeverities = function(filter) {
-			filter = filter || new AlarmFilter({limit:100,minimumSeverity:'WARNING'});
+		var getSeverities = function(_filter) {
+			var filter = _filter || new AlarmFilter({limit:100,minimumSeverity:'WARNING'});
 			var deferred = $q.defer();
 
 			getAlarms(filter).then(function(results) {
@@ -125,10 +124,12 @@
 					}
 				}
 				for (var sev in alarmSeverities) {
-					legend.push({
-						severity: sev.toUpperCase(),
-						count: alarmSeverities[sev]
-					});
+					if ({}.hasOwnProperty.call(alarmSeverities, sev)) {
+						legend.push({
+							severity: sev.toUpperCase(),
+							count: alarmSeverities[sev]
+						});
+					}
 				}
 
 				var severities = util.severities();
