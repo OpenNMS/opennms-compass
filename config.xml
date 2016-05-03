@@ -3,7 +3,7 @@
   <name>OpenNMS</name>
   <description>OpenNMS Compass</description>
   <author email="ranger@opennms.com" href="http://www.opennms.com/">Benjamin Reed</author>
-  <content src="index.html"/>
+  <content src="http://localhost:8100" original-src="index.html"/>
   <allow-navigation href="*"/>
   <allow-intent href="*"/>
   <access origin="*"/>
