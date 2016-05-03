@@ -139,13 +139,15 @@ angular.module('opennms.misc.Queue', [])
 		}
 
 		if (__DEVELOPMENT__) {
-			$log.debug('Queue.' + this.name + ': removed: ' + ret.map(function(pending) {
-				if (pending) {
-					return pending.name;
-				} else {
-					return 'unknown';
-				}
-			}));
+			if (ret.length > 0) {
+				$log.debug('Queue.' + this.name + ': removed: ' + ret.map(function(pending) {
+					if (pending) {
+						return pending.name;
+					} else {
+						return 'unknown';
+					}
+				}));
+			}
 		}
 		return ret;
 	};
