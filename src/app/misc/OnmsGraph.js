@@ -44,7 +44,7 @@ angular.module('opennms.misc.OnmsGraph', [
 
 	var queue = function queue(cb, description) {
 		$log.debug('queue: queueing ' + description);
-		return graphQueue.add(cb);
+		return graphQueue.add(cb, description);
 	};
 
 	return {
@@ -119,6 +119,8 @@ angular.module('opennms.misc.OnmsGraph', [
 			var cleanUpGraph = function() {
 				var resourceId = $scope.resourceId;
 				$log.debug('Destroying graph: ' + getGraphDescription());
+				graphQueue.cancel(getGraphDescription());
+
 				if ($scope.graph) {
 					if ($scope.graph.destroy) {
 						$scope.graph.destroy();
@@ -230,11 +232,16 @@ angular.module('opennms.misc.OnmsGraph', [
 					angular.equals($scope.graph._last.ds,            $scope.ds) &&
 					angular.equals($scope.graph._last.graphModel,    $scope.graphModel)
 				) {
+					// graph is unchanged
 					deferred.resolve(true);
 					$scope.$broadcast('scroll.refreshComplete');
 					return;
 				}
 
+				// cancel any in-flight renderings since we're doing one fresh
+				graphQueue.cancel(description);
+
+				// make sure the graph date range is set
 				$scope.graph.start = newStart;
 				$scope.graph.end = newEnd;
 
@@ -273,19 +280,6 @@ angular.module('opennms.misc.OnmsGraph', [
 				$log.debug('OnmsGraph.refresh()');
 				var description = getGraphDescription();
 				return $scope.createGraph();
-				/*
-				return $scope.createGraph().finally(function() {
-					if ($scope.graph) {
-						if ($scope.shouldDisplay && $scope.shouldRender) {
-							$log.debug('OnmsGraph.refresh(): graph.begin(): ' + description);
-							$scope.graph.begin();
-						} else {
-							$log.debug('OnmsGraph.refresh(): graph.cancel(): ' + description);
-							$scope.graph.cancel();
-						}
-					}
-				});
-				*/
 			};
 
 			$scope.redraw = debounce(100, $scope.refresh);
