@@ -32,7 +32,9 @@ angular.module('opennms.misc.Queue', [])
 	function execute(request) {
 		//$log.info('HTTP.execute: request=' + angular.toJson(request));
 		request.started = Date.now();
-		$log.debug('Queue.' + request.queue.name + ': executing, latency=' + (request.started - request.added) + 'ms.');
+		if (__DEVELOPMENT__) {
+			$log.debug('Queue.' + request.queue.name + ': executing, latency=' + (request.started - request.added) + 'ms.');
+		}
 		request.queue.inFlight.push(request);
 		return $q.when(request.callback()).then(function(res) {
 			request.deferred.resolve(res);
@@ -54,7 +56,7 @@ angular.module('opennms.misc.Queue', [])
 			for (var f=queue.inFlight.length - 1, inFlight; f >= 0; f--) {
 				inFlight = queue.inFlight[f];
 				if (inFlight && inFlight.started < threshold) {
-					$log.warn('request timed out; this should not happen');
+					$log.warn('request timed out; this should not happen' + (inFlight.name? ': ' + inFlight.name : ''));
 					inFlight.deferred.reject('timed out');
 					queue.inFlight.remove(inFlight);
 				}
@@ -109,16 +111,43 @@ angular.module('opennms.misc.Queue', [])
 		this.maxRequests = this.options.maxRequests || defaultMaxRequests;
 		this.timeout = this.options.timeout || defaultTimeout;
 	}
-	Queue.prototype.add = function addToQueue(callback) {
+	Queue.prototype.add = function addToQueue(callback, name) {
 		var self = this,
 			deferred = $q.defer();
 		self.pending.push({
 			queue: self,
+			name: name,
 			deferred: deferred,
 			callback: callback,
 			added: Date.now()
 		});
 		return deferred.promise;
+	};
+	Queue.prototype.cancel = function(name) {
+		var ret = [];
+
+		var self = this,
+			len = self.pending.length;
+		for (var i=0, pending; i < len; i++) {
+			pending = self.pending[i];
+			if (pending && pending.name !== undefined && pending.name === name) {
+				ret.push(self.pending.splice(i, 1)[0]);
+			}
+		}
+		for (var i=0, len = ret.length; i < len; i++) {
+			self.pending.remove(ret[i]);
+		}
+
+		if (__DEVELOPMENT__) {
+			$log.debug('Queue.' + this.name + ': removed: ' + ret.map(function(pending) {
+				if (pending) {
+					return pending.name;
+				} else {
+					return 'unknown';
+				}
+			}));
+		}
+		return ret;
 	};
 	Queue.prototype.clear = function clear() {
 		var len = this.pending.length;
