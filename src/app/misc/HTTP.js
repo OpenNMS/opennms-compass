@@ -191,7 +191,7 @@ module.factory('HTTP', function($http, $injector, $interval, $log, $q, $window, 
 
 	var httpQueue = Queue.create({
 		name: 'HTTP',
-		maxRequests: 6
+		maxRequests: 8
 	});
 
 	var queuedCall = function(options) {
