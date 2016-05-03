@@ -53,7 +53,7 @@ var plugins = [
 
 if (argv.env !== 'development') {
 	plugins.push(new webpack.optimize.OccurenceOrderPlugin(true));
-	plugins.push(new webpack.optimize.DedupePlugin()),
+	plugins.push(new webpack.optimize.DedupePlugin());
 	plugins.push(new webpack.optimize.UglifyJsPlugin({
 		mangle: {
 			except: [ '$super', '$', 'jQuery', 'exports', 'require', 'angular', 'ionic' ]
