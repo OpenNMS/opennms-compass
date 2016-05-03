@@ -26,6 +26,16 @@
 		function($injector, $log, $q, $rootScope, $window, $cordovaGoogleAnalytics, Settings,
 		androidAnalyticsId, iosAnalyticsId, otherAnalyticsId) {
 
+		var version = $injector.get('config.build.version'),
+			build = $injector.get('config.build.build'),
+			numericVersion = null,
+			opennmsVersion = null,
+			opennmsPlatform = null;
+
+		if (version) {
+			numericVersion = parseFloat(version.replace('^(\\d+\\.\\d+).*$', '$1'));
+		}
+
 		var ready = $q.defer();
 
 		var listeners = {};
@@ -33,6 +43,16 @@
 		function trackView(viewName) {
 			ready.promise.then(function() {
 				$log.debug('Analytics.trackView: view=' + viewName);
+				if (opennmsVersion) {
+					$cordovaGoogleAnalytics.addCustomDimension(dimensions.opennms_version, opennmsVersion);
+				} else {
+					$log.debug('Analytics.trackView: no OpenNMS version defined');
+				}
+				if (opennmsPlatform) {
+					$cordovaGoogleAnalytics.addCustomDimension(dimensions.opennms_type, opennmsPlatform);
+				} else {
+					$log.debug('Analytics.trackView: no OpenNMS platform defined');
+				}
 				$cordovaGoogleAnalytics.trackView(viewName);
 			});
 		}
@@ -66,13 +86,12 @@
 				Settings.uuid().then(function(uuid) {
 					$cordovaGoogleAnalytics.setUserId(uuid);
 				});
-
-				var version = $injector.get('config.build.version');
-				if (version) {
-					var build = $injector.get('config.build.build');
-					var numericVersion = parseFloat(version.replace('^(\\d+\\.\\d+).*$', '$1'));
+				if (numericVersion !== null) {
+					$cordovaGoogleAnalytics.addCustomDimension(dimensions.version, version);
 					$cordovaGoogleAnalytics.addCustomDimension(dimensions.major_version, numericVersion);
 					$cordovaGoogleAnalytics.addCustomDimension(dimensions.build, build);
+				} else {
+					$log.debug('Analytics.trackView: no compass version/build defined');
 				}
 
 				listeners.trackEvent = $rootScope.$on('opennms.analytics.trackEvent', function(ev, category, name, label, value) {
@@ -127,6 +146,11 @@
 					deInit();
 				}
 			}
+		});
+
+		$rootScope.$on('opennms.info.updated', function(ev, info) {
+			opennmsVersion = info.numericVersion;
+			opennmsPlatform = info.packageDescription;
 		});
 
 		return {
