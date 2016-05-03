@@ -26,12 +26,14 @@ require('../servers/Servers');
 
 require('../misc/Cache');
 require('../misc/Errors');
+require('../misc/Queue');
 require('../misc/util');
 
 angular.module('opennms.dashboard.Service', [
 	'ionic',
 	'rt.debounce',
 	'opennms.misc.Cache',
+	'opennms.misc.Queue',
 	'opennms.services.Alarms',
 	'opennms.services.Availability',
 	'opennms.services.DB',
@@ -41,10 +43,14 @@ angular.module('opennms.dashboard.Service', [
 	'opennms.services.Servers',
 	'opennms.services.Util'
 ])
-.factory('DashboardService', function($log, $q, $rootScope, AlarmService, AvailabilityService, Cache, debounce, Errors, OutageService, ResourceService, Servers, util) {
+.factory('DashboardService', function($log, $q, $rootScope, AlarmService, AvailabilityService, Cache, debounce, Errors, OutageService, Queue, ResourceService, Servers, util) {
 	$log.info('Initializing DashboardService.');
 
 	var watchers = {};
+	var requestQueue = Queue.create({
+		name: 'dashboard',
+		maxRequests: 4
+	});
 
 	var refresh = {
 		alarms: function() {
@@ -187,13 +193,15 @@ angular.module('opennms.dashboard.Service', [
 				lastUpdated: new Date()
 			};
 
-			return refresh[type]().then(function(result) {
+			requestQueue.cancel(type);
+
+			return requestQueue.add(refresh[type], type).then(function(result) {
 				Errors.clear('dashboard-' + type);
 				update.success = true;
 				update.contents = result;
 				Cache.set('dashboard-service-' + type, update);
 				return update;
-			}, function(err) {
+			}).catch(function(err) {
 				Errors.set('dashboard-' + type, err);
 				update.success = false;
 				update.error = err;

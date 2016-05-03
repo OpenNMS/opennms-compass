@@ -5,6 +5,7 @@
 		AlarmFilter = require('../alarms/models/AlarmFilter'),
 		$ = require('jquery');
 
+	var Server = require('../servers/models/Server');
 	var Constants = require('../misc/Constants');
 
 	require('angular-debounce');
@@ -23,7 +24,6 @@
 	require('../misc/Info');
 	require('../misc/Modals');
 	require('../misc/OnmsGraph');
-	require('../misc/Queue');
 	require('../misc/util');
 
 	var dashboardTemplate = require('ngtemplate!./dashboard.html');
@@ -58,7 +58,6 @@
 		'opennms.dashboard.Service',
 		'opennms.misc.Cache',
 		'opennms.misc.OnmsGraph',
-		'opennms.misc.Queue',
 		'opennms.services.Alarms',
 		'opennms.services.Availability',
 		'opennms.services.Capabilities',
@@ -82,7 +81,7 @@
 			controller: 'DashboardCtrl'
 		});
 	})
-	.controller('DashboardCtrl', function($document, $injector, $interval, $ionicLoading, $ionicPopup, $ionicPopover, $ionicSlideBoxDelegate, $ionicViewSwitcher, $log, $q, $rootScope, $scope, $state, $timeout, $window, AlarmService, AvailabilityService, Cache, Capabilities, DashboardService, debounce, Errors, Info, Modals, OutageService, Queue, ResourceService, Servers, util) {
+	.controller('DashboardCtrl', function($document, $injector, $interval, $ionicLoading, $ionicPopup, $ionicPopover, $ionicSlideBoxDelegate, $ionicViewSwitcher, $log, $q, $rootScope, $scope, $state, $timeout, $window, AlarmService, AvailabilityService, Cache, Capabilities, DashboardService, debounce, Errors, Info, Modals, OutageService, ResourceService, Servers, util) {
 		$log.info('DashboardCtrl: Initializing.');
 
 		$scope.favoriteGraphsTemplate = favoriteGraphsTemplate;
@@ -468,7 +467,7 @@
 
 		util.onDefaultServerUpdated(function(defaultServer) {
 			//$log.debug('DashboardController.onDefaultServerUpdated: ' + angular.toJson(defaultServer));
-			if ($scope.server && defaultServer && defaultServer._id && defaultServer._id === $scope.server._id) {
+			if (defaultServer && defaultServer.equals($scope.server)) {
 				$scope.server.name = defaultServer.name;
 				$log.debug('DashboardController.defaultServerUpdated: server is unchanged.');
 				return;
@@ -476,7 +475,7 @@
 
 			if (defaultServer && angular.isDefined(defaultServer.name)) {
 				Cache.set('dashboard-default-server', defaultServer);
-				$scope.server = defaultServer;
+				$scope.server = new Server(defaultServer);
 				$scope.refreshData();
 			} else {
 				Cache.remove('dashboard-default-server');

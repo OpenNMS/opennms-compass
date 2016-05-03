@@ -280,8 +280,7 @@ angular.module('opennms.misc.OnmsGraph', [
 			};
 
 			$scope.refresh = function() {
-				$log.debug('OnmsGraph.refresh()');
-				var description = getGraphDescription();
+				//$log.debug('OnmsGraph.refresh()');
 				return $scope.createGraph();
 			};
 
@@ -308,7 +307,7 @@ angular.module('opennms.misc.OnmsGraph', [
 				if (angular.isArray(updated)) {
 					for (var i=0, len=updated.length; i < len; i++) {
 						if (previous[i] && !angular.equals(previous[i], updated[i])) {
-							$log.debug('OnmsGraph: dirty' + (type? ': ' + type : ''));
+							//$log.debug('OnmsGraph: dirty' + (type? ': ' + type : ''));
 							$scope.dirty = true;
 							$scope.redraw();
 							return;
@@ -316,7 +315,7 @@ angular.module('opennms.misc.OnmsGraph', [
 					}
 				} else {
 					if (previous && !angular.equals(previous, updated)) {
-						$log.debug('OnmsGraph: dirty' + (type? ': ' + type : ''));
+						//$log.debug('OnmsGraph: dirty' + (type? ': ' + type : ''));
 						$scope.dirty = true;
 						$scope.redraw();
 					}
@@ -332,14 +331,14 @@ angular.module('opennms.misc.OnmsGraph', [
 			});
 
 			$scope.$on('resize', function(ev, info) {
-				$log.debug('OnmsGraph: dirty: resize');
+				//$log.debug('OnmsGraph: dirty: resize');
 				$scope.width = info.width;
 				$scope.height = info.height;
 			});
 
 			$scope.$watchGroup(['graphDef', 'resourceId'], function(watched) {
 				if (watched[0] && watched[1]) {
-					$log.debug('OnmsGraph: dirty: graphDef/resourceId');
+					//$log.debug('OnmsGraph: dirty: graphDef/resourceId');
 					$scope.rrdGraphConverter = new Backshift.Utilities.RrdGraphConverter({
 						graphDef: watched[0],
 						resourceId: watched[1]
@@ -349,14 +348,14 @@ angular.module('opennms.misc.OnmsGraph', [
 
 			$scope.$watch('rrdGraphConverter', function(rrdGraphConverter) {
 				if (rrdGraphConverter && rrdGraphConverter.model) {
-					$log.debug('OnmsGraph: dirty: rrdGraphConverter');
+					//$log.debug('OnmsGraph: dirty: rrdGraphConverter');
 					$scope.graphModel = rrdGraphConverter.model;
 				}
 			});
 
 			$scope.$watch('graphModel', function(graphModel) {
 				if (graphModel && graphModel.metrics) {
-					$log.debug('OnmsGraph: dirty: graphModel');
+					//$log.debug('OnmsGraph: dirty: graphModel');
 					Servers.getDefault().then(function(server) {
 						if (server) {
 							var options = {
