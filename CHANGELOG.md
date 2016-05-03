@@ -1,5 +1,23 @@
 <a name="2.1.0"></a>
-# [2.1.0](https://github.com/OpenNMS/opennms-compass/compare/v2.1.0-404...v2.1.0) (2016-05-02)
+# [2.1.0](https://github.com/OpenNMS/opennms-compass/compare/v2.1.0-405...v2.1.0) (2016-05-03)
+
+
+### Bug Fixes
+
+* **analytics:** fix OpenNMS version reporting ([c3f2a57](https://github.com/OpenNMS/opennms-compass/commit/c3f2a57))
+* **dashboard:** fix a potential stuck-refresh issue when switching servers ([df201be](https://github.com/OpenNMS/opennms-compass/commit/df201be))
+* **graphs:** fix rendering error that can happen mid-refresh ([980707b](https://github.com/OpenNMS/opennms-compass/commit/980707b))
+
+### Performance Improvements
+
+* **graphs:** cancel old pending redraws ([3b8f413](https://github.com/OpenNMS/opennms-compass/commit/3b8f413))
+* **queue:** improve latency ([9ddec3f](https://github.com/OpenNMS/opennms-compass/commit/9ddec3f))
+* **rest:** allow more simultaneous in-flight requests ([dafb48a](https://github.com/OpenNMS/opennms-compass/commit/dafb48a))
+
+
+
+<a name="2.1.0-405"></a>
+# [2.1.0-405](https://github.com/OpenNMS/opennms-compass/compare/v2.1.0-404...v2.1.0-405) (2016-05-02)
 
 
 ### Bug Fixes
