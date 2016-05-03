@@ -49,7 +49,6 @@ angular.module('opennms.misc.Queue', [])
 	}
 
 	function processQueues() {
-		printQueuesStats();
 		for (var i=0, len=queues.length, queue; i < len; i++) {
 			queue = queues[i];
 			var threshold = Date.now() - queue.timeout;
@@ -66,6 +65,7 @@ angular.module('opennms.misc.Queue', [])
 				execute(request);
 			}
 		}
+		printQueuesStats();
 	}
 
 	var lastCheck = Date.now();
