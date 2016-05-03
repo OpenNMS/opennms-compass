@@ -23,19 +23,21 @@
 
 		var checkAvailability = debounce(300, function() {
 			var oldAvailability = hasAvailability;
+			var newAvailability = $q.defer();
+
 			var done = function(value) {
 				if (oldAvailability) {
 					oldAvailability.resolve(value);
 				}
-				hasAvailability.resolve(value);
+				newAvailability.resolve(value);
 			};
 
-			hasAvailability = $q.defer();
+			hasAvailability = newAvailability;
 			$log.debug('AvailabilityService.checkAvailability: checking if availability service is valid.');
 			RestService.head('/availability').then(function() {
 				$log.info('AvailabilityService.checkAvailability: availability service works!');
 				done(true);
-			}, function() {
+			}).catch(function() {
 				$log.info('AvailabilityService.checkAvailability: availability service does not work. :(');
 				done(false);
 			});

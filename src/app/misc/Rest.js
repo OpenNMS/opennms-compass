@@ -47,7 +47,7 @@
 			var username, password;
 
 			var oldReady = ready;
-			ready = $q.defer();
+			var newReady = $q.defer();
 
 			var done = function(reject) {
 				if (oldReady) {
@@ -58,13 +58,14 @@
 					}
 				}
 				if (reject) {
-					ready.reject(false);
+					newReady.reject(false);
 				} else {
-					ready.resolve(true);
+					newReady.resolve(true);
 				}
-				return ready.promise;
+				return newReady.promise;
 			};
 
+			ready = newReady;
 			return clearCookies().then(function() {
 				$log.debug('RestService.updateAuthorization: cleared cookies.');
 				return Servers.getDefault();
@@ -92,7 +93,7 @@
 						return done();
 					});
 				}
-			}, function(err) {
+			}).catch(function(err) {
 				$log.error('RestService.updateAuthorization: failed: ' + angular.toJson(err));
 				return done(true);
 			});
