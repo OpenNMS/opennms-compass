@@ -1,10 +1,11 @@
 .onms-graph {
 	>.graph {
-		margin: 5px;
+		margin: 0px;
 		min-height: 300px;
 	}
 	>.picker {
-		margin: 5px;
+		margin: 0px;
+		padding: 3px;
 		font-size: $font-size-base * 0.9;
 		.wide {
 			font-size: $font-size-base * 2;

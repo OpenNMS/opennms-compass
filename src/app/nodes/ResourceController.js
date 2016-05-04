@@ -7,7 +7,6 @@
 
 	var Constants = require('../misc/Constants'),
 		TOP_POSITION = 0,
-		GRAPH_HEIGHT_EXTRA = 90,
 		DEFAULT_PAUSE = 500;
 
 	require('angular-debounce');
@@ -47,6 +46,7 @@
 		$scope.util = util;
 		$scope.shouldRender = false;
 		$scope.ready = {};
+		$scope.graphBarHeight = 300;
 
 		var defaultRange = $injector.get('default-graph-range');
 		//var defaultRange = 60 * 60 * 1000;
@@ -88,27 +88,6 @@
 
 		$scope.getId = function(graph) {
 			return graph && graph.name? 'graph-' + encodeURIComponent(graph.name):undefined;
-		};
-
-		$scope.display = {};
-
-		$scope.calculateHeight = function(graph) {
-			//$scope.shouldDisplay(graph);
-			return $scope.width + GRAPH_HEIGHT_EXTRA;
-		};
-
-		$scope.shouldDisplay = function(graph) {
-			if (graph && graph.name) {
-				var id = $scope.getId(graph);
-				var el = $('#'+id);
-				var visible = el.visible(true);
-				if ($scope.display[id] !== visible) {
-					$log.debug(graph.name + ': ' + $scope.display[id] + ' -> ' + visible);
-				}
-				$scope.display[id] = visible;
-				return $scope.display['graph-' + graph.name];
-			}
-			return false;
 		};
 
 		$scope.refreshGraphs = function() {
