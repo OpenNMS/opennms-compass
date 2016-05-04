@@ -150,7 +150,7 @@ $shadow-color: rgba(0,0,0,0.3);
 	.settings-button {
 		position: fixed;
 		padding-right: 0;
-		top: $bar-height + $ios-statusbar-height;
+		top: $bar-height;
 		right: 0;
 		z-index: $z-index-menu-bar-header + 1;
 		text-shadow:
@@ -159,5 +159,15 @@ $shadow-color: rgba(0,0,0,0.3);
 			1px 0 white,
 			0 -1px white,
 			0 0 8px white;
+	}
+}
+
+.platform-ios.platform-cordova {
+	&:not(.fullscreen) {
+		.dashboard {
+			.settings-button {
+				top: $bar-height + $ios-statusbar-height;
+			}
+		}
 	}
 }
