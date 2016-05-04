@@ -8,6 +8,8 @@
 	var Server = require('../servers/models/Server');
 	var Constants = require('../misc/Constants');
 
+	var initialLoad = true;
+
 	require('angular-debounce');
 
 	require('./Service');
@@ -45,7 +47,7 @@
 
 	var SHORT_DELAY = 50,
 		REFRESH_DELAY = 500,
-		AVAILABILITY_REFRESH_DELAY = 5000;
+		LONG_REFRESH_DELAY = 5000;
 
 	var sortAlarmData = function(a, b) {
 		return severityOrder.indexOf(b.label.toUpperCase()) - severityOrder.indexOf(a.label.toUpperCase());
@@ -290,7 +292,7 @@
 							$log.debug('Availability is still calculating... refreshing in 5 seconds.');
 							$timeout(function() {
 								DashboardService.refreshAvailability();
-							}, AVAILABILITY_REFRESH_DELAY);
+							}, LONG_REFRESH_DELAY);
 							return;
 						}
 					}
@@ -528,6 +530,10 @@
 			$scope.visible = true;
 			$timeout.cancel(lazyReset);
 			$scope.refreshData();
+			if (initialLoad) {
+				initialLoad = false;
+				$timeout(DashboardService.refreshFavorites, LONG_REFRESH_DELAY);
+			}
 		});
 		$scope.$on('$ionicView.afterLeave', function(ev) {
 			$scope.visible = false;
