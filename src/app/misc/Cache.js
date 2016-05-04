@@ -100,6 +100,9 @@ angular.module('opennms.misc.Cache', [
 		var query = getQuery(_query);
 		return $q.all({defaultServer: defaultServer.promise, ready: ready.promise}).then(function(ret) {
 			var server = ret.defaultServer;
+			if (!server || !server._id) {
+				return $q.reject('no server configured');
+			}
 			return cachedb.get(server._id + '-' + query.id).then(function(res) {
 				for (var key in query) {
 					if (key === 'id') {
@@ -122,7 +125,7 @@ angular.module('opennms.misc.Cache', [
 							res.results = new wrap(res.results);
 						}
 					} catch(err) {
-						$log.error('Cache.get(' + query.id + '): Failed to wrap: ' + err);
+						$log.error('Cache.get(' + query.id + '): Failed to wrap: ' + err + ': ' + angular.toJson(res.results));
 						return $q.reject(err);
 					}
 				}
