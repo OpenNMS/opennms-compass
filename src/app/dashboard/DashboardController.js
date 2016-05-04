@@ -322,11 +322,13 @@
 			} else {
 				resetFavorites();
 			}
-			$timeout(function() {
-				var delegate = $ionicSlideBoxDelegate.$getByHandle('graph-slide-box');
-				delegate.slide($scope.currentGraphSlide);
-				delegate.update();
-			});
+			if ($scope.favoriteGraphs.length > 0) { // eslint-disable-line no-magic-numbers
+				$timeout(function() {
+					var delegate = $ionicSlideBoxDelegate.$getByHandle('graph-slide-box');
+					delegate.slide($scope.currentGraphSlide);
+					delegate.update();
+				}, SHORT_DELAY);
+			}
 		});
 
 

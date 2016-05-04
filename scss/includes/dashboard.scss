@@ -39,10 +39,10 @@ $shadow-color: rgba(0,0,0,0.3);
 		width: 50%;
 	}
 	.wide .outages .donut-overlay {
-		left: 0;
+		left: 50%;
 	}
 	.wide .alarms .donut-overlay {
-		left: 50%;
+		left: 0;
 	}
 	.spinner-container {
 		padding: 50px;
@@ -128,7 +128,7 @@ $shadow-color: rgba(0,0,0,0.3);
 		position: absolute;
 		left: 0;
 		bottom: 0;
-		z-index: $z-index-view-above;
+		z-index: $z-index-view-above + 2;
 		padding-top: $arrow-touch-padding;
 		padding-left: $arrow-edge-padding;
 		padding-right: $arrow-touch-padding;
@@ -140,7 +140,7 @@ $shadow-color: rgba(0,0,0,0.3);
 		position: absolute;
 		right: 0;
 		bottom: 0;
-		z-index: $z-index-view-above;
+		z-index: $z-index-view-above + 2;
 		padding-top: $arrow-touch-padding;
 		padding-left: $arrow-touch-padding;
 		padding-right: $arrow-edge-padding;
