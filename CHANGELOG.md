@@ -1,5 +1,23 @@
 <a name="2.1.0"></a>
-# [2.1.0](https://github.com/OpenNMS/opennms-compass/compare/v2.1.0-405...v2.1.0) (2016-05-03)
+# [2.1.0](https://github.com/OpenNMS/opennms-compass/compare/v2.1.0-406...v2.1.0) (2016-05-04)
+
+
+### Bug Fixes
+
+* **analytics:** fix custom dimension reporting ([4aeac06](https://github.com/OpenNMS/opennms-compass/commit/4aeac06))
+* **cache:** fix a error triggered by accessing the cache when no server is configured ([a74b6f0](https://github.com/OpenNMS/opennms-compass/commit/a74b6f0))
+* **dashboard:** fix settings button location on Android ([1f37b51](https://github.com/OpenNMS/opennms-compass/commit/1f37b51))
+* **dashboard:** work around problem loading favorites on launch ([d0ff6a3](https://github.com/OpenNMS/opennms-compass/commit/d0ff6a3))
+* **graphs:** fix spacing of graphs on tablets ([f2e2acc](https://github.com/OpenNMS/opennms-compass/commit/f2e2acc))
+
+### Features
+
+* **dashboard:** switch the alarm and outages donuts ([21d9534](https://github.com/OpenNMS/opennms-compass/commit/21d9534))
+
+
+
+<a name="2.1.0-406"></a>
+# [2.1.0-406](https://github.com/OpenNMS/opennms-compass/compare/v2.1.0-405...v2.1.0-406) (2016-05-04)
 
 
 ### Bug Fixes
