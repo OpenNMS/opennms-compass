@@ -2,7 +2,8 @@ var path = require('path'),
 	fs = require('fs'),
 	webpack = require('webpack'),
 	argv = require('yargs').argv,
-	ngAnnotatePlugin = require('ng-annotate-webpack-plugin');
+	ngAnnotatePlugin = require('ng-annotate-webpack-plugin'),
+	copyWebpackPlugin = require('copy-webpack-plugin');
 
 var configfile = path.join(__dirname, 'package.json');
 var configobj  = JSON.parse(fs.readFileSync(configfile, 'utf8'));
@@ -15,6 +16,18 @@ console.log(configobj.name + ' v' + configobj.version + ' (build ' + configobj.b
 var outputDirectory = './www';
 
 var plugins = [
+	new copyWebpackPlugin([
+		{
+			context: 'src',
+			from: 'index.html',
+			to: path.resolve(outputDirectory)
+		},
+		{
+			context: 'src',
+			from: 'images/',
+			to: path.resolve(outputDirectory, 'images')
+		}
+	]),
 	new webpack.DefinePlugin({
 		__DEVELOPMENT__: argv.env === 'development',
 		__PRODUCTION__: argv.env === 'production',
