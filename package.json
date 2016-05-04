@@ -57,10 +57,6 @@
       "id": "cordova-plugin-file"
     },
     "cordova-plugin-geolocation",
-    {
-      "locator": "https://github.com/RangerRick/google-analytics-plugin",
-      "id": "cordova-plugin-google-analytics"
-    },
     "cordova-plugin-inappbrowser",
     "cordova-plugin-network-information",
     "cordova-plugin-splashscreen",
@@ -89,7 +85,8 @@
       "locator": "https://github.com/RangerRick/cordova-plugin-chrome-apps-system-memory.git#master",
       "id": "cordova-plugin-chrome-apps-system-memory"
     },
-    "cordova-plugin-wkwebview-engine"
+    "cordova-plugin-wkwebview-engine",
+    "cordova-plugin-google-analytics"
   ],
   "cordovaPlatforms": [
     {
