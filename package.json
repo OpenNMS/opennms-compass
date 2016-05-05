@@ -49,7 +49,6 @@
   },
   "cordovaPlugins": [
     "ionic-plugin-keyboard",
-    "cordova-plugin-extension",
     "cordova-plugin-console",
     "cordova-plugin-datepicker",
     {
