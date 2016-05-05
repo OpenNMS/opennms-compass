@@ -1,6 +1,6 @@
 {
   "name": "OpenNMS",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "build": 408,
   "description": "OpenNMS Compass",
   "repository": {

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<widget android-versionCode="408" id="com.opennms.compass" ios-CFBundleVersion="408" version="2.1.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget android-versionCode="408" id="com.opennms.compass" ios-CFBundleVersion="408" version="3.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
   <name>OpenNMS</name>
   <description>OpenNMS Compass</description>
   <author email="ranger@opennms.com" href="http://www.opennms.com/">Benjamin Reed</author>
