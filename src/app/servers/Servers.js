@@ -82,6 +82,20 @@
 			});
 		};
 
+		var getServerById = function(serverId) {
+			return getServers().then(function(servers) {
+				for (var i=0, len=servers.length, server; i < len; i++) {
+					server = servers[i];
+					if (server._id === serverId) {
+						return server;
+					}
+				}
+				return undefined;
+			}).catch(function(err) {
+				return undefined;
+			});
+		};
+
 		var getDefaultServer = function() {
 			var onFailure = function() {
 				return getServers().then(function(servers) {
@@ -197,14 +211,14 @@
 				if (__DEVELOPMENT__) { $log.debug('_saveServer: updating: ' + angular.toJson(doc)); }
 				return serversDB.put(doc).then(function(result) {
 					doc._rev = result.rev;
-					return doc;
+					return new Server(doc);
 				});
 			}).catch(function(err) {
 				if (err.error && err.reason === 'missing') {
 					if (__DEVELOPMENT__) { $log.debug('_saveServer: saving: ' + angular.toJson(server)); }
 					return serversDB.put(server).then(function(result) {
 						server._rev = result.rev;
-						return server;
+						return new Server(server);
 					}).catch(function(err) {
 						$log.error('Failed to save ' + server.name + ': ' + angular.toJson(err));
 						return $q.reject(err);
@@ -314,6 +328,7 @@
 			getDefault: getDefaultServer,
 			setDefault: setDefaultServer,
 			configured: isServerConfigured,
+			getById: getServerById,
 			names: getServerNames,
 			all: getServers,
 			save: saveServer,

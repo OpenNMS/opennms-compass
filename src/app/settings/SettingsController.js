@@ -163,17 +163,25 @@
 			$scope.serverError = undefined;
 			if (__DEVELOPMENT__) { $log.debug('ServerModal.save: Saving server: ' + angular.toJson(server)); }
 			if (server && server.name && server.url) {
-				return tryServer(server).then(function(url) {
-					server.url = url;
-					/*return $q.reject('force failed');*/
-					return Servers.save(server).finally(function() {
-						Servers.setDefault(server);
-						$scope.closeModal();
+				return Servers.getById(server._id).then(function(existing) {
+					if (existing && existing.equals(server)) {
+						// server is unchanged, or only the name has been modified
+						return Servers.save(server);
+					}
+
+					// otherwise, server is changed in some way, check if it is reachable first, then save
+					return tryServer(server).then(function(url) {
+						server.url = url;
+						return Servers.save(server);
+					}).then(function(saved) {
+						Servers.setDefault(saved);
+					}).catch(function(err) {
+						$scope.serverError = err;
+						$log.warn('Server check failed: ' + angular.toJson(err));
+						return $q.reject(err);
 					});
-				}).catch(function(err) {
-					$scope.serverError = err;
-					$log.warn('Server check failed: ' + angular.toJson(err));
-					return $q.reject(err);
+				}).then(function() {
+					$scope.closeModal();
 				});
 			}
 
