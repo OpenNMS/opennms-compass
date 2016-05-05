@@ -1,5 +1,19 @@
-<a name="2.1.0"></a>
-# [2.1.0](https://github.com/OpenNMS/opennms-compass/compare/v2.1.0-406...v2.1.0) (2016-05-04)
+<a name="3.0.0"></a>
+# [3.0.0](https://github.com/OpenNMS/opennms-compass/compare/v2.1.0-407...v3.0.0) (2016-05-05)
+
+
+### Bug Fixes
+
+* **graphs:** fix date picker size on small screens ([777b40f](https://github.com/OpenNMS/opennms-compass/commit/777b40f))
+
+### Features
+
+* **settings:** allow editing a server name even if it is currently unreachable ([24ac2d8](https://github.com/OpenNMS/opennms-compass/commit/24ac2d8))
+
+
+
+<a name="2.1.0-407"></a>
+# [2.1.0-407](https://github.com/OpenNMS/opennms-compass/compare/v2.1.0-406...v2.1.0-407) (2016-05-04)
 
 
 ### Bug Fixes
