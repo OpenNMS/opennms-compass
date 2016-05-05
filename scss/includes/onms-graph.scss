@@ -11,10 +11,11 @@
 			font-size: $font-size-base * 2;
 		}
 		.datetime {
+			white-space: nowrap;
 			border: 1px solid;
 			padding: 5px;
 			font-weight: bolder;
-			font-size: smaller;
+			font-size: $font-size-base * 0.7;
 		}
 	}
 }
