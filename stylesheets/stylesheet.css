@@ -83,7 +83,7 @@ sup {
   color: #237cb7;
 }
 
-sup.reg {
+sup.reg, sup > a {
   vertical-align: text-top;
   font-size: 50%;
   color: #237cb7;
@@ -326,6 +326,7 @@ ol li {
   list-style-position: inside;
   list-style: decimal;
   padding-left: 3px;
+  margin-left: 20px;
 }
 
 dl dt {
