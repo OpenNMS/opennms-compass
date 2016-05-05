@@ -1,7 +1,7 @@
 {
   "name": "OpenNMS",
   "version": "3.0.0",
-  "build": 408,
+  "build": 409,
   "description": "OpenNMS Compass",
   "repository": {
     "type": "git",
