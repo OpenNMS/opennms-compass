@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -e
 
 MYDIR=$(dirname "$0")
 MYDIR=$(cd "$MYDIR"; pwd)
