@@ -46,8 +46,9 @@
 	];
 
 	var SHORT_DELAY = 50,
-		REFRESH_DELAY = 500,
-		LONG_REFRESH_DELAY = 5000;
+		REFRESH_DELAY = 200,
+		LONG_REFRESH_DELAY = 5000,
+		SUPER_LONG_DELAY = Constants.DEFAULT_REFRESH_INTERVAL * 2; // eslint-disable-line no-magic-numbers
 
 	var sortAlarmData = function(a, b) {
 		return severityOrder.indexOf(b.label.toUpperCase()) - severityOrder.indexOf(a.label.toUpperCase());
@@ -83,7 +84,7 @@
 			controller: 'DashboardCtrl'
 		});
 	})
-	.controller('DashboardCtrl', function($document, $injector, $interval, $ionicLoading, $ionicPopup, $ionicPopover, $ionicSlideBoxDelegate, $ionicViewSwitcher, $log, $q, $rootScope, $scope, $state, $timeout, $window, AlarmService, AvailabilityService, Cache, Capabilities, DashboardService, debounce, Errors, Info, Modals, OutageService, ResourceService, Servers, util) {
+	.controller('DashboardCtrl', function($document, $injector, $ionicLoading, $ionicPopup, $ionicPopover, $ionicSlideBoxDelegate, $ionicViewSwitcher, $log, $q, $rootScope, $scope, $state, $timeout, $window, AlarmService, AvailabilityService, Cache, Capabilities, DashboardService, debounce, Errors, Info, Modals, OutageService, ResourceService, Servers, util) {
 		$log.info('DashboardCtrl: Initializing.');
 
 		$scope.favoriteGraphsTemplate = favoriteGraphsTemplate;
@@ -236,6 +237,9 @@
 
 		$scope.$on('opennms.dashboard.update.outages', function(ev, update) {
 			$log.debug('Dashboard Update Outages: ' + (update.success? 'Success':'Failure'));
+			if (!update.cached) {
+				$scope.refreshWaiting--;
+			}
 
 			if (update.success) {
 				$scope.donuts.outages = update.contents;
@@ -261,6 +265,9 @@
 
 		$scope.$on('opennms.dashboard.update.alarms', function(ev, update) {
 			$log.debug('Dashboard Update Alarms: ' + (update.success? 'Success':'Failure'));
+			if (!update.cached) {
+				$scope.refreshWaiting--;
+			}
 
 			if (update.success) {
 				$scope.donuts.alarms = update.contents;
@@ -281,6 +288,9 @@
 
 		$scope.$on('opennms.dashboard.update.availability', function(ev, update) {
 			$log.debug('Dashboard Update Availability: ' + (update.success? 'Success':'Failure'));
+			if (!update.cached) {
+				$scope.refreshWaiting--;
+			}
 
 			if (update.success) {
 				$scope.availability = update.contents;
@@ -310,6 +320,9 @@
 
 		$scope.$on('opennms.dashboard.update.favorites', function(ev, update) {
 			$log.debug('Dashboard Update Favorites: ' + (update.success? 'Success':'Failure'));
+			if (!update.cached) {
+				$scope.refreshWaiting--;
+			}
 
 			if (update.success) {
 				if ($scope.currentGraphSlide >= update.contents.favorites.length) {
@@ -332,23 +345,31 @@
 		});
 
 
-		var refreshing = false;
+		$scope.refreshing = false;
+		$scope.refreshWaiting = 0;
+		var refreshTimeout;
 		$scope.refreshData = debounce(REFRESH_DELAY, function() {
-			if (refreshing) {
+			if ($scope.refreshing) {
 				return;
 			}
 			if (!$scope.visible) {
 				$log.warn('DashboardController.refreshData(): view is not currently visible, skipping refresh.');
 				return;
 			}
-			refreshing = true;
+			$scope.refreshing = true;
+			$scope.refreshWaiting = 4;
+			// just in case
+			$timeout.cancel(refreshTimeout);
+			refreshTimeout = $timeout(function() {
+				$scope.refreshWaiting = 0;
+			}, SUPER_LONG_DELAY);
 
 			$log.info('DashboardCtrl.refreshData: refreshing data.');
 
 			var finished = function(type) {
 				$log.info('DashboardCtrl.refreshData: finished refreshing.');
 				util.hideSplashscreen();
-				refreshing = false;
+				$scope.refreshing = false;
 				$timeout(function() {
 					$ionicLoading.hide();
 					$scope.$broadcast('scroll.refreshComplete');

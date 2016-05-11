@@ -148,6 +148,19 @@ $shadow-color: rgba(0,0,0,0.3);
 		font-size: ($arrow-touch-padding * 2);
 		line-height: ($arrow-touch-padding * 2);
 	}
+
+	.refreshing-spinner {
+		position: fixed;
+		padding-left: 16px;
+		padding-top: 16px;
+		top: $bar-height;
+		left: 0;
+		z-index: $z-index-menu-bar-header + 1;
+		.spinner svg {
+			width: 16px;
+			height: 16px;
+		}
+	}
 	.settings-button {
 		position: fixed;
 		padding-right: 0;
@@ -166,6 +179,9 @@ $shadow-color: rgba(0,0,0,0.3);
 .platform-ios.platform-cordova {
 	&:not(.fullscreen) {
 		.dashboard {
+			.refreshing-spinner {
+				top: $bar-height + $ios-statusbar-height;
+			}
 			.settings-button {
 				top: $bar-height + $ios-statusbar-height;
 			}

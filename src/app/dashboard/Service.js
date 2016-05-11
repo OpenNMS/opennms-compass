@@ -172,7 +172,7 @@ angular.module('opennms.dashboard.Service', [
 					update.contents = new wrap(update.contents);
 				}
 			}
-			update.stopSpinner = false;
+			update.cached = true;
 			$rootScope.$broadcast('opennms.dashboard.update.' + type, update);
 		}).catch(function() {
 			$log.debug('DashboardService.checkCache: no cached update for ' + type + ' found');
@@ -200,11 +200,13 @@ angular.module('opennms.dashboard.Service', [
 				update.success = true;
 				update.contents = result;
 				Cache.set('dashboard-service-' + type, update);
+				update.cached = false;
 				return update;
 			}).catch(function(err) {
 				Errors.set('dashboard-' + type, err);
 				update.success = false;
 				update.error = err;
+				update.cached = false;
 				return update;
 			}).finally(function() {
 				$rootScope.$broadcast('opennms.dashboard.update.' + type, update);

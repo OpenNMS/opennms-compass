@@ -55,5 +55,8 @@
 		<ng-include src="favoriteGraphsTemplate" ng-if="supportsGraphs &amp;&amp; favoriteGraphs &amp;&amp; favoriteGraphs.length > 0"></ng-include>
 		<ng-include src="availabilityTemplate" ng-if="availability &amp;&amp; availability.length > 0"></ng-include>
 	</ion-content>
+	<div class="refreshing-spinner" ng-if="refreshWaiting &gt; 0">
+		<ion-spinner class="spinner-compass"></ion-spinner>
+	</div>
 	<button class="button button-compass button-clear settings-button" ng-click="modals.settings()"><i class="icon ion-gear-a"></i></button>
 </ion-view>
