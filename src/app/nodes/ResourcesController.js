@@ -55,8 +55,10 @@
 			$log.info('NodeResources.refresh: refreshing: ' + $scope.nodeId);
 			if ($scope.nodeId) {
 				Cache.get('node-resources-' + $scope.nodeId).then(function(ret) {
-					$scope.resourceLabel = ret.resourceLabel;
-					$scope.resources = ret.resources;
+					if ($scope.error === false) {
+						$scope.resourceLabel = ret.resourceLabel;
+						$scope.resources = ret.resources;
+					}
 				}).catch(function() {
 					$scope.loading = true;
 				});
@@ -65,11 +67,13 @@
 					var children = ret.children;
 					children.sort(sortResources);
 					$scope.resources = ResourceService.withDividers(children);
+					$scope.error = false;
 					return Cache.set('node-resources-' + $scope.nodeId, {
 						resourceLabel: $scope.resourceLabel,
 						resources: $scope.resources
 					});
 				}, function(err) {
+					$scope.error = true;
 					$log.error('NodeResources.refresh: failed: ' + angular.toJson(err));
 					return $q.reject(err);
 				}).finally(function() {

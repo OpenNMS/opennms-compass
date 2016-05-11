@@ -57,7 +57,9 @@
 
 		$scope.updateSearch = function(searchFor, pullToRefresh) {
 			Cache.get('nodes-list-'+searchFor).then(function(nodes, Node) {
-				$scope.nodes = nodes;
+				if ($scope.error === false) {
+					$scope.nodes = nodes;
+				}
 			});
 
 			if (!pullToRefresh) {

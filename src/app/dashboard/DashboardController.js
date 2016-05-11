@@ -241,6 +241,13 @@
 				$scope.refreshWaiting--;
 			}
 
+			if ($scope.lastResultGood.outages === false && update.cached) {
+				// we're in an error state, and this is a cached result, don't do anything
+				resetOutages();
+				return;
+			}
+			$scope.lastResultGood.outages = update.success;
+
 			if (update.success) {
 				$scope.donuts.outages = update.contents;
 				$scope.donuts.outages.options = angular.copy(flotOptions);
@@ -269,6 +276,12 @@
 				$scope.refreshWaiting--;
 			}
 
+			if ($scope.lastResultGood.alarms === false && update.cached) {
+				// we're in an error state, and this is a cached result, don't do anything
+				resetAlarms();
+			}
+			$scope.lastResultGood.alarms = update.success;
+
 			if (update.success) {
 				$scope.donuts.alarms = update.contents;
 				$scope.donuts.alarms.options = angular.copy(flotOptions);
@@ -291,6 +304,13 @@
 			if (!update.cached) {
 				$scope.refreshWaiting--;
 			}
+
+			if ($scope.lastResultGood.availability === false && update.cached) {
+				// we're in an error state, and this is a cached result, don't do anything
+				resetAvailability();
+				return;
+			}
+			$scope.lastResultGood.availability = update.success;
 
 			if (update.success) {
 				$scope.availability = update.contents;
@@ -324,6 +344,13 @@
 				$scope.refreshWaiting--;
 			}
 
+			if ($scope.lastResultGood.favorites === false && update.cached) {
+				// we're in an error state, and this is a cached result, don't do anything
+				resetFavorites();
+				return;
+			}
+			$scope.lastResultGood.favorites = update.success;
+
 			if (update.success) {
 				if ($scope.currentGraphSlide >= update.contents.favorites.length) {
 					// "current" graph is now higher than the number of graphs we have
@@ -344,7 +371,7 @@
 			}
 		});
 
-
+		$scope.lastResultGood = {};
 		$scope.refreshing = false;
 		$scope.refreshWaiting = 0;
 		var refreshTimeout;

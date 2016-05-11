@@ -182,7 +182,7 @@
 			} else if (Errors.hasError('alarmSeverities')) {
 				$scope.error = Errors.get('alarmSeverities');
 			} else {
-				delete $scope.error;
+				$scope.error = false;
 			}
 		};
 
@@ -307,7 +307,9 @@
 			if (!$scope.refreshing.alarmSeverities) {
 				setRefreshing('alarmSeverities', true);
 				getCached('alarmSeverities').then(function(severities) {
-					$scope.legend = severities;
+					if ($scope.error === false) {
+						$scope.legend = severities;
+					}
 				}).catch(function(err) {
 					/*
 					$ionicLoading.show({
@@ -333,7 +335,9 @@
 			if (!$scope.refreshing.alarms) {
 				setRefreshing('alarms', true);
 				getCached('alarms', Alarm).then(function(alarms) {
-					updateView('alarms', alarms);
+					if ($scope.error === false) {
+						updateView('alarms', alarms);
+					}
 				}).catch(function(err) {
 					/*
 					$ionicLoading.show({
