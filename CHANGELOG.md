@@ -1,5 +1,19 @@
-<a name="3.0.0"></a>
-# [3.0.0](https://github.com/OpenNMS/opennms-compass/compare/v2.1.0-407...v3.0.0) (2016-05-05)
+<a name="3.0.1"></a>
+## [3.0.1](https://github.com/OpenNMS/opennms-compass/compare/v3.0.0-409...v3.0.1) (2016-05-11)
+
+
+### Bug Fixes
+
+* if there was a connection error, do not replace with cached data (COMPASS-73) ([4709d39](https://github.com/OpenNMS/opennms-compass/commit/4709d39))
+
+### Features
+
+* **dashboard:** show a spinner while network operations are happening ([682853e](https://github.com/OpenNMS/opennms-compass/commit/682853e))
+
+
+
+<a name="3.0.0-409"></a>
+# [3.0.0-409](https://github.com/OpenNMS/opennms-compass/compare/v2.1.0-407...v3.0.0-409) (2016-05-05)
 
 
 ### Bug Fixes
