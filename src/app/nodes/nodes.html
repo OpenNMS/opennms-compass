@@ -11,7 +11,7 @@
 			<i class="icon ion-ios-search placeholder-icon"></i>
 			<input type="search" placeholder="Search" ng-model="searchString" autocapitalize="none">
 		</label>
-		<button class="button button-clear" ng-click="searchString = ''">Cancel</button>
+		<button class="button button-clear button-compass" ng-click="searchString = ''">Cancel</button>
 	</ion-header-bar>
 	<ion-content delegate-handle="nodes-scroll" scroll="true" overflow-scroll="false">
 		<ion-refresher pulling-text="Pull to Refresh..." on-refresh="updateSearch(searchString, true)"></ion-refresher>
