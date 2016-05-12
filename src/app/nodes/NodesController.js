@@ -37,7 +37,7 @@
 			controller: 'NodesCtrl'
 		});
 	})
-	.controller('NodesCtrl', function($ionicLoading, $log, $q, $scope, $state, $timeout, $window, Cache, Capabilities, debounce, Errors, NodeService, storage, util) {
+	.controller('NodesCtrl', function($ionicLoading, $ionicScrollDelegate, $log, $q, $scope, $state, $timeout, $window, Cache, Capabilities, debounce, Errors, NodeService, storage, util) {
 		$log.info('NodesCtrl: initializing.');
 
 		$scope.searching = false;
@@ -92,6 +92,9 @@
 				if (nodes.length === MAX_NODE_LIST_LENGTH && (angular.isUndefined(searchFor) || searchFor.trim() === '')) {
 					$scope.nodes.push({id:'more'});
 				}
+				if ($scope.searchString !== $scope.lastSearchString) {
+					$ionicScrollDelegate.$getByHandle('nodes-scroll').scrollTop(false);
+				}
 			}, function(err) {
 				Errors.set('nodes', err);
 				$scope.error = true;
@@ -120,7 +123,10 @@
 			$scope.nodes = [];
 		}
 
-		$scope.$watch('searchString', function(newValue) {
+		$scope.$watch('searchString', function(newValue, oldValue) {
+			if (newValue !== oldValue) {
+				$scope.lastSearchString = oldValue;
+			}
 			storage.set('opennms.nodes.search-string', newValue);
 			$scope.delayedSearch();
 		});
