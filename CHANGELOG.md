@@ -1,5 +1,16 @@
 <a name="3.0.1"></a>
-## [3.0.1](https://github.com/OpenNMS/opennms-compass/compare/v3.0.0-409...v3.0.1) (2016-05-11)
+## [3.0.1](https://github.com/OpenNMS/opennms-compass/compare/v3.0.1-410...v3.0.1) (2016-05-12)
+
+
+### Bug Fixes
+
+* **nodes:** fix missing "Clear" button in the node list search ([13fba9a](https://github.com/OpenNMS/opennms-compass/commit/13fba9a))
+* **nodes:** scroll to top when the search is modified in the node list ([b289809](https://github.com/OpenNMS/opennms-compass/commit/b289809))
+
+
+
+<a name="3.0.1-410"></a>
+## [3.0.1-410](https://github.com/OpenNMS/opennms-compass/compare/v3.0.0-409...v3.0.1-410) (2016-05-11)
 
 
 ### Bug Fixes
