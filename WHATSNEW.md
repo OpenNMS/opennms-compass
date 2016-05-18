@@ -1,8 +1,8 @@
 What's New in OpenNMS Compass
 =============================
 
-Compass 3.0.1
--------------
+3.0.1
+-----
 
 Bug fixes and performance improvements.  (Sorry, couldn't help ourselves.)
 
@@ -12,8 +12,8 @@ But seriously, this release contains just a few small changes:
 * don't flash cached data on reload when there was an error
 * show a spinner on the dashboard while network operations are still in-progress, even if cached data is shown
 
-Compass 3.0.0
--------------
+3.0.0
+-----
 
 Compass has had a huge internal update, a face lift, and probably a Brazilian Blowout or something.  The codebase is leaner, faster, and has a number of new features, including:
 
