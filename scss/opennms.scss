@@ -1,4 +1,4 @@
-$ionicons-font-path: "../bower_components/ionic/release/fonts" !default;
+$ionicons-font-path: "../node_modules/ionic/release/fonts" !default;
 
 $fontPath: "../fonts" !default;
 $imagePath: "../images" !default;
@@ -32,8 +32,8 @@ $font-family-monospace:           "Helvetica Neue", "HelveticaNeue", "Droid Sans
 
 /* END OVERRIDE IONIC VARIABLES HERE */
 
-@import "bower_components/ionic/scss/ionic";
-@import "bower_components/ionic-filter-bar/scss/ionic.filter.bar";
+@import "node_modules/ionic/scss/ionic";
+@import "node_modules/ionic-filter-bar/scss/ionic.filter.bar";
 /*@import "includes/c3"; */
 
 /* OPENNMS GLOBAL COLORS */

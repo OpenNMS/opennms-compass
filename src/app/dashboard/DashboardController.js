@@ -10,6 +10,7 @@
 
 	var initialLoad = true;
 
+	require('../../3rdparty/angular-flot');
 	require('angular-debounce');
 
 	require('./Service');

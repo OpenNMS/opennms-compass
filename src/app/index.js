@@ -4,13 +4,13 @@
 	/* global screen: true */
 
 	/*
-	require('style!css!../../bower_components/leaflet/dist/leaflet.css');
+	require('style!css!../../node_modules/leaflet/dist/leaflet.css');
 	require('../../scss/opennms.scss');
 	*/
-	require('../../bower_components/onmsicons/fonts/onmsicons.eot');
-	require('../../bower_components/onmsicons/fonts/onmsicons.svg');
-	require('../../bower_components/onmsicons/fonts/onmsicons.ttf');
-	require('../../bower_components/onmsicons/fonts/onmsicons.woff');
+	require('../../node_modules/onmsicons/fonts/onmsicons.eot');
+	require('../../node_modules/onmsicons/fonts/onmsicons.svg');
+	require('../../node_modules/onmsicons/fonts/onmsicons.ttf');
+	require('../../node_modules/onmsicons/fonts/onmsicons.woff');
 
 	var angular = require('angular');
 	require('angular-debounce');

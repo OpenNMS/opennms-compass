@@ -11,7 +11,7 @@ www
 bower_components
 generated/
 !www/.htaccess
-npm-debug.log
+npm-debug.log*
 node_modules/
 platforms/
 plugins/

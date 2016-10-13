@@ -115,11 +115,6 @@ ipv6/index.js
 ipv6/lib/node/bigint.js
 ipv6/test
 ipv6/test/**/*
-jquery-visible/benchmark
-jquery-visible/benchmark/**/*
-jquery-visible/df-visible.jquery.json
-jquery-visible/examples
-jquery-visible/examples/**/*
 jquery/src
 jquery/src/**/*
 leaflet/*.md

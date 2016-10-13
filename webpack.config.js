@@ -3,7 +3,8 @@ var path = require('path'),
 	webpack = require('webpack'),
 	argv = require('yargs').argv,
 	ngAnnotatePlugin = require('ng-annotate-webpack-plugin'),
-	copyWebpackPlugin = require('copy-webpack-plugin');
+	CopyWebpackPlugin = require('copy-webpack-plugin'),
+	ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 var configfile = path.join(__dirname, 'package.json');
 var configobj  = JSON.parse(fs.readFileSync(configfile, 'utf8'));
@@ -15,12 +16,19 @@ console.log(configobj.name + ' v' + configobj.version + ' (build ' + configobj.b
 
 var outputDirectory = './www';
 
+var extractCSS = new ExtractTextPlugin('[name].css');
+
 var plugins = [
-	new copyWebpackPlugin([
+	new CopyWebpackPlugin([
 		{
 			context: 'src',
 			from: 'index.html',
 			to: path.resolve(outputDirectory)
+		},
+		{
+			context: 'node_modules/jquery',
+			from: 'dist/',
+			to: path.resolve(outputDirectory, 'jquery')
 		},
 		{
 			context: 'src',
@@ -34,18 +42,17 @@ var plugins = [
 		__VERSION__: JSON.stringify(configobj.version),
 		__BUILD__: JSON.stringify(configobj.build)
 	}),
-	new webpack.ResolverPlugin([
-		new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin('package.json', ['main']),
-		new webpack.ResolverPlugin.DirectoryDescriptionFilePlugin('bower.json', ['main'])
-	]),
 	new ngAnnotatePlugin({
 		add: true
 	}),
+	/*
 	new webpack.ProvidePlugin({
 		$: 'jquery',
 		jQuery: 'jquery',
 		'window.jQuery': 'jquery'
 	}),
+	*/
+	extractCSS,
 	new webpack.optimize.CommonsChunkPlugin({
 		name: 'vendor',
 		filename: 'vendor.bundle.js',
@@ -91,16 +98,16 @@ var options = {
 			'ionic/release/js/ionic',
 			'ionic/release/js/ionic-angular',
 			'ip-address',
-			'jquery',
-			'jquery-visible',
+			/* 'jquery', */
+			'./src/3rdparty/jquery.visible',
 			'leaflet/dist/leaflet-src',
-			'angular-simple-logger/dist/angular-simple-logger',
+			'angular-simple-logger',
 			'ui-leaflet/dist/ui-leaflet',
 			'moment',
 			'ngCordova',
 			'urijs',
 			'version_compare',
-			'winstore-jscompat/winstore-jscompat',
+			'./src/3rdparty/winstore-jscompat',
 			'x2js/xml2json',
 			/* graphing */
 			'd3',
@@ -109,15 +116,15 @@ var options = {
 			'flot/jquery.flot.pie',
 			'./src/3rdparty/jquery.flot.resize',
 			'flot/jquery.flot.time',
-			'flot-axislabels/jquery.flot.axislabels',
+			'./src/3rdparty/jquery.flot.axislabels',
 			'flot-legend/jquery.flot.legend',
 			'flot.tooltip/js/jquery.flot.tooltip',
-			'./src/3rdparty/angular-flot'
+			'imports?angular!./src/3rdparty/angular-flot'
 		],
 		css: [
 			'./scss/opennms.scss',
-			'./bower_components/onmsicons/scss/onmsicons.scss',
-			'style!css!./bower_components/leaflet/dist/leaflet.css'
+			'./node_modules/onmsicons/scss/onmsicons.scss',
+			'style!css!./node_modules/leaflet/dist/leaflet.css'
 		],
 		app: [
 			'./src/app/index'
@@ -129,24 +136,29 @@ var options = {
 		chunkFilename: '[chunkhash].bundle.js'
 	},
 	resolve: {
+		modules: [ 'node_modules' ],
+		modulesDirectories: [ 'node_modules', 'src', '.' ],
+		descriptionFiles: ['package.json', 'bower.json'],
+		mainFields: ['main', 'browser'],
+		mainFiles: ['index'],
+		aliasFields: ['browser'],
+		extensions: ['', '.js', '.json', '.scss', '.css'],
+		/*moduleExtensions: ['-loader'],
+		enforceModuleExtension: false,*/
 		alias: {
 			'ionic-filter-bar': 'ionic-filter-bar/dist/ionic.filter.bar',
 			'lodash.find': 'lodash',
 			'lodash.max': 'lodash'
-		},
-		root: [
-			/*__dirname, */
-			/*path.resolve(__dirname, 'bower_components/ionic/release/js'),*/
-			path.resolve(__dirname, 'bower_components'),
-			path.resolve(__dirname, 'node_modules')
-		]
+		}
 	},
 	module: {
 		noParse: /lie\.js$|\/leveldown\/|min\.js$/,
-		preLoaders: [
+		rules: [
 		  {
+          enforce: 'pre',
           test: /\.js$/,
-          loaders: ['eslint']
+          loaders: ['eslint'],
+          exclude: /node_modules/
         }
       ],
 		loaders: [
@@ -159,11 +171,19 @@ var options = {
 			},
 			{
 				test: /\.scss$/,
-				loaders: ['style', 'css', 'sass']
+				/*loader: extractCSS.extract('css', 'sass')*/
+				/*
+				loader: ExtractTextPlugin.extract({
+					fallbackLoader: 'style',
+					loader: 'css?minifier!group-css-media-queries!sass'
+				})
+				*/
+				loaders: ['style', 'css?minifier', 'group-css-media-queries', 'sass']
 			},
 			{
 				test: /\.html$/,
-				loader: 'html?config=htmlLoaderConfig'
+				loader: 'html'
+				/* loader: 'html?config=htmlLoaderConfig' */
 			},
 			{
 				test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
@@ -189,6 +209,12 @@ var options = {
 				test: /\.(jpe?g|png|gif)$/i,
 				loader: 'file'
 			},
+			/*
+			{
+				test: /jquery\.js$/,
+				loader: 'expose?jQuery!expose?$'
+			},
+			*/
 			{
 				test: /[\/]angular\.js$/,
 				loader: 'expose?angular!exports?angular'
@@ -204,10 +230,11 @@ var options = {
 		fs: '{}',
 		cordova: '{}',
 		jQuery: '{}'
-	},
+	} /*,
 	htmlLoaderConfig: {
 		minimize: false
 	}
+	*/
 };
 
 if (argv.env === 'development') {
