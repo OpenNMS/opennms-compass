@@ -85,6 +85,15 @@ Server.prototype.restUrl = function(segment) {
   return undefined;
 };
 
+Server.prototype.nrtUrl = function() {
+  if (this.url) {
+    var url = URI(this.url).segment('nrt/starter');
+    return url.toString();
+  }
+
+  return undefined;
+};
+
 Server.prototype.getHost = function() {
   return URI(this.url).hostname();
 }

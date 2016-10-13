@@ -63,6 +63,7 @@ angular.module('opennms.misc.OnmsGraph', [
 		templateUrl: onmsGraphTemplate,
 		link: function linkOnmsGraph($scope, element, attrs) {
 			$scope.dirty = false;
+			$scope.realtime = true;
 
 			$scope.width = getWidth();
 			$scope.height = getWidth();
@@ -125,6 +126,7 @@ angular.module('opennms.misc.OnmsGraph', [
 				graphQueue.cancel(getGraphDescription());
 
 				if ($scope.graph) {
+					$scope.graph.cancel();
 					if ($scope.graph.destroy) {
 						$scope.graph.destroy();
 					}
@@ -185,6 +187,7 @@ angular.module('opennms.misc.OnmsGraph', [
 					$log.debug('Graph exists: ' + description);
 					$scope.graph.onAfterQuery = function() {
 						$rootScope.$evalAsync(function() {
+							$log.error('onAfterQuery');
 							deferred.resolve(true);
 						});
 					}
@@ -217,6 +220,7 @@ angular.module('opennms.misc.OnmsGraph', [
 
 					$scope.graph.onAfterQuery = function() {
 						$rootScope.$evalAsync(function() {
+							$log.error('onAfterQuery');
 							deferred.resolve(true);
 						});
 					}
@@ -353,18 +357,66 @@ angular.module('opennms.misc.OnmsGraph', [
 				}
 			});
 
-			$scope.$watch('graphModel', function(graphModel) {
+			$scope.$watchGroup(['graphModel', 'realtime'], function(watched) {
+				var graphModel = watched[0],
+					realtime = watched[1];
+
 				if (graphModel && graphModel.metrics) {
 					//$log.debug('OnmsGraph: dirty: graphModel');
 					Servers.getDefault().then(function(server) {
 						if (server) {
 							var options = {
-								url: server.restUrl('measurements'),
 								username: server.username,
 								password: server.password,
-								metrics: graphModel.metrics
+								pollingInterval: 10000 // eslint-disable-line no-magic-numbers
+
 							};
 
+							var processResponse = function(response, success, failure) {
+								$log.debug('ResourceService.processResponse: ' + angular.toJson(response));
+								if (angular.isString(response.data)) {
+									try {
+										var json = angular.fromJson(response.data);
+										$log.debug('ResourceService.processResponse: json = ' + angular.toJson(json,true));
+										success(json);
+										return json;
+									} catch (err) {
+										if (err.message) {
+											$log.error('ResourceService.processResponse: error: ' + err.message);
+										} else {
+											$log.error('ResourceService.processResponse: error: ' + err);
+										}
+										$log.debug('ResourceService.processResponse: falling back to sending the raw response data.');
+										success(response.data);
+										return response.data;
+									}
+								}
+								success(response.data);
+								return response.data;
+							};
+
+							options.getFunction = function(url, data, success, failure) {
+								$log.error('get: ' + url + ' data=' + angular.toJson(data));
+								for (var key in data) {
+									if (data.hasOwnProperty(key)) {
+										data[key] = String(data[key]);
+									}
+								}
+								HTTP.get(url, {
+									headers: {
+										'Content-Type': 'application/json',
+										Accept: 'application/json'
+									},
+									params: data
+								}).then(function(response) {
+									return processResponse(response, success, failure);
+								}).catch(function(err) {
+									var error = new RestError(url, err.data, err.status);
+									$log.error('ResourceService.getFunction: HTTP error: ' + error.toString());
+									failure(error.toString());
+									return $q.reject(error);
+								});
+							}
 							options.fetchFunction = function(url, data, success, failure) {
 								HTTP.post(url, {
 									data: data,
@@ -373,32 +425,36 @@ angular.module('opennms.misc.OnmsGraph', [
 										Accept: 'application/json'
 									}
 								}).then(function(response) {
-									//$log.debug('ResourceService.fetchFunction: ' + angular.toJson(response));
-									if (angular.isString(response.data)) {
-										try {
-											var json = angular.fromJson(response.data);
-											//$log.debug('ResourceService.fetchFunction: json = ' + angular.toJson(json));
-											success(json);
-										} catch (err) {
-											if (err.message) {
-												$log.error('ResourceService.fetchFunction: error: ' + err.message);
-											} else {
-												$log.error('ResourceService.fetchFunction: error: ' + err);
-											}
-											$log.debug('ResourceService.fetchFunction: falling back to sending the raw response data string.');
-											success(response.data);
-										}
-									} else {
-										success(response.data);
-									}
+									return processResponse(response, success, failure);
 								}, function(err) {
 									var error = new RestError(url, err.data, err.status);
-									$log.error('ResourceService.fetchFunction: cordovaHTTP error: ' + error.toString());
+									$log.error('ResourceService.fetchFunction: HTTP error: ' + error.toString());
 									failure(error.toString());
+									return $q.reject(error);
 								});
 							};
 
-							$scope.ds = new Backshift.DataSource.OpenNMS(options);
+							if (realtime) {
+								options.metrics = [{
+									resourceId: $scope.resourceId,
+									report: $scope.graphDef.name
+								}];
+								options.url = server.nrtUrl();
+								$log.debug('ResourceService: using NRTG datasource: ' + angular.toJson(options));
+								$scope.ds = new Backshift.DataSource.NRTG(options);
+								/* eslint-disable no-magic-numbers */
+								/*
+								$timeout(function() {
+									$scope.ds.updatePollingInterval(1000);
+								}, 5000);
+								*/
+								/* eslint-enable no-magic-numbers */
+							} else {
+								options.metrics = graphModel.metrics;
+								options.url = server.restUrl('measurements');
+								$log.debug('ResourceService: using OpenNMS datasource: ' + angular.toJson(options));
+								$scope.ds = new Backshift.DataSource.OpenNMS(options);
+							}
 						} else {
 							$log.warn('OnmsGraph: graphModel has changed, but server is unknown!');
 						}
