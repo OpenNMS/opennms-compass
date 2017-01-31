@@ -22,11 +22,14 @@
 
 			var params = {
 				comparator: 'ilike',
-				match: 'any',
-				label: '%' + search + '%',
-				'ipInterface.ipAddress': '%' + search + '%',
-				'ipInterface.ipHostName': '%' + search + '%'
+				match: 'any'
 			};
+
+			if (search) {
+				params.label = '%' + search + '%';
+				params['ipInterface.ipAddress'] = '%' + search + '%';
+				params['ipInterface.ipHostName'] = '%' + search + '%';
+			}
 
 			if (limit) {
 				params.limit = limit;
