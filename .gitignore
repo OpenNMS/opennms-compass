@@ -4,6 +4,7 @@
 .DS_Store
 /index.html
 .index.html
+.vscode
 *.swp
 www.zip
 www
