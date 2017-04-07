@@ -17,6 +17,7 @@ platforms/
 plugins/
 temp
 engine
+build.json
 build-properties.json
 release-signing.properties
 platforms/android/ant.properties
