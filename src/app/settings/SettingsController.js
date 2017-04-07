@@ -76,6 +76,7 @@
 			}
 		};
 
+		var retries = 1;
 		var tryServer = function(s) {
 			var server = new Server(s);
 			var url = new URI(server.url);
@@ -97,9 +98,21 @@
 				};
 
 				return HTTP.get(alarmUrl, options).then(function(res) {
-					return url;
+					//$log.debug('ServerModal.tryServer: Got result: ' + angular.toJson(res));
+					if (res && res.data && res.data.match(/^\s*\d+\s*$/)) {
+						return url;
+					}
+					$log.warn('ServerModal.tryServer: Got a result, but it was not a number as expected: ' + angular.toJson(res));
+					return $q.reject({
+						status: Constants.HTTP_NOT_FOUND
+					});
 				}).catch(function(err) {
 					$log.error('ServerModal.tryServer: Failed to get ' + alarmUrl + ': ' + angular.toJson(err));
+					if (retries-- > 0) {  // eslint-disable-line no-magic-numbers
+						// try again, in case there's a transient error
+						return tryUrl(url);
+					}
+					retries = 1;
 					return $q.reject(err);
 				});
 			};
@@ -128,23 +141,27 @@
 			};
 
 			$scope.saving = true;
+			var tryThis = new URI(url.toString());
 			// first try the URL they gave us (normalized for '/')
-			return tryUrl(server.url).catch(function(err) {
+			return tryUrl(tryThis.toString()).catch(function(err) {
 				updateError(err);
+
 				// then, try with /opennms/ appended
-				url.pathname(url.pathname() + 'opennms/');
-				return tryUrl(url.toString());
+				tryThis.pathname(url.pathname() + 'opennms/');
+				return tryUrl(tryThis.toString());
 			}).catch(function(err) {
 				updateError(err);
+
 				// then, try toggling SSL
-				url = new URI(server.url);
-				url.protocol(url.protocol() === 'http'? 'https':'http');
-				return tryUrl(url.toString());
+				tryThis = new URI(url.toString());
+				tryThis.protocol(tryThis.protocol() === 'http'? 'https':'http');
+				return tryUrl(tryThis.toString());
 			}).catch(function(err) {
 				updateError(err);
+
 				// then, try the toggled with /opennms/ appended
-				url.pathname(url.pathname() + 'opennms/');
-				return tryUrl(url.toString());
+				tryThis.pathname(tryThis.pathname() + 'opennms/');
+				return tryUrl(tryThis.toString());
 			}).catch(function(err) {
 				updateError(err);
 
