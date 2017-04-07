@@ -2,7 +2,7 @@
   "name": "OpenNMS",
   "version": "3.0.2",
   "build": 412,
-  "description": "OpenNMS Compass",
+  "description": "Compass by OpenNMS",
   "repository": {
     "type": "git",
     "url": "http://github.com/OpenNMS/opennms-compass.git"
