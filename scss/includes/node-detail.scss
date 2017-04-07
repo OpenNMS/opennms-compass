@@ -10,6 +10,11 @@
 	.row {
 		font-size: 90%;
 	}
+	.spinner.spinner-main svg {
+		width: 16px;
+		height: 16px;
+		float: right;
+	}
 	.leaflet-map-pane, .leaflet-container {
 		pointer-events:none;
 	}
