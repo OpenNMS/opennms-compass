@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<widget android-versionCode="411" id="com.opennms.compass" ios-CFBundleVersion="411" version="3.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget android-versionCode="412" id="com.opennms.compass" ios-CFBundleVersion="412" version="3.0.2" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
   <name>OpenNMS</name>
   <description>OpenNMS Compass</description>
   <author email="ranger@opennms.com" href="http://www.opennms.com/">Benjamin Reed</author>
   <content src="index.html"/>
   <allow-navigation href="*"/>
+  <allow-navigation href="http://localhost:8100"/>
   <allow-intent href="*"/>
   <access origin="*"/>
   <preference name="android-minSdkVersion" value="14"/>
@@ -83,11 +84,11 @@
     <config-file parent="NSAppTransportSecurity" platform="ios" target="*-Info.plist">
       <dict>
         <key>NSAllowsArbitraryLoads</key>
-        <true></true>
+        <true/>
       </dict>
     </config-file>
     <config-file parent="UIRequiresFullScreen" platform="ios" target="*-Info.plist">
-      <true></true>
+      <true/>
     </config-file>
     <icon src="resources/ios/icon/icon.png" width="57" height="57"/>
     <icon src="resources/ios/icon/icon@2x.png" width="114" height="114"/>

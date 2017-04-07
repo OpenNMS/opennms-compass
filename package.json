@@ -1,7 +1,7 @@
 {
   "name": "OpenNMS",
-  "version": "3.0.1",
-  "build": 411,
+  "version": "3.0.2",
+  "build": 412,
   "description": "OpenNMS Compass",
   "repository": {
     "type": "git",
@@ -27,7 +27,7 @@
     "imports-loader": "0.6.5",
     "jshint": "*",
     "jshint-stylish": "*",
-    "libxmljs": "0.17.1",
+    "libxmljs": "^0.18.4",
     "lodash": "4.11.2",
     "lodash.merge": "4.3.5",
     "lodash.padstart": "4.4.0",
@@ -41,6 +41,7 @@
     "script-loader": "0.7.0",
     "shelljs": "0.7.0",
     "style-loader": "0.13.1",
+    "touch": "^1.0.0",
     "url-loader": "0.5.7",
     "webpack": "1.13.0",
     "xcode": "0.8.4",
@@ -112,7 +113,7 @@
     "verbose-build": "npm run lint && npm run test && webpack --debug --colors --display-modules --display-chunks --display-error-details --display-origins --display-reasons",
     "genymotion": "ionic run -slc android",
     "android": "ionic emulate -slc android",
-    "ios": "ionic emulate -slc --address=localhost --target='iPhone-6s, 9.3' ios",
+    "ios": "ionic emulate -slc --address=localhost --target='iPhone-6s, 10.3' ios",
     "device": "ionic run --device -slc ios",
     "watch": "webpack --colors --display-error-details --watch",
     "lint": "eslint . --ext .js"
