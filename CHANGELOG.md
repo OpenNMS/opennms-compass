@@ -1,5 +1,15 @@
 <a name="3.0.2"></a>
-## [3.0.2](https://github.com/OpenNMS/opennms-compass/compare/v3.0.1-411...v3.0.2) (2017-04-07)
+## [3.0.2](https://github.com/OpenNMS/opennms-compass/compare/v3.0.2-413...v3.0.2) (2017-04-07)
+
+
+### Bug Fixes
+
+* **nodes:** fix rendering of node page ([25a3db6](https://github.com/OpenNMS/opennms-compass/commit/25a3db6))
+
+
+
+<a name="3.0.2-413"></a>
+## [3.0.2-413](https://github.com/OpenNMS/opennms-compass/compare/v3.0.1-411...v3.0.2-413) (2017-04-07)
 
 
 ### Bug Fixes

@@ -1,6 +1,15 @@
 What's New in OpenNMS Compass
 =============================
 
+3.0.2
+-----
+
+A small release just to get us built against the iOS 10.3 SDK and fix a few tiny bugs.
+* fix an issue that could cause a ReST error on an empty node search
+* change the "demo" URL to https to avoid weird redirects
+* when checking the OpenNMS server setting, retry once before trying other URLs
+* when checking the OpenNMS server setting, fix a bug when trying '/opennms/' on HTTPS
+
 3.0.1
 -----
 
