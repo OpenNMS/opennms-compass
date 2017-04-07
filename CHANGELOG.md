@@ -1,5 +1,21 @@
-<a name="3.0.1"></a>
-## [3.0.1](https://github.com/OpenNMS/opennms-compass/compare/v3.0.1-410...v3.0.1) (2016-05-12)
+<a name="3.0.2"></a>
+## [3.0.2](https://github.com/OpenNMS/opennms-compass/compare/v3.0.1-411...v3.0.2) (2017-04-07)
+
+
+### Bug Fixes
+
+* **nodes:** fix empty search to avoid "%%" to ReST call ([a452097](https://github.com/OpenNMS/opennms-compass/commit/a452097))
+* **settings:** fix demo URL to be HTTPS now ([9d564b0](https://github.com/OpenNMS/opennms-compass/commit/9d564b0))
+
+
+### Features
+
+* **settings:** retry failed server tests, fix bug in handling http redirects to https ([dc385c1](https://github.com/OpenNMS/opennms-compass/commit/dc385c1))
+
+
+
+<a name="3.0.1-411"></a>
+## [3.0.1-411](https://github.com/OpenNMS/opennms-compass/compare/v3.0.1-410...v3.0.1-411) (2016-05-12)
 
 
 ### Bug Fixes
@@ -17,6 +33,7 @@
 
 * if there was a connection error, do not replace with cached data (COMPASS-73) ([4709d39](https://github.com/OpenNMS/opennms-compass/commit/4709d39))
 
+
 ### Features
 
 * **dashboard:** show a spinner while network operations are happening ([682853e](https://github.com/OpenNMS/opennms-compass/commit/682853e))
@@ -30,6 +47,7 @@
 ### Bug Fixes
 
 * **graphs:** fix date picker size on small screens ([777b40f](https://github.com/OpenNMS/opennms-compass/commit/777b40f))
+
 
 ### Features
 
@@ -49,6 +67,7 @@
 * **dashboard:** work around problem loading favorites on launch ([d0ff6a3](https://github.com/OpenNMS/opennms-compass/commit/d0ff6a3))
 * **graphs:** fix spacing of graphs on tablets ([f2e2acc](https://github.com/OpenNMS/opennms-compass/commit/f2e2acc))
 
+
 ### Features
 
 * **dashboard:** switch the alarm and outages donuts ([21d9534](https://github.com/OpenNMS/opennms-compass/commit/21d9534))
@@ -64,6 +83,7 @@
 * **analytics:** fix OpenNMS version reporting ([c3f2a57](https://github.com/OpenNMS/opennms-compass/commit/c3f2a57))
 * **dashboard:** fix a potential stuck-refresh issue when switching servers ([df201be](https://github.com/OpenNMS/opennms-compass/commit/df201be))
 * **graphs:** fix rendering error that can happen mid-refresh ([980707b](https://github.com/OpenNMS/opennms-compass/commit/980707b))
+
 
 ### Performance Improvements
 
@@ -86,6 +106,7 @@
 * **graphs:** ensure a graph refresh when navigating favorite graphs ([7d255f7](https://github.com/OpenNMS/opennms-compass/commit/7d255f7))
 * **graphs:** fix refresh when date ranges are modified ([e48a71a](https://github.com/OpenNMS/opennms-compass/commit/e48a71a))
 * **nodes:** fix undefined reference in a debug log ([6450d97](https://github.com/OpenNMS/opennms-compass/commit/6450d97))
+
 
 ### Features
 
@@ -115,6 +136,7 @@
 * **nodes:** add more loading indicators for slower devices/connections ([4bd626f](https://github.com/OpenNMS/opennms-compass/commit/4bd626f))
 * **util:** create method for escalating an alarm ([abc266c](https://github.com/OpenNMS/opennms-compass/commit/abc266c))
 
+
 ### Performance Improvements
 
 * **ios:** enable WKWebView engine ([1ca7a3d](https://github.com/OpenNMS/opennms-compass/commit/1ca7a3d))
@@ -128,6 +150,7 @@
 ### Features
 
 * add low-memory handling ([13c1327](https://github.com/OpenNMS/opennms-compass/commit/13c1327))
+
 
 ### Performance Improvements
 
@@ -149,6 +172,7 @@
 * **rest:** handle null limit properly ([be9bdc5](https://github.com/OpenNMS/opennms-compass/commit/be9bdc5))
 * **settings:** fix display of capabilities in "About"; add graphing ([03ee192](https://github.com/OpenNMS/opennms-compass/commit/03ee192))
 
+
 ### Performance Improvements
 
 * **outages:** add caching to the outage summary popup ([1d6063f](https://github.com/OpenNMS/opennms-compass/commit/1d6063f))
@@ -167,6 +191,7 @@
 
 * **nodes:** fix handling of upper/lower case ([ffd09ac](https://github.com/OpenNMS/opennms-compass/commit/ffd09ac))
 * **nodes:** fix some quirky refresh issues in the node page(s) ([7623d33](https://github.com/OpenNMS/opennms-compass/commit/7623d33))
+
 
 ### Features
 
@@ -196,9 +221,11 @@
 * **nodes:** fix loading of map images ([d6d98c7](https://github.com/OpenNMS/opennms-compass/commit/d6d98c7))
 * **server:** clear node/alarm caches when switching servers (COMPASS-57) ([5f908f6](https://github.com/OpenNMS/opennms-compass/commit/5f908f6))
 
+
 ### Features
 
 * **dashboard:** clicking the alarm donut takes you to the alarm list (COMPASS-66) ([51e360c](https://github.com/OpenNMS/opennms-compass/commit/51e360c))
+
 
 ### Performance Improvements
 
@@ -225,11 +252,13 @@
 * **settings:** set to default when adding/editing a server ([b138ce1](https://github.com/OpenNMS/opennms-compass/commit/b138ce1))
 * **settings:** show server name and hostname in "About" ([56395ef](https://github.com/OpenNMS/opennms-compass/commit/56395ef))
 
+
 ### Features
 
 * **dashboard:** auto-refresh availability if "Calculating..." ([60a4824](https://github.com/OpenNMS/opennms-compass/commit/60a4824))
 * **info:** handle info query against old OpenNMS versions cleanly ([5f1487e](https://github.com/OpenNMS/opennms-compass/commit/5f1487e))
 * **settings:** test server before saving ([5330042](https://github.com/OpenNMS/opennms-compass/commit/5330042))
+
 
 ### Performance Improvements
 
@@ -250,7 +279,7 @@
 * **dashboard:** fix rendering of "favorites" header ([824fec9](https://github.com/OpenNMS/opennms-compass/commit/824fec9))
 * **dashboard:** huge cleanup of dashboard behavior, plus a few other small bugfixes ([c696f39](https://github.com/OpenNMS/opennms-compass/commit/c696f39))
 * **db:** create index if necessary, other misc cleanup ([8af3624](https://github.com/OpenNMS/opennms-compass/commit/8af3624))
-* **graphs:** cleaned up graphs some more, now able to make HTTP calls without AJAX/CORS issue ([c7da878](https://github.com/OpenNMS/opennms-compass/commit/c7da878))
+* **graphs:** cleaned up graphs some more, now able to make HTTP calls without AJAX/CORS issues ([c7da878](https://github.com/OpenNMS/opennms-compass/commit/c7da878))
 * **graphs:** fix flot graph exception when removing the active server ([0cfde0e](https://github.com/OpenNMS/opennms-compass/commit/0cfde0e))
 * **graphs:** fix graph rendering on android ([42f3db2](https://github.com/OpenNMS/opennms-compass/commit/42f3db2))
 * **nodes:** only show the graph button if there are graphs ([3afaf41](https://github.com/OpenNMS/opennms-compass/commit/3afaf41))
@@ -259,11 +288,13 @@
 * **ReST:** port to the new cordovaHTTP API ([2cb6978](https://github.com/OpenNMS/opennms-compass/commit/2cb6978))
 * **util:** fix initialization of Keyboard plugin ([72b64b8](https://github.com/OpenNMS/opennms-compass/commit/72b64b8))
 
+
 ### Features
 
 * disable ads and in-app-purchases ([35c42d5](https://github.com/OpenNMS/opennms-compass/commit/35c42d5))
 * generate source-map and create css bundle ([bab3005](https://github.com/OpenNMS/opennms-compass/commit/bab3005))
 * **navigation:** tap-and-hold back buttons to go straight to the dashboard ([a4d3af1](https://github.com/OpenNMS/opennms-compass/commit/a4d3af1))
+
 
 ### Performance Improvements
 
@@ -297,6 +328,7 @@
 * **nodes:** fix a pull-to-refresh bug ([f1fc232](https://github.com/OpenNMS/opennms-compass/commit/f1fc232))
 * **settings:** fix server display and first-launch issues ([c6552e2](https://github.com/OpenNMS/opennms-compass/commit/c6552e2))
 
+
 ### Features
 
 * try to use San Francisco font on iOS 9 ([d8c5c84](https://github.com/OpenNMS/opennms-compass/commit/d8c5c84))
@@ -317,6 +349,7 @@
 * **servers:** fix "server updated" check handling ([7f829f7](https://github.com/OpenNMS/opennms-compass/commit/7f829f7))
 * **settings:** hide "Add" button unless on the settings tab ([325d325](https://github.com/OpenNMS/opennms-compass/commit/325d325))
 * **settings:** store default server in a non-cloud file ([17d9b7e](https://github.com/OpenNMS/opennms-compass/commit/17d9b7e))
+
 
 ### Features
 
@@ -350,6 +383,7 @@
 * **servers:** fix an initialization issue on clean install ([fa47035](https://github.com/OpenNMS/opennms-compass/commit/fa47035))
 * **servers:** handle renames gracefully ([cba2759](https://github.com/OpenNMS/opennms-compass/commit/cba2759))
 
+
 ### Features
 
 * **favorites:** store favorites in the filesystem ([2890537](https://github.com/OpenNMS/opennms-compass/commit/2890537))
@@ -371,6 +405,7 @@
 * **rest:** fix iOS ReST breakage introduced by cordovaHTTP refactor ([51c75b9](https://github.com/OpenNMS/opennms-compass/commit/51c75b9))
 * **rest:** handle unusual payloads better ([b8847ff](https://github.com/OpenNMS/opennms-compass/commit/b8847ff))
 
+
 ### Features
 
 * **core:** add support for Ionic Deploy ([e8a1675](https://github.com/OpenNMS/opennms-compass/commit/e8a1675))
@@ -385,6 +420,7 @@
 ### Bug Fixes
 
 * **dashboard:** handle rejection better ([dd15194](https://github.com/OpenNMS/opennms-compass/commit/dd15194))
+
 
 ### Features
 
@@ -424,6 +460,7 @@
 * **settings:** fix error checking server URL change ([d2fdc3e](https://github.com/OpenNMS/opennms-compass/commit/d2fdc3e))
 * **ssl:** handle some SSL server types better ([4abb84a](https://github.com/OpenNMS/opennms-compass/commit/4abb84a))
 
+
 ### Features
 
 * track basic metrics for navigation ([50f9909](https://github.com/OpenNMS/opennms-compass/commit/50f9909))
@@ -432,7 +469,6 @@
 
 <a name="2.0.6-381"></a>
 ## [2.0.6-381](https://github.com/OpenNMS/opennms-compass/compare/v2.0.5-380...v2.0.6-381) (2015-05-27)
-
 
 
 
@@ -464,6 +500,7 @@
 ### Bug Fixes
 
 * **settings:** make sure server info is updated when displaying in "about" (COMPASS-46) ([a5702fc](https://github.com/OpenNMS/opennms-compass/commit/a5702fc))
+
 
 ### Features
 
@@ -520,7 +557,7 @@
 
 ### Bug Fixes
 
-* **outages:** clicking any info in the outage popup takes you to the appropriate node (COMPASS ([fc9cbc3](https://github.com/OpenNMS/opennms-compass/commit/fc9cbc3))
+* **outages:** clicking any info in the outage popup takes you to the appropriate node (COMPASS-39) ([fc9cbc3](https://github.com/OpenNMS/opennms-compass/commit/fc9cbc3))
 
 
 
@@ -544,6 +581,7 @@
 * **alarms:** better error reporting for alarm permissions errors ([2ed68cd](https://github.com/OpenNMS/opennms-compass/commit/2ed68cd))
 * **info:** better reporting of unknown OpenNMS version(s) (COMPASS-43) ([951ef59](https://github.com/OpenNMS/opennms-compass/commit/951ef59))
 * **rest:** use cordova-HTTP for permissive-SSL ReST calls (COMPASS-40) ([c103e8a](https://github.com/OpenNMS/opennms-compass/commit/c103e8a))
+
 
 ### Features
 
@@ -591,6 +629,7 @@
 
 * **launch:** make portrait the first orientation ([1de543c](https://github.com/OpenNMS/opennms-compass/commit/1de543c))
 
+
 ### Features
 
 * **settings:** settings are tabbed so purchases are less in-your-face ([9dc32bd](https://github.com/OpenNMS/opennms-compass/commit/9dc32bd))
@@ -610,6 +649,7 @@
 * **nodes:** node list refreshes on settings change ([4021965](https://github.com/OpenNMS/opennms-compass/commit/4021965))
 * **settings:** don't autocorrect username ([2343683](https://github.com/OpenNMS/opennms-compass/commit/2343683))
 
+
 ### Features
 
 * **nodes:** better node list layout in landscape mode ([13857c3](https://github.com/OpenNMS/opennms-compass/commit/13857c3))
@@ -626,10 +666,12 @@
 * **dashboard:** sometimes donuts would not render after rotate ([a6d441a](https://github.com/OpenNMS/opennms-compass/commit/a6d441a))
 * **ios:** support rotation on iPhone ([f6a4920](https://github.com/OpenNMS/opennms-compass/commit/f6a4920))
 
+
 ### Features
 
 * **dashboard:** clicking server name launches opennms in a browser ([ba4146a](https://github.com/OpenNMS/opennms-compass/commit/ba4146a))
 * **info:** add server information to the info popup ([f730bb0](https://github.com/OpenNMS/opennms-compass/commit/f730bb0))
+
 
 ### Performance Improvements
 
