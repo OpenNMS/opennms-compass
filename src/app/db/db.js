@@ -5,7 +5,7 @@
 
 	window.PouchDB = require('pouchdb/dist/pouchdb.min');
 	require('pouchdb-find/dist/pouchdb.find.min');
-	require('angular-pouchdb');
+	require('angular-pouchdb/angular-pouchdb');
 
 	var Constants = require('../misc/Constants');
 
