@@ -86,7 +86,7 @@
       "id": "cordova-plugin-chrome-apps-system-memory"
     },
     "cordova-plugin-wkwebview-engine",
-    "cordova-plugin-google-analytics@1.0.0"
+    "cordova-plugin-google-analytics@0.9.0"
   ],
   "cordovaPlatforms": [
     {
