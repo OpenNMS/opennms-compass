@@ -1,5 +1,15 @@
 <a name="3.0.2"></a>
-## [3.0.2](https://github.com/OpenNMS/opennms-compass/compare/v3.0.2-413...v3.0.2) (2017-04-07)
+## [3.0.2](https://github.com/OpenNMS/opennms-compass/compare/v3.0.2-415...v3.0.2) (2017-04-10)
+
+
+
+<a name="3.0.2-415"></a>
+## [3.0.2-415](https://github.com/OpenNMS/opennms-compass/compare/v3.0.2-414...v3.0.2-415) (2017-04-10)
+
+
+
+<a name="3.0.2-414"></a>
+## [3.0.2-414](https://github.com/OpenNMS/opennms-compass/compare/v3.0.2-413...v3.0.2-414) (2017-04-07)
 
 
 ### Bug Fixes
