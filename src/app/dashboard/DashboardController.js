@@ -36,6 +36,11 @@
 	var favoriteGraphsTemplate = require('ngtemplate!./dashboard-favorite-graphs.html');
 	var availabilityTemplate = require('ngtemplate!./dashboard-availability.html');
 
+	var types = {
+		outages: 'Outages',
+		alarms: 'Alarms<br>(>= WARN)'
+	};
+
 	var severityOrder = [
 		'INDETERMINATE',
 		'CLEARED',
@@ -213,7 +218,7 @@
 							visible.text('');
 						} else {
 							var html = '<div class="row total"><div class="col">' + total + '</div></div>' +
-								'<div class="row type"><div class="col">' + type + '</div></div>';
+								'<div class="row type"><div class="col">' + types[type] + '</div></div>';
 							visible.html(html);
 							visible.show();
 						}

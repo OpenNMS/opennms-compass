@@ -14,7 +14,7 @@ $shadow-color: rgba(0,0,0,0.3);
 	}
 	.donut-title {
 		z-index: $z-index-view-above;
-		margin-top: -($font-size-large * 1.6);
+		margin-top: -($font-size-large * 1.5);
 		font-size: $font-size-large * 2;
 		left:0;
 		width: 100%;
@@ -23,6 +23,12 @@ $shadow-color: rgba(0,0,0,0.3);
 			font-size: $font-size-base;
 		}
 	}
+
+	/* bump the alarms title up a little bit because it's 2 lines */
+	.alarms .donut-title {
+		margin-top: -($font-size-large * 2.0);
+	}
+
 	.donut-title {
 		top: 50%;
 		position: absolute;
