@@ -102,6 +102,7 @@
   ],
   "scripts": {
     "setup": "bower install && npm install && ionic state reset",
+    "reset": "rm -rf bower_components node_modules platforms plugins && npm run setup",
     "webpack": "webpack --colors --display-error-details",
     "webpack-release": "webpack --colors --display-error-details --env=production",
     "build": "npm run webpack && ionic build",
