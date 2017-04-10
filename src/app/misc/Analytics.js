@@ -40,12 +40,12 @@
 		var listeners = {};
 
 		function enableExceptionReporting() {
-			if (!window || !$window.analytics) {
+			if (!window || !$window.ga) {
 				return $q.reject('Analytics not available.');
 			}
 
 			var deferred = $q.defer();
-			$window.analytics.enableUncaughtExceptionReporting(true, function() {
+			$window.ga.enableUncaughtExceptionReporting(true, function() {
 				$rootScope.$evalAsync(function() {
 					$log.debug('Analytics.init: Enabled uncaught exception reporting.');
 					deferred.resolve(true);
@@ -60,7 +60,7 @@
 		}
 
 		function startTracker() {
-			if (!$window || !$window.analytics) {
+			if (!$window || !$window.ga) {
 				return $q.reject('Analytics not available.');
 			}
 
@@ -79,7 +79,7 @@
 		}
 
 		function configureListeners() {
-			if (!$window || !$window.analytics) {
+			if (!$window || !$window.ga) {
 				return $q.reject('Analytics not available.');
 			}
 
@@ -109,7 +109,7 @@
 		}
 
 		function configureUserId() {
-			if (!$window || !$window.analytics) {
+			if (!$window || !$window.ga) {
 				return $q.reject('Analytics not available.');
 			}
 
@@ -122,7 +122,7 @@
 		}
 
 		function configureAnalytics() {
-			if (!$window || !$window.analytics) {
+			if (!$window || !$window.ga) {
 				return $q.reject('Analytics not available.');
 			}
 
