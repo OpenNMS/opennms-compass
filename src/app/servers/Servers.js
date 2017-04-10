@@ -43,7 +43,7 @@
 			var deferred = $q.defer();
 			ready.promise.then(function(r) {
 				deferred.resolve(r);
-			}, function(err) {
+			}).catch(function(err) {
 				deferred.resolve(false);
 			});
 			return deferred.promise;
@@ -163,7 +163,7 @@
 				return checkDefaultServerUpdated().then(function() {
 					return newServers;
 				});
-			}, function(err) {
+			}).catch(function(err) {
 				$log.error('Servers._checkServersUpdated: error: ' + angular.toJson(err));
 				return $q.reject(err);
 			});
@@ -178,7 +178,7 @@
 				checking.finally(function() {
 					_checkServersUpdated(force, ++checkingCount).then(function(ret) {
 						deferred.resolve(ret);
-					}, function(err) {
+					}).catch(function(err) {
 						deferred.reject(err);
 					});
 				});
@@ -252,16 +252,15 @@
 						return _saveServer(server);
 					}
 
-					$log.debug('Servers.init: No servers configured.');
 					return $q.reject('No servers configured.');
-				}, function(err) {
-					$log.info('Servers.init: No settings found.');
+				}).catch(function(err) {
+					$log.info('Servers.init: No settings: ' + angular.toJson(err));
 					return $q.reject(err);
 				});
 			}).then(function() {
 				ready.resolve(true);
 				return ready.promise;
-			}, function(err) {
+			}).catch(function(err) {
 				$log.error('Servers.init: failed initialization: ' + angular.toJson(err));
 				ready.resolve(false);
 				return ready.promise;

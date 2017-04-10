@@ -72,7 +72,7 @@
 						resourceLabel: $scope.resourceLabel,
 						resources: $scope.resources
 					});
-				}, function(err) {
+				}).catch(function(err) {
 					$scope.error = true;
 					$log.error('NodeResources.refresh: failed: ' + angular.toJson(err));
 					return $q.reject(err);

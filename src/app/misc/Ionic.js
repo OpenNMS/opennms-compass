@@ -42,7 +42,7 @@
 			$ionicDeploy.check().then(function(hasUpdate) {
 				$log.debug('Ionic.checkForUpdates: hasUpdate = ' + hasUpdate);
 				deferred.resolve(hasUpdate);
-			}, function(err) {
+			}).catch(function(err) {
 				$log.error('Ionic.checkForUpdates: failed: ' + angular.toJson(err));
 				deferred.reject(err);
 			});
@@ -85,10 +85,12 @@
 				$log.debug('Ionic.doUpdate: success! ' + angular.toJson(res));
 				return true;
 			}, function(err) {
-				$log.info('Ionic.doUpdate: failed: ' + angular.toJson(err));
-				return false;
+				return $q.reject(err);
 			}, function(progress) {
 				$log.debug('Ionic.doUpdate: progress: ' + angular.toJson(progress));
+			}).catch(function(err) {
+				$log.info('Ionic.doUpdate: failed: ' + angular.toJson(err));
+				return false;
 			});
 		};
 

@@ -391,7 +391,7 @@ angular.module('opennms.misc.OnmsGraph', [
 									} else {
 										success(response.data);
 									}
-								}, function(err) {
+								}).catch(function(err) {
 									var error = new RestError(url, err.data, err.status);
 									$log.error('ResourceService.fetchFunction: cordovaHTTP error: ' + error.toString());
 									failure(error.toString());

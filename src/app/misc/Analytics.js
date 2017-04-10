@@ -50,7 +50,7 @@
 					$log.debug('Analytics.init: Enabled uncaught exception reporting.');
 					deferred.resolve(true);
 				});
-			}, function(err) {
+			}).catch(function(err) {
 				$rootScope.$evalAsync(function() {
 					$log.warn('Analytics.init: Failed to enable uncaught exception reporting: ' + angular.toJson(err));
 					deferred.reject(err);
@@ -224,6 +224,7 @@
 				return $q.when();
 			}).catch(function(err) {
 				$log.warn('Analytics.init: Failed to initialize analytics: ' + err);
+				return $q.reject(err);
 			});
 		}
 
@@ -242,21 +243,23 @@
 
 		Settings.isAnalyticsEnabled().then(function(enabled) {
 			if (!enabled) {
-				$log.info('Analytics: not enabled.');
 				return $q.reject('Analytics not enabled.');
 			}
 			return init();
+		}).catch(function(err) {
+			$log.info(err);
+			return $q.reject(err);
 		});
 
 		$rootScope.$on('opennms.settings.updated', function(ev, newSettings, oldSettings, changedSettings) {
 			if (changedSettings.hasOwnProperty('enableAnalytics')) {
 				$log.debug('Analytics: analyticsEnabled setting updated: ' + angular.toJson(changedSettings));
 				if (changedSettings.enableAnalytics) {
-					init();
-				} else {
-					deInit();
+					return init();
 				}
+				return deInit();
 			}
+			return false;
 		});
 
 		return {

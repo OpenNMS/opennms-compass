@@ -38,7 +38,7 @@
 					}
 				}
 				deferred.resolve(ret);
-			}, function(err) {
+			}).catch(function(err) {
 				err.caller = 'EventService.getEventsForNode';
 				deferred.reject(err);
 			});

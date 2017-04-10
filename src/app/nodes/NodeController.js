@@ -164,7 +164,7 @@
 				$scope.availability = results;
 				Cache.set('node-' + $scope.nodeId + '-availability', results);
 				return results;
-			}, function(err) {
+			}).catch(function(err) {
 				$log.error('AvailabilityService got error:',err);
 				return err;
 			});
@@ -177,7 +177,7 @@
 				$scope.events = results;
 				Cache.set('node-' + $scope.nodeId + '-events', results);
 				return results;
-			}, function(err) {
+			}).catch(function(err) {
 				$log.error('EventService got error:',err);
 				return err;
 			});
@@ -190,7 +190,7 @@
 				$scope.outages = results;
 				Cache.set('node-' + $scope.nodeId + '-outages', results);
 				return results;
-			}, function(err) {
+			}).catch(function(err) {
 				$log.error('OutageService got error:',err);
 				return err;
 			});
@@ -227,14 +227,14 @@
 						NodeService.setLocation($scope.node, longitude, latitude).then(function() {
 							$log.debug('NodeCtrl.submitCoordinates: Submitted coordinates.  Refreshing.');
 							$scope.refresh();
-						}, function(err) {
+						}).catch(function(err) {
 							$log.error('NodeCtrl.submitCoordinates: failed to submit coordinates: ' + angular.toJson(err));
 						});
 					} else {
 						$log.debug('NodeCtrl.submitCoordinates: user canceled.');
 					}
 				});
-			}, function(err) {
+			}).catch(function(err) {
 				$log.error('failure:',err);
 			});
 		};
@@ -249,7 +249,7 @@
 				return NodeService.get($scope.nodeId).then(function(n) {
 					Cache.set('node-' + $scope.nodeId, n);
 					return showNode(n);
-				}, function(err) {
+				}).catch(function(err) {
 					err.caller = 'NodeCtrl.refresh';
 					$log.error(err.toString());
 					return $q.reject(err);

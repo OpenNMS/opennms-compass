@@ -95,7 +95,7 @@
 				if ($scope.searchString !== $scope.lastSearchString) {
 					$ionicScrollDelegate.$getByHandle('nodes-scroll').scrollTop(false);
 				}
-			}, function(err) {
+			}).catch(function(err) {
 				Errors.set('nodes', err);
 				$scope.error = true;
 				//$scope.nodes = [];

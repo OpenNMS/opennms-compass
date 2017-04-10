@@ -79,7 +79,7 @@
 					HTTP.useBasicAuth(undefined, undefined).then(function() {
 						$log.debug('RestService.updateAuthorization: unconfigured basic auth.');
 						return done();
-					}, function(err) {
+					}).catch(function(err) {
 						$log.error('RestService.updateAuthorization: failed to unconfigure basic auth.');
 						return done();
 					});
@@ -88,7 +88,7 @@
 					HTTP.useBasicAuth(server.username, server.password).then(function() {
 						$log.debug('RestService.updateAuthorization: configured basic auth with username "' + server.username + '".');
 						return done();
-					}, function(err) {
+					}).catch(function(err) {
 						$log.error('RestService.updateAuthorization: failed to configure basic auth with username "' + server.username + '".');
 						return done();
 					});
@@ -188,7 +188,7 @@
 					return $q.reject(err);
 				});
 
-			}, function(err) {
+			}).catch(function(err) {
 				if (__DEVELOPMENT__) { $log.debug('Rest.doQuery: failed: ' + angular.toJson(err)); }
 				return $q.reject(err);
 			});

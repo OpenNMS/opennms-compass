@@ -71,7 +71,7 @@
 
 					return ret;
 				});
-			}, function(err) {
+			}).catch(function(err) {
 				err.caller = 'AvailabilityService.getAvailability';
 				return $q.reject(err);
 			});
@@ -85,7 +85,7 @@
 
 				var url = '/availability/' + encodeURIComponent(category);
 				return RestService.getXml(url);
-			}, function(err) {
+			}).catch(function(err) {
 				err.caller = 'AvailabilityService.getCategory';
 				return $q.reject(err);
 			});
@@ -99,7 +99,7 @@
 
 				var url = '/availability/' + encodeURIComponent(category) + '/nodes';
 				return RestService.getXml(url);
-			}, function(err) {
+			}).catch(function(err) {
 				err.caller = 'AvailabilityService.getNodes';
 				return $q.reject(err);
 			});
@@ -123,7 +123,7 @@
 
 					return undefined;
 				});
-			}, function(err) {
+			}).catch(function(err) {
 				err.caller = 'AvailabilityService.getNode';
 				return $q.reject(err);
 			});

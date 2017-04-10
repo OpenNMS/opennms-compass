@@ -216,11 +216,11 @@ var options = {
 			},
 			*/
 			{
-				test: /[\/]angular\.js$/,
+				test: /[/]angular\.js$/,
 				loader: 'expose?angular!exports?angular'
 			},
 			{
-				test: /[\/]ionic\.js$/,
+				test: /[/]ionic\.js$/,
 				loader: 'expose?ionic!exports?ionic'
 			}
 		]

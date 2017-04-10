@@ -179,7 +179,7 @@
 				}
 			};
 			modal.scope.clear = function() {
-				AlarmService.clear(modal.scope.alarm).then(modal.scope.updateAlarmData, function(err) {
+				AlarmService.clear(modal.scope.alarm).then(modal.scope.updateAlarmData).catch(function(err) {
 					$log.error('Modals.alarmDetail.clear: error: ' + angular.toJson(err));
 					if (err.permissionDenied()) {
 						$ionicPopup.alert({
@@ -193,7 +193,7 @@
 				});
 			};
 			modal.scope.escalate = function() {
-				AlarmService.escalate(modal.scope.alarm).then(modal.scope.updateAlarmData, function(err) {
+				AlarmService.escalate(modal.scope.alarm).then(modal.scope.updateAlarmData).catch(function(err) {
 					$log.error('Modals.alarmDetail.escalate: error: ' + angular.toJson(err));
 					if (err.permissionDenied()) {
 						$ionicPopup.alert({
@@ -207,7 +207,7 @@
 				});
 			};
 			modal.scope.acknowledge = function() {
-				AlarmService.acknowledge(modal.scope.alarm).then(modal.scope.updateAlarmData, function(err) {
+				AlarmService.acknowledge(modal.scope.alarm).then(modal.scope.updateAlarmData).catch(function(err) {
 					if (err.permissionDenied()) {
 						$ionicPopup.alert({
 							title: 'Permission Denied',
@@ -220,7 +220,7 @@
 				});
 			};
 			modal.scope.unacknowledge = function() {
-				AlarmService.unacknowledge(modal.scope.alarm).then(modal.scope.updateAlarmData, function(err) {
+				AlarmService.unacknowledge(modal.scope.alarm).then(modal.scope.updateAlarmData).catch(function(err) {
 					if (err.permissionDenied()) {
 						$ionicPopup.alert({
 							title: 'Permission Denied',

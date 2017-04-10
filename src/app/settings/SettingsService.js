@@ -77,7 +77,7 @@
 			var deferred = $q.defer();
 			ready.promise.then(function(r) {
 				deferred.resolve(r);
-			}, function(err) {
+			}).catch(function(err) {
 				deferred.resolve(false);
 			});
 			return deferred.promise;
@@ -273,11 +273,12 @@
 				return storeSettings(newSettings).then(function(stored) {
 					$rootScope.$broadcast('opennms.settings.updated', newSettings, oldSettings, changedSettings);
 					return stored;
-				}, function(err) {
+				}).catch(function(err) {
 					$log.error('SettingsService.saveSettings: Failed to save settings: ' + angular.toJson(err));
 					if (err.message) {
 						$log.error(err.message);
 					}
+					return $q.reject(err);
 				});
 			});
 		};

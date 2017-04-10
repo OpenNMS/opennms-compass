@@ -101,7 +101,7 @@
 					ret = new Alarm(results.alarm);
 				}
 				deferred.resolve(ret);
-			}, function(err) {
+			}).catch(function(err) {
 				err.caller = 'AlarmService.getAlarm';
 				deferred.reject(err);
 			});
@@ -137,7 +137,7 @@
 					return severities.indexOf(a.severity) - severities.indexOf(b.severity);
 				});
 				deferred.resolve(legend);
-			}, function(err) {
+			}).catch(function(err) {
 				err.caller = 'AlarmService.getSeverities';
 				deferred.reject(err);
 			});
@@ -150,7 +150,7 @@
 			RestService.put('/alarms/' + alarm.id, {limit:0, clear:'true'}).then(function(response) {
 				util.dirty('alarms');
 				deferred.resolve(response);
-			}, function(err) {
+			}).catch(function(err) {
 				deferred.reject(err);
 			});
 			return deferred.promise;
@@ -161,7 +161,7 @@
 			RestService.put('/alarms/' + alarm.id, {limit:0, escalate:'true'}).then(function(response) {
 				util.dirty('alarms');
 				deferred.resolve(response);
-			}, function(err) {
+			}).catch(function(err) {
 				deferred.reject(err);
 			});
 			return deferred.promise;
@@ -172,7 +172,7 @@
 			RestService.put('/alarms/' + alarm.id, {limit:0, ack:'true'}).then(function(response) {
 				util.dirty('alarms');
 				deferred.resolve(response);
-			}, function(err) {
+			}).catch(function(err) {
 				deferred.reject(err);
 			});
 			return deferred.promise;
@@ -183,7 +183,7 @@
 			RestService.put('/alarms/' + alarm.id, {limit:0, ack:'false'}).then(function(response) {
 				util.dirty('alarms');
 				deferred.resolve(response);
-			}, function(err) {
+			}).catch(function(err) {
 				deferred.reject(err);
 			});
 			return deferred.promise;

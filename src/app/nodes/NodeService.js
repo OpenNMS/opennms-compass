@@ -48,7 +48,7 @@
 					}
 				}
 				deferred.resolve(ret);
-			}, function(err) {
+			}).catch(function(err) {
 				err.caller = 'NodeService.searchNodes';
 				deferred.reject(err);
 			});
@@ -64,7 +64,7 @@
 					ret = new Node(results.node);
 				}
 				deferred.resolve(ret);
-			}, function(err) {
+			}).catch(function(err) {
 				err.caller = 'NodeService.getNode';
 				deferred.reject(err);
 			});
@@ -79,7 +79,7 @@
 				'geolocation.latitude': latitude
 			}).then(function() {
 				deferred.resolve(true);
-			}, function(err) {
+			}).catch(function(err) {
 				if (err.toString().contains('request was redirected')) {
 					deferred.resolve(true);
 				} else if (err.status === Constants.HTTP_BAD_REQUEST || err.status === 0) { // eslint-disable-line no-magic-numbers

@@ -147,7 +147,7 @@
 
 			Modals.settings(true);
 			return false;
-		}, function(err) {
+		}).catch(function(err) {
 			$log.error('Failed to get default server: ' + angular.toJson(err));
 			return Modals.settings(true).then(function() {
 				return false;

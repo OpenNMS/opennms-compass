@@ -60,7 +60,7 @@
 					}
 				});
 				return modal;
-			}, function(err) {
+			}).catch(function(err) {
 				$log.error('ServerModal.open: failed: ' + angular.toJson(err));
 				return $q.reject(err);
 			});
@@ -112,7 +112,7 @@
 						// try again, in case there's a transient error
 						return tryUrl(url);
 					}
-					retries = 1;
+					retries = 1; // eslint-disable-line no-magic-numbers
 					return $q.reject(err);
 				});
 			};

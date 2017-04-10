@@ -35,7 +35,7 @@
 					}
 				}
 				deferred.resolve(ret);
-			}, function(err) {
+			}).catch(function(err) {
 				err.caller = 'OutageService.getOutages';
 				deferred.reject(err);
 			});
@@ -63,7 +63,7 @@
 					}
 				}
 				deferred.resolve(ret);
-			}, function(err) {
+			}).catch(function(err) {
 				err.caller = 'OutageService.getOutagesForNode';
 				deferred.reject(err);
 			});
@@ -85,7 +85,7 @@
 					}
 				}
 				deferred.resolve(ret);
-			}, function(err) {
+			}).catch(function(err) {
 				err.caller = 'OutageService.getOutageSummaries';
 				deferred.reject(err);
 			});

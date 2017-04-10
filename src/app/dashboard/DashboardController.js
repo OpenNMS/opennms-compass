@@ -402,6 +402,7 @@
 					$ionicLoading.hide();
 					$scope.$broadcast('scroll.refreshComplete');
 				}, SHORT_DELAY);
+				return true;
 			};
 
 			$q.when($scope.server).then(function(server) {
@@ -416,7 +417,7 @@
 					DashboardService.refreshFavorites()
 				]);
 			}).finally(function() {
-				finished();
+				return finished();
 			});
 		});
 
