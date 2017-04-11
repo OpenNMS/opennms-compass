@@ -1,5 +1,20 @@
-<a name="3.0.2"></a>
-## [3.0.2](https://github.com/OpenNMS/opennms-compass/compare/v3.0.2-415...v3.0.2) (2017-04-10)
+<a name="3.1.0"></a>
+# [3.1.0](https://github.com/OpenNMS/opennms-compass/compare/v3.0.2-416...v3.1.0) (2017-04-11)
+
+
+### Bug Fixes
+
+* **graphs:** bump backshift+flot-legend to latest version ([52c8b30](https://github.com/OpenNMS/opennms-compass/commit/52c8b30))
+
+
+### Features
+
+* **dashboard:** add ">= WARN" to the alarm donut ([c00d187](https://github.com/OpenNMS/opennms-compass/commit/c00d187))
+
+
+
+<a name="3.0.2-416"></a>
+## [3.0.2-416](https://github.com/OpenNMS/opennms-compass/compare/v3.0.2-415...v3.0.2-416) (2017-04-10)
 
 
 
