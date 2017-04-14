@@ -1,5 +1,15 @@
 <a name="3.1.0"></a>
-# [3.1.0](https://github.com/OpenNMS/opennms-compass/compare/v3.0.2-416...v3.1.0) (2017-04-11)
+# [3.1.0](https://github.com/OpenNMS/opennms-compass/compare/v3.1.0-450...v3.1.0) (2017-04-14)
+
+
+### Features
+
+* **settings:** add support for password auto-fill ([20eb8cb](https://github.com/OpenNMS/opennms-compass/commit/20eb8cb))
+
+
+
+<a name="3.1.0-450"></a>
+# [3.1.0-450](https://github.com/OpenNMS/opennms-compass/compare/v3.0.2-416...v3.1.0-450) (2017-04-11)
 
 
 ### Bug Fixes
