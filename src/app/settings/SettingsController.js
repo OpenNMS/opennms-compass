@@ -34,7 +34,7 @@
 		'opennms.services.Util',
 		'opennms.util.HTTP'
 	])
-	.factory('ServerModal', function($ionicModal, $log, $q, $rootScope, HTTP, Servers, Settings, util) {
+	.factory('ServerModal', function($ionicModal, $ionicPopup, $log, $q, $rootScope, HTTP, Servers, Settings, util) {
 		var $scope = $rootScope.$new();
 
 		$scope.openModal = function(server) {
@@ -174,6 +174,21 @@
 				$scope.saving = false;
 			});
 		};
+
+		$scope.getPassword = function(ev) {
+			//console.log('getPassword');
+			ev.preventDefault();
+			ev.stopPropagation();
+			GenericPassword.findLoginForUrl(function success(ret) {
+				$scope.server.username = ret.username;
+				$scope.server.password = ret.password;
+			}, function failure(ret) {
+				$ionicPopup.alert({
+					title: 'Autofill failed.',
+					template: ret
+				});
+			}, $scope.server.url);
+		}
 
 		$scope.saveServer = function() {
 			var server = $scope.server;
