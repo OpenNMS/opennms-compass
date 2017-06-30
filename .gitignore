@@ -8,7 +8,6 @@
 *.swp
 www.zip
 www
-bower_components
 generated/
 !www/.htaccess
 npm-debug.log*

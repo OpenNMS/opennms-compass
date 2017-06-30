@@ -1,6 +1,7 @@
 {
   "name": "Compass by OpenNMS",
   "app_id": "bf988c24",
+  "type": "ionic1",
   "gulpStartupTasks": [],
   "watchPatterns": [
     "www/**/*",
