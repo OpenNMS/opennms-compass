@@ -507,10 +507,6 @@ boom@2.x.x:
   dependencies:
     hoek "2.x.x"
 
-bower@^1.8.0:
-  version "1.8.0"
-  resolved "https://registry.yarnpkg.com/bower/-/bower-1.8.0.tgz#55dbebef0ad9155382d9e9d3e497c1372345b44a"
-
 bplist-creator@0.0.4:
   version "0.0.4"
   resolved "https://registry.yarnpkg.com/bplist-creator/-/bplist-creator-0.0.4.tgz#4ac0496782e127a85c1d2026a4f5eb22a7aff991"
@@ -2708,7 +2704,7 @@ invert-kv@^1.0.0:
   version "1.1.1"
   resolved "https://github.com/djett41/ionic-filter-bar.git#1a551c8b0b6780e8d58ed098b1205810eda00301"
 
-"ionic@https://github.com/driftyco/ionic-v1.git":
+"ionic-framework@https://github.com/driftyco/ionic-v1.git":
   version "1.3.3"
   resolved "https://github.com/driftyco/ionic-v1.git#1b7414fabafc8a87252d9ec30d004bf6ac3fa5a7"
 

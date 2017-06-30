@@ -123,7 +123,7 @@
     "flot-legend": "https://github.com/OpenNMS/flot-legend.git#2.0.0",
     "flot.tooltip": "https://github.com/krzysu/flot.tooltip.git#0.8.7",
     "html5shiv": "~3.7.3",
-    "ionic": "https://github.com/driftyco/ionic-v1.git",
+    "ionic-framework": "https://github.com/driftyco/ionic-v1.git",
     "ionic-filter-bar": "https://github.com/djett41/ionic-filter-bar.git#v1.1.1",
     "ip-address": "^5.8.0",
     "jquery": "^3.2.1",
