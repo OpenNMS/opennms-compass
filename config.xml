@@ -68,6 +68,17 @@
     <splash src="resources/android/splash/drawable-port-xxxhdpi-screen.png" density="port-xxxhdpi"/>
   </platform>
   <platform name="ios">
+    <config-file parent="UIBackgroundModes" platform="ios" target="*-Info.plist">
+      <array>
+        <string>remote-notification</string>
+      </array>
+    </config-file>
+    <config-file platform="ios" target="*-Info.plist">
+      <dict>
+        <key>aps-environment</key>
+        <string>development</string>
+      </dict>
+    </config-file>
     <config-file parent="UISupportedInterfaceOrientations" platform="ios" target="*-Info.plist">
       <array>
         <string>UIInterfaceOrientationPortrait</string>
