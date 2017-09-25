@@ -1611,6 +1611,10 @@ cordova-lib@6.1.0:
     valid-identifier "0.0.1"
     xcode "0.8.0"
 
+cordova-plugin-advanced-http@^1.5.10:
+  version "1.5.10"
+  resolved "https://registry.yarnpkg.com/cordova-plugin-advanced-http/-/cordova-plugin-advanced-http-1.5.10.tgz#c2d9c343b173f6e85b549e57155b36656ed3a4c2"
+
 cordova-plugin-appavailability@^0.4.2:
   version "0.4.2"
   resolved "https://registry.yarnpkg.com/cordova-plugin-appavailability/-/cordova-plugin-appavailability-0.4.2.tgz#a017aaf0f8827ee599dc778b6245dcc1350bcba8"

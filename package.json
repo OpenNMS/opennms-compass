@@ -45,6 +45,7 @@
     },
     "cordovaPlugins": [
         "ionic-plugin-keyboard",
+        "cordova-plugin-advanced-http",
         "cordova-plugin-appavailability",
         "cordova-plugin-console",
         "cordova-plugin-datepicker",
@@ -62,10 +63,6 @@
         {
             "locator": "https://github.com/OpenNMS/cordova-plugin-json-storage.git",
             "id": "cordova-plugin-json-storage"
-        },
-        {
-            "locator": "https://github.com/RangerRick/cordova-HTTP.git",
-            "id": "com.raccoonfink.cordova.plugins.http"
         },
         "cordova-plugin-screen-orientation",
         "cordova-plugin-crosswalk-webview",
@@ -115,6 +112,7 @@
         "com.bez4pieci.cookies": "https://github.com/bez4pieci/Phonegap-Cookies-Plugin",
         "cordova-android": "^6.2.3",
         "cordova-ios": "4.4.0",
+        "cordova-plugin-advanced-http": "^1.5.10",
         "cordova-plugin-appavailability": "^0.4.2",
         "cordova-plugin-compat": "^1.1.0",
         "cordova-plugin-console": "^1.0.7",
@@ -155,8 +153,30 @@
         "ui-leaflet": "^1.0.0",
         "urijs": "^1.18.0",
         "version_compare": "~0.0.3",
-        "x2js": "https://github.com/abdmob/x2js.git#v1.2.0",
-        "com.raccoonfink.cordova.plugins.http": "//github.com/RangerRick/cordova-HTTP"
+        "x2js": "https://github.com/abdmob/x2js.git#v1.2.0"
+    },
+    "cordova": {
+        "platforms": [
+            "android",
+            "ios"
+        ],
+        "plugins": {
+            "ionic-plugin-keyboard": {},
+            "cordova-plugin-appavailability": {},
+            "cordova-plugin-console": {},
+            "cordova-plugin-datepicker": {},
+            "cordova-plugin-geolocation": {
+                "GEOLOCATION_USAGE_DESCRIPTION": " "
+            },
+            "cordova-plugin-inappbrowser": {},
+            "cordova-plugin-network-information": {},
+            "cordova-plugin-splashscreen": {},
+            "cordova-plugin-statusbar": {},
+            "cordova-plugin-whitelist": {},
+            "com.bez4pieci.cookies": {},
+            "cordova-plugin-file": {},
+            "cordova-plugin-advanced-http": {}
+        }
     },
     "scripts": {
         "setup": "yarn && ionic state reset && yarn",
@@ -176,28 +196,5 @@
         "device": "ionic run --device -slc ios",
         "watch": "webpack --colors --display-error-details --watch",
         "lint": "eslint . --ext .js"
-    },
-    "cordova": {
-        "platforms": [
-            "android",
-            "ios"
-        ],
-        "plugins": {
-            "com.bez4pieci.cookies": {},
-            "com.raccoonfink.cordova.plugins.http": {},
-            "cordova-plugin-appavailability": {},
-            "cordova-plugin-console": {},
-            "cordova-plugin-datepicker": {},
-            "cordova-plugin-file": {},
-            "cordova-plugin-geolocation": {
-                "GEOLOCATION_USAGE_DESCRIPTION": " "
-            },
-            "cordova-plugin-inappbrowser": {},
-            "cordova-plugin-network-information": {},
-            "cordova-plugin-splashscreen": {},
-            "cordova-plugin-statusbar": {},
-            "cordova-plugin-whitelist": {},
-            "ionic-plugin-keyboard": {}
-        }
     }
 }
