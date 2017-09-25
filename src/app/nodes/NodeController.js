@@ -235,7 +235,7 @@
 					}
 				});
 			}).catch(function(err) {
-				$log.error('failure:',err);
+				$log.error('NodeCtrl.submitCoordinates: failed to submit coordinates: ' + JSON.stringify(err));
 			});
 		};
 
@@ -250,8 +250,8 @@
 					Cache.set('node-' + $scope.nodeId, n);
 					return showNode(n);
 				}).catch(function(err) {
-					err.caller = 'NodeCtrl.refresh';
-					$log.error(err.toString());
+					err.caller = 'NodeCtrl.refreshNode';
+					$log.error('NodeCtrl.refreshNode: failed to refresh node ' + $scope.nodeId + ': ' + JSON.stringify(err));
 					return $q.reject(err);
 				}).finally(function() {
 					hideLoading();
