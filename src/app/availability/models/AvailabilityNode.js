@@ -1,7 +1,7 @@
 'use strict';
 
 var AvailabilityIpInterface = require('./AvailabilityIpInterface'),
-  md5 = require('js-md5'),
+  md5 = require('blueimp-md5'),
   moment = require('moment');
 
 /**

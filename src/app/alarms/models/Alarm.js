@@ -2,7 +2,7 @@
 
 var OnmsEvent = require('../../events/models/OnmsEvent'),
   moment = require('moment'),
-  md5 = require('js-md5'),
+  md5 = require('blueimp-md5'),
   StringUtils = require('../../misc/String');
 
 var emptyParms = /\s+parms:\s*$/;
