@@ -1,7 +1,7 @@
 'use strict';
 
 var angular = require('angular'),
-  md5 = require('js-md5'),
+  md5 = require('blueimp-md5'),
   moment = require('moment');
 
 /**

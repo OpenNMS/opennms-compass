@@ -19,4 +19,5 @@ engine
 build.json
 build-properties.json
 release-signing.properties
+package-lock.json
 platforms/android/ant.properties

@@ -2,7 +2,7 @@
 
 /* eslint-disable no-console */
 
-var fs = require('fs.extra');
+var fs = require('fs-extra');
 var exec = require('child_process').exec;
 
 var rootdir = process.argv[2];
