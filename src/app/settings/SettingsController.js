@@ -179,7 +179,7 @@
 			//console.log('getPassword');
 			ev.preventDefault();
 			ev.stopPropagation();
-			GenericPassword.findLoginForUrl(function success(ret) {
+			Password.findLoginForUrl(function success(ret) {
 				$scope.server.username = ret.username;
 				$scope.server.password = ret.password;
 			}, function failure(ret) {

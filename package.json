@@ -79,7 +79,7 @@
         "cordova-plugin-google-analytics@0.9.0",
         {
             "locator": "https://github.com/RangerRick/cordova-plugin-generic-password.git",
-            "id": "cordova-plugin-generic-password"
+            "id": "cordova-plugin-password"
         }
     ],
     "cordovaPlatforms": [
@@ -124,6 +124,7 @@
         "cordova-plugin-geolocation": "^2.4.3",
         "cordova-plugin-inappbrowser": "^1.7.1",
         "cordova-plugin-network-information": "^1.3.3",
+        "cordova-plugin-password": "https://github.com/RangerRick/cordova-plugin-generic-password",
         "cordova-plugin-splashscreen": "^4.0.3",
         "cordova-plugin-statusbar": "^2.2.3",
         "cordova-plugin-whitelist": "^1.3.2",
@@ -198,6 +199,7 @@
             "cordova-plugin-statusbar": {},
             "cordova-plugin-whitelist": {},
             "ionic-plugin-keyboard": {}
+            "cordova-plugin-password": {}
         }
     }
 }
