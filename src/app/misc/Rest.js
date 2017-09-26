@@ -30,17 +30,7 @@
 		var x2js = new X2JS();
 
 		var clearCookies = function() {
-			var deferred = $q.defer();
-			if ($window.cookies && $window.cookies.clear) {
-				$window.cookies.clear(function() {
-					deferred.resolve(true);
-				}, function() {
-					deferred.resolve(false);
-				});
-			} else {
-				deferred.resolve(false);
-			}
-			return deferred.promise;
+			return HTTP.clearCookies();
 		};
 
 		var updateAuthorization = function() {

@@ -133,7 +133,6 @@
     <icon src="resources/android/icon/drawable-xhdpi-icon.png" />
     <engine name="android" spec="^6.2.3" />
     <engine name="ios" spec="4.4.0" />
-    <plugin name="com.bez4pieci.cookies" spec="https://github.com/bez4pieci/Phonegap-Cookies-Plugin" />
     <plugin name="cordova-plugin-advanced-http" spec="^1.5.10" />
     <plugin name="cordova-plugin-appavailability" spec="^0.4.2" />
     <plugin name="cordova-plugin-console" spec="^1.1.0" />

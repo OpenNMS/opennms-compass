@@ -166,6 +166,16 @@ module.factory('HTTP', function($http, $injector, $interval, $log, $q, $window, 
 		});
 	};
 
+	var clearCookies = function() {
+		return ready.then(function(cordovaHTTP) {
+			cordovaHTTP.clearCookies();
+			return true;
+		}).catch(function(err) {
+			$log.warn('Failed to clear cookies: ' + JSON.stringify(err));
+			return false;
+		});
+	};
+
 	var createBasicAuthHeader = function(username, password) {
 		return 'Basic ' + $window.btoa(username + ':' + password);
 	};

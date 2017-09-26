@@ -61,10 +61,6 @@
         },
         "cordova-plugin-whitelist",
         {
-            "locator": "https://github.com/bez4pieci/Phonegap-Cookies-Plugin.git",
-            "id": "com.bez4pieci.cookies"
-        },
-        {
             "locator": "https://github.com/OpenNMS/cordova-plugin-json-storage.git",
             "id": "cordova-plugin-json-storage"
         },
@@ -113,7 +109,6 @@
         "base64": "https://github.com/davidchambers/Base64.js.git#1.0.0",
         "blueimp-md5": "^2.10.0",
         "classlist": "^1.0.1",
-        "com.bez4pieci.cookies": "https://github.com/bez4pieci/Phonegap-Cookies-Plugin",
         "cordova-android": "^6.2.3",
         "cordova-ios": "4.4.0",
         "cordova-plugin-advanced-http": "^1.5.10",
@@ -129,7 +124,6 @@
         "cordova-plugin-splashscreen": "^4.0.3",
         "cordova-plugin-statusbar": "https://github.com/apache/cordova-plugin-statusbar",
         "cordova-plugin-whitelist": "^1.3.2",
-        "cordova-remove-cookies": "git+https://github.com/bez4pieci/Phonegap-Cookies-Plugin.git",
         "d3": "^3.5.17",
         "es5-shim": "^4.5.8",
         "flot": "https://github.com/flot/flot.git#v0.8.3",
@@ -177,7 +171,6 @@
             "cordova-plugin-splashscreen": {},
             "cordova-plugin-statusbar": {},
             "cordova-plugin-whitelist": {},
-            "com.bez4pieci.cookies": {},
             "cordova-plugin-file": {},
             "cordova-plugin-advanced-http": {},
             "cordova-plugin-password": {}
