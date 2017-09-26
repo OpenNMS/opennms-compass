@@ -47,7 +47,6 @@
     "cordovaPlugins": [
         "ionic-plugin-keyboard",
         "cordova-plugin-appavailability",
-        "cordova-plugin-console",
         "cordova-plugin-datepicker",
         "cordova-plugin-file",
         "cordova-plugin-geolocation",
@@ -94,7 +93,7 @@
         },
         {
             "platform": "ios",
-            "version": "4.4.0",
+            "version": "4.5.1",
             "locator": "ios"
         }
     ],
@@ -120,11 +119,10 @@
         "com.bez4pieci.cookies": "git+https://github.com/bez4pieci/Phonegap-Cookies-Plugin.git",
         "com.raccoonfink.cordova.plugins.http": "git+https://github.com/RangerRick/cordova-HTTP.git#master",
         "cordova-android": "^6.2.3",
-        "cordova-ios": "=4.4.0",
+        "cordova-ios": "^4.5.1",
         "cordova-plugin-appavailability": "^0.4.2",
         "cordova-plugin-chrome-apps-system-memory": "git+https://github.com/RangerRick/cordova-plugin-chrome-apps-system-memory.git#master",
         "cordova-plugin-compat": "^1.2.0",
-        "cordova-plugin-console": "^1.1.0",
         "cordova-plugin-crosswalk-webview": "^2.3.0",
         "cordova-plugin-datepicker": "^0.9.3",
         "cordova-plugin-file": "git+https://github.com/apache/cordova-plugin-file.git",
@@ -182,7 +180,6 @@
             "com.raccoonfink.cordova.plugins.http": {},
             "cordova-plugin-appavailability": {},
             "cordova-plugin-chrome-apps-system-memory": {},
-            "cordova-plugin-console": {},
             "cordova-plugin-crosswalk-webview": {
                 "XWALK_VERSION": "19+",
                 "XWALK_LITEVERSION": "xwalk_core_library_canary:17+",
