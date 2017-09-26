@@ -1,5 +1,6 @@
 'use strict';
 
+require('Base64');
 require('./Queue');
 
 var module = angular.module('opennms.util.HTTP', [

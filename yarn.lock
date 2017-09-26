@@ -43,6 +43,10 @@
     uuid "^3.0.1"
     wrap-ansi "^3.0.1"
 
+Base64@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/Base64/-/Base64-1.0.1.tgz#def45cc50c961bcc9bf2321d0f52bcbfec1f1bb1"
+
 Base64@~0.2.0:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/Base64/-/Base64-0.2.1.tgz#ba3a4230708e186705065e66babdd4c35cf60028"
@@ -225,10 +229,6 @@ angular-ui-router@^0.4.2:
 angular-uuid4@~0.3.1:
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/angular-uuid4/-/angular-uuid4-0.3.1.tgz#b8b50beb10cebff4ba52312fd7bd4ed8d99b49d7"
-
-angular@1.6.6:
-  version "1.6.6"
-  resolved "https://registry.yarnpkg.com/angular/-/angular-1.6.6.tgz#fd5a3cfb437ce382d854ee01120797978527cb64"
 
 angular@1.x, "angular@>=1 <2", angular@^1.0.1, angular@^1.0.8, angular@^1.2:
   version "1.6.4"
@@ -573,10 +573,6 @@ base64-js@0.0.8:
 base64-js@1.1.2, base64-js@^1.0.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.1.2.tgz#d6400cac1c4c660976d90d07a04351d89395f5e8"
-
-"base64@https://github.com/davidchambers/Base64.js.git#1.0.0":
-  version "1.0.0"
-  resolved "https://github.com/davidchambers/Base64.js.git#a0100ccc2e0945d2b8445b68187de2a17ab2b4d0"
 
 bcrypt-pbkdf@^1.0.0:
   version "1.0.1"
@@ -1778,9 +1774,9 @@ cordova-plugin-splashscreen@^4.0.3:
   version "4.0.3"
   resolved "https://registry.yarnpkg.com/cordova-plugin-splashscreen/-/cordova-plugin-splashscreen-4.0.3.tgz#773cd1363c1f3bacb9901663e9e3793dd3e0a19d"
 
-cordova-plugin-statusbar@^2.2.3:
-  version "2.2.3"
-  resolved "https://registry.yarnpkg.com/cordova-plugin-statusbar/-/cordova-plugin-statusbar-2.2.3.tgz#51c5e02ad433bebd0b0dc977a446eb91dfee1502"
+"cordova-plugin-statusbar@https://github.com/apache/cordova-plugin-statusbar":
+  version "2.2.4-dev"
+  resolved "https://github.com/apache/cordova-plugin-statusbar#fff289c0b8a7d0eb5b94f06d8ace9733054185bd"
 
 cordova-plugin-whitelist@^1.3.2:
   version "1.3.2"

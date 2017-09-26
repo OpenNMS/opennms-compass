@@ -91,7 +91,7 @@
         }
     ],
     "dependencies": {
-        "angular": "1.6.6",
+        "Base64": "^1.0.1",
         "angular-animate": "1.6.6",
         "angular-cache": "^4.6.0",
         "angular-cookies": "1.6.6",
@@ -106,7 +106,6 @@
         "angularLocalStorage": "https://github.com/agrublev/angularLocalStorage.git#0.3.2",
         "async": "~2.5.0",
         "backshift": "https://github.com/RangerRick/backshift.git#433d9416706af921fe36040c626416b1888b28c7",
-        "base64": "https://github.com/davidchambers/Base64.js.git#1.0.0",
         "blueimp-md5": "^2.10.0",
         "classlist": "^1.0.1",
         "cordova-android": "^6.2.3",
