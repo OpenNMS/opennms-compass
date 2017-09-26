@@ -53,28 +53,29 @@
         "cordova-plugin-file",
         "cordova-plugin-geolocation",
         "cordova-plugin-inappbrowser",
+        {
+            "locator": "https://github.com/RangerRick/KeychainPlugin",
+            "id": "cordova-plugin-keychain"
+        },
         "cordova-plugin-network-information",
         "cordova-plugin-splashscreen",
-        {
-            "locator": "https://github.com/apache/cordova-plugin-statusbar",
-            "id": "cordova-plugin-statusbar"
-        },
+        "cordova-plugin-statusbar",
         "cordova-plugin-whitelist",
         {
-            "locator": "https://github.com/OpenNMS/cordova-plugin-json-storage.git",
+            "locator": "https://github.com/OpenNMS/cordova-plugin-json-storage",
             "id": "cordova-plugin-json-storage"
         },
         "cordova-plugin-screen-orientation",
         "cordova-plugin-crosswalk-webview",
         "cordova-plugin-sqlite-2",
         {
-            "locator": "https://github.com/RangerRick/cordova-plugin-chrome-apps-system-memory.git#master",
+            "locator": "https://github.com/RangerRick/cordova-plugin-chrome-apps-system-memory#master",
             "id": "cordova-plugin-chrome-apps-system-memory"
         },
         "cordova-plugin-wkwebview-engine",
         "cordova-plugin-google-analytics@0.9.0",
         {
-            "locator": "https://github.com/RangerRick/cordova-plugin-generic-password.git",
+            "locator": "https://github.com/RangerRick/cordova-plugin-generic-password",
             "id": "cordova-plugin-password"
         }
     ],
@@ -92,6 +93,7 @@
     ],
     "dependencies": {
         "Base64": "^1.0.1",
+        "angular": "1.6.6",
         "angular-animate": "1.6.6",
         "angular-cache": "^4.6.0",
         "angular-cookies": "1.6.6",
@@ -109,22 +111,31 @@
         "blueimp-md5": "^2.10.0",
         "classlist": "^1.0.1",
         "cordova-android": "^6.2.3",
-        "cordova-ios": "4.4.0",
+        "cordova-ios": "=4.4.0",
         "cordova-plugin-advanced-http": "^1.5.10",
         "cordova-plugin-appavailability": "^0.4.2",
+        "cordova-plugin-chrome-apps-system-memory": "git+https://github.com/RangerRick/cordova-plugin-chrome-apps-system-memory.git#master",
         "cordova-plugin-compat": "^1.2.0",
         "cordova-plugin-console": "^1.1.0",
+        "cordova-plugin-crosswalk-webview": "^2.3.0",
         "cordova-plugin-datepicker": "^0.9.3",
         "cordova-plugin-file": "^4.3.3",
         "cordova-plugin-geolocation": "^2.4.3",
+        "cordova-plugin-google-analytics": "^0.9.0",
         "cordova-plugin-inappbrowser": "^1.7.1",
+        "cordova-plugin-json-storage": "git+https://github.com/OpenNMS/cordova-plugin-json-storage.git",
+        "cordova-plugin-keychain": "git+https://github.com/RangerRick/KeychainPlugin.git",
         "cordova-plugin-network-information": "^1.3.3",
-        "cordova-plugin-password": "https://github.com/RangerRick/cordova-plugin-generic-password",
+        "cordova-plugin-password": "git+https://github.com/RangerRick/cordova-plugin-generic-password.git",
+        "cordova-plugin-screen-orientation": "^2.0.1",
         "cordova-plugin-splashscreen": "^4.0.3",
-        "cordova-plugin-statusbar": "https://github.com/apache/cordova-plugin-statusbar",
+        "cordova-plugin-sqlite-2": "^1.0.4",
+        "cordova-plugin-statusbar": "git+https://github.com/apache/cordova-plugin-statusbar.git#master",
         "cordova-plugin-whitelist": "^1.3.2",
+        "cordova-plugin-wkwebview-engine": "^1.1.3",
         "d3": "^3.5.17",
         "es5-shim": "^4.5.8",
+        "es6-promise-plugin": "git+https://github.com/vstirbu/PromisesPlugin.git",
         "flot": "https://github.com/flot/flot.git#v0.8.3",
         "flot-legend": "https://github.com/OpenNMS/flot-legend.git#2.0.0",
         "flot.tooltip": "https://github.com/krzysu/flot.tooltip.git#0.8.7",
@@ -162,17 +173,31 @@
             "cordova-plugin-appavailability": {},
             "cordova-plugin-console": {},
             "cordova-plugin-datepicker": {},
+            "cordova-plugin-keychain": {},
             "cordova-plugin-geolocation": {
                 "GEOLOCATION_USAGE_DESCRIPTION": " "
             },
             "cordova-plugin-inappbrowser": {},
             "cordova-plugin-network-information": {},
             "cordova-plugin-splashscreen": {},
-            "cordova-plugin-statusbar": {},
             "cordova-plugin-whitelist": {},
             "cordova-plugin-file": {},
             "cordova-plugin-advanced-http": {},
-            "cordova-plugin-password": {}
+            "cordova-plugin-password": {},
+            "cordova-plugin-chrome-apps-system-memory": {},
+            "cordova-plugin-json-storage": {},
+            "cordova-plugin-screen-orientation": {},
+            "cordova-plugin-crosswalk-webview": {
+                "XWALK_VERSION": "19+",
+                "XWALK_LITEVERSION": "xwalk_core_library_canary:17+",
+                "XWALK_COMMANDLINE": "--disable-pull-to-refresh-effect",
+                "XWALK_MODE": "embedded",
+                "XWALK_MULTIPLEAPK": "true"
+            },
+            "cordova-plugin-sqlite-2": {},
+            "cordova-plugin-wkwebview-engine": {},
+            "cordova-plugin-google-analytics": {},
+            "cordova-plugin-statusbar": {}
         }
     },
     "scripts": {
