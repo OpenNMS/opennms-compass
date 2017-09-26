@@ -1770,6 +1770,10 @@ cordova-plugin-network-information@^1.3.3:
   version "1.3.3"
   resolved "https://registry.yarnpkg.com/cordova-plugin-network-information/-/cordova-plugin-network-information-1.3.3.tgz#0ea9aa5c1124cf7cbd6f84f828a542cbd24a8518"
 
+"cordova-plugin-password@https://github.com/RangerRick/cordova-plugin-generic-password":
+  version "0.2.0"
+  resolved "https://github.com/RangerRick/cordova-plugin-generic-password#4e932c57fe2c542a2ea6bf205c7c49096209d703"
+
 cordova-plugin-splashscreen@^4.0.3:
   version "4.0.3"
   resolved "https://registry.yarnpkg.com/cordova-plugin-splashscreen/-/cordova-plugin-splashscreen-4.0.3.tgz#773cd1363c1f3bacb9901663e9e3793dd3e0a19d"
