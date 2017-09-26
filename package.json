@@ -177,7 +177,7 @@
         }
     },
     "scripts": {
-        "setup": "yarn && ionic state reset && yarn",
+        "setup": "yarn && ionic state restore && yarn",
         "reset": "rm -rf node_modules platforms plugins && npm run setup",
         "webpack": "webpack --colors --display-error-details",
         "webpack-release": "webpack --colors --display-error-details --env=production",
