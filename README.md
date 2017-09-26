@@ -19,7 +19,7 @@ Install Command-Line Tools
 Then, install Ionic, Cordova, and Bower:
 
 ```
-sudo npm install -g ionic cordova bower
+sudo npm install -g 'ionic@legacy' cordova yarn
 ```
 
 The "-g" installs them "globally", ie, in /usr/local/bin rather than just in a secret directory in your build tree.
@@ -30,21 +30,10 @@ Install Node Plugins
 Next, install the node plugins used during building/developing the app:
 
 ```
-npm install
+yarn
 ```
 
-Any time the dependencies in `packages.json` change, you will want to run this again.  I recommend doing it any time you do a `git pull` just to be sure.
-
-Install Bower Dependencies
---------------------------
-
-Finally, install the javascript dependencies for the app, using bower:
-
-```
-bower install
-```
-
-Like `npm install`, you will want to run `bower install` any time `bower.json` changes.
+Any time the dependencies in `packages.json` or `yarn.lock` change, you will want to run this again.  I recommend doing it any time you do a `git pull` just to be sure.
 
 Configure Build Properties
 --------------------------

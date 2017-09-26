@@ -1,8 +1,6 @@
 **/AUTHORS
 **/API
 **/API.md
-**/.bower.json
-**/bower.json
 **/CHANGES
 **/CHANGELOG.md
 **/CONTRIBUTING.md
@@ -81,8 +79,6 @@ backshift/test
 backshift/test/**/*
 backshift/vendor
 backshift/vendor/**/*
-bower
-bower/**/*
 classlist/component.json
 classlist/composer.json
 classlist/tests

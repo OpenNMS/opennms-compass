@@ -1,7 +1,6 @@
 gulpfile.js
 
 bin/
-bower_components/
 couchdb/
 engine/
 generated/

@@ -1,10 +1,22 @@
 What's New in OpenNMS Compass
 =============================
 
+3.1.0
+-----
+
+A performance release, with updates to core Angular, Ionic, and Cordova frameworks.
+
+Also includes:
+
+* updated backshift graphing engine with graph bug fixes
+* alarm donut now notes that it is for WARN or higher
+* add support for auto-filling passwords in the server settings
+
 3.0.2
 -----
 
 A small release just to get us built against the iOS 10.3 SDK and fix a few tiny bugs.
+
 * fix an issue that could cause a ReST error on an empty node search
 * change the "demo" URL to https to avoid weird redirects
 * when checking the OpenNMS server setting, retry once before trying other URLs
@@ -16,6 +28,7 @@ A small release just to get us built against the iOS 10.3 SDK and fix a few tiny
 Bug fixes and performance improvements.  (Sorry, couldn't help ourselves.)
 
 But seriously, this release contains just a few small changes:
+
 * fix missing "Clear" button on the node search
 * fix hidden search results when a user has scrolled and then the search shortens the list
 * don't flash cached data on reload when there was an error

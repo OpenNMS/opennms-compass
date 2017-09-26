@@ -3,7 +3,7 @@
 var MonitoredService = require('../../nodes/models/MonitoredService'),
   moment = require('moment'),
   OnmsEvent = require('../../events/models/OnmsEvent'),
-  md5 = require('js-md5'),
+  md5 = require('blueimp-md5'),
   angular = require('angular');
 
 /**

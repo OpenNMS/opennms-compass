@@ -8,7 +8,6 @@
 *.swp
 www.zip
 www
-bower_components
 generated/
 !www/.htaccess
 npm-debug.log*
@@ -20,4 +19,5 @@ engine
 build.json
 build-properties.json
 release-signing.properties
+package-lock.json
 platforms/android/ant.properties

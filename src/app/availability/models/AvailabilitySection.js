@@ -2,7 +2,7 @@
 
 var AvailabilityCategory = require('./AvailabilityCategory');
 var moment = require('moment');
-var md5 = require('js-md5');
+var md5 = require('blueimp-md5');
 
 /**
  * @ngdoc object

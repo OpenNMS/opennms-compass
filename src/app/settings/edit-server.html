@@ -21,13 +21,17 @@
 					<span class="input-label">Server URL <span ng-show="editServer.url.$error.url" class="error">please enter a valid URL</span></span>
 					<input name="url" type="url" placeholder="e.g., https://demo.opennms.org/opennms/" ng-model="server.url" ng-model-options="{debounce:200}" autocapitalize="off" required>
 				</label>
-				<label class="item item-input item-floating-label">
+				<label class="item item-input item-stacked-label">
 					<span class="input-label">Username</span>
 					<input name="username" type="text" placeholder="Username" ng-model="server.username" ng-model-options="{debounce:200}" autocapitalize="off" autocorrect="off" required>
 				</label>
-				<label class="item item-input item-floating-label">
+				<label class="item item-input item-stacked-label item-icon-right">
 					<span class="input-label">Password</span>
 					<input name="password" type="password" placeholder="Password" ng-model="server.password" ng-model-options="{debounce:200}" autocapitalize="off" required>
+				</label>
+				<label class="item item-icon-left no-top" ng-click="getPassword($event)" ng-if="server.url &amp;&amp; server.url.length > 0">
+					<i class="icon compass onms-1password"></i>
+					Autofill Password (1Password, etc.)
 				</label>
 			</ion-list>
 		</ion-content>

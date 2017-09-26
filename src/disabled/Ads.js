@@ -2,7 +2,7 @@
 	'use strict';
 
 	var angular = require('angular'),
-		ionic = require('ionic/release/js/ionic');
+		ionic = require('ionic-framework/release/js/ionic');
 
 	require('angular-debounce');
 
