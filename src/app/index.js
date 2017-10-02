@@ -37,6 +37,7 @@
 	require('./nodes/NodesController');
 	require('./nodes/ResourceController');
 	require('./nodes/ResourcesController');
+	require('./notifications/NotificationService');
 	require('./settings/SettingsController');
 
 	require('./servers/Servers');
@@ -54,6 +55,7 @@
 		'opennms.services.Info',
 		/*'opennms.services.Ionic',*/
 		'opennms.services.Modals',
+		'opennms.services.Notifications',
 		'opennms.services.Outages',
 		'opennms.services.Servers',
 		'opennms.services.Util',
@@ -96,7 +98,7 @@
 			toolbarposition:'top'
 		});
 	})
-	.run(function($rootScope, $http, $log, $timeout, $window, $ionicPlatform, $ionicPopup, debounce, Info, /*IonicService, */ Modals, Servers, util) {
+	.run(function($rootScope, $http, $log, $timeout, $window, $ionicPlatform, $ionicPopup, debounce, Info, /*IonicService, */ Modals, NotificationService, Servers, util) {
 		/* eslint-disable no-magic-numbers */
 		var calculateSizes = function() {
 			$rootScope.width  = angular.element($window).width();

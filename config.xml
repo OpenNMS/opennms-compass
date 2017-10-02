@@ -135,12 +135,13 @@
         <splash height="480" src="resources/ios/splash/Default~iphone.png" width="320" />
     </platform>
     <icon src="resources/android/icon/drawable-xhdpi-icon.png" />
-    <engine name="android" spec="^6.2.3" />
+    <engine name="android" spec="^6.3.0" />
     <engine name="ios" spec="^4.5.1" />
     <plugin name="com.bez4pieci.cookies" spec="git+https://github.com/bez4pieci/Phonegap-Cookies-Plugin.git" />
     <plugin name="com.raccoonfink.cordova.plugins.http" spec="git+https://github.com/RangerRick/cordova-HTTP.git#master" />
     <plugin name="cordova-plugin-appavailability" spec="^0.4.2" />
     <plugin name="cordova-plugin-chrome-apps-system-memory" spec="git+https://github.com/RangerRick/cordova-plugin-chrome-apps-system-memory.git#master" />
+    <plugin name="cordova-plugin-cocoapod-support" spec="^1.3.0" />
     <plugin name="cordova-plugin-crosswalk-webview" spec="^2.3.0">
         <variable name="XWALK_VERSION" value="19+" />
         <variable name="XWALK_LITEVERSION" value="xwalk_core_library_canary:17+" />
@@ -155,7 +156,7 @@
     </plugin>
     <plugin name="cordova-plugin-google-analytics" spec="^0.9.0" />
     <plugin name="cordova-plugin-inappbrowser" spec="^1.7.1" />
-    <plugin name="cordova-plugin-ionic-webview" spec="^1.1.8" />
+    <plugin name="cordova-plugin-ionic-webview" spec="^1.1.9" />
     <plugin name="cordova-plugin-json-storage" spec="git+https://github.com/OpenNMS/cordova-plugin-json-storage.git" />
     <plugin name="cordova-plugin-keychain" spec="git+https://github.com/RangerRick/KeychainPlugin.git" />
     <plugin name="cordova-plugin-network-information" spec="^1.3.3" />
@@ -166,4 +167,5 @@
     <plugin name="cordova-plugin-statusbar" spec="^2.2.3" />
     <plugin name="cordova-plugin-whitelist" spec="^1.3.2" />
     <plugin name="ionic-plugin-keyboard" spec="^2.2.1" />
+    <plugin name="phonegap-plugin-push" spec="^2.0.0" />
 </widget>

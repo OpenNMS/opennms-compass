@@ -171,6 +171,10 @@ amdefine@>=0.0.4:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/amdefine/-/amdefine-1.0.1.tgz#4a5282ac164729e93619bcfd3ad151f817ce91f5"
 
+android-versions@^1.2.0:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/android-versions/-/android-versions-1.2.1.tgz#3f50baf693e73a512c3c5403542291cead900063"
+
 angular-animate@1.6.6:
   version "1.6.6"
   resolved "https://registry.yarnpkg.com/angular-animate/-/angular-animate-1.6.6.tgz#6925647b141a040d241bf125040f1a150fcd8a70"
@@ -230,13 +234,9 @@ angular-uuid4@~0.3.1:
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/angular-uuid4/-/angular-uuid4-0.3.1.tgz#b8b50beb10cebff4ba52312fd7bd4ed8d99b49d7"
 
-angular@1.6.6:
+angular@1.6.6, angular@1.x, "angular@>=1 <2", angular@^1.0.1, angular@^1.0.8, angular@^1.2:
   version "1.6.6"
   resolved "https://registry.yarnpkg.com/angular/-/angular-1.6.6.tgz#fd5a3cfb437ce382d854ee01120797978527cb64"
-
-angular@1.x, "angular@>=1 <2", angular@^1.0.1, angular@^1.0.8, angular@^1.2:
-  version "1.6.4"
-  resolved "https://registry.yarnpkg.com/angular/-/angular-1.6.4.tgz#03b7b15c01a0802d7e2cf593240e604054dc77fb"
 
 "angularLocalStorage@https://github.com/agrublev/angularLocalStorage.git#0.3.2":
   version "0.3.1"
@@ -499,9 +499,9 @@ async@^1.3.0, async@^1.4.0, async@^1.5.0:
   version "1.5.2"
   resolved "https://registry.yarnpkg.com/async/-/async-1.5.2.tgz#ec6a61ae56480c0c3cb241c95618e20892f9672a"
 
-async@^2.0.0, async@^2.0.1:
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/async/-/async-2.3.0.tgz#1013d1051047dd320fe24e494d5c66ecaf6147d9"
+async@^2.0.0, async@^2.0.1, async@~2.5.0:
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/async/-/async-2.5.0.tgz#843190fd6b7357a0b9e1c956edddd5ec8462b54d"
   dependencies:
     lodash "^4.14.0"
 
@@ -512,12 +512,6 @@ async@~0.2.6, async@~0.2.9:
 async@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/async/-/async-1.0.0.tgz#f8fc04ca3a13784ade9e1641af98578cfbd647a9"
-
-async@~2.5.0:
-  version "2.5.0"
-  resolved "https://registry.yarnpkg.com/async/-/async-2.5.0.tgz#843190fd6b7357a0b9e1c956edddd5ec8462b54d"
-  dependencies:
-    lodash "^4.14.0"
 
 asynckit@^0.4.0:
   version "0.4.0"
@@ -557,6 +551,10 @@ babel-code-frame@^6.11.0, babel-code-frame@^6.16.0:
     chalk "^1.1.0"
     esutils "^2.0.2"
     js-tokens "^3.0.0"
+
+babel-plugin-add-header-comment@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/babel-plugin-add-header-comment/-/babel-plugin-add-header-comment-1.0.3.tgz#511c4901062640d5a480b4ac3edd6944195850ec"
 
 "backshift@https://github.com/RangerRick/backshift.git#433d9416706af921fe36040c626416b1888b28c7":
   version "1.2.3-SNAPSHOT"
@@ -1335,25 +1333,11 @@ continuable-cache@^0.3.1:
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/continuable-cache/-/continuable-cache-0.3.1.tgz#bd727a7faed77e71ff3985ac93351a912733ad0f"
 
-conventional-changelog-angular@^1.3.4:
-  version "1.3.4"
-  resolved "https://registry.yarnpkg.com/conventional-changelog-angular/-/conventional-changelog-angular-1.3.4.tgz#7d7cdfbd358948312904d02229a61fd6075cf455"
-  dependencies:
-    compare-func "^1.3.1"
-    github-url-from-git "^1.4.0"
-    q "^1.4.1"
-
 conventional-changelog-angular@^1.5.0:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/conventional-changelog-angular/-/conventional-changelog-angular-1.5.0.tgz#50b2d45008448455fdf67e06ea01972fbd08182a"
   dependencies:
     compare-func "^1.3.1"
-    q "^1.4.1"
-
-conventional-changelog-atom@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/conventional-changelog-atom/-/conventional-changelog-atom-0.1.0.tgz#67a47c66a42b2f8909ef1587c9989ae1de730b92"
-  dependencies:
     q "^1.4.1"
 
 conventional-changelog-atom@^0.1.1:
@@ -1372,35 +1356,11 @@ conventional-changelog-cli@^1.3.3:
     meow "^3.7.0"
     tempfile "^1.1.1"
 
-conventional-changelog-codemirror@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/conventional-changelog-codemirror/-/conventional-changelog-codemirror-0.1.0.tgz#7577a591dbf9b538e7a150a7ee62f65a2872b334"
-  dependencies:
-    q "^1.4.1"
-
 conventional-changelog-codemirror@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/conventional-changelog-codemirror/-/conventional-changelog-codemirror-0.2.0.tgz#3cc925955f3b14402827b15168049821972d9459"
   dependencies:
     q "^1.4.1"
-
-conventional-changelog-core@^1.9.0:
-  version "1.9.0"
-  resolved "https://registry.yarnpkg.com/conventional-changelog-core/-/conventional-changelog-core-1.9.0.tgz#de5dfbc091847656508d4a389e35c9a1bc49e7f4"
-  dependencies:
-    conventional-changelog-writer "^1.1.0"
-    conventional-commits-parser "^1.0.0"
-    dateformat "^1.0.12"
-    get-pkg-repo "^1.0.0"
-    git-raw-commits "^1.2.0"
-    git-remote-origin-url "^2.0.0"
-    git-semver-tags "^1.2.0"
-    lodash "^4.0.0"
-    normalize-package-data "^2.3.5"
-    q "^1.4.1"
-    read-pkg "^1.1.0"
-    read-pkg-up "^1.0.1"
-    through2 "^2.0.0"
 
 conventional-changelog-core@^1.9.1:
   version "1.9.1"
@@ -1420,33 +1380,15 @@ conventional-changelog-core@^1.9.1:
     read-pkg-up "^1.0.1"
     through2 "^2.0.0"
 
-conventional-changelog-ember@^0.2.6:
-  version "0.2.6"
-  resolved "https://registry.yarnpkg.com/conventional-changelog-ember/-/conventional-changelog-ember-0.2.6.tgz#8b7355419f5127493c4c562473ab2fc792f1c2b6"
-  dependencies:
-    q "^1.4.1"
-
 conventional-changelog-ember@^0.2.7:
   version "0.2.7"
   resolved "https://registry.yarnpkg.com/conventional-changelog-ember/-/conventional-changelog-ember-0.2.7.tgz#c6aff35976284e7222649f81c62bd96ff3217bd2"
   dependencies:
     q "^1.4.1"
 
-conventional-changelog-eslint@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/conventional-changelog-eslint/-/conventional-changelog-eslint-0.1.0.tgz#a52411e999e0501ce500b856b0a643d0330907e2"
-  dependencies:
-    q "^1.4.1"
-
 conventional-changelog-eslint@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/conventional-changelog-eslint/-/conventional-changelog-eslint-0.2.0.tgz#b4b9b5dc09417844d87c7bcfb16bdcc686c4b1c1"
-  dependencies:
-    q "^1.4.1"
-
-conventional-changelog-express@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/conventional-changelog-express/-/conventional-changelog-express-0.1.0.tgz#55c6c841c811962036c037bdbd964a54ae310fce"
   dependencies:
     q "^1.4.1"
 
@@ -1468,34 +1410,12 @@ conventional-changelog-jscs@^0.1.0:
   dependencies:
     q "^1.4.1"
 
-conventional-changelog-jshint@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/conventional-changelog-jshint/-/conventional-changelog-jshint-0.1.0.tgz#00cab8e9a3317487abd94c4d84671342918d2a07"
-  dependencies:
-    compare-func "^1.3.1"
-    q "^1.4.1"
-
 conventional-changelog-jshint@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/conventional-changelog-jshint/-/conventional-changelog-jshint-0.2.0.tgz#63ad7aec66cd1ae559bafe80348c4657a6eb1872"
   dependencies:
     compare-func "^1.3.1"
     q "^1.4.1"
-
-conventional-changelog-writer@^1.1.0:
-  version "1.4.1"
-  resolved "https://registry.yarnpkg.com/conventional-changelog-writer/-/conventional-changelog-writer-1.4.1.tgz#3f4cb4d003ebb56989d30d345893b52a43639c8e"
-  dependencies:
-    compare-func "^1.3.1"
-    conventional-commits-filter "^1.0.0"
-    dateformat "^1.0.11"
-    handlebars "^4.0.2"
-    json-stringify-safe "^5.0.1"
-    lodash "^4.0.0"
-    meow "^3.3.0"
-    semver "^5.0.1"
-    split "^1.0.0"
-    through2 "^2.0.0"
 
 conventional-changelog-writer@^2.0.1:
   version "2.0.1"
@@ -1519,22 +1439,7 @@ conventional-changelog@0.0.11:
     event-stream "~3.1.0"
     lodash.assign "~2.4.1"
 
-conventional-changelog@^1.1.0:
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/conventional-changelog/-/conventional-changelog-1.1.4.tgz#108bc750c2a317e200e2f9b413caaa1f8c7efa3b"
-  dependencies:
-    conventional-changelog-angular "^1.3.4"
-    conventional-changelog-atom "^0.1.0"
-    conventional-changelog-codemirror "^0.1.0"
-    conventional-changelog-core "^1.9.0"
-    conventional-changelog-ember "^0.2.6"
-    conventional-changelog-eslint "^0.1.0"
-    conventional-changelog-express "^0.1.0"
-    conventional-changelog-jquery "^0.1.0"
-    conventional-changelog-jscs "^0.1.0"
-    conventional-changelog-jshint "^0.1.0"
-
-conventional-changelog@^1.1.5:
+conventional-changelog@^1.1.0, conventional-changelog@^1.1.5:
   version "1.1.5"
   resolved "https://registry.yarnpkg.com/conventional-changelog/-/conventional-changelog-1.1.5.tgz#4c46fb64b2986cab19888d8c4b87ca7c0e431bfd"
   dependencies:
@@ -1555,18 +1460,6 @@ conventional-commits-filter@^1.0.0:
   dependencies:
     is-subset "^0.1.1"
     modify-values "^1.0.0"
-
-conventional-commits-parser@^1.0.0:
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/conventional-commits-parser/-/conventional-commits-parser-1.3.0.tgz#e327b53194e1a7ad5dc63479ee9099a52b024865"
-  dependencies:
-    JSONStream "^1.0.4"
-    is-text-path "^1.0.0"
-    lodash "^4.2.1"
-    meow "^3.3.0"
-    split2 "^2.0.0"
-    through2 "^2.0.0"
-    trim-off-newlines "^1.0.0"
 
 conventional-commits-parser@^2.0.0:
   version "2.0.0"
@@ -1613,11 +1506,12 @@ copy-webpack-plugin@^4.0.1:
     minimatch "^3.0.0"
     node-dir "^0.1.10"
 
-cordova-android@^6.2.3:
-  version "6.2.3"
-  resolved "https://registry.yarnpkg.com/cordova-android/-/cordova-android-6.2.3.tgz#249f21b6ce5f1f1c847a7ab83b16909dbed5aa28"
+cordova-android@^6.3.0:
+  version "6.3.0"
+  resolved "https://registry.yarnpkg.com/cordova-android/-/cordova-android-6.3.0.tgz#da5418433d25c75a5977b428244bbe437d0128d2"
   dependencies:
-    cordova-common "^2.0.1"
+    android-versions "^1.2.0"
+    cordova-common "^2.1.0"
     elementtree "0.1.6"
     nopt "^3.0.1"
     properties-parser "^0.2.3"
@@ -1645,27 +1539,9 @@ cordova-common@1.1.x:
     underscore "^1.8.3"
     unorm "^1.3.3"
 
-cordova-common@2.1.0:
+cordova-common@2.1.0, cordova-common@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/cordova-common/-/cordova-common-2.1.0.tgz#bb357ee1b9825031ed9db3c56b592efe973d1640"
-  dependencies:
-    ansi "^0.3.1"
-    bplist-parser "^0.1.0"
-    cordova-registry-mapper "^1.1.8"
-    elementtree "0.1.6"
-    glob "^5.0.13"
-    minimatch "^3.0.0"
-    osenv "^0.1.3"
-    plist "^1.2.0"
-    q "^1.4.1"
-    semver "^5.0.1"
-    shelljs "^0.5.3"
-    underscore "^1.8.3"
-    unorm "^1.3.3"
-
-cordova-common@^2.0.1:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/cordova-common/-/cordova-common-2.0.3.tgz#2214ee04ae1c2ec012a52c7c185313e341a6fb38"
   dependencies:
     ansi "^0.3.1"
     bplist-parser "^0.1.0"
@@ -1746,6 +1622,15 @@ cordova-plugin-appavailability@^0.4.2:
   version "1.1.2-dev"
   resolved "git+https://github.com/RangerRick/cordova-plugin-chrome-apps-system-memory.git#f9b05a1d2b07d6482936b6734e5d065fe7fdccd1"
 
+cordova-plugin-cocoapod-support@^1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/cordova-plugin-cocoapod-support/-/cordova-plugin-cocoapod-support-1.3.0.tgz#7d5de96cd25da43c03eaec8cff0017cfaef14644"
+  dependencies:
+    lodash "^4.17.2"
+    semver "^5.3.0"
+    shelljs "^0.7.5"
+    xml2js "^0.4.16"
+
 cordova-plugin-compat@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/cordova-plugin-compat/-/cordova-plugin-compat-1.2.0.tgz#0bc65757276ebd920c012ce920e274177576373e"
@@ -1774,9 +1659,9 @@ cordova-plugin-inappbrowser@^1.7.1:
   version "1.7.1"
   resolved "https://registry.yarnpkg.com/cordova-plugin-inappbrowser/-/cordova-plugin-inappbrowser-1.7.1.tgz#435b43f591fe7bfa95ea98dbe0004841fe59ba51"
 
-cordova-plugin-ionic-webview@^1.1.8:
-  version "1.1.8"
-  resolved "https://registry.yarnpkg.com/cordova-plugin-ionic-webview/-/cordova-plugin-ionic-webview-1.1.8.tgz#96a2ba2f4d7e921fd091eef528197d9879210bc2"
+cordova-plugin-ionic-webview@^1.1.9:
+  version "1.1.9"
+  resolved "https://registry.yarnpkg.com/cordova-plugin-ionic-webview/-/cordova-plugin-ionic-webview-1.1.9.tgz#e891941065990c4b49813cc1a73f9e974f040025"
 
 "cordova-plugin-json-storage@git+https://github.com/OpenNMS/cordova-plugin-json-storage.git":
   version "0.1.0-dev"
@@ -3225,13 +3110,6 @@ git-remote-origin-url@^2.0.0:
     gitconfiglocal "^1.0.0"
     pify "^2.3.0"
 
-git-semver-tags@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/git-semver-tags/-/git-semver-tags-1.2.0.tgz#b31fd02c8ab578bd6c9b5cacca5e1c64c1177ac1"
-  dependencies:
-    meow "^3.3.0"
-    semver "^5.0.1"
-
 git-semver-tags@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/git-semver-tags/-/git-semver-tags-1.2.1.tgz#6ccd2a52e735b736748dc762444fcd9588e27490"
@@ -3248,10 +3126,6 @@ gitconfiglocal@^1.0.0:
 github-from-package@0.0.0:
   version "0.0.0"
   resolved "https://registry.yarnpkg.com/github-from-package/-/github-from-package-0.0.0.tgz#97fb5d96bfde8973313f20e8288ef9a167fa64ce"
-
-github-url-from-git@^1.4.0:
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/github-url-from-git/-/github-url-from-git-1.5.0.tgz#f985fedcc0a9aa579dc88d7aff068d55cc6251a0"
 
 github-url-from-git@~1.4.0:
   version "1.4.0"
@@ -3928,6 +3802,10 @@ insert-module-globals@^6.4.1:
     process "~0.11.0"
     through2 "^1.0.0"
     xtend "^4.0.0"
+
+install@^0.8.2:
+  version "0.8.9"
+  resolved "https://registry.yarnpkg.com/install/-/install-0.8.9.tgz#9f4b5c0d1851ef872e9df85e4f7162d4e5dcdbed"
 
 interpret@^0.3.2:
   version "0.3.10"
@@ -4926,7 +4804,7 @@ lodash@3.7.x, lodash@^3.2.0, lodash@^3.3.1, lodash@^3.5.0:
   version "3.7.0"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-3.7.0.tgz#3678bd8ab995057c07ade836ed2ef087da811d45"
 
-lodash@^4.0.0, lodash@^4.1.0, lodash@^4.14.0, lodash@^4.17.4, lodash@^4.2.1, lodash@^4.3.0, lodash@^4.8.0:
+lodash@^4.0.0, lodash@^4.1.0, lodash@^4.14.0, lodash@^4.17.2, lodash@^4.17.4, lodash@^4.2.1, lodash@^4.3.0, lodash@^4.8.0:
   version "4.17.4"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
 
@@ -5972,6 +5850,13 @@ phantomjs-prebuilt@^2.1.15:
     request "~2.81.0"
     request-progress "~2.0.1"
     which "~1.2.10"
+
+phonegap-plugin-push@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/phonegap-plugin-push/-/phonegap-plugin-push-2.0.0.tgz#161289b4fdebd0b52a4d5a10520d156083eecf73"
+  dependencies:
+    babel-plugin-add-header-comment "^1.0.3"
+    install "^0.8.2"
 
 pify@^2.0.0, pify@^2.3.0:
   version "2.3.0"
@@ -7425,7 +7310,7 @@ source-map-url@~0.3.0:
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/source-map-url/-/source-map-url-0.3.0.tgz#7ecaf13b57bcd09da8a40c5d269db33799d4aaf9"
 
-source-map@0.5.x, source-map@^0.5.3, source-map@^0.5.6, source-map@~0.5.0, source-map@~0.5.1, source-map@~0.5.3:
+source-map@0.5.x, source-map@^0.5.6, source-map@~0.5.1, source-map@~0.5.3:
   version "0.5.6"
   resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.5.6.tgz#75ce38f52bf0733c5a7f0c118d81334a2bb5f412"
 
@@ -7441,7 +7326,7 @@ source-map@^0.4.2, source-map@^0.4.4, source-map@~0.4.0, source-map@~0.4.1, sour
   dependencies:
     amdefine ">=0.0.4"
 
-source-map@^0.5.7:
+source-map@^0.5.3, source-map@^0.5.7, source-map@~0.5.0:
   version "0.5.7"
   resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.5.7.tgz#8a039d2d1021d22d1ea14c80d8ea468ba2ef3fcc"
 
@@ -8537,7 +8422,7 @@ xml-escape@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/xml-escape/-/xml-escape-1.1.0.tgz#3904c143fa8eb3a0030ec646d2902a2f1b706c44"
 
-xml2js@0.4.16:
+xml2js@0.4.16, xml2js@^0.4.16:
   version "0.4.16"
   resolved "https://registry.yarnpkg.com/xml2js/-/xml2js-0.4.16.tgz#f82fccd2f9540d7e0a9b5dac163e7471195c9db3"
   dependencies:

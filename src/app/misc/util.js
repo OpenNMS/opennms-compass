@@ -102,16 +102,31 @@
 			}
 		});
 
-		$rootScope.$on('opennms.errors.updated', function(ev, errors) {
-			if (eventListeners['opennms.errors.updated']) {
-				if (__DEVELOPMENT__) { $log.debug('util.onErrorsUpdated: ' + angular.toJson(errors)); }
-				$rootScope.$evalAsync(function() {
-					for (var i=0, len=eventListeners['opennms.errors.updated'].length; i < len; i++) {
-						eventListeners['opennms.errors.updated'][i](errors);
-					}
-				});
-			}
-		});
+		var createBasicListener = function(listener) {
+			var camelCase = listener.replace(/\.(.)/g, function(match, p1, offset, string) {
+				return p1.toUpperCase();
+			}).replace(/^opennms/, 'on');
+			$log.debug('createBasicListener: ' + listener + '=' + camelCase);
+			$rootScope.$on(listener, function() {
+				var args = Array.prototype.slice.call(arguments);
+				if (eventListeners[listener]) {
+					if (__DEVELOPMENT__) { $log.debug('util.' + camelCase + ': ' + angular.toJson(args)); }
+					$rootScope.$evalAsync(function() {
+						for (var i=0, len=eventListeners[listener].length; i < len; i++) {
+							eventListeners[listener][i].apply(this, args);
+						}
+					});
+				}
+			});
+		};
+
+		createBasicListener('opennms.errors.updated');
+		createBasicListener('opennms.product.updated');
+		createBasicListener('opennms.servers.defaultUpdated');
+		createBasicListener('opennms.servers.updated');
+		createBasicListener('opennms.servers.removed');
+		createBasicListener('opennms.settings.updated');
+		createBasicListener('opennms.notifications.notification');
 
 		var lastInfo = null;
 		$rootScope.$on('opennms.info.updated', function(ev, info) {
@@ -121,61 +136,6 @@
 				$rootScope.$evalAsync(function() {
 					for (var i=0, len=eventListeners['opennms.info.updated'].length; i < len; i++) {
 						eventListeners['opennms.info.updated'][i](info);
-					}
-				});
-			}
-		});
-
-		$rootScope.$on('opennms.product.updated', function(ev, product) {
-			if (eventListeners['opennms.product.updated']) {
-				if (__DEVELOPMENT__) { $log.debug('util.onProductUpdated: ' + product.id); }
-				$rootScope.$evalAsync(function() {
-					for (var i=0, len=eventListeners['opennms.product.updated'].length; i < len; i++) {
-						eventListeners['opennms.product.updated'][i](product);
-					}
-				});
-			}
-		});
-
-		$rootScope.$on('opennms.servers.defaultUpdated', function(ev, server) {
-			if (eventListeners['opennms.servers.defaultUpdated']) {
-				if (__DEVELOPMENT__) { $log.debug('util.onDefaultServerUpdated: ' + angular.toJson(server)); }
-				$rootScope.$evalAsync(function() {
-					for (var i=0, len=eventListeners['opennms.servers.defaultUpdated'].length; i < len; i++) {
-						eventListeners['opennms.servers.defaultUpdated'][i](server);
-					}
-				});
-			}
-		});
-
-		$rootScope.$on('opennms.servers.updated', function(ev, newServers, oldServers) {
-			if (eventListeners['opennms.servers.updated']) {
-				if (__DEVELOPMENT__) { $log.debug('util.onServersUpdated: ' + angular.toJson(newServers)); }
-				$rootScope.$evalAsync(function() {
-					for (var i=0, len=eventListeners['opennms.servers.updated'].length; i < len; i++) {
-						eventListeners['opennms.servers.updated'][i](newServers, oldServers);
-					}
-				});
-			}
-		});
-
-		$rootScope.$on('opennms.servers.removed', function(ev, server) {
-			if (eventListeners['opennms.servers.removed']) {
-				if (__DEVELOPMENT__) { $log.debug('util.onServerRemoved: ' + server.name); }
-				$rootScope.$evalAsync(function() {
-					for (var i=0, len=eventListeners['opennms.servers.removed'].length; i < len; i++) {
-						eventListeners['opennms.servers.removed'][i](server);
-					}
-				});
-			}
-		});
-
-		$rootScope.$on('opennms.settings.updated', function(ev, newSettings, oldSettings, changedSettings) {
-			if (eventListeners['opennms.settings.updated']) {
-				if (__DEVELOPMENT__) { $log.debug('util.onSettingsUpdated: ' + angular.toJson(changedSettings)); }
-				$rootScope.$evalAsync(function() {
-					for (var i=0, len=eventListeners['opennms.settings.updated'].length; i < len; i++) {
-						eventListeners['opennms.settings.updated'][i](newSettings, oldSettings, changedSettings);
 					}
 				});
 			}
@@ -218,6 +178,9 @@
 				if (lastInfo) {
 					f(lastInfo);
 				}
+			},
+			onNotification: function(f) {
+				addListener('opennms.notifications.notification', f);
 			},
 			onProductUpdated: function(f) {
 				addListener('opennms.product.updated', f);

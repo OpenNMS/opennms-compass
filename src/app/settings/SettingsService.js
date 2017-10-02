@@ -285,6 +285,14 @@
 
 		init();
 
+		var getRegistrationId = function() {
+			return _get('registrationId');
+		};
+
+		var setRegistrationId = function(id) {
+			return _set('registrationId', id);
+		};
+
 		var _getDefaultServerId = function() {
 			return $q.when(storage.get('opennms.default-server-id') || undefined);
 		};
@@ -349,6 +357,8 @@
 			set: saveSettings,
 			getDefaultServerId: _getDefaultServerId,
 			setDefaultServerId: _setDefaultServerId,
+			getRegistrationId: _getRegistrationId,
+			setRegistrationId: _setRegistrationId,
 			refreshInterval: _refreshInterval,
 			restLimit: _getRestLimit,
 			uuid: _uuid,

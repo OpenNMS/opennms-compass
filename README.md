@@ -16,7 +16,7 @@ If you are on a mac and use HomeBrew, I recommend installing it with that instea
 Install Command-Line Tools
 --------------------------
 
-Then, install Ionic, Cordova, and Bower:
+Install Ionic, Cordova, and Bower:
 
 ```
 sudo npm install -g 'ionic@legacy' cordova yarn
@@ -34,6 +34,16 @@ yarn
 ```
 
 Any time the dependencies in `packages.json` or `yarn.lock` change, you will want to run this again.  I recommend doing it any time you do a `git pull` just to be sure.
+
+Install CocoaPods
+-----------------
+
+The push notification plugin requires CocoaPods to be installed.  Install it and set it up like so:
+
+```
+sudo gem install cocoapods
+pod setup
+```
 
 Configure Build Properties
 --------------------------
