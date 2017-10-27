@@ -76,7 +76,7 @@ if (argv.env !== 'development') {
 	plugins.push(new webpack.optimize.DedupePlugin());
 	plugins.push(new webpack.optimize.UglifyJsPlugin({
 		mangle: {
-			except: [ '$super', '$', 'jQuery', 'exports', 'require', 'angular', 'ionic', 'ionic-framework' ]
+			except: [ '$super', '$', 'jQuery', 'exports', 'require', 'angular', 'ionic', 'ionic-angular' ]
 		}
 	}));
 }
@@ -95,8 +95,8 @@ var options = {
 			'async',
 			'classlist',
 			'es5-shim',
-			'ionic-framework/release/js/ionic',
-			'ionic-framework/release/js/ionic-angular',
+			'ionic-angular/release/js/ionic',
+			'ionic-angular/release/js/ionic-angular',
 			'ip-address',
 			/* 'jquery', */
 			'./src/3rdparty/jquery.visible',

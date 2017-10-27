@@ -1,4 +1,4 @@
-$ionicons-font-path: "../node_modules/ionic-framework/release/fonts" !default;
+$ionicons-font-path: "../node_modules/ionic-angular/release/fonts" !default;
 
 $fontPath: "../fonts" !default;
 $imagePath: "../images" !default;
@@ -32,7 +32,7 @@ $font-family-monospace:           "Helvetica Neue", "HelveticaNeue", "Droid Sans
 
 /* END OVERRIDE IONIC VARIABLES HERE */
 
-@import "node_modules/ionic-framework/scss/ionic";
+@import "node_modules/ionic-angular/scss/ionic";
 @import "node_modules/ionic-filter-bar/scss/ionic.filter.bar";
 /*@import "includes/c3"; */
 

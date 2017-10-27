@@ -15,8 +15,8 @@
 	var angular = require('angular');
 	require('angular-debounce');
 
-	require('ionic-framework/release/js/ionic');
-	require('ionic-framework/release/js/ionic-angular');
+	require('ionic-angular/release/js/ionic');
+	require('ionic-angular/release/js/ionic-angular');
 
 	require('ngCordova');
 

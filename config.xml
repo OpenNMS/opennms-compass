@@ -1,11 +1,12 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-versionCode="455" id="com.opennms.compass" ios-CFBundleVersion="454" version="3.2.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget android-versionCode="455" id="com.opennms.compass" ios-CFBundleVersion="455" version="3.2.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>OpenNMS</name>
     <description>Compass by OpenNMS</description>
     <author email="ranger@opennms.com" href="http://www.opennms.com/">Benjamin Reed</author>
     <content src="index.html" />
     <allow-navigation href="*" />
-    <allow-navigation href="http://localhost:8100" />
+    <allow-navigation href="http://localhost:8100/*" />
+    <allow-navigation href="http://localhost:8080/*" />
     <allow-intent href="*" />
     <access origin="*" />
     <preference name="android-minSdkVersion" value="14" />
@@ -13,7 +14,8 @@
     <preference name="UIWebViewBounce" value="false" />
     <preference name="DisallowOverscroll" value="true" />
     <preference name="BackupWebStorage" value="none" />
-    <preference name="StatusBarOverlaysWebView" value="true" />
+    <preference name="StatusBarOverlaysWebView" value="false" />
+    <preference name="StatusBarCropsWebview" value="true" />
     <preference name="StatusBarStyle" value="default" />
     <preference name="AndroidPersistentFileLocation" value="Internal" />
     <preference name="Orientation" value="default" />
@@ -30,6 +32,10 @@
     <preference name="xwalkMode" value="embedded" />
     <preference name="xwalkMultipleApk" value="true" />
     <preference name="xwalkVersion" value="19+" />
+    <preference name="CordovaWebViewEngine" value="CDVWKWebViewEngine" />
+    <feature name="CDVWKWebViewEngine">
+        <param name="ios-package" value="CDVWKWebViewEngine" />
+    </feature>
     <feature name="Console">
         <param name="ios-package" onload="true" value="CDVLogger" />
     </feature>
@@ -135,8 +141,8 @@
         <splash height="480" src="resources/ios/splash/Default~iphone.png" width="320" />
     </platform>
     <icon src="resources/android/icon/drawable-xhdpi-icon.png" />
-    <engine name="android" spec="^6.2.3" />
-    <engine name="ios" spec="^4.5.1" />
+    <engine name="android" spec="^6.3.0" />
+    <engine name="ios" spec="^4.5.2" />
     <plugin name="com.bez4pieci.cookies" spec="git+https://github.com/bez4pieci/Phonegap-Cookies-Plugin.git" />
     <plugin name="com.raccoonfink.cordova.plugins.http" spec="git+https://github.com/RangerRick/cordova-HTTP.git#master" />
     <plugin name="cordova-plugin-appavailability" spec="^0.4.2" />
@@ -155,7 +161,7 @@
     </plugin>
     <plugin name="cordova-plugin-google-analytics" spec="^0.9.0" />
     <plugin name="cordova-plugin-inappbrowser" spec="^1.7.1" />
-    <plugin name="cordova-plugin-ionic-webview" spec="^1.1.8" />
+    <plugin name="cordova-plugin-ionic-webview" spec="^1.1.16" />
     <plugin name="cordova-plugin-json-storage" spec="git+https://github.com/OpenNMS/cordova-plugin-json-storage.git" />
     <plugin name="cordova-plugin-keychain" spec="git+https://github.com/RangerRick/KeychainPlugin.git" />
     <plugin name="cordova-plugin-network-information" spec="^1.3.3" />
@@ -163,7 +169,7 @@
     <plugin name="cordova-plugin-screen-orientation" spec="^2.0.1" />
     <plugin name="cordova-plugin-splashscreen" spec="^4.0.3" />
     <plugin name="cordova-plugin-sqlite-2" spec="^1.0.4" />
-    <plugin name="cordova-plugin-statusbar" spec="^2.2.3" />
+    <plugin name="cordova-plugin-statusbar" spec="git+https://github.com/apache/cordova-plugin-statusbar.git" />
     <plugin name="cordova-plugin-whitelist" spec="^1.3.2" />
     <plugin name="ionic-plugin-keyboard" spec="^2.2.1" />
 </widget>
