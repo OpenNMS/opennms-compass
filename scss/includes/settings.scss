@@ -17,6 +17,10 @@
 		}
 	}
 
+	.button-1password {
+		z-index: $z-index-item + 1;
+	}
+
 	.item {
 		p {
 			color: black;
