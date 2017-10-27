@@ -187,9 +187,13 @@ $shadow-color: rgba(0,0,0,0.3);
 		.dashboard {
 			.refreshing-spinner {
 				top: $bar-height + $ios-statusbar-height;
+				top: calc(constant(safe-area-inset-top) + #{$bar-height});
+				top: calc(env(safe-area-inset-top) + #{$bar-height});
 			}
 			.settings-button {
 				top: $bar-height + $ios-statusbar-height;
+				top: calc(constant(safe-area-inset-top) + #{$bar-height});
+				top: calc(env(safe-area-inset-top) + #{$bar-height});
 			}
 		}
 	}

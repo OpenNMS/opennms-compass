@@ -58,7 +58,7 @@
         "cordova-plugin-network-information",
         "cordova-plugin-splashscreen",
         {
-            "locator": "https://github.com/apache/cordova-plugin-statusbar.git",
+            "locator": "https://github.com/apache/cordova-plugin-statusbar.git#master",
             "id": "cordova-plugin-statusbar"
         },
         "cordova-plugin-whitelist",
@@ -140,7 +140,7 @@
         "cordova-plugin-screen-orientation": "^2.0.1",
         "cordova-plugin-splashscreen": "^4.0.3",
         "cordova-plugin-sqlite-2": "^1.0.4",
-        "cordova-plugin-statusbar": "git+https://github.com/apache/cordova-plugin-statusbar.git",
+        "cordova-plugin-statusbar": "git+https://github.com/apache/cordova-plugin-statusbar.git#master",
         "cordova-plugin-whitelist": "^1.3.2",
         "cordova-remove-cookies": "git+https://github.com/bez4pieci/Phonegap-Cookies-Plugin.git",
         "d3": "^3.5.17",

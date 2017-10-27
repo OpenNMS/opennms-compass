@@ -1678,7 +1678,7 @@ cordova-plugin-sqlite-2@^1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/cordova-plugin-sqlite-2/-/cordova-plugin-sqlite-2-1.0.4.tgz#eba03ddf8dc4d2652f165e0a235312b0eeb20aea"
 
-"cordova-plugin-statusbar@git+https://github.com/apache/cordova-plugin-statusbar.git":
+"cordova-plugin-statusbar@git+https://github.com/apache/cordova-plugin-statusbar.git#master":
   version "2.2.4-dev"
   resolved "git+https://github.com/apache/cordova-plugin-statusbar.git#c45331b95555c5c77b4ed4ca690236a9b077ec4b"
 
