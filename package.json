@@ -75,6 +75,7 @@
             "id": "com.raccoonfink.cordova.plugins.http"
         },
         "cordova-plugin-screen-orientation",
+        "cordova-plugin-crosswalk-webview",
         "cordova-plugin-sqlite-2",
         {
             "locator": "https://github.com/RangerRick/cordova-plugin-chrome-apps-system-memory#master",
@@ -125,6 +126,7 @@
         "cordova-plugin-appavailability": "^0.4.2",
         "cordova-plugin-chrome-apps-system-memory": "git+https://github.com/RangerRick/cordova-plugin-chrome-apps-system-memory.git#master",
         "cordova-plugin-compat": "^1.2.0",
+        "cordova-plugin-crosswalk-webview": "^2.3.0",
         "cordova-plugin-datepicker": "^0.9.3",
         "cordova-plugin-file": "git+https://github.com/apache/cordova-plugin-file.git",
         "cordova-plugin-geolocation": "^2.4.3",
@@ -182,6 +184,13 @@
             "com.raccoonfink.cordova.plugins.http": {},
             "cordova-plugin-appavailability": {},
             "cordova-plugin-chrome-apps-system-memory": {},
+            "cordova-plugin-crosswalk-webview": {
+                "XWALK_VERSION": "19+",
+                "XWALK_LITEVERSION": "xwalk_core_library_canary:17+",
+                "XWALK_COMMANDLINE": "--disable-pull-to-refresh-effect",
+                "XWALK_MODE": "embedded",
+                "XWALK_MULTIPLEAPK": "true"
+            },
             "cordova-plugin-datepicker": {},
             "cordova-plugin-file": {},
             "cordova-plugin-geolocation": {

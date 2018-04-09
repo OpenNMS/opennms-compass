@@ -1806,6 +1806,10 @@ cordova-plugin-compat@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/cordova-plugin-compat/-/cordova-plugin-compat-1.2.0.tgz#0bc65757276ebd920c012ce920e274177576373e"
 
+cordova-plugin-crosswalk-webview@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/cordova-plugin-crosswalk-webview/-/cordova-plugin-crosswalk-webview-2.3.0.tgz#e2ee34ecfdaddd84bda84e72663539e40c99d324"
+
 cordova-plugin-datepicker@^0.9.3:
   version "0.9.3"
   resolved "https://registry.yarnpkg.com/cordova-plugin-datepicker/-/cordova-plugin-datepicker-0.9.3.tgz#2558a9ce5998f6d6dc06cf92fd8bbb9d0901f16a"
