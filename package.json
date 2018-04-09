@@ -121,12 +121,12 @@
         "classlist": "^1.0.1",
         "com.bez4pieci.cookies": "git+https://github.com/bez4pieci/Phonegap-Cookies-Plugin.git",
         "com.raccoonfink.cordova.plugins.http": "git+https://github.com/RangerRick/cordova-HTTP.git#master",
-        "cordova-android": "6.3.0",
+        "cordova-android": "^6.3.0",
         "cordova-ios": "4.5.2",
         "cordova-plugin-appavailability": "^0.4.2",
         "cordova-plugin-chrome-apps-system-memory": "git+https://github.com/RangerRick/cordova-plugin-chrome-apps-system-memory.git#master",
         "cordova-plugin-compat": "^1.2.0",
-        "cordova-plugin-crosswalk-webview": "^2.3.0",
+        "cordova-plugin-crosswalk-webview": "^2.4.0",
         "cordova-plugin-datepicker": "^0.9.3",
         "cordova-plugin-file": "git+https://github.com/apache/cordova-plugin-file.git",
         "cordova-plugin-geolocation": "^2.4.3",
@@ -176,8 +176,8 @@
     },
     "cordova": {
         "platforms": [
-            "android",
-            "ios"
+            "ios",
+            "android"
         ],
         "plugins": {
             "com.bez4pieci.cookies": {},
