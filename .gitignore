@@ -5,12 +5,14 @@
 /index.html
 .index.html
 .vscode
+*.bak
 *.swp
 www.zip
 www
 generated/
 !www/.htaccess
 npm-debug.log*
+yarn-error.log*
 node_modules/
 platforms/
 plugins/
