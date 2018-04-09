@@ -130,8 +130,8 @@
 	<splash src="resources/ios/splash/Default@2x~universal~anyany.png"/>
     </platform>
     <icon src="resources/android/icon/drawable-xhdpi-icon.png" />
-    <engine name="android" spec="^6.3.0" />
-    <engine name="ios" spec="^4.5.2" />
+    <engine name="android" spec="6.3.0" />
+    <engine name="ios" spec="4.5.2" />
     <plugin name="com.bez4pieci.cookies" spec="git+https://github.com/bez4pieci/Phonegap-Cookies-Plugin.git" />
     <plugin name="com.raccoonfink.cordova.plugins.http" spec="git+https://github.com/RangerRick/cordova-HTTP.git#master" />
     <plugin name="cordova-plugin-appavailability" spec="^0.4.2" />
