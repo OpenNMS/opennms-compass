@@ -3,6 +3,11 @@
 		"browser": true,
 		"node": true
 	},
+	"parser": "babel-eslint",
+	"parserOptions": {
+		"allowImportExportEverywhere": true,
+		"sourceType": "module"
+	},
 	"rules": {
 		"array-callback-return": 2,
 		"block-scoped-var": 2,
