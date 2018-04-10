@@ -22,6 +22,10 @@
 					<input name="url" type="url" placeholder="e.g., https://demo.opennms.org/opennms/" ng-model="server.url" ng-model-options="{debounce:200}" autocapitalize="off" required>
 				</label>
 				<label class="item item-input item-stacked-label">
+					<span class="input-label">Timeout (Seconds) <span ng-show="editServer.timeout.$error.number || editServer.timeout.$error.pattern" class="error">please enter a number</span></span>
+					<input name="timeout" type="number" ng-model="server.timeout" ng-model-options="{debounce:200}" pattern="^\d+(\.\d+)?$" required>
+				</label>
+				<label class="item item-input item-stacked-label">
 					<span class="input-label">Username</span>
 					<input name="username" type="text" placeholder="Username" ng-model="server.username" ng-model-options="{debounce:200}" autocapitalize="off" autocorrect="off" required>
 				</label>

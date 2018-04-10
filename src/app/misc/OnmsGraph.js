@@ -10,6 +10,7 @@ require('angular-debounce');
 require('./HTTP');
 require('./Queue');
 require('./Rest');
+require('./util');
 
 require('../servers/Servers');
 
@@ -24,14 +25,19 @@ angular.module('opennms.misc.OnmsGraph', [
 	'opennms.misc.Queue',
 	'opennms.services.Rest',
 	'opennms.services.Servers',
+	'opennms.services.Util',
 	'opennms.util.HTTP'
 ])
-.directive('onmsGraph', function($injector, $log, $q, $rootScope, $timeout, $window, debounce, HTTP, Queue, RestService, Servers) {
+.directive('onmsGraph', function($injector, $log, $q, $rootScope, $timeout, $window, debounce, HTTP, Queue, RestService, Servers, util) {
 	var invalidCharacters = /[^a-zA-Z0-9]+/g;
 
 	var graphQueue = Queue.create({
 		name: 'OnmsGraph',
 		maxRequests: 2
+	});
+
+	util.onTimeoutUpdated(timeout => {
+		graphQueue.timeout = timeout;
 	});
 
 	var getWidth = function() {

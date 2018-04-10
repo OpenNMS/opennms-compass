@@ -3,6 +3,9 @@
 var moment = require('moment'),
   URI = require('urijs');
 
+const TIMEOUT_MULTIPLIER = 1000;
+const DEFAULT_TIMEOUT = require('../../misc/Constants').DEFAULT_TIMEOUT / TIMEOUT_MULTIPLIER;
+
 /**
  * @ngdoc object
  * @name Server
@@ -67,6 +70,15 @@ function Server(server) {
    */
   self.password = _server.password;
 
+  /**
+   * @description
+   * @ngdoc property
+   * @name Server#timeout
+   * @propertyOf Server
+   * @returns {number} The password used to connect to the server.
+   */
+  self.timeout = _server.timeout || DEFAULT_TIMEOUT;
+
 }
 
 Server.prototype.relativeUrl = function(segment) {
@@ -89,11 +101,16 @@ Server.prototype.getHost = function() {
   return URI(this.url).hostname();
 }
 
+Server.prototype.getTimeoutMS = function() {
+  return parseInt(this.timeout || DEFAULT_TIMEOUT, 10) * TIMEOUT_MULTIPLIER;
+}
+
 Server.prototype.equals = function(that) {
   return that &&
     this.url      === that.url &&
     this.username === that.username &&
     this.password === that.password &&
+    this.timeout  === that.timeout &&
     this._id      === that._id;
 }
 

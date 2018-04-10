@@ -134,6 +134,13 @@
 			var oldDefaultServer = defaultServer;
 			return getDefaultServer().then(function(newDefaultServer) {
 				defaultServer = newDefaultServer;
+				let oldTimeout = oldDefaultServer? oldDefaultServer.getTimeoutMS() : undefined;
+				let newTimeout = newDefaultServer? newDefaultServer.getTimeoutMS() : undefined;
+
+				if (oldTimeout !== newTimeout && angular.isDefined(newTimeout) && angular.isNumber(newTimeout) && isFinite(newTimeout)) {
+					UtilEventBroadcaster.timeoutUpdated(newTimeout, oldTimeout);
+				}
+
 				if (!angular.equals(oldDefaultServer, newDefaultServer)) {
 					UtilEventBroadcaster.defaultServerUpdated(newDefaultServer);
 					var match = serverTypeMatch.exec(newDefaultServer.url);
@@ -141,6 +148,7 @@
 						$rootScope.$broadcast('opennms.analytics.trackEvent', 'settings', 'serverType', 'Server Type', match[0]); // eslint-disable-line no-magic-numbers
 					}
 				}
+
 				return defaultServer;
 			});
 		};
@@ -259,7 +267,10 @@
 				});
 			}).then(function() {
 				ready.resolve(true);
-				return ready.promise;
+				return getDefaultServer().then(server => {
+					defaultServer = server;
+					return ready.promise;
+				});
 			}).catch(function(err) {
 				$log.error('Servers.init: failed initialization: ' + angular.toJson(err));
 				ready.resolve(false);

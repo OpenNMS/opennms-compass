@@ -36,7 +36,7 @@
 
 			hasAvailability = newAvailability;
 			$log.debug('AvailabilityService.checkAvailability: checking if availability service is valid.');
-			RestService.head('/availability').then(function() {
+			RestService.head('/availability', {limit:1}).then(function() {
 				$log.info('AvailabilityService.checkAvailability: availability service works!');
 				done(true);
 			}).catch(function() {
@@ -131,6 +131,7 @@
 
 		util.onSettingsUpdated(checkAvailability);
 		util.onServersUpdated(checkAvailability);
+		util.onTimeoutUpdated(checkAvailability);
 		checkAvailability();
 
 		return {
