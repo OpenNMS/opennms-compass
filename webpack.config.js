@@ -182,7 +182,7 @@ var options = {
 			},
 			{
 				test: /\.html$/,
-				loader: 'html'
+				loader: 'ngtemplate!html'
 				/* loader: 'html?config=htmlLoaderConfig' */
 			},
 			{
@@ -212,7 +212,7 @@ var options = {
 			/*
 			{
 				test: /jquery\.js$/,
-				loader: 'expose?jQuery!expose?$'
+				loader: 'expose?jQuery!expose?$!babel'
 			},
 			*/
 			{
@@ -222,6 +222,10 @@ var options = {
 			{
 				test: /[/]ionic\.js$/,
 				loader: 'expose?ionic!exports?ionic'
+			},
+			{
+				test: /\.js$/,
+				loader: 'babel'
 			}
 		]
 	},

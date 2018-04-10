@@ -16,7 +16,7 @@ require('../servers/Servers');
 var HEADER_PADDING = 140;
 var REFRESH_DELAY = 100;
 
-var onmsGraphTemplate = require('ngtemplate!./onms-graph.html');
+var onmsGraphTemplate = require('./onms-graph.html');
 
 angular.module('opennms.misc.OnmsGraph', [
 	'ionic',

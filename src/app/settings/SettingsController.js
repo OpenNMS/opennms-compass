@@ -20,7 +20,7 @@
 	require('../misc/Info');
 	require('../misc/util');
 
-	var editServerTemplate = require('ngtemplate!./edit-server.html');
+	var editServerTemplate = require('./edit-server.html');
 
 	angular.module('opennms.controllers.Settings', [
 		'ionic',

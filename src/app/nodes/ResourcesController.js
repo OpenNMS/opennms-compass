@@ -10,7 +10,7 @@
 	require('../misc/Capabilities');
 	require('../misc/util');
 
-	var nodeResourcesTemplate = require('ngtemplate!./node-resources.html');
+	var nodeResourcesTemplate = require('./node-resources.html');
 
 	/* eslint-disable no-else-return, no-magic-numbers */
 	var sortResources = function(a,b) {
