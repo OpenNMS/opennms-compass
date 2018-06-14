@@ -93,8 +93,8 @@ var options = {
 			'angular-uuid4',
 			'angularLocalStorage/src/angularLocalStorage',
 			'async',
-			'classlist',
-			'es5-shim',
+			/* 'classlist', */
+			/* 'es5-shim', */
 			'ionic-angular/release/js/ionic',
 			'ionic-angular/release/js/ionic-angular',
 			'ip-address',
