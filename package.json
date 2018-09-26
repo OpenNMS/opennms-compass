@@ -1,7 +1,7 @@
 {
   "name": "OpenNMS",
   "version": "3.2.1",
-  "build": 457,
+  "build": 458,
   "description": "Compass by OpenNMS",
   "repository": {
     "type": "git",
@@ -91,7 +91,6 @@
       "id": "com.raccoonfink.cordova.plugins.http"
     },
     "cordova-plugin-screen-orientation",
-    "cordova-plugin-crosswalk-webview",
     "cordova-plugin-sqlite-2",
     {
       "locator": "https://github.com/RangerRick/cordova-plugin-chrome-apps-system-memory#master",
@@ -102,6 +101,10 @@
     {
       "locator": "https://github.com/RangerRick/cordova-plugin-generic-password",
       "id": "cordova-plugin-password"
+    },
+    {
+      "locator": "https://github.com/dpa99c/cordova-diagnostic-plugin",
+      "id": "cordova-diagnostic-plugin"
     }
   ],
   "cordovaPlatforms": [
@@ -138,7 +141,8 @@
     "com.bez4pieci.cookies": "https://github.com/bez4pieci/Phonegap-Cookies-Plugin.git",
     "com.raccoonfink.cordova.plugins.http": "https://github.com/RangerRick/cordova-HTTP.git#master",
     "cordova-android": "6.3.0",
-    "cordova-ios": "^4.5.4",
+    "cordova-diagnostic-plugin": "https://github.com/dpa99c/cordova-diagnostic-plugin.git#4.0.10",
+    "cordova-ios": "^4.5.5",
     "cordova-plugin-appavailability": "^0.4.2",
     "cordova-plugin-chrome-apps-system-memory": "https://github.com/RangerRick/cordova-plugin-chrome-apps-system-memory.git#master",
     "cordova-plugin-compat": "^1.2.0",
@@ -196,15 +200,9 @@
     "plugins": {
       "com.bez4pieci.cookies": {},
       "com.raccoonfink.cordova.plugins.http": {},
+      "cordova-diagnostic-plugin": {},
       "cordova-plugin-appavailability": {},
       "cordova-plugin-chrome-apps-system-memory": {},
-      "cordova-plugin-crosswalk-webview": {
-        "XWALK_VERSION": "19+",
-        "XWALK_LITEVERSION": "xwalk_core_library_canary:17+",
-        "XWALK_COMMANDLINE": "--disable-pull-to-refresh-effect",
-        "XWALK_MODE": "embedded",
-        "XWALK_MULTIPLEAPK": "true"
-      },
       "cordova-plugin-datepicker": {},
       "cordova-plugin-file": {},
       "cordova-plugin-geolocation": {
@@ -222,7 +220,14 @@
       "cordova-plugin-sqlite-2": {},
       "cordova-plugin-statusbar": {},
       "cordova-plugin-whitelist": {},
-      "ionic-plugin-keyboard": {}
+      "ionic-plugin-keyboard": {},
+      "cordova-plugin-crosswalk-webview": {
+        "XWALK_VERSION": "23+",
+        "XWALK_LITEVERSION": "xwalk_core_library_canary:17+",
+        "XWALK_COMMANDLINE": "--disable-pull-to-refresh-effect",
+        "XWALK_MODE": "embedded",
+        "XWALK_MULTIPLEAPK": "true"
+      }
     }
   },
   "scripts": {

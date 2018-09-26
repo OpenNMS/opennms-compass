@@ -1,5 +1,15 @@
-<a name="3.2.0"></a>
-# [3.2.0](https://github.com/OpenNMS/opennms-compass/compare/v3.1.0-454...v3.2.0) (2018-04-09)
+<a name="3.2.1"></a>
+## [3.2.1](https://github.com/OpenNMS/opennms-compass/compare/v3.2.0-456...v3.2.1) (2018-09-26)
+
+
+### Features
+
+* **rest:** make timeouts configurable ([c87aded](https://github.com/OpenNMS/opennms-compass/commit/c87aded))
+
+
+
+<a name="3.2.0-456"></a>
+# [3.2.0-456](https://github.com/OpenNMS/opennms-compass/compare/v3.1.0-454...v3.2.0-456) (2018-04-09)
 
 
 ### Bug Fixes
