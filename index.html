@@ -52,7 +52,7 @@
         </header>
 
         <section id="downloads" class="clearfix">
-          <a href="https://itunes.apple.com/us/app/opennms-compass/id968875097?ls=1&mt=8" id="download-ios"><img src="images/Download_on_the_App_Store_Badge_US-UK_135x40.svg" /></a>
+          <a href="https://itunes.apple.com/us/app/opennms-compass/id968875097?ls=1&mt=8" id="download-ios"><img src="images/Download_on_the_App_Store_Badge_US-UK_135x40.svg" alt="Download on the Apple App Store" /></a>
           <a href="https://play.google.com/store/apps/details?id=com.opennms.compass" id="download-android"><img alt="Get it on Google Play" src="images/Get_it_on_Google_play.svg" /></a>
         </section>
 
@@ -70,7 +70,8 @@
 
           <div style="overflow: hidden">
             <p>
-              3.2 is primarily a bugfix release, adding support for iPhone X and fixing a few cosmetic bugs.
+              3.2 is primarily a bugfix release, adding support for iPhone X, fixing a crash on Android 8 (Oreo) and higher, and fixing a few cosmetic bugs.
+              Also, 3.2.1 adds support for adjusting the timeout used when connecting to OpenNMS, for slow network connections or servers.
             </p>
           </div>
 
@@ -111,8 +112,8 @@
           <h3><a id="features" class="anchor" name="features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Features</h3>
 
           <div style="overflow: hidden">
-            <a href="images/screenshot-dashboard-alarms.png" class="popup"><img class="screenshot" src="images/screenshot-dashboard-alarms.png" /></a>
-            <a href="images/screenshot-dashboard-outages.png" class="popup"><img class="screenshot" src="images/screenshot-dashboard-outages.png" /></a>
+            <a href="images/screenshot-dashboard-alarms.png" class="popup"><img class="screenshot" src="images/screenshot-dashboard-alarms.png" alt="Alarm Dashboard" /></a>
+            <a href="images/screenshot-dashboard-outages.png" class="popup"><img class="screenshot" src="images/screenshot-dashboard-outages.png" alt="Outage Dasboard" /></a>
             <h4><a id="features-dashboard" class="anchor" name="features-dashboard" aria-hidden="true"><span class="octicon octicon-link"></span></a>Outage and Alarm Dashboard</h4>
 
             <p>At a glance, you can see a summary of any current outages and services with pending problems.  One tap will take you to a more detailed view of outages or alarms.</p>
@@ -121,15 +122,15 @@
           </div>
 
           <div style="overflow: hidden">
-            <a href="images/screenshot-alarms-list.png" class="popup"><img class="screenshot" src="images/screenshot-alarms-list.png" /></a>
-            <a href="images/screenshot-alarms-detail.png" class="popup"><img class="screenshot" src="images/screenshot-alarms-detail.png" /></a>
+            <a href="images/screenshot-alarms-list.png" class="popup"><img class="screenshot" src="images/screenshot-alarms-list.png" alt="Alarm List" /></a>
+            <a href="images/screenshot-alarms-detail.png" class="popup"><img class="screenshot" src="images/screenshot-alarms-detail.png" alt="Alarm Details" /></a>
             <h4><a id="features-alarms" class="anchor" name="features-alarms" aria-hidden="true"><span class="octicon octicon-link"></span></a>Alarm Details</h4>
 
             <p>You can view your current alarms, as well as acknowledge, escalate, and clear them &mdash; right from the list, or from the alarm's details.</p>
           </div>
 
           <div style="overflow: hidden">
-            <a href="images/screenshot-node-detail.png" class="popup"><img class="screenshot" src="images/screenshot-node-detail.png" /></a>
+            <a href="images/screenshot-node-detail.png" class="popup"><img class="screenshot" src="images/screenshot-node-detail.png" alt="Node Details" /></a>
             <h4><a id="features-nodes" class="anchor" name="features-nodes" aria-hidden="true"><span class="octicon octicon-link"></span></a>Node Details</h4>
 
             <p>View detailed information on your nodes, including SNMP attributes, address, availability information<sup><a href="#supported-14">1</a></sup>, and outages.</p>
@@ -138,8 +139,8 @@
           </div>
 
           <div style="overflow: hidden">
-            <a href="images/screenshot-dashboard-graphs.png" class="popup"><img class="screenshot" src="images/screenshot-dashboard-graphs.png" /></a>
-            <a href="images/screenshot-node-graphs.png" class="popup"><img class="screenshot" src="images/screenshot-node-graphs.png" /></a>
+            <a href="images/screenshot-dashboard-graphs.png" class="popup"><img class="screenshot" src="images/screenshot-dashboard-graphs.png" alt="Dashboard Graphs" /></a>
+            <a href="images/screenshot-node-graphs.png" class="popup"><img class="screenshot" src="images/screenshot-node-graphs.png" alt="Node Graphs" /></a>
             <h4><a id="features-graphs" class="anchor" name="features-graphs" aria-hidden="true"><span class="octicon octicon-link"></span></a>Graphs</h4>
 
             <p>View and favorite node resource graphs and see them at a glance on the Compass dashboard<sup><a href="#supported-16">2</a></sup>.</p>
@@ -151,7 +152,7 @@
 
           <p>OpenNMS Compass supports the following OpenNMS server versions:</p>
           <ul>
-            <li><a href="http://www.opennms.com/the-platform/">Horizon</a> version 1.12 or higher<a href="#supported-systems">*</a></sup>, or</li>
+            <li><a href="http://www.opennms.com/the-platform/">Horizon</a> version 1.12 or higher<sup><a href="#supported-systems">*</a></sup>, or</li>
             <li><a href="http://www.opennms.com/meridian/">Meridian</a> version 2015.1.0 or higher.</li>
           </ul>
 
@@ -163,7 +164,7 @@
             </ol>
           <!--</div>-->
 
-          <h3><a id="support" class="anchor" name="faq" aria-hidden="true"><span class="octicon octicon-link"></span></a>Frequently Asked Questions</h3>
+          <h3><a id="faq" class="anchor" name="faq" aria-hidden="true"><span class="octicon octicon-link"></span></a>Frequently Asked Questions</h3>
 
           <dl>
             <dt><a name="faq-cost" aria-hidden="true"></a>Q: How much does it cost?</dt>
