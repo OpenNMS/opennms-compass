@@ -224,6 +224,10 @@ angular.module('opennms.dashboard.Service', [
 		watchers = {};
 	};
 
+	util.onTimeoutUpdated(newTimeout => {
+		requestQueue.timeout = newTimeout;
+	});
+
 	return {
 		refreshAlarms: function() { doRefresh('alarms') },
 		refreshAvailability: function() { doRefresh('availability', AvailabilitySection) },

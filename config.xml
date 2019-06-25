@@ -1,171 +1,168 @@
-<?xml version='1.0' encoding='utf-8'?>
-<widget android-versionCode="500" id="com.opennms.compass" ios-CFBundleVersion="500" version="4.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>OpenNMS</name>
-    <description>Compass by OpenNMS</description>
-    <author email="ranger@opennms.com" href="http://www.opennms.com/">Benjamin Reed</author>
-    <content src="index.html" />
-    <allow-navigation href="*" />
-    <allow-navigation href="http://localhost:8100" />
-    <allow-intent href="*" />
-    <access origin="*" />
-    <preference name="android-minSdkVersion" value="14" />
-    <preference name="webviewbounce" value="false" />
-    <preference name="UIWebViewBounce" value="false" />
-    <preference name="DisallowOverscroll" value="true" />
-    <preference name="BackupWebStorage" value="none" />
-    <preference name="StatusBarOverlaysWebView" value="true" />
-    <preference name="StatusBarStyle" value="default" />
-    <preference name="AndroidPersistentFileLocation" value="Internal" />
-    <preference name="Orientation" value="default" />
-    <preference name="SplashScreen" value="screen" />
-    <preference name="SplashScreenDelay" value="5000" />
-    <preference name="FadeSplashScreen" value="true" />
-    <preference name="FadeSplashScreenDuration" value="2" />
-    <preference name="ShowSplashScreenSpinner" value="true" />
-    <preference name="AutoHideSplashScreen" value="true" />
-    <preference name="KeyboardDisplayRequiresUserAction" value="false" />
-    <preference name="MediaPlaybackRequiresUserAction" value="false" />
-    <preference name="SuppressesIncrementalRendering" value="false" />
-    <preference name="xwalkCommandLine" value="--disable-pull-to-refresh-effect" />
-    <preference name="xwalkMode" value="embedded" />
-    <preference name="xwalkMultipleApk" value="true" />
-    <preference name="xwalkVersion" value="19+" />
-    <feature name="Console">
-        <param name="ios-package" onload="true" value="CDVLogger" />
-    </feature>
-    <feature name="Device">
-        <param name="ios-package" onload="true" value="CDVDevice" />
-    </feature>
-    <feature name="NetworkStatus">
-        <param name="ios-package" onload="true" value="CDVConnection" />
-    </feature>
-    <feature name="SplashScreen">
-        <param name="ios-package" onload="true" value="CDVSplashScreen" />
-        <param name="onload" value="true" />
-    </feature>
-    <feature name="StatusBar">
-        <param name="ios-package" onload="true" value="CDVStatusBar" />
-        <param name="onload" value="true" />
-    </feature>
-    <platform name="android">
-        <icon density="ldpi" src="resources/android/icon/drawable-ldpi-icon.png" />
-        <icon density="mdpi" src="resources/android/icon/drawable-mdpi-icon.png" />
-        <icon density="hdpi" src="resources/android/icon/drawable-hdpi-icon.png" />
-        <icon density="xhdpi" src="resources/android/icon/drawable-xhdpi-icon.png" />
-        <icon density="xxhdpi" src="resources/android/icon/drawable-xxhdpi-icon.png" />
-        <icon density="xxxhdpi" src="resources/android/icon/drawable-xxxhdpi-icon.png" />
-        <splash density="land-ldpi" src="resources/android/splash/drawable-land-ldpi-screen.png" />
-        <splash density="land-mdpi" src="resources/android/splash/drawable-land-mdpi-screen.png" />
-        <splash density="land-hdpi" src="resources/android/splash/drawable-land-hdpi-screen.png" />
-        <splash density="land-xhdpi" src="resources/android/splash/drawable-land-xhdpi-screen.png" />
-        <splash density="land-xxhdpi" src="resources/android/splash/drawable-land-xxhdpi-screen.png" />
-        <splash density="land-xxxhdpi" src="resources/android/splash/drawable-land-xxxhdpi-screen.png" />
-        <splash density="port-ldpi" src="resources/android/splash/drawable-port-ldpi-screen.png" />
-        <splash density="port-mdpi" src="resources/android/splash/drawable-port-mdpi-screen.png" />
-        <splash density="port-hdpi" src="resources/android/splash/drawable-port-hdpi-screen.png" />
-        <splash density="port-xhdpi" src="resources/android/splash/drawable-port-xhdpi-screen.png" />
-        <splash density="port-xxhdpi" src="resources/android/splash/drawable-port-xxhdpi-screen.png" />
-        <splash density="port-xxxhdpi" src="resources/android/splash/drawable-port-xxxhdpi-screen.png" />
-    </platform>
-    <platform name="ios">
-        <config-file parent="UIBackgroundModes" platform="ios" target="*-Info.plist">
-            <array>
-                <string>remote-notification</string>
-            </array>
-        </config-file>
-        <config-file platform="ios" target="*-Info.plist">
-            <dict>
-                <key>aps-environment</key>
-                <string>development</string>
-            </dict>
-        </config-file>
-        <config-file parent="UISupportedInterfaceOrientations" platform="ios" target="*-Info.plist">
-            <array>
-                <string>UIInterfaceOrientationPortrait</string>
-            </array>
-        </config-file>
-        <config-file parent="UISupportedInterfaceOrientations~ipad" platform="ios" target="*-Info.plist">
-            <array>
-                <string>UIInterfaceOrientationPortrait</string>
-                <string>UIInterfaceOrientationLandscapeLeft</string>
-                <string>UIInterfaceOrientationPortraitUpsideDown</string>
-                <string>UIInterfaceOrientationLandscapeRight</string>
-            </array>
-        </config-file>
-        <config-file parent="NSAppTransportSecurity" platform="ios" target="*-Info.plist">
-            <dict>
-                <key>NSAllowsArbitraryLoads</key>
-                <true />
-            </dict>
-        </config-file>
-        <config-file parent="UIRequiresFullScreen" platform="ios" target="*-Info.plist">
-            <true />
-        </config-file>
-        <icon height="57" src="resources/ios/icon/icon.png" width="57" />
-        <icon height="114" src="resources/ios/icon/icon@2x.png" width="114" />
-        <icon height="40" src="resources/ios/icon/icon-40.png" width="40" />
-        <icon height="80" src="resources/ios/icon/icon-40@2x.png" width="80" />
-        <icon height="120" src="resources/ios/icon/icon-40@3x.png" width="120" />
-        <icon height="50" src="resources/ios/icon/icon-50.png" width="50" />
-        <icon height="100" src="resources/ios/icon/icon-50@2x.png" width="100" />
-        <icon height="60" src="resources/ios/icon/icon-60.png" width="60" />
-        <icon height="120" src="resources/ios/icon/icon-60@2x.png" width="120" />
-        <icon height="180" src="resources/ios/icon/icon-60@3x.png" width="180" />
-        <icon height="72" src="resources/ios/icon/icon-72.png" width="72" />
-        <icon height="144" src="resources/ios/icon/icon-72@2x.png" width="144" />
-        <icon height="76" src="resources/ios/icon/icon-76.png" width="76" />
-        <icon height="152" src="resources/ios/icon/icon-76@2x.png" width="152" />
-        <icon height="167" src="resources/ios/icon/icon-83.5@2x.png" width="167" />
-        <icon height="29" src="resources/ios/icon/icon-small.png" width="29" />
-        <icon height="58" src="resources/ios/icon/icon-small@2x.png" width="58" />
-        <icon height="87" src="resources/ios/icon/icon-small@3x.png" width="87" />
-        <icon height="1024" src="./resources/ios/icon/icon-1024.png" width="1024" />
-        <icon height="1100" src="./resources/ios/icon/icon-1100.png" width="1100" />
-        <splash height="1136" src="resources/ios/splash/Default-568h@2x~iphone.png" width="640" />
-        <splash height="1334" src="resources/ios/splash/Default-667h.png" width="750" />
-        <splash height="2208" src="resources/ios/splash/Default-736h.png" width="1242" />
-        <splash height="1242" src="resources/ios/splash/Default-Landscape-736h.png" width="2208" />
-        <splash height="1536" src="resources/ios/splash/Default-Landscape@2x~ipad.png" width="2048" />
-        <splash height="2048" src="resources/ios/splash/Default-Landscape@~ipadpro.png" width="2732" />
-        <splash height="768" src="resources/ios/splash/Default-Landscape~ipad.png" width="1024" />
-        <splash height="2048" src="resources/ios/splash/Default-Portrait@2x~ipad.png" width="1536" />
-        <splash height="2732" src="resources/ios/splash/Default-Portrait@~ipadpro.png" width="2048" />
-        <splash height="1024" src="resources/ios/splash/Default-Portrait~ipad.png" width="768" />
-        <splash height="960" src="resources/ios/splash/Default@2x~iphone.png" width="640" />
-        <splash height="480" src="resources/ios/splash/Default~iphone.png" width="320" />
-    </platform>
-    <icon src="resources/android/icon/drawable-xhdpi-icon.png" />
-    <engine name="android" spec="^6.3.0" />
-    <engine name="ios" spec="^4.5.1" />
-    <plugin name="com.bez4pieci.cookies" spec="git+https://github.com/bez4pieci/Phonegap-Cookies-Plugin.git" />
-    <plugin name="com.raccoonfink.cordova.plugins.http" spec="git+https://github.com/RangerRick/cordova-HTTP.git#master" />
-    <plugin name="cordova-plugin-appavailability" spec="^0.4.2" />
-    <plugin name="cordova-plugin-chrome-apps-system-memory" spec="git+https://github.com/RangerRick/cordova-plugin-chrome-apps-system-memory.git#master" />
-    <plugin name="cordova-plugin-cocoapod-support" spec="^1.3.0" />
-    <plugin name="cordova-plugin-crosswalk-webview" spec="^2.3.0">
-        <variable name="XWALK_VERSION" value="19+" />
-        <variable name="XWALK_LITEVERSION" value="xwalk_core_library_canary:17+" />
-        <variable name="XWALK_COMMANDLINE" value="--disable-pull-to-refresh-effect" />
-        <variable name="XWALK_MODE" value="embedded" />
-        <variable name="XWALK_MULTIPLEAPK" value="true" />
-    </plugin>
-    <plugin name="cordova-plugin-datepicker" spec="^0.9.3" />
-    <plugin name="cordova-plugin-file" spec="git+https://github.com/apache/cordova-plugin-file.git" />
-    <plugin name="cordova-plugin-geolocation" spec="^2.4.3">
-        <variable name="GEOLOCATION_USAGE_DESCRIPTION" value=" " />
-    </plugin>
-    <plugin name="cordova-plugin-google-analytics" spec="^0.9.0" />
-    <plugin name="cordova-plugin-inappbrowser" spec="^1.7.1" />
-    <plugin name="cordova-plugin-ionic-webview" spec="^1.1.9" />
-    <plugin name="cordova-plugin-json-storage" spec="git+https://github.com/OpenNMS/cordova-plugin-json-storage.git" />
-    <plugin name="cordova-plugin-keychain" spec="git+https://github.com/RangerRick/KeychainPlugin.git" />
-    <plugin name="cordova-plugin-network-information" spec="^1.3.3" />
-    <plugin name="cordova-plugin-password" spec="git+https://github.com/RangerRick/cordova-plugin-generic-password.git" />
-    <plugin name="cordova-plugin-screen-orientation" spec="^2.0.1" />
-    <plugin name="cordova-plugin-splashscreen" spec="^4.0.3" />
-    <plugin name="cordova-plugin-sqlite-2" spec="^1.0.4" />
-    <plugin name="cordova-plugin-statusbar" spec="^2.2.3" />
-    <plugin name="cordova-plugin-whitelist" spec="^1.3.2" />
-    <plugin name="ionic-plugin-keyboard" spec="^2.2.1" />
-    <plugin name="phonegap-plugin-push" spec="^2.0.0" />
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<widget android-versionCode="500" id="com.opennms.compass" ios-CFBundleVersion="500" version="4.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+  <name>OpenNMS</name>
+  <description>Compass by OpenNMS</description>
+  <author email="ranger@opennms.com" href="http://www.opennms.com/">Benjamin Reed</author>
+  <content src="index.html"/>
+  <allow-navigation href="*"/>
+  <allow-intent href="*"/>
+  <access origin="*"/>
+  <preference name="android-minSdkVersion" value="16"/>
+  <preference name="webviewbounce" value="false"/>
+  <preference name="UIWebViewBounce" value="false"/>
+  <preference name="DisallowOverscroll" value="true"/>
+  <preference name="BackupWebStorage" value="none"/>
+  <preference name="StatusBarOverlaysWebView" value="false"/>
+  <preference name="StatusBarCropsWebview" value="true"/>
+  <preference name="StatusBarStyle" value="default"/>
+  <preference name="AndroidPersistentFileLocation" value="Internal"/>
+  <preference name="Orientation" value="default"/>
+  <preference name="SplashScreen" value="screen"/>
+  <preference name="SplashScreenDelay" value="5000"/>
+  <preference name="FadeSplashScreen" value="true"/>
+  <preference name="FadeSplashScreenDuration" value="2"/>
+  <preference name="ShowSplashScreenSpinner" value="true"/>
+  <preference name="AutoHideSplashScreen" value="true"/>
+  <preference name="KeyboardDisplayRequiresUserAction" value="false"/>
+  <preference name="MediaPlaybackRequiresUserAction" value="false"/>
+  <preference name="SuppressesIncrementalRendering" value="false"/>
+  <preference name="xwalkCommandLine" value="--disable-pull-to-refresh-effect"/>
+  <preference name="xwalkMode" value="embedded"/>
+  <preference name="xwalkMultipleApk" value="true"/>
+  <preference name="xwalkVersion" value="23"/>
+  <preference name="CordovaWebViewEngine" value="CDVWKWebViewEngine"/>
+  <preference name="deployment-target" value="8.0"/>
+  <feature name="CDVWKWebViewEngine">
+    <param name="ios-package" value="CDVWKWebViewEngine"/>
+  </feature>
+  <feature name="Console">
+    <param name="ios-package" onload="true" value="CDVLogger"/>
+  </feature>
+  <feature name="Device">
+    <param name="ios-package" onload="true" value="CDVDevice"/>
+  </feature>
+  <feature name="NetworkStatus">
+    <param name="ios-package" onload="true" value="CDVConnection"/>
+  </feature>
+  <feature name="SplashScreen">
+    <param name="ios-package" onload="true" value="CDVSplashScreen"/>
+    <param name="onload" value="true"/>
+  </feature>
+  <feature name="StatusBar">
+    <param name="ios-package" onload="true" value="CDVStatusBar"/>
+    <param name="onload" value="true"/>
+  </feature>
+  <platform name="android">
+    <config-file parent="/manifest" target="AndroidManifest.xml">
+      <uses-permission android:name="android.permission.READ_CONTACTS"/>
+      <uses-permission android:name="android.permission.WRITE_CONTACTS"/>
+    </config-file>
+    <icon density="ldpi" src="resources/android/icon/drawable-ldpi-icon.png"/>
+    <icon density="mdpi" src="resources/android/icon/drawable-mdpi-icon.png"/>
+    <icon density="hdpi" src="resources/android/icon/drawable-hdpi-icon.png"/>
+    <icon density="xhdpi" src="resources/android/icon/drawable-xhdpi-icon.png"/>
+    <icon density="xxhdpi" src="resources/android/icon/drawable-xxhdpi-icon.png"/>
+    <icon density="xxxhdpi" src="resources/android/icon/drawable-xxxhdpi-icon.png"/>
+    <splash density="land-ldpi" src="resources/android/splash/drawable-land-ldpi-screen.png"/>
+    <splash density="land-mdpi" src="resources/android/splash/drawable-land-mdpi-screen.png"/>
+    <splash density="land-hdpi" src="resources/android/splash/drawable-land-hdpi-screen.png"/>
+    <splash density="land-xhdpi" src="resources/android/splash/drawable-land-xhdpi-screen.png"/>
+    <splash density="land-xxhdpi" src="resources/android/splash/drawable-land-xxhdpi-screen.png"/>
+    <splash density="land-xxxhdpi" src="resources/android/splash/drawable-land-xxxhdpi-screen.png"/>
+    <splash density="port-ldpi" src="resources/android/splash/drawable-port-ldpi-screen.png"/>
+    <splash density="port-mdpi" src="resources/android/splash/drawable-port-mdpi-screen.png"/>
+    <splash density="port-hdpi" src="resources/android/splash/drawable-port-hdpi-screen.png"/>
+    <splash density="port-xhdpi" src="resources/android/splash/drawable-port-xhdpi-screen.png"/>
+    <splash density="port-xxhdpi" src="resources/android/splash/drawable-port-xxhdpi-screen.png"/>
+    <splash density="port-xxxhdpi" src="resources/android/splash/drawable-port-xxxhdpi-screen.png"/>
+  </platform>
+  <platform name="ios">
+    <config-file parent="UIBackgroundModes" platform="ios" target="*-Info.plist">
+      <array>
+        <string>remote-notification</string>
+      </array>
+    </config-file>
+    <config-file platform="ios" target="*-Info.plist">
+      <dict>
+        <key>aps-environment</key>
+        <string>development</string>
+      </dict>
+    </config-file>
+    <config-file parent="UISupportedInterfaceOrientations" platform="ios" target="*-Info.plist">
+      <array>
+        <string>UIInterfaceOrientationPortrait</string>
+      </array>
+    </config-file>
+    <config-file parent="UISupportedInterfaceOrientations~ipad" platform="ios" target="*-Info.plist">
+      <array>
+        <string>UIInterfaceOrientationPortrait</string>
+        <string>UIInterfaceOrientationLandscapeLeft</string>
+        <string>UIInterfaceOrientationPortraitUpsideDown</string>
+        <string>UIInterfaceOrientationLandscapeRight</string>
+      </array>
+    </config-file>
+    <config-file parent="NSAppTransportSecurity" platform="ios" target="*-Info.plist">
+      <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+      </dict>
+    </config-file>
+    <config-file parent="UIRequiresFullScreen" platform="ios" target="*-Info.plist">
+      <true/>
+    </config-file>
+    <icon height="57" src="resources/ios/icon/icon.png" width="57"/>
+    <icon height="114" src="resources/ios/icon/icon@2x.png" width="114"/>
+    <icon height="40" src="resources/ios/icon/icon-40.png" width="40"/>
+    <icon height="80" src="resources/ios/icon/icon-40@2x.png" width="80"/>
+    <icon height="120" src="resources/ios/icon/icon-40@3x.png" width="120"/>
+    <icon height="50" src="resources/ios/icon/icon-50.png" width="50"/>
+    <icon height="100" src="resources/ios/icon/icon-50@2x.png" width="100"/>
+    <icon height="60" src="resources/ios/icon/icon-60.png" width="60"/>
+    <icon height="120" src="resources/ios/icon/icon-60@2x.png" width="120"/>
+    <icon height="180" src="resources/ios/icon/icon-60@3x.png" width="180"/>
+    <icon height="72" src="resources/ios/icon/icon-72.png" width="72"/>
+    <icon height="144" src="resources/ios/icon/icon-72@2x.png" width="144"/>
+    <icon height="76" src="resources/ios/icon/icon-76.png" width="76"/>
+    <icon height="152" src="resources/ios/icon/icon-76@2x.png" width="152"/>
+    <icon height="167" src="resources/ios/icon/icon-83.5@2x.png" width="167"/>
+    <icon height="29" src="resources/ios/icon/icon-small.png" width="29"/>
+    <icon height="58" src="resources/ios/icon/icon-small@2x.png" width="58"/>
+    <icon height="87" src="resources/ios/icon/icon-small@3x.png" width="87"/>
+    <icon height="1024" src="./resources/ios/icon/icon-1024.png" width="1024"/>
+    <icon height="1100" src="./resources/ios/icon/icon-1100.png" width="1100"/>
+    <splash src="resources/ios/splash/Default@2x~universal~anyany.png"/>
+  </platform>
+  <icon src="resources/android/icon/drawable-xhdpi-icon.png"/>
+  <engine name="android" spec="6.3.0"/>
+  <engine name="ios" spec="^4.5.5"/>
+  <plugin name="com.bez4pieci.cookies" spec="https://github.com/bez4pieci/Phonegap-Cookies-Plugin.git"/>
+  <plugin name="com.raccoonfink.cordova.plugins.http" spec="https://github.com/RangerRick/cordova-HTTP.git#master"/>
+  <plugin name="cordova-plugin-appavailability" spec="^0.4.2"/>
+  <plugin name="cordova-diagnostic-plugin" spec="https://github.com/dpa99c/cordova-diagnostic-plugin.git#4.0.10" />
+  <plugin name="cordova-plugin-chrome-apps-system-memory" spec="https://github.com/RangerRick/cordova-plugin-chrome-apps-system-memory.git#master"/>
+  <plugin name="cordova-plugin-crosswalk-webview" spec="^2.4.0">
+    <variable name="XWALK_VERSION" value="23+"/>
+    <variable name="XWALK_LITEVERSION" value="xwalk_core_library_canary:17+"/>
+    <variable name="XWALK_COMMANDLINE" value="--disable-pull-to-refresh-effect"/>
+    <variable name="XWALK_MODE" value="embedded"/>
+    <variable name="XWALK_MULTIPLEAPK" value="true"/>
+  </plugin>
+  <plugin name="cordova-plugin-datepicker" spec="^0.9.3"/>
+  <plugin name="cordova-plugin-file" spec="https://github.com/apache/cordova-plugin-file.git"/>
+  <plugin name="cordova-plugin-geolocation" spec="^2.4.3">
+    <variable name="GEOLOCATION_USAGE_DESCRIPTION" value="For setting locations on nodes."/>
+  </plugin>
+  <plugin name="cordova-plugin-google-analytics" spec="^0.9.0"/>
+  <plugin name="cordova-plugin-inappbrowser" spec="^1.7.2"/>
+  <plugin name="cordova-plugin-ionic-webview" spec="^1.2.1"/>
+  <plugin name="cordova-plugin-keychain" spec="https://github.com/RangerRick/KeychainPlugin.git"/>
+  <plugin name="cordova-plugin-json-storage" spec="https://github.com/OpenNMS/cordova-plugin-json-storage.git"/>
+  <plugin name="cordova-plugin-network-information" spec="^2.0.1"/>
+  <plugin name="cordova-plugin-password" spec="https://github.com/RangerRick/cordova-plugin-generic-password.git"/>
+  <plugin name="cordova-plugin-screen-orientation" spec="^3.0.1"/>
+  <plugin name="cordova-plugin-splashscreen" spec="^5.0.2"/>
+  <plugin name="cordova-plugin-sqlite-2" spec="^1.0.4"/>
+  <plugin name="cordova-plugin-statusbar" spec="^2.4.2"/>
+  <plugin name="cordova-plugin-whitelist" spec="^1.3.3"/>
+  <plugin name="ionic-plugin-keyboard" spec="^2.2.1"/>
 </widget>

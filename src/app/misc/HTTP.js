@@ -5,7 +5,9 @@ require('./Queue');
 
 var module = angular.module('opennms.util.HTTP', [
 	'ng',
-	'opennms.misc.Queue'
+	'opennms.misc.Queue',
+	'opennms.services.Servers',
+	'opennms.services.Util'
 ]);
 
 ionic.Platform.ready(function() {
@@ -91,37 +93,66 @@ ionic.Platform.ready(function() {
 	}
 });
 
-module.factory('HTTP', function($http, $injector, $interval, $log, $q, $window, Queue) {
-	//var requestTimeout = parseInt($injector.get('config.request.timeout'), 10) * 1000;
-	var requestTimeout = 10000;
-	var enableCachebusting = false;
+module.factory('HTTP', function($http, $injector, $interval, $log, $q, $window, Queue, Servers, util) {
+	const enableCachebusting = false;
 	var basicAuth = null;
 
 	var ready;
-	var initialize = function() {
-		var deferred = $q.defer();
 
-		if ($injector.has('cordovaHTTP')) {
-			$log.info('HTTP: Cordova HTTP is available.');
-			var cordovaHTTP = $injector.get('cordovaHTTP');
-			cordovaHTTP.enableSSLPinning(false);
-			cordovaHTTP.acceptAllCerts(true);
-			cordovaHTTP.setTimeouts(requestTimeout, requestTimeout);
-			deferred.resolve(cordovaHTTP);
-		} else {
-			$log.warn('HTTP: Cordova HTTP is not available.');
-			deferred.resolve(undefined);
-		}
-		return deferred.promise;
-	};
+	var lastTimeout = undefined;
+	var timeout = undefined;
 
-	var defaultOptions = {
+	const defaultOptions = {
 		cache: false,
-		timeout: requestTimeout,
 		withCredentials: true,
 		headers: {
 			Accept: 'application/xml'
 		}
+	};
+
+	const httpQueue = Queue.create({
+		name: 'HTTP',
+		maxRequests: 8
+	});
+
+	const validTimeout = function validTimeout(t) {
+		return angular.isDefined(t) && angular.isNumber(t) && isFinite(t);
+	};
+
+	const updateTimeouts = function updateTimeouts(newTimeout) {
+		if (validTimeout(newTimeout)) {
+			httpQueue.timeout = newTimeout;
+			timeout = newTimeout;
+		} else {
+			$log.warn('HTTP.updateTimeouts: new timeout is not a number: ' + newTimeout);
+		}
+	};
+
+	const initialize = function() {
+		return Servers.getDefault().then(defaultServer => {
+			if (defaultServer) {
+				return defaultServer.getTimeoutMS();
+			}
+			return undefined;
+		}).catch(() => {
+			return undefined;
+		}).then(serverTimeout => {
+			updateTimeouts(serverTimeout);
+
+			if (!$injector.has('cordovaHTTP')) {
+				$log.warn('HTTP: Cordova HTTP is not available.');
+				return undefined;
+			}
+
+			$log.info('HTTP: Cordova HTTP is available.');
+			const cordovaHTTP = $injector.get('cordovaHTTP');
+			cordovaHTTP.enableSSLPinning(false);
+			cordovaHTTP.acceptAllCerts(true);
+			if (validTimeout(serverTimeout)) {
+				cordovaHTTP.setTimeouts(serverTimeout, serverTimeout);
+			}
+			return cordovaHTTP;
+		});
 	};
 
 	var call = function(passedOptions) {
@@ -131,7 +162,7 @@ module.factory('HTTP', function($http, $injector, $interval, $log, $q, $window, 
 			ready = initialize();
 		}
 
-		return ready.then(function(cordovaHTTP) {
+		return ready.then(cordovaHTTP => {
 			if (options.url.indexOf('http') !== 0) { // eslint-disable-line no-magic-numbers
 				return $q.reject(options.url + ' is not a valid URL!');
 			}
@@ -149,6 +180,17 @@ module.factory('HTTP', function($http, $injector, $interval, $log, $q, $window, 
 				options.cache = true;
 				delete options.params._x;
 				delete options.params.cache;
+			}
+
+			if (lastTimeout != timeout) {
+				if (cordovaHTTP) {
+					$log.debug('HTTP.call: updating cordovaHTTP default timeout: ' + lastTimeout + ' => ' + timeout);
+					cordovaHTTP.setTimeouts(timeout, timeout);
+				}
+				lastTimeout = timeout;
+			}
+			if (validTimeout(timeout)) {
+				options.timeout = timeout;
 			}
 
 			if (basicAuth && basicAuth.header && !options.headers.hasOwnProperty('Authorization')) {
@@ -190,11 +232,6 @@ module.factory('HTTP', function($http, $injector, $interval, $log, $q, $window, 
 			return $http(options);
 		});
 	};
-
-	var httpQueue = Queue.create({
-		name: 'HTTP',
-		maxRequests: 8
-	});
 
 	var queuedCall = function(options) {
 		return httpQueue.add(function queueAdd() {
@@ -269,6 +306,10 @@ module.factory('HTTP', function($http, $injector, $interval, $log, $q, $window, 
 
 		return $q.when(basicAuth);
 	};
+
+	util.onTimeoutUpdated(newTimeout => {
+		updateTimeouts(newTimeout);
+	});
 
 	return {
 		get: get,

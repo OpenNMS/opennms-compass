@@ -7,7 +7,7 @@
 		lodash = require('lodash'),
 		Address6 = require('ip-address').Address6;
 
-	require('ngCordova');
+	require('ng-cordova');
 
 	require('./Analytics');
 	require('./Errors');
@@ -57,11 +57,17 @@
 			$rootScope.$broadcast('opennms.servers.removed', server);
 		};
 
+		const timeoutUpdated = (newTimeout, oldTimeout) => {
+			if (__DEVELOPMENT__) { $log.debug('util.timeoutUpdated: ' + newTimeout); }
+			$rootScope.$broadcast('opennms.timeout.updated', newTimeout, oldTimeout);
+		};
+
 		return {
 			dirty: markDirty,
 			serversUpdated: serversUpdated,
 			defaultServerUpdated: defaultServerUpdated,
-			serverRemoved: serverRemoved
+			serverRemoved: serverRemoved,
+			timeoutUpdated: timeoutUpdated
 		};
 	})
 	.factory('UtilEventHandler', function($ionicHistory, $log, $rootScope) {
@@ -160,6 +166,17 @@
 			}
 		});
 
+		$rootScope.$on('opennms.timeout.updated', (ev, newTimeout, oldTimeout) => {
+			if (eventListeners['opennms.timeout.updated']) {
+				if (__DEVELOPMENT__) { $log.debug('util.onTimeoutUpdated: ' + oldTimeout + ' => ' + newTimeout); }
+				$rootScope.$evalAsync(function() {
+					for (let i=0, len=eventListeners['opennms.timeout.updated'].length; i < len; i++) {
+						eventListeners['opennms.timeout.updated'][i](newTimeout, oldTimeout);
+					}
+				});
+			}
+		});
+
 		return {
 			onDirty: function(type, f) {
 				if (!eventListeners['opennms.dirty']) {
@@ -199,6 +216,9 @@
 			},
 			onLowMemory: function(stateName, f) {
 				addListener('opennms.low-memory', [stateName, f]);
+			},
+			onTimeoutUpdated: function(f) {
+				addListener('opennms.timeout.updated', f);
 			}
 		};
 	})
@@ -321,7 +341,8 @@
 			onDefaultServerUpdated: UtilEventHandler.onDefaultServerUpdated,
 			onServerRemoved: UtilEventHandler.onServerRemoved,
 			onSettingsUpdated: UtilEventHandler.onSettingsUpdated,
-			onLowMemory: UtilEventHandler.onLowMemory
+			onLowMemory: UtilEventHandler.onLowMemory,
+			onTimeoutUpdated: UtilEventHandler.onTimeoutUpdated
 		};
 	});
 

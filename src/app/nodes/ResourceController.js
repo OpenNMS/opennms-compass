@@ -20,7 +20,7 @@
 	require('../misc/OnmsGraph');
 	require('../misc/util');
 
-	var nodeResourceTemplate = require('ngtemplate!./node-resource.html');
+	var nodeResourceTemplate = require('./node-resource.html');
 
 	angular.module('opennms.controllers.NodeResource', [
 		'ionic',

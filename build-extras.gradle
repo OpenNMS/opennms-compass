@@ -1,0 +1,16 @@
+configurations.all {
+    resolutionStrategy {
+        force 'com.android.support:support-v4:27.1.0'
+    }
+}
+android {
+    flavorDimensions "default"
+    productFlavors {
+        armv7 {
+            flavorDimension "default"
+        }
+        x86 {
+            flavorDimension "default"
+        }
+    }
+}

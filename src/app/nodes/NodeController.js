@@ -2,7 +2,7 @@
 	'use strict';
 
 	var angular = require('angular');
-	require('ngCordova');
+	require('ng-cordova');
 	require('angular-debounce');
 
 	var Constants = require('../misc/Constants');
@@ -34,8 +34,8 @@
 	require('../misc/Errors');
 	require('../misc/util');
 
-	var loadingTemplate = require('ngtemplate!../misc/loading.html');
-	var nodeDetailTemplate = require('ngtemplate!./node-detail.html');
+	var loadingTemplate = require('../misc/loading.html');
+	var nodeDetailTemplate = require('./node-detail.html');
 
 	angular.module('opennms.controllers.Node', [
 		'ionic',

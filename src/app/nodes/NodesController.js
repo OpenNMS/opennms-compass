@@ -16,8 +16,8 @@
 
 	var MAX_NODE_LIST_LENGTH = 20;
 
-	var nodesTemplate = require('ngtemplate!./nodes.html');
-	var loadingTemplate = require('ngtemplate!../misc/loading.html');
+	var nodesTemplate = require('./nodes.html');
+	var loadingTemplate = require('../misc/loading.html');
 
 	angular.module('opennms.controllers.Nodes', [
 		'ionic',

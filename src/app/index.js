@@ -15,10 +15,30 @@
 	var angular = require('angular');
 	require('angular-debounce');
 
-	require('ionic-framework/release/js/ionic');
-	require('ionic-framework/release/js/ionic-angular');
+	require('ionic-angular/release/js/ionic');
+	require('ionic-angular/release/js/ionic-angular');
 
-	require('ngCordova');
+	require('ng-cordova');
+
+	if (ionic.Platform.isAndroid()) {
+		ionic.Platform.ready(function() {
+			if (!cordova && !cordova.plugins && !cordova.plugins.diagnostic) {
+				console.log('Android is missing cordova.plugins.diagnostic!!');
+			}
+			cordova.plugins.diagnostic.requestRuntimePermissions(function(statuses) {
+			}, function(error) {
+				console.error('An error occurred requesting permissions: ' + error);
+			},[
+				cordova.plugins.diagnostic.permission.ACCESS_COARSE_LOCATION,
+				cordova.plugins.diagnostic.permission.ACCESS_FINE_LOCATION,
+				cordova.plugins.diagnostic.permission.ACCESS_NETWORK_STATE,
+				cordova.plugins.diagnostic.permission.ACCESS_WIFI_STATE,
+				cordova.plugins.diagnostic.permission.BLUETOOTH,
+				cordova.plugins.diagnostic.permission.INTERNET,
+				cordova.plugins.diagnostic.permission.WRITE_EXTERNAL_STORAGE
+			]);
+		});
+	}
 
 	require('../../generated/misc/BuildConfig');
 	require('./misc/Array');

@@ -2,9 +2,9 @@
 	'use strict';
 
 	var angular = require('angular'),
-		ionic = require('ionic-framework/release/js/ionic');
+		ionic = require('ionic-angular/release/js/ionic');
 
-	require('ngCordova');
+	require('ng-cordova');
 
 	require('../settings/SettingsService');
 

@@ -20,7 +20,7 @@
 	require('../misc/Info');
 	require('../misc/util');
 
-	var editServerTemplate = require('ngtemplate!./edit-server.html');
+	var editServerTemplate = require('./edit-server.html');
 
 	angular.module('opennms.controllers.Settings', [
 		'ionic',
@@ -43,7 +43,7 @@
 				$scope.server = angular.copy(server);
 			} else {
 				$scope.adding = true;
-				$scope.server = {};
+				$scope.server = new Server();
 			}
 
 			return $ionicModal.fromTemplateUrl(editServerTemplate, {
@@ -94,7 +94,8 @@
 					headers: {
 						Accept: '*/*',
 						Authorization: HTTP.createBasicAuthHeader(server.username, server.password)
-					}
+					},
+					timeout: server.getTimeoutMS()
 				};
 
 				return HTTP.get(alarmUrl, options).then(function(res) {

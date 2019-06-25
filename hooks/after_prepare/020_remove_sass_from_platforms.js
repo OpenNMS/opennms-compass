@@ -21,8 +21,8 @@ var deleteFolderRecursive = function(removePath) {
   }
 };
 
-var iosPlatformsDir = path.resolve(__dirname, '../../platforms/ios/www/lib/ionic-framework/scss');
-var androidPlatformsDir = path.resolve(__dirname, '../../platforms/android/assets/www/lib/ionic-framework/scss');
+var iosPlatformsDir = path.resolve(__dirname, '../../platforms/ios/www/lib/ionic-angular/scss');
+var androidPlatformsDir = path.resolve(__dirname, '../../platforms/android/assets/www/lib/ionic-angular/scss');
 
 deleteFolderRecursive(iosPlatformsDir);
 deleteFolderRecursive(androidPlatformsDir);

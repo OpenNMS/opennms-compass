@@ -22,9 +22,9 @@
 	require('../misc/Modals');
 	require('../misc/util');
 
-	var alarmsTemplate = require('ngtemplate!./alarms.html');
-	var filterTemplate = require('ngtemplate!./alarm-filter.html');
-	var loadingTemplate = require('ngtemplate!../misc/loading.html');
+	var alarmsTemplate = require('./alarms.html');
+	var filterTemplate = require('./alarm-filter.html');
+	var loadingTemplate = require('../misc/loading.html');
 
 	var REFRESH_DELAY = 500;
 

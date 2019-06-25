@@ -79,13 +79,7 @@ backshift/test
 backshift/test/**/*
 backshift/vendor
 backshift/vendor/**/*
-classlist/component.json
-classlist/composer.json
-classlist/tests
-classlist/tests/**/*
 d3/package.js
-es5-shim/component.json
-es5-shim/shims.json
 flot-legend/src
 flot-legend/src/**/*
 flot-legend/test

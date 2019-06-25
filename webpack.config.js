@@ -76,7 +76,7 @@ if (argv.env !== 'development') {
 	plugins.push(new webpack.optimize.DedupePlugin());
 	plugins.push(new webpack.optimize.UglifyJsPlugin({
 		mangle: {
-			except: [ '$super', '$', 'jQuery', 'exports', 'require', 'angular', 'ionic', 'ionic-framework' ]
+			except: [ '$super', '$', 'jQuery', 'exports', 'require', 'angular', 'ionic', 'ionic-angular' ]
 		}
 	}));
 }
@@ -93,10 +93,10 @@ var options = {
 			'angular-uuid4',
 			'angularLocalStorage/src/angularLocalStorage',
 			'async',
-			'classlist',
-			'es5-shim',
-			'ionic-framework/release/js/ionic',
-			'ionic-framework/release/js/ionic-angular',
+			/* 'classlist', */
+			/* 'es5-shim', */
+			'ionic-angular/release/js/ionic',
+			'ionic-angular/release/js/ionic-angular',
 			'ip-address',
 			/* 'jquery', */
 			'./src/3rdparty/jquery.visible',
@@ -104,7 +104,7 @@ var options = {
 			'angular-simple-logger',
 			'ui-leaflet/dist/ui-leaflet',
 			'moment',
-			'ngCordova',
+			'ng-cordova',
 			'urijs',
 			'version_compare',
 			'./src/3rdparty/winstore-jscompat',
@@ -182,7 +182,7 @@ var options = {
 			},
 			{
 				test: /\.html$/,
-				loader: 'html'
+				loader: 'ngtemplate!html'
 				/* loader: 'html?config=htmlLoaderConfig' */
 			},
 			{
@@ -212,7 +212,7 @@ var options = {
 			/*
 			{
 				test: /jquery\.js$/,
-				loader: 'expose?jQuery!expose?$'
+				loader: 'expose?jQuery!expose?$!babel'
 			},
 			*/
 			{
@@ -222,6 +222,10 @@ var options = {
 			{
 				test: /[/]ionic\.js$/,
 				loader: 'expose?ionic!exports?ionic'
+			},
+			{
+				test: /\.js$/,
+				loader: 'babel'
 			}
 		]
 	},

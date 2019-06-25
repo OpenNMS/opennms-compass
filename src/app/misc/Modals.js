@@ -18,9 +18,9 @@
 	require('../servers/Servers');
 	require('../settings/SettingsService');
 
-	var alarmDetailTemplate = require('ngtemplate!../alarms/alarm-detail.html');
-	var outagesTemplate = require('ngtemplate!../outages/outages.html');
-	var settingsTemplate = require('ngtemplate!../settings/settings.html');
+	var alarmDetailTemplate = require('../alarms/alarm-detail.html');
+	var outagesTemplate = require('../outages/outages.html');
+	var settingsTemplate = require('../settings/settings.html');
 
 	angular.module('opennms.services.Modals', [
 		'ionic',

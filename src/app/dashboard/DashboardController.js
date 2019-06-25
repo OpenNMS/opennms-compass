@@ -29,12 +29,12 @@
 	require('../misc/OnmsGraph');
 	require('../misc/util');
 
-	var dashboardTemplate = require('ngtemplate!./dashboard.html');
-	var loadingTemplate = require('ngtemplate!../misc/loading.html');
-	var serverPopoverTemplate = require('ngtemplate!./server-popover.html');
+	var dashboardTemplate = require('./dashboard.html');
+	var loadingTemplate = require('../misc/loading.html');
+	var serverPopoverTemplate = require('./server-popover.html');
 
-	var favoriteGraphsTemplate = require('ngtemplate!./dashboard-favorite-graphs.html');
-	var availabilityTemplate = require('ngtemplate!./dashboard-availability.html');
+	var favoriteGraphsTemplate = require('./dashboard-favorite-graphs.html');
+	var availabilityTemplate = require('./dashboard-availability.html');
 
 	var types = {
 		outages: 'Outages',

@@ -1,5 +1,32 @@
-<a name="3.1.0"></a>
-# [3.1.0](https://github.com/OpenNMS/opennms-compass/compare/v3.1.0-450...v3.1.0) (2017-04-14)
+<a name="3.2.1"></a>
+## [3.2.1](https://github.com/OpenNMS/opennms-compass/compare/v3.2.0-456...v3.2.1) (2018-09-26)
+
+
+### Features
+
+* **rest:** make timeouts configurable ([c87aded](https://github.com/OpenNMS/opennms-compass/commit/c87aded))
+
+
+
+<a name="3.2.0-456"></a>
+# [3.2.0-456](https://github.com/OpenNMS/opennms-compass/compare/v3.1.0-454...v3.2.0-456) (2018-04-09)
+
+
+### Bug Fixes
+
+* fix iPhone X rendering issues ([27f9de6](https://github.com/OpenNMS/opennms-compass/commit/27f9de6))
+* **dashboard:** handle duplicate availability categories ([e338d94](https://github.com/OpenNMS/opennms-compass/commit/e338d94))
+* **settings:** fix 1password/lastpass icon placement ([d918a2f](https://github.com/OpenNMS/opennms-compass/commit/d918a2f))
+
+
+
+<a name="3.1.0-454"></a>
+# [3.1.0-454](https://github.com/OpenNMS/opennms-compass/compare/v3.1.0-451...v3.1.0-454) (2017-09-26)
+
+
+
+<a name="3.1.0-451"></a>
+# [3.1.0-451](https://github.com/OpenNMS/opennms-compass/compare/v3.1.0-450...v3.1.0-451) (2017-04-14)
 
 
 ### Features

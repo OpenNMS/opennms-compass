@@ -1,17 +1,11 @@
 {
   "name": "Compass by OpenNMS",
-  "app_id": "bf988c24",
+  "integrations": {},
   "type": "ionic1",
   "gulpStartupTasks": [],
   "watchPatterns": [
     "www/**/*",
     "!www/lib/**/*"
   ],
-  "browsers": [
-    {
-      "platform": "android",
-      "browser": "crosswalk",
-      "version": "12.41.296.5"
-    }
-  ]
+  "id": "bf988c24"
 }

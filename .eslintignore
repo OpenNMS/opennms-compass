@@ -1,18 +1,10 @@
-gulpfile.js
-
 bin/
-couchdb/
-engine/
 generated/
 hooks/
 node_modules/
 platforms/
 plugins/
-temp/
-
-src/3rdparty/
-www/
-
-# for now
-test/
 spec/
+src/3rdparty/
+src/disabled/
+www/

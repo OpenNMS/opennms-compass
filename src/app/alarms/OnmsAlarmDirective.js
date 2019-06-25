@@ -13,7 +13,7 @@ require('../misc/Info');
 require('../misc/Modals');
 require('../misc/util');
 
-var itemTemplate = require('ngtemplate!./onms-alarm.html');
+var itemTemplate = require('./onms-alarm.html');
 
 angular.module('opennms.alarms.Directive', [
 	'ionic',

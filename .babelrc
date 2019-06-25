@@ -1,0 +1,22 @@
+{
+  "presets": [
+    ["env", {
+      "targets": {
+        "browsers": [
+          "last 2 versions",
+          "ios 8.0",
+          "android 4.3"
+        ]
+      }
+    }]
+  ],
+  "plugins": [
+    "transform-class-properties",
+    "transform-es2015-destructuring",
+    "transform-es2015-for-of",
+    "transform-es2015-modules-commonjs",
+    "transform-object-rest-spread",
+    "transform-regenerator",
+    "syntax-async-functions",
+  ]
+}
