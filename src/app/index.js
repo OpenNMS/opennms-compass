@@ -12,13 +12,10 @@
 	require('../../node_modules/onmsicons/fonts/onmsicons.ttf');
 	require('../../node_modules/onmsicons/fonts/onmsicons.woff');
 
-	var angular = require('angular');
-	require('angular-debounce');
-
 	require('ionic-angular/release/js/ionic');
 	require('ionic-angular/release/js/ionic-angular');
 
-	require('ng-cordova');
+	require('ngCordova');
 
 	if (ionic.Platform.isAndroid()) {
 		ionic.Platform.ready(function() {
@@ -33,7 +30,6 @@
 				cordova.plugins.diagnostic.permission.ACCESS_FINE_LOCATION,
 				cordova.plugins.diagnostic.permission.ACCESS_NETWORK_STATE,
 				cordova.plugins.diagnostic.permission.ACCESS_WIFI_STATE,
-				cordova.plugins.diagnostic.permission.BLUETOOTH,
 				cordova.plugins.diagnostic.permission.INTERNET,
 				cordova.plugins.diagnostic.permission.WRITE_EXTERNAL_STORAGE
 			]);
@@ -95,30 +91,16 @@
 		$logProvider.debugEnabled(isDebug);
       /* eslint-enable no-console */
 	}])
-	.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider, $cordovaInAppBrowserProvider) {
+	.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
 		$urlRouterProvider.otherwise('/dashboard');
-
-		$cordovaInAppBrowserProvider.setDefaultOptions({
-			location:'no',
-			enableViewportScale:'yes',
-			transitionstyle:'fliphorizontal',
-			toolbarposition:'top'
-		});
-
 		$ionicConfigProvider.views.maxCache(Constants.MAX_CACHED_VIEWS);
 		$ionicConfigProvider.views.forwardCache(true);
 		$ionicConfigProvider.views.swipeBackEnabled(false);
 		$ionicConfigProvider.tabs.position('bottom');
 		$ionicConfigProvider.backButton.previousTitleText(false);
-
-		$cordovaInAppBrowserProvider.setDefaultOptions({
-			location:'no',
-			enableViewportScale:'yes',
-			transitionstyle:'fliphorizontal',
-			toolbarposition:'top'
-		});
 	})
 	.run(function($rootScope, $http, $log, $timeout, $window, $ionicPlatform, $ionicPopup, debounce, Info, /*IonicService, */ Modals, NotificationService, Servers, util) {
+		console.debug('Main: initializing');
 		/* eslint-disable no-magic-numbers */
 		var calculateSizes = function() {
 			$rootScope.width  = angular.element($window).width();
@@ -140,8 +122,9 @@
 
 		var handleResize = debounce(RESIZE_DELAY, calculateSizes);
 
-		$rootScope.$on('resize', handleResize);
 		$window.addEventListener('orientationchange', handleResize);
+		$window.addEventListener('orientation', handleResize);
+		$window.addEventListener('resize', handleResize);
 		calculateSizes();
 		if (!$rootScope.wide && screen && screen.lockOrientation) {
 			$log.debug('Looks like we\'re on a phone-like device.  Locking orientation to portrait.');

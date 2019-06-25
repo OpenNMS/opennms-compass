@@ -5,6 +5,7 @@
   <author email="ranger@opennms.com" href="http://www.opennms.com/">Benjamin Reed</author>
   <content src="index.html"/>
   <allow-navigation href="*"/>
+  <allow-navigation href="http://10.145.138.14:8100"/>
   <allow-intent href="*"/>
   <access origin="*"/>
   <preference name="android-minSdkVersion" value="16"/>
@@ -138,7 +139,6 @@
   <plugin name="com.bez4pieci.cookies" spec="https://github.com/bez4pieci/Phonegap-Cookies-Plugin.git"/>
   <plugin name="com.raccoonfink.cordova.plugins.http" spec="https://github.com/RangerRick/cordova-HTTP.git#master"/>
   <plugin name="cordova-plugin-appavailability" spec="^0.4.2"/>
-  <plugin name="cordova-diagnostic-plugin" spec="https://github.com/dpa99c/cordova-diagnostic-plugin.git#4.0.10" />
   <plugin name="cordova-plugin-chrome-apps-system-memory" spec="https://github.com/RangerRick/cordova-plugin-chrome-apps-system-memory.git#master"/>
   <plugin name="cordova-plugin-crosswalk-webview" spec="^2.4.0">
     <variable name="XWALK_VERSION" value="23+"/>
@@ -153,16 +153,11 @@
     <variable name="GEOLOCATION_USAGE_DESCRIPTION" value="For setting locations on nodes."/>
   </plugin>
   <plugin name="cordova-plugin-google-analytics" spec="^0.9.0"/>
-  <plugin name="cordova-plugin-inappbrowser" spec="^1.7.2"/>
   <plugin name="cordova-plugin-ionic-webview" spec="^1.2.1"/>
   <plugin name="cordova-plugin-keychain" spec="https://github.com/RangerRick/KeychainPlugin.git"/>
   <plugin name="cordova-plugin-json-storage" spec="https://github.com/OpenNMS/cordova-plugin-json-storage.git"/>
-  <plugin name="cordova-plugin-network-information" spec="^2.0.1"/>
   <plugin name="cordova-plugin-password" spec="https://github.com/RangerRick/cordova-plugin-generic-password.git"/>
-  <plugin name="cordova-plugin-screen-orientation" spec="^3.0.1"/>
-  <plugin name="cordova-plugin-splashscreen" spec="^5.0.2"/>
   <plugin name="cordova-plugin-sqlite-2" spec="^1.0.4"/>
-  <plugin name="cordova-plugin-statusbar" spec="^2.4.2"/>
   <plugin name="cordova-plugin-whitelist" spec="^1.3.3"/>
   <plugin name="ionic-plugin-keyboard" spec="^2.2.1"/>
 </widget>

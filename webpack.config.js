@@ -1,94 +1,43 @@
-var path = require('path'),
-	fs = require('fs'),
-	webpack = require('webpack'),
-	argv = require('yargs').argv,
-	ngAnnotatePlugin = require('ng-annotate-webpack-plugin'),
-	CopyWebpackPlugin = require('copy-webpack-plugin'),
-	ExtractTextPlugin = require('extract-text-webpack-plugin');
+/* eslint-disable no-console */
+
+const argv = require('yargs').argv;
+const fs = require('fs');
+const _ = require('lodash');
+const path = require('path');
+const webpack = require('webpack');
+
+const CopyPlugin = require('copy-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const ngAnnotatePlugin = require('ng-annotate-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+const rootdir = __dirname; // eslint-disable-line no-undef
+const srcdir = path.resolve(rootdir, 'src');
+const destdir = path.resolve(rootdir, 'www');
 
 var configfile = path.join(__dirname, 'package.json');
 var configobj  = JSON.parse(fs.readFileSync(configfile, 'utf8'));
-argv.env = argv.env === 'production'? 'production':'development';
+const mode = argv.mode === 'production'? 'production':'development';
 
-/* eslint-disable no-console */
-console.log(configobj.name + ' v' + configobj.version + ' (build ' + configobj.build + ')');
-/* eslint-enable no-console */
+console.log(configobj.name + ' v' + configobj.version + ' (' + mode + ' build ' + configobj.build + ')'); // eslint-disable-line no-console
 
-var outputDirectory = './www';
-
-var extractCSS = new ExtractTextPlugin('[name].css');
-
-var plugins = [
-	new CopyWebpackPlugin([
-		{
-			context: 'src',
-			from: 'index.html',
-			to: path.resolve(outputDirectory)
-		},
-		{
-			context: 'node_modules/jquery',
-			from: 'dist/',
-			to: path.resolve(outputDirectory, 'jquery')
-		},
-		{
-			context: 'src',
-			from: 'images/',
-			to: path.resolve(outputDirectory, 'images')
-		}
-	]),
-	new webpack.DefinePlugin({
-		__DEVELOPMENT__: argv.env === 'development',
-		__PRODUCTION__: argv.env === 'production',
-		__VERSION__: JSON.stringify(configobj.version),
-		__BUILD__: JSON.stringify(configobj.build)
-	}),
-	new ngAnnotatePlugin({
-		add: true
-	}),
-	/*
-	new webpack.ProvidePlugin({
-		$: 'jquery',
-		jQuery: 'jquery',
-		'window.jQuery': 'jquery'
-	}),
-	*/
-	extractCSS,
-	new webpack.optimize.CommonsChunkPlugin({
-		name: 'vendor',
-		filename: 'vendor.bundle.js',
-		minChunks: Infinity
-	}),
-	/*
-	new webpack.optimize.CommonsChunkPlugin({
-		name: 'css',
-		filename: 'css.bundle.js',
-		minChunks: Infinity
-	}),
-	*/
-	new webpack.optimize.CommonsChunkPlugin({
-		children: true,
-		async: true
-	})
-];
-
-if (argv.env !== 'development') {
-	plugins.push(new webpack.optimize.OccurenceOrderPlugin(true));
-	plugins.push(new webpack.optimize.DedupePlugin());
-	plugins.push(new webpack.optimize.UglifyJsPlugin({
-		mangle: {
-			except: [ '$super', '$', 'jQuery', 'exports', 'require', 'angular', 'ionic', 'ionic-angular' ]
-		}
-	}));
-}
-
-var options = {
+const config = {
+	mode: mode,
 	entry: {
+		styles: [
+			'scss/opennms',
+			'node_modules/onmsicons/scss/onmsicons',
+			'node_modules/leaflet/dist/leaflet'
+		],
+		jquery: 'expose-loader?jQuery!expose-loader?$!jquery/dist/jquery',
 		vendor: [
 			'angular',
 			'angular-animate',
 			'angular-cookies',
 			'angular-debounce',
 			'angular-sanitize',
+			'angular-simple-logger',
 			'angular-ui-router',
 			'angular-uuid4',
 			'angularLocalStorage/src/angularLocalStorage',
@@ -101,14 +50,13 @@ var options = {
 			/* 'jquery', */
 			'./src/3rdparty/jquery.visible',
 			'leaflet/dist/leaflet-src',
-			'angular-simple-logger',
 			'ui-leaflet/dist/ui-leaflet',
 			'moment',
-			'ng-cordova',
+			'ngCordova',
 			'urijs',
 			'version_compare',
 			'./src/3rdparty/winstore-jscompat',
-			'x2js/xml2json',
+			'x2js',
 			/* graphing */
 			'd3',
 			'flot/jquery.flot',
@@ -119,133 +67,258 @@ var options = {
 			'./src/3rdparty/jquery.flot.axislabels',
 			'flot-legend/jquery.flot.legend',
 			'flot.tooltip/js/jquery.flot.tooltip',
-			'imports?angular!./src/3rdparty/angular-flot'
-		],
-		css: [
-			'./scss/opennms.scss',
-			'./node_modules/onmsicons/scss/onmsicons.scss',
-			'style!css!./node_modules/leaflet/dist/leaflet.css'
+			'imports-loader?angular!./src/3rdparty/angular-flot'
 		],
 		app: [
-			'./src/app/index'
+			path.resolve(srcdir, 'app', 'index')
 		]
 	},
 	output: {
-		path: outputDirectory,
+		path: destdir,
 		filename: '[name].bundle.js',
 		chunkFilename: '[chunkhash].bundle.js'
 	},
 	resolve: {
-		modules: [ 'node_modules' ],
-		modulesDirectories: [ 'node_modules', 'src', '.' ],
+		modules: [ path.resolve(rootdir, 'node_modules'), srcdir, rootdir ],
 		descriptionFiles: ['package.json', 'bower.json'],
 		mainFields: ['main', 'browser'],
 		mainFiles: ['index'],
 		aliasFields: ['browser'],
-		extensions: ['', '.js', '.json', '.scss', '.css'],
-		/*moduleExtensions: ['-loader'],
-		enforceModuleExtension: false,*/
+		extensions: ['.ts', '.js', '.json', '.scss', '.css', '.html'],
 		alias: {
 			'ionic-filter-bar': 'ionic-filter-bar/dist/ionic.filter.bar',
 			'lodash.find': 'lodash',
-			'lodash.max': 'lodash'
+			'lodash.max': 'lodash',
+			'x2js/xml2json': 'x2js'
 		}
 	},
-	module: {
-		noParse: /lie\.js$|\/leveldown\/|min\.js$/,
-		rules: [
-		  {
-          enforce: 'pre',
-          test: /\.js$/,
-          loaders: ['eslint'],
-          exclude: /node_modules/
-        }
-      ],
-		loaders: [
-			{
-				test: /\.css$/,
-				loader: 'style!css',
-				include: [
-					path.resolve(__dirname, 'lib/css')
-				]
-			},
-			{
-				test: /\.scss$/,
-				/*loader: extractCSS.extract('css', 'sass')*/
-				/*
-				loader: ExtractTextPlugin.extract({
-					fallbackLoader: 'style',
-					loader: 'css?minifier!group-css-media-queries!sass'
-				})
-				*/
-				loaders: ['style', 'css?minifier', 'group-css-media-queries', 'sass']
-			},
-			{
-				test: /\.html$/,
-				loader: 'ngtemplate!html'
-				/* loader: 'html?config=htmlLoaderConfig' */
-			},
-			{
-				test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
-				loader: 'url?limit=10000&mimetype=application/vnd.ms-fontobject'
-			},
-			{
-				test: /\.otf(\?v=\d+\.\d+\.\d+)?$/,
-				loader: 'url?limit=10000&mimetype=application/x-font-opentype'
-			},
-			{
-				test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
-				loader: 'url?limit=10000&mimetype=application/octet-stream'
-			},
-			{
-				test: /\.woff2?(\?v=\d+\.\d+\.\d+)?$/,
-				loader: 'url?limit=10000&mimetype=application/font-woff'
-			},
-			{
-				test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
-				loader: 'file'
-			},
-			{
-				test: /\.(jpe?g|png|gif)$/i,
-				loader: 'file'
-			},
+	plugins: [
+    new MiniCssExtractPlugin({
+      filename: '[name].css',
+      chunkFilename: '[id].css'
+		}),
+		new CopyPlugin([
 			/*
 			{
-				test: /jquery\.js$/,
-				loader: 'expose?jQuery!expose?$!babel'
+				context: 'node_modules/jquery/dist',
+				from: 'jquery.min.js',
+				to: path.resolve(destdir, 'jquery.js')
+			},
+			{
+				context: 'node_modules/jquery/dist',
+				from: 'jquery.min.map',
+				to: path.resolve(destdir, 'jquery.map')
 			},
 			*/
 			{
+				context: 'node_modules/d3',
+				from: 'd3.min.js',
+				to: path.resolve(destdir, 'd3.js')
+			},
+			{
+				context: 'src',
+				from: 'index.html',
+				to: path.resolve(destdir, 'index.html')
+			},
+			{
+				context: 'src',
+				from: 'images/',
+				to: path.resolve(destdir, 'images')
+			}
+		]),
+		new webpack.DefinePlugin({
+			__DEVELOPMENT__: mode === 'development',
+			__PRODUCTION__: mode === 'production',
+			__VERSION__: JSON.stringify(configobj.version),
+			__BUILD__: JSON.stringify(configobj.build)
+		}),
+		new ngAnnotatePlugin({
+			add: true
+		}),
+		new HtmlWebpackPlugin({
+			inject: 'head',
+			template: 'src/index.html'
+		})
+	],
+	module: {
+		noParse: /lie\.js$|\/leveldown\/|min\.js$/,
+		rules: [
+			{
+				test: /\.(sa|sc|c)ss$/,
+				use: [
+					{
+						loader: MiniCssExtractPlugin.loader,
+						options: {
+							hmr: mode === 'development'
+						}
+					},
+          {
+            loader: 'css-loader',
+            options: {
+              sourceMap: true
+            },
+					},
+					'sass-loader'
+				]
+			},
+			{
+				test: /\.html$/,
+				exclude: [ path.resolve(srcdir, 'index.html') ],
+				use: [
+					'ngtemplate-loader',
+					'html-loader'
+				]
+			},
+			{
+				test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
+				use: [
+					{
+						loader: 'url-loader',
+						options: {
+							limit: 10000,
+							mimetype: 'application/vnd.ms-fontobject'
+						}
+					}
+				]
+			},
+			{
+				test: /\.otf(\?v=\d+\.\d+\.\d+)?$/,
+				use: [
+					{
+						loader: 'url-loader',
+						options: {
+							limit: 10000,
+							mimetype: 'application/x-font-opentype'
+						}
+					}
+				]
+			},
+			{
+				test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
+				use: [
+					{
+						loader: 'url-loader',
+						options: {
+							limit: 10000,
+							mimetype: 'application/octet-stream'
+						}
+					}
+				]
+			},
+			{
+				test: /\.woff2?(\?v=\d+\.\d+\.\d+)?$/,
+				use: [
+					{
+						loader: 'url-loader',
+						options: {
+							limit: 10000,
+							mimetype: 'application/font-woff'
+						}
+					}
+				]
+			},
+			{
+				test: /\.(jpe?g|png|gif|svg)(\?v=\d+\.\d+\.\d+)?$/,
+				use: [ 'file-loader' ]
+			},
+			{
+				test: /[/]d3\.js$/,
+				use: [
+					{
+						loader: 'expose-loader',
+						options: 'd3'
+					},
+					{
+						loader: 'exports-loader',
+						options: 'd3'
+					}
+				]
+			},
+			{
 				test: /[/]angular\.js$/,
-				loader: 'expose?angular!exports?angular'
+				use: [
+					{
+						loader: 'expose-loader',
+						options: 'angular'
+					},
+					{
+						loader: 'exports-loader',
+						options: 'angular'
+					}
+				]
 			},
 			{
 				test: /[/]ionic\.js$/,
-				loader: 'expose?ionic!exports?ionic'
+				use: [
+					{
+						loader: 'expose-loader',
+						options: 'ionic'
+					},
+					{
+						loader: 'exports-loader',
+						options: 'ionic'
+					}
+				]
 			},
 			{
-				test: /\.js$/,
-				loader: 'babel'
+				test: /\.[jt]s$/,
+				exclude: /node_modules/,
+				loader: 'babel-loader'
 			}
 		]
 	},
-	plugins: plugins,
 	externals: {
 		fs: '{}',
 		cordova: '{}',
-		jQuery: '{}'
-	} /*,
-	htmlLoaderConfig: {
-		minimize: false
+		d3: '{}' /*,
+		jQuery: '{}' */
+	},
+	optimization: {
+		minimize: mode === 'production',
+		minimizer: [
+			new TerserPlugin({
+				cache: true,
+				parallel: true,
+				sourceMap: true,
+				terserOptions: {
+					mangle: {
+						reserved: ['$super', '$', 'jQuery', 'exports', 'require', 'angular', 'ionic', 'ionic-angular']
+					}
+				}
+			})
+		] /*,
+		runtimeChunk: 'single',
+		splitChunks: {
+			chunks: 'all',
+			maxInitialRequests: Infinity,
+			minSize: 0,
+			cacheGroups: {
+				vendor: {
+					test: /[\\/]node_modules[\\/]/,
+					name(module) {
+						let packageName = module.context.match(/[/]node_modules[/](.*?)$/)[1];
+						// console.log('context=', module.context);
+						// console.log('raw package name=', packageName);
+						if (packageName && packageName.startsWith('@')) {
+							packageName = packageName.match(/^(@[^/]+\/[^/]+)/)[1];
+						} else {
+							packageName = packageName.match(/^([^\\/]+)/)[1];
+						}
+						const moduleName = `npm.${packageName.replace('@', '')}`;
+						// console.log('using module name:', moduleName);
+						return moduleName;
+					}
+				}
+			}
+		}
+		*/
 	}
-	*/
 };
 
-if (argv.env === 'development') {
-	options.output.pathinfo = true;
-	options.devtool = 'eval';
+if (mode === 'development') {
+	config.devtool = 'eval';
 } else {
-	options.devtool = 'source-map';
+	config.devtool = 'source-map';
 }
 
-module.exports = options;
+module.exports = config;

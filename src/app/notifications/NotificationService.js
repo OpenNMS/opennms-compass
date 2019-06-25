@@ -28,32 +28,6 @@
 	.factory('NotificationService', function($log, $ionicPlatform, util) {
 		$log.info('NotificationService: Initializing.');
 
-		var registerForPush = function() {
-			$log.debug('registering for push');
-
-			var push = PushNotification.init({
-				ios: {
-					alert: true,
-					badge: true,
-					sound: true
-				}
-			});
-
-			push.on('registration', function(data) {
-				$log.debug('NotificationService.registration: complete: ' + angular.toJson(data));
-			});
-			push.on('notification', function(data) {
-				$log.debug('NotificationService.notification: ' + angular.toJson(data));
-			});
-			push.on('error', function(data) {
-				$log.debug('NotificationService.error: ' + angular.toJson(data));
-			});
-		};
-
-		$ionicPlatform.ready(function() {
-			registerForPush();
-		});
-
 		return {};
 	});
 

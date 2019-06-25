@@ -285,11 +285,11 @@
 
 		init();
 
-		var getRegistrationId = function() {
+		var _getRegistrationId = function() {
 			return _get('registrationId');
 		};
 
-		var setRegistrationId = function(id) {
+		var _setRegistrationId = function(id) {
 			return _set('registrationId', id);
 		};
 

@@ -4,7 +4,7 @@
 	var angular = require('angular'),
 		ionic = require('ionic-angular/release/js/ionic');
 
-	require('ng-cordova');
+	require('ngCordova');
 
 	require('../settings/SettingsService');
 

@@ -1,3 +1,6 @@
+import { Plugins } from '@capacitor/core';
+const { Browser, SplashScreen } = Plugins;
+
 (function() {
 	'use strict';
 
@@ -7,7 +10,7 @@
 		lodash = require('lodash'),
 		Address6 = require('ip-address').Address6;
 
-	require('ng-cordova');
+	require('ngCordova');
 
 	require('./Analytics');
 	require('./Errors');
@@ -222,7 +225,7 @@
 			}
 		};
 	})
-	.factory('util', function($cordovaInAppBrowser, $ionicHistory, $ionicPlatform, $ionicViewSwitcher, $log, $rootScope, $state, $window, Analytics, Servers, Settings, UtilEventBroadcaster, UtilEventHandler) {
+	.factory('util', function($ionicHistory, $ionicPlatform, $ionicViewSwitcher, $log, $rootScope, $state, $window, Analytics, Servers, Settings, UtilEventBroadcaster, UtilEventHandler) {
 		$log.info('util: Initializing.');
 
 		$ionicPlatform.ready(function() {
@@ -279,16 +282,16 @@
 		};
 
 		var hideSplashscreen = function() {
-			if (navigator.splashscreen) {
-				navigator.splashscreen.hide();
-			}
+			SplashScreen.hide();
 		};
 
 		var openServer = function() {
 			Servers.getDefault().then(function(server) {
 				if (server) {
 					if (__DEVELOPMENT__) { $log.debug('util.openServer: ' + server.url); }
-					$cordovaInAppBrowser.open(server.url, '_blank');
+					Browser.open({
+						url: server.url
+					});
 				} else {
 					$log.debug('util.openServer: no server defined');
 				}

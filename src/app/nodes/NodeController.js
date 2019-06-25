@@ -2,7 +2,7 @@
 	'use strict';
 
 	var angular = require('angular');
-	require('ng-cordova');
+	require('ngCordova');
 	require('angular-debounce');
 
 	var Constants = require('../misc/Constants');

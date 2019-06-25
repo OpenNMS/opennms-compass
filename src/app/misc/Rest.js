@@ -4,7 +4,7 @@
 	var angular = require('angular'),
 		RestError = require('./RestError'),
 		URI = require('urijs'),
-		X2JS = require('x2js/xml2json');
+		X2JS = require('x2js');
 
 	require('./HTTP');
 	require('./util');
@@ -238,8 +238,8 @@
 			},
 			getXml: function(restFragment, params, headers) {
 				return doGet(restFragment, params, headers).then(function(data) {
-					var json = x2js.xml_str2json(data);
-					//$log.debug('Rest.getXml:',json);
+					var json = x2js.xml2js(data);
+					// $log.debug('Rest.getXml:',json);
 					return json;
 				});
 			},

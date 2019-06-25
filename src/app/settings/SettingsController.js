@@ -387,10 +387,12 @@
 		util.onSettingsUpdated(init);
 
 		util.onDefaultServerUpdated(function(newDefault) {
+			$log.debug('SettingsCtrl: onDefaultServerUpdated:', newDefault);
 			$scope.defaultServer = newDefault;
 			$scope.$broadcast('scroll.refreshComplete');
 		});
 		util.onServersUpdated(function(newServers) {
+			$log.debug('SettingsCtrl: onServersUpdated:', newServers);
 			$scope.servers = newServers;
 			initDefaultServer();
 			$scope.$broadcast('scroll.refreshComplete');
