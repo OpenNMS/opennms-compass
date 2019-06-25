@@ -8,7 +8,6 @@ const webpack = require('webpack');
 
 const CopyPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const ngAnnotatePlugin = require('ng-annotate-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
@@ -131,9 +130,6 @@ const config = {
 			__PRODUCTION__: mode === 'production',
 			__VERSION__: JSON.stringify(configobj.version),
 			__BUILD__: JSON.stringify(configobj.build)
-		}),
-		new ngAnnotatePlugin({
-			add: true
 		}),
 		new HtmlWebpackPlugin({
 			inject: 'head',

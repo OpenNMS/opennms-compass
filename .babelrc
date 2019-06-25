@@ -1,23 +1,25 @@
 {
   "presets": [
-    ["env", {
+    ["@babel/preset-env", {
       "targets": {
         "browsers": [
           "last 2 versions",
-          "ios 8.0",
+          "ios 11.0",
           "android 4.3"
         ]
       }
-    }]
+    }, "@babel/preset-typescript"]
   ],
   "plugins": [
-    "transform-class-properties",
-    "transform-es2015-destructuring",
-    "transform-es2015-for-of",
-    "transform-es2015-modules-commonjs",
-    "transform-object-rest-spread",
-    "transform-regenerator",
-    "transform-runtime",
-    "syntax-async-functions",
+    "angularjs-annotate",
+    "@babel/plugin-proposal-async-generator-functions",
+    "@babel/plugin-proposal-class-properties",
+    "@babel/plugin-proposal-object-rest-spread",
+    "@babel/plugin-transform-destructuring",
+    "@babel/plugin-transform-for-of",
+    "@babel/plugin-transform-modules-commonjs",
+    "@babel/plugin-transform-regenerator",
+    "@babel/plugin-transform-runtime",
+    "@babel/plugin-transform-typescript"
   ]
 }
