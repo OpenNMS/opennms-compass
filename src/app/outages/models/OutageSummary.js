@@ -18,7 +18,7 @@ function OutageSummary(data) {
    * @propertyOf OutageSummary
    * @returns {number} Unique integer identifier for node
    */
-  self.nodeId = parseInt(data['_node-id'], 10);
+  self.nodeId = parseInt(data['node-id'], 10);
 
   /**
    * @description
@@ -27,7 +27,7 @@ function OutageSummary(data) {
    * @propertyOf OutageSummary
    * @returns {string} The human-readable name of the node of this alarm.
    */
-  self.nodeLabel = data['_node-label'];
+  self.nodeLabel = data['node-label'];
 
   /**
    * @description
@@ -36,7 +36,7 @@ function OutageSummary(data) {
    * @propertyOf OutageSummary
    * @returns {*|Date} The time the outage started.
    */
-  self.down = data['_time-down']? moment(data['_time-down']) : undefined;
+  self.down = data['time-down']? moment(data['time-down']) : undefined;
 
   /**
    * @description
@@ -45,7 +45,7 @@ function OutageSummary(data) {
    * @propertyOf OutageSummary
    * @returns {*|Date} The time the outage was resolved.
    */
-  self.up = data['_time-up']? moment(data['_time-up']) : undefined;
+  self.up = data['time-up']? moment(data['time-up']) : undefined;
 
   /**
    * @description
@@ -54,7 +54,7 @@ function OutageSummary(data) {
    * @propertyOf OutageSummary
    * @returns {*|Date} The time the outage was retrieved from the server.
    */
-  self.now = data['_time-now']? moment(data['_time-now']) : undefined;
+  self.now = data['time-now']? moment(data['time-now']) : undefined;
 }
 
 /**
@@ -76,11 +76,11 @@ OutageSummary.prototype.getNodeName = function() {
 
 OutageSummary.prototype.toJSON = function() {
   return {
-    '_node-id': this.nodeId,
-    '_node-label': this.nodeLabel,
-    '_time-down': this.down,
-    '_time-up': this.up,
-    '_time-now': this.now
+    'node-id': this.nodeId,
+    'node-label': this.nodeLabel,
+    'time-down': this.down,
+    'time-up': this.up,
+    'time-now': this.now
   };
 };
 

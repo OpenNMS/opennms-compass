@@ -19,7 +19,7 @@ function AvailabilityService(svc) {
    * @propertyOf AvailabilityService
    * @returns {number} Service ID
    */
-  self.id   = Number(svc._id);
+  self.id   = Number(svc.id);
 
   /**
    * @description
@@ -28,7 +28,7 @@ function AvailabilityService(svc) {
    * @propertyOf AvailabilityService
    * @returns {number} Service's availability (as a percentage)
    */
-  self.availability = parseFloat(svc._availability);
+  self.availability = parseFloat(svc.availability);
 
   /**
    * @description
@@ -37,16 +37,16 @@ function AvailabilityService(svc) {
    * @propertyOf AvailabilityService
    * @returns {string} The name of the service.
    */
-  self.name = svc._name;
+  self.name = svc.name;
 
   self.hash = md5([self.id, self.availability, self.name].join('|'));
 }
 
 AvailabilityService.prototype.toJSON = function() {
   return {
-    _id: this.id,
-    _availability: this.availability,
-    _name: this.name
+    id: this.id,
+    availability: this.availability,
+    name: this.name
   };
 };
 

@@ -27,7 +27,7 @@ function Node(node) {
    * @propertyOf Node
    * @returns {number} The unique node ID
    */
-  self.id = parseInt(node._id, 10);
+  self.id = parseInt(node.id, 10);
 
   /**
    * @description
@@ -36,7 +36,7 @@ function Node(node) {
    * @propertyOf Node
    * @returns {string} The node's foreign source
    */
-  self.foreignSource = nullSafe(node._foreignSource);
+  self.foreignSource = nullSafe(node.foreignSource);
 
   /**
    * @description
@@ -45,7 +45,7 @@ function Node(node) {
    * @propertyOf Node
    * @returns {string} The node's foreignId field
    */
-  self.foreignId = nullSafe(node._foreignId);
+  self.foreignId = nullSafe(node.foreignId);
 
   /**
    * @description
@@ -54,7 +54,7 @@ function Node(node) {
    * @propertyOf Node
    * @returns {string} The node's label
    */
-  self.label = node._label;
+  self.label = node.label;
 
   /**
    * @description
@@ -63,7 +63,7 @@ function Node(node) {
    * @propertyOf Node
    * @returns {string} The node's type
    */
-  self.type = node._type;
+  self.type = node.type;
 
   /**
    * @description
@@ -111,15 +111,12 @@ function Node(node) {
    * @propertyOf Node
    * @returns {array} The node's list of categories
    */
-  self.categories = node.categories;
-  if (self.categories && !angular.isArray(self.categories)) {
-    self.categories = [self.categories];
-  }
+  self.categories = node.categories_asArray;
   if (self.categories) {
-    self.categories = self.categories.map(function(cat) {
+    self.categories = self.categories.map((cat) => {
       return {
-        id: parseInt(cat._id, 10),
-        name: cat._name
+        id: parseInt(cat.id, 10),
+        name: cat.name
       };
     });
   }
@@ -237,11 +234,11 @@ Node.prototype.getAddress = function() {
 
 Node.prototype.toJSON = function() {
   var ret = {
-    _id: this.id,
-    _foreignSource: this.foreignSource,
-    _foreignId: this.foreignId,
-    _label: this.label,
-    _type: this.type,
+    id: this.id,
+    foreignSource: this.foreignSource,
+    foreignId: this.foreignId,
+    label: this.label,
+    type: this.type,
     labelSource: this.labelSource,
     assetRecord: this.assets,
     createTime: this.createTime,
@@ -256,8 +253,8 @@ Node.prototype.toJSON = function() {
   if (this.categories) {
     ret.categories = this.categories.map(function(cat) {
       return {
-        _id: cat.id,
-        _name: cat.name
+        id: cat.id,
+        name: cat.name
       };
     });
   }

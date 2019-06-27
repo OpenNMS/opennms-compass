@@ -56,19 +56,9 @@
 				}
 
 				return RestService.getXml('/availability').then(function(results) {
-					/* jshint -W069 */ /* "better written in dot notation" */
-					var ret = [];
-
-					if (results && results.availability && results.availability.section) {
-						var sections = results.availability.section;
-						if (!angular.isArray(sections)) {
-							sections = [sections];
-						}
-						for (var i=0, len=sections.length; i < len; i++) {
-							ret.push(new AvailabilitySection(sections[i]));
-						}
+					if (results && results.section_asArray) {
+						return results.section_asArray.map((section) => new AvailabilitySection(section));
 					}
-
 					return ret;
 				});
 			}).catch(function(err) {
@@ -117,8 +107,8 @@
 				}
 				var url = '/availability/nodes/' + nodeId;
 				return RestService.getXml(url).then(function(results) {
-					if (results && results.node) {
-						return new AvailabilityNode(results.node);
+					if (results && results.id) {
+						return new AvailabilityNode(results);
 					}
 
 					return undefined;

@@ -1,9 +1,14 @@
 {
 	"compilerOptions": {
-		"target": "ES5",
+		"target": "es6",
 		"module": "commonjs",
-		"declarationFiles": false,
-		"noExternalResolve": true,
-		"sortOutput": true
+		"esModuleInterop": true,
+		"lib": [
+			"dom",
+			"es2015",
+			"es5",
+			"es6",
+			"es7"
+		]
 	}
 }

@@ -13,6 +13,8 @@ var md5 = require('blueimp-md5');
 function AvailabilitySection(section) {
   var self = this;
 
+  console.log('section=', section);
+
   /**
    * @description
    * @ngdoc property
@@ -20,7 +22,7 @@ function AvailabilitySection(section) {
    * @propertyOf AvailabilitySection
    * @returns {string} Section name
    */
-  self.name   = section._name;
+  self.name   = section.name;
 
   /**
    * @description
@@ -30,22 +32,14 @@ function AvailabilitySection(section) {
    * @returns {array} An array of categories
    */
   self.categories = [];
-  if (section.categories) {
-    if (section.categories.category) {
-      if (!angular.isArray(section.categories.category)) {
-        section.categories.category = [section.categories.category];
-      }
-      section.categories = section.categories.category;
-    }
-    for (var i=0, len=section.categories.length; i < len; i++) {
-      self.categories.push(new AvailabilityCategory(section.categories[i]));
-    }
+  if (section.categories && section.categories.category_asArray) {
+    self.categories = section.categories.category_asArray.map((cat) => new AvailabilityCategory(cat));
   }
 }
 
 AvailabilitySection.prototype.toJSON = function() {
   return {
-    _name: this.name,
+    name: this.name,
     categories: {
       category: this.categories
     }

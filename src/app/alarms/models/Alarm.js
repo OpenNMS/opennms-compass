@@ -1,14 +1,15 @@
 'use strict';
 
-var OnmsEvent = require('../../events/models/OnmsEvent'),
-  moment = require('moment'),
-  md5 = require('blueimp-md5'),
-  StringUtils = require('../../misc/String');
+import moment from 'moment';
+import md5 from 'blueimp-md5';
+import StringUtils from '../../misc/String';
 
-var emptyParms = /\s+parms:\s*$/;
+const OnmsEvent = require('../../events/models/OnmsEvent');
 
-var DEFAULT_ALARM_ID = -1;
-var DEFAULT_ALARM_COUNT = 0;
+const emptyParms = /\s+parms:\s*$/;
+
+const DEFAULT_ALARM_ID = -1;
+const DEFAULT_ALARM_COUNT = 0;
 
 /**
  * @ngdoc object
@@ -18,7 +19,7 @@ var DEFAULT_ALARM_COUNT = 0;
  * @constructor
  */
 function Alarm(alarm, isJson) {
-  var self = this;
+  const self = this;
   //console.log('alarm:' + angular.toJson(alarm));
 
   /**
@@ -28,7 +29,7 @@ function Alarm(alarm, isJson) {
    * @propertyOf Alarm
    * @returns {number} Alarm ID
    */
-  self.id   = parseInt(alarm._id||DEFAULT_ALARM_ID, 10);
+  self.id   = parseInt(alarm.id||DEFAULT_ALARM_ID, 10);
 
   /**
    * @description
@@ -37,7 +38,7 @@ function Alarm(alarm, isJson) {
    * @propertyOf Alarm
    * @returns {number} Number of times the alarm has triggered.
    */
-  self.count = parseInt(alarm._count||DEFAULT_ALARM_ID, 10);
+  self.count = parseInt(alarm.count||DEFAULT_ALARM_ID, 10);
 
   /**
    * @description
@@ -82,7 +83,7 @@ function Alarm(alarm, isJson) {
    * @propertyOf Alarm
    * @returns {string} Severity the of alarm.
    */
-  self.severity   = alarm._severity;
+  self.severity   = alarm.severity;
 
   /**
    * @description
@@ -91,7 +92,7 @@ function Alarm(alarm, isJson) {
    * @propertyOf Alarm
    * @returns {number} Alarm type ID, see {@link http://www.opennms.org/wiki/Configuring_alarms#Alarm_Types alarm types}
    */
-  self.type   = parseInt(alarm._type, 10);
+  self.type   = parseInt(alarm.type, 10);
 
   /**
    * @description

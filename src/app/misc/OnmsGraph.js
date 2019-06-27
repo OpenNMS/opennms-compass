@@ -376,7 +376,7 @@ angular.module('opennms.misc.OnmsGraph', [
 									data: data,
 									headers: {
 										'Content-Type': 'application/json',
-										Accept: 'application/json'
+										accept: 'application/json'
 									}
 								}).then(function(response) {
 									//$log.debug('ResourceService.fetchFunction: ' + angular.toJson(response));

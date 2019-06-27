@@ -1,30 +1,27 @@
+import 'onmsicons/fonts/onmsicons.eot';
+import 'onmsicons/fonts/onmsicons.svg';
+import 'onmsicons/fonts/onmsicons.ttf';
+import 'onmsicons/fonts/onmsicons.woff';
+
+import 'ionic-angular/release/js/ionic';
+import 'ionic-angular/release/js/ionic-angular';
+import 'ngCordova';
+
+import '../../generated/misc/BuildConfig';
+import './misc/Array';
+import './misc/String';
+
 (function () {
 	'use strict';
-
-	/* global screen: true */
-
-	/*
-	require('style!css!../../node_modules/leaflet/dist/leaflet.css');
-	require('../../scss/opennms.scss');
-	*/
-	require('../../node_modules/onmsicons/fonts/onmsicons.eot');
-	require('../../node_modules/onmsicons/fonts/onmsicons.svg');
-	require('../../node_modules/onmsicons/fonts/onmsicons.ttf');
-	require('../../node_modules/onmsicons/fonts/onmsicons.woff');
-
-	require('ionic-angular/release/js/ionic');
-	require('ionic-angular/release/js/ionic-angular');
-
-	require('ngCordova');
 
 	if (ionic.Platform.isAndroid()) {
 		ionic.Platform.ready(function() {
 			if (!cordova && !cordova.plugins && !cordova.plugins.diagnostic) {
-				console.log('Android is missing cordova.plugins.diagnostic!!');
+				console.log('Android is missing cordova.plugins.diagnostic!!'); // eslint-disable-line no-console
 			}
 			cordova.plugins.diagnostic.requestRuntimePermissions(function(statuses) {
 			}, function(error) {
-				console.error('An error occurred requesting permissions: ' + error);
+				console.error('An error occurred requesting permissions: ' + error); // eslint-disable-line no-console
 			},[
 				cordova.plugins.diagnostic.permission.ACCESS_COARSE_LOCATION,
 				cordova.plugins.diagnostic.permission.ACCESS_FINE_LOCATION,
@@ -36,11 +33,7 @@
 		});
 	}
 
-	require('../../generated/misc/BuildConfig');
-	require('./misc/Array');
-	require('./misc/String');
-
-	var Constants = require('./misc/Constants');
+	const Constants = require('./misc/Constants');
 
 	require('./misc/Analytics');
 	require('./misc/Info');
@@ -59,8 +52,8 @@
 	require('./servers/Servers');
 	require('./misc/util');
 
-	var RESIZE_DELAY = 100,
-		READY_DELAY = 1000;
+	const RESIZE_DELAY = 100;
+	const READY_DELAY = 1000;
 
 	angular.module('opennms.Main', [
 		'ionic',

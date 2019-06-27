@@ -20,7 +20,7 @@ function MonitoredService(svc) {
    * @propertyOf MonitoredService
    * @returns {number} The unique service ID
    */
-  self.id = svc._id;
+  self.id = svc.id;
 
   /**
    * @description
@@ -38,7 +38,7 @@ function MonitoredService(svc) {
    * @propertyOf MonitoredService
    * @returns {number} The unique ID of the service type this monitored service is of.
    */
-  self.serviceId = svc.serviceType._id;
+  self.serviceId = svc.serviceType.id;
 
   /**
    * @description
@@ -56,21 +56,21 @@ function MonitoredService(svc) {
    * @propertyOf MonitoredService
    * @returns {*} the monitored service status.
    */
-  self.status = svc._status;
+  self.status = svc.status;
 
   self.hash = md5([self.id, self.ipInterfaceId, self.serviceId, self.serviceName, self.status].join('|'));
 }
 
 MonitoredService.prototype.toJSON = function() {
   var ret = {
-    _id: this.id,
+    id: this.id,
     ipInterfaceId: this.ipInterfaceId,
-    _status: this.status
+    status: this.status
   };
 
   if (this.serviceId || this.serviceName) {
     ret.serviceType = {
-      _id: this.serviceId,
+      id: this.serviceId,
       name: this.serviceName
     };
   }

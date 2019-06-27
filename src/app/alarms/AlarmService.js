@@ -31,40 +31,27 @@
 			return info.then(function(i) {
 				var useJson = Capabilities.useJson();
 				if (useJson) {
-					return RestService.get('/alarms', filter.toParams(i.numericVersion), {Accept: 'application/json'}).then(function(results) {
+					return RestService.get('/alarms', filter.toParams(i.numericVersion), {accept: 'application/json'}).then(function(results) {
 						if (results && results.alarm) {
 							var alarms = results.alarm;
 							if (!angular.isArray(alarms)) {
 								alarms = [alarms];
 							}
-							for (var i=0, len = alarms.length; i < len; i++) {
-								alarms[i] = new Alarm(alarms[i], true);
-							}
-							return alarms;
+							return alarms.map((alarm) => new Alarm(alarm, true));
 						}
 
-						$log.warn('AlarmService.getAlarms: unhandled response: ' + angular.toJson(results));
+						$log.warn('AlarmService.getAlarms: unhandled response:', results);
 						return [];
 					});
 				}
 
 				// no JSON, parse the XML version
 				return RestService.getXml('/alarms', filter.toParams(i.numericVersion)).then(function(results) {
-					/* jshint -W069 */ /* "better written in dot notation" */
-					if (results && results.alarms && results.alarms._totalCount === '0') {
-						return [];
-					} else if (results && results.alarms && results.alarms.alarm) {
-						var alarms = results.alarms.alarm;
-						if (!angular.isArray(alarms)) {
-							alarms = [alarms];
-						}
-						for (var i=0, len=alarms.length; i < len; i++) {
-							alarms[i] = new Alarm(alarms[i]);
-						}
-						return alarms;
+					if (results && results.alarm_asArray) {
+						return results.alarm_asArray.map((alarm) => new Alarm(alarm, true));
 					}
 
-					$log.warn('AlarmService.getAlarms: unhandled response: ' + angular.toJson(results));
+					$log.warn('AlarmService.getAlarms: unhandled response:', results);
 					return [];
 				});
 			}).catch(function(err) {
@@ -97,8 +84,8 @@
 			RestService.getXml('/alarms/' + alarmId).then(function(results) {
 				/* jshint -W069 */ /* "better written in dot notation" */
 				var ret;
-				if (results && results.alarm) {
-					ret = new Alarm(results.alarm);
+				if (results && results.id) {
+					ret = new Alarm(results);
 				}
 				deferred.resolve(ret);
 			}).catch(function(err) {

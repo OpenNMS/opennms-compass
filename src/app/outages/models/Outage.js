@@ -22,7 +22,7 @@ function Outage(outage) {
    * @propertyOf Outage
    * @returns {number} The unique outage ID
    */
-  self.id = parseInt(outage._id, 10);
+  self.id = parseInt(outage.id, 10);
 
   /**
    * @description
@@ -40,9 +40,9 @@ function Outage(outage) {
    * @propertyOf Outage
    * @returns {*|Date} The time the service was lost.
    */
-  self.ifLostService = moment(outage._ifLostService);
+  self.ifLostService = moment(outage.ifLostService);
 
-  if (outage._ifRegainedService) {
+  if (outage.ifRegainedService) {
     /**
      * @description
      * @ngdoc property
@@ -50,7 +50,7 @@ function Outage(outage) {
      * @propertyOf Outage
      * @returns {*|Date} The time the service was regained. Property is undefined if the service hasn't been regained.
      */
-    self.ifRegainedService = moment(outage._ifRegainedService);
+    self.ifRegainedService = moment(outage.ifRegainedService);
   }
 
   /**
@@ -126,10 +126,10 @@ Outage.prototype.getSeverityClass = function() {
 
 Outage.prototype.toJSON = function() {
   return {
-    _id: this.id,
+    id: this.id,
     ipAddress: this.ipAddress,
-    _ifLostService: this.ifLostService,
-    _ifRegainedService: this.ifRegainedService,
+    ifLostService: this.ifLostService,
+    ifRegainedService: this.ifRegainedService,
     monitoredService: this.monitoredService,
     serviceLostEvent: this.serviceLostEvent
   };

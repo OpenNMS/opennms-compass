@@ -33,12 +33,6 @@
 					SNMP Attributes
 				</ion-item>
 				<ion-item class="row item-text-wrap"><div class="col"><ion-spinner class="spinner-compass"></ion-spinner></div></ion-item>
-				<!--
-				<ion-item class="row item-text-wrap"><div class="col">&nbsp;</div></ion-item>
-				<ion-item class="row item-text-wrap"><div class="col">&nbsp;</div></ion-item>
-				<ion-item class="row item-text-wrap"><div class="col">&nbsp;</div></ion-item>
-				<ion-item class="row item-text-wrap"><div class="col">&nbsp;</div></ion-item>
-				-->
 			</span>
 			<span ng-if="loaded &amp;&amp; hasSnmpAttributes()">
 				<ion-item class="item-divider item-compass">
@@ -80,7 +74,7 @@
 					<div ng-if="address &amp;&amp; address.country">{{address.country}}</div>
 					<span ng-if="address.longitude &amp;&amp; address.latitude">
 						<br ng-if="hasAddress" />
-						<leaflet width="100%" height="400px" defaults="leaflet.defaults" center="leaflet.center" markers="leaflet.markers"></leaflet>
+							<!-- <leaflet width="100%" height="400px" defaults="leaflet.defaults" lf-center="leaflet.center" markers="leaflet.markers"></leaflet> -->
 						<br />
 						<div style="text-align: center">
 							Lat: {{address.latitude}},

@@ -116,7 +116,7 @@
 						return serversDB.get(serverId).then(function(server) {
 							return _toServer(server);
 						}).catch(function(err) {
-							if (err.error && err.reason === 'missing') {
+							if (err.error && err.reason === 'missing' || err.reason === 'deleted') {
 								return onFailure();
 							}
 

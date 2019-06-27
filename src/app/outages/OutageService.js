@@ -14,82 +14,55 @@
 	.factory('OutageService', function($q, $log, RestService) {
 		$log.info('OutageService: Initializing.');
 
-		var getOutages = function(all) {
-			var deferred = $q.defer();
-			var params = {
+		var getOutages = (all) => {
+			const params = {
 				orderBy: 'ifLostService',
 				order: 'desc'
 			};
 			if (!all) {
 				params.ifRegainedService = 'null';
 			}
-			RestService.getXml('/outages', params).then(function(results) {
-				var ret = [];
-				if (results && results.outages && results.outages.outage) {
-					var outages = results.outages.outage;
-					if (!angular.isArray(outages)) {
-						outages = [outages];
-					}
-					for (var i=0, len=outages.length; i < len; i++) {
-						ret.push(new Outage(outages[i]));
-					}
+			return RestService.getXml('/outages', params).then((results) => {
+				if (results && results.outage_asArray) {
+					return results.outage_asArray.map((outage) => new Outage(outage));
 				}
-				deferred.resolve(ret);
-			}).catch(function(err) {
+			}).catch((err) => {
 				err.caller = 'OutageService.getOutages';
-				deferred.reject(err);
+				return $q.reject(err);
 			});
-			return deferred.promise;
 		};
 
-		var getOutagesForNode = function(nodeId) {
-			var deferred = $q.defer();
-			var url = '/outages/forNode/' + nodeId;
-			var params = {
+		var getOutagesForNode = (nodeId) => {
+			const url = '/outages/forNode/' + nodeId;
+			const params = {
 				limit: 50,
 				orderBy: 'ifLostService',
 				order: 'desc'
 			};
 
-			RestService.getXml(url, params).then(function(results) {
-				var ret = [];
-				if (results && results.outages && results.outages.outage) {
-					var outages = results.outages.outage;
-					if (!angular.isArray(outages)) {
-						outages = [outages];
-					}
-					for (var i=0, len=outages.length; i < len; i++) {
-						ret.push(new Outage(outages[i]));
-					}
+			return RestService.getXml(url, params).then((results) => {
+				if (results && results.outage_asArray) {
+					return results.outage_asArray.map((outage) => new Outage(outage));
 				}
-				deferred.resolve(ret);
-			}).catch(function(err) {
+				throw new Error('Invalid response.');
+			}).catch((err) => {
 				err.caller = 'OutageService.getOutagesForNode';
-				deferred.reject(err);
+				return $q.reject(err);
 			});
-			return deferred.promise;
 		};
 
-		var getOutageSummaries = function() {
-			var deferred = $q.defer();
-			var url = '/outages/summaries';
-			RestService.getXml(url).then(function(results) {
-				var ret = [];
-				if (results && results['outage-summaries'] && results['outage-summaries']['outage-summary']) {
-					var summaries = results['outage-summaries']['outage-summary'];
-					if (!angular.isArray(summaries)) {
-						summaries = [summaries];
-					}
-					for (var i=0, len=summaries.length; i < len; i++) {
-						ret.push(new OutageSummary(summaries[i]));
-					}
+		var getOutageSummaries = () => {
+			const url = '/outages/summaries';
+			return RestService.getXml(url).then((results) => {
+				console.log('summaries=', results);
+				if (results && results['outage-summaries_asArray']) {
+					return results['outage-summaries_asArray'].map((summary) => new OutageSummary(summary));
 				}
-				deferred.resolve(ret);
-			}).catch(function(err) {
+				throw new Error('Invalid response.');
+			}).catch((err) => {
 				err.caller = 'OutageService.getOutageSummaries';
-				deferred.reject(err);
+				return $q.reject(err);
 			});
-			return deferred.promise;
 		};
 
 		return {

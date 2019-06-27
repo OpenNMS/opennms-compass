@@ -91,15 +91,17 @@
 				$log.debug('trying: ' + alarmUrl);
 
 				var options = {
+					url: alarmUrl,
+					method: 'GET',
 					headers: {
-						Accept: '*/*',
-						Authorization: HTTP.createBasicAuthHeader(server.username, server.password)
+						accept: 'text/plain',
+						authorization: 'Basic ' + btoa(server.username + ':' + server.password)
 					},
 					timeout: server.getTimeoutMS()
 				};
 
-				return HTTP.get(alarmUrl, options).then(function(res) {
-					//$log.debug('ServerModal.tryServer: Got result: ' + angular.toJson(res));
+				return HTTP.call(options, server).then(function(res) {
+					$log.debug('ServerModal.tryServer: Got result:', res);
 					if (res && res.data && res.data.match(/^\s*\d+\s*$/)) {
 						return url;
 					}
@@ -108,7 +110,7 @@
 						status: Constants.HTTP_NOT_FOUND
 					});
 				}).catch(function(err) {
-					$log.error('ServerModal.tryServer: Failed to get ' + alarmUrl + ': ' + angular.toJson(err));
+					$log.error('ServerModal.tryServer: Failed to get ' + alarmUrl + ':', err);
 					if (retries-- > 0) {  // eslint-disable-line no-magic-numbers
 						// try again, in case there's a transient error
 						return tryUrl(url);
@@ -228,7 +230,7 @@
 			close: $scope.closeModal
 		};
 	})
-	.controller('SettingsCtrl', function($filter, $ionicListDelegate, $ionicPlatform, $ionicPopup, $log, $scope, $timeout, $window, AvailabilityService, debounce, Capabilities, Errors, Info, ServerModal, Servers, Settings, util) {
+	.controller('SettingsCtrl', function($ionicListDelegate, $log, $scope, AvailabilityService, debounce, Capabilities, Errors, Info, ServerModal, Servers, Settings, util) {
 		$log.info('Settings initializing.');
 		$scope.util = util;
 		$scope.analyticsCheckbox = {};

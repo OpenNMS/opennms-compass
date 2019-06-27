@@ -257,17 +257,24 @@ const config = {
 				]
 			},
 			{
-				test: /\.[jt]s$/,
+				test: /\.js$/,
 				exclude: /node_modules/,
 				loader: 'babel-loader'
+			},
+			{
+				test: /\.ts$/,
+				exclude: /node_modules/,
+				use: [
+					'babel-loader',
+					'ts-loader'
+				]
 			}
 		]
 	},
 	externals: {
 		fs: '{}',
 		cordova: '{}',
-		d3: '{}' /*,
-		jQuery: '{}' */
+		d3: '{}'
 	},
 	optimization: {
 		minimize: mode === 'production',
@@ -282,7 +289,7 @@ const config = {
 					}
 				}
 			})
-		] /*,
+		],
 		runtimeChunk: 'single',
 		splitChunks: {
 			chunks: 'all',
@@ -307,7 +314,6 @@ const config = {
 				}
 			}
 		}
-		*/
 	}
 };
 

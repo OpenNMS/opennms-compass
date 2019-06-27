@@ -21,7 +21,7 @@ function AlarmSummary(data) {
    * @propertyOf AlarmSummary
    * @returns {number} Unique integer identifier for node
    */
-  self.nodeId    = data['_node-id'];
+  self.nodeId    = data['node-id'];
 
   /**
    * @description
@@ -30,7 +30,7 @@ function AlarmSummary(data) {
    * @propertyOf AlarmSummary
    * @returns {string} The human-readable name of the node of this alarm.
    */
-  self.nodeLabel = data['_node-label'];
+  self.nodeLabel = data['node-label'];
 
   /**
    * @description
@@ -39,7 +39,7 @@ function AlarmSummary(data) {
    * @propertyOf AlarmSummary
    * @returns {string} Severity the of alarm.
    */
-  self.severity  = data._severity;
+  self.severity  = data.severity;
 
   /**
    * @description
@@ -48,7 +48,7 @@ function AlarmSummary(data) {
    * @propertyOf AlarmSummary
    * @returns {*|Date} The last time an event affected alarms for the summary node.
    */
-  self.date      = moment(data._date);
+  self.date      = moment(data.date);
 
   /**
    * @description
@@ -57,7 +57,7 @@ function AlarmSummary(data) {
    * @propertyOf AlarmSummary
    * @returns {number} The number of alarms affecting the summary node.
    */
-  self.count     = parseInt(data._count, 10);
+  self.count     = parseInt(data.count, 10);
 }
 
 /**
@@ -79,10 +79,10 @@ AlarmSummary.prototype.getNodeName = function() {
 
 AlarmSummary.prototype.toJSON = function() {
   return {
-    '_node-label': this.nodeLabel,
-    _severity: this.severity,
-    _date: this.date,
-    _count: this.count
+    'node-label': this.nodeLabel,
+    severity: this.severity,
+    date: this.date,
+    count: this.count
   };
 };
 

@@ -1,9 +1,9 @@
 'use strict';
 
-var moment = require('moment'),
-  md5 = require('blueimp-md5'),
-  StringUtils = require('../../misc/String');
-
+import moment from 'moment';
+import md5 from 'blueimp-md5';
+import StringUtils from '../../misc/String';
+  
 /**
  * @ngdoc object
  * @name Event
@@ -12,7 +12,7 @@ var moment = require('moment'),
  */
 function OnmsEvent(event) {
   //console.log('new Event():', event);
-  var self = this;
+  const self = this;
 
   /**
    * @description
@@ -21,7 +21,7 @@ function OnmsEvent(event) {
    * @propertyOf OnmsEvent
    * @returns {number} Unique identifier for the event
    */
-  self.id = parseInt(event._id, 10);
+  self.id = parseInt(event.id, 10);
 
   /**
    * @description
@@ -75,7 +75,7 @@ function OnmsEvent(event) {
    * @propertyOf OnmsEvent
    * @returns {string} Severity the of event.
    */
-  self.severity = event._severity;
+  self.severity = event.severity;
 
   /**
    * @description
@@ -111,7 +111,7 @@ function OnmsEvent(event) {
    * @propertyOf OnmsEvent
    * @returns {boolean} Whether the event was logged but not displayed.
    */
-  self.log = event._log === 'Y';
+  self.log = event.log === 'Y';
 
   /**
    * @description
@@ -120,7 +120,7 @@ function OnmsEvent(event) {
    * @propertyOf OnmsEvent
    * @returns {boolean} Whether the event was both logged and displayed.
    */
-  self.display = event._display === 'Y';
+  self.display = event.display === 'Y';
 
   /**
    * @description
@@ -150,7 +150,7 @@ function OnmsEvent(event) {
      * @propertyOf OnmsEvent
      * @returns {number} Unique integer identifier of service/poller package
      */
-    self.serviceType = event.serviceType._id;
+    self.serviceType = event.serviceType.id;
 
     /**
      * @description
@@ -190,17 +190,17 @@ OnmsEvent.prototype.getSeverityClass = function() {
 
 OnmsEvent.prototype.toJSON = function() {
   var ret = {
-    _id: this.id,
+    id: this.id,
     uei: this.uei,
     nodeId: this.nodeId,
     nodeLabel: this.nodeLabel,
     ipAddress: this.ipAddress,
-    _severity: this.severity,
+    severity: this.severity,
     createTime: this.createTime,
     time: this.time,
     source: this.source,
-    _log: this.log,
-    _display: this.display,
+    log: this.log,
+    display: this.display,
     description: this.description,
     logMessage: this.logMessage,
     parms: this.parms
@@ -208,11 +208,12 @@ OnmsEvent.prototype.toJSON = function() {
 
   if (this.serviceType || this.serviceName) {
     ret.serviceType = {
-      _id: this.serviceType,
+      id: this.serviceType,
       name: this.serviceName
     };
   }
 
   return ret;
 };
+
 module.exports = OnmsEvent;

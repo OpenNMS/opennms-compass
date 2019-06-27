@@ -1,14 +1,19 @@
 {
   "presets": [
-    ["@babel/preset-env", {
+    ["@babel/env", {
       "targets": {
+        "node": "current",
         "browsers": [
           "last 2 versions",
           "ios 11.0",
           "android 4.3"
         ]
-      }
-    }, "@babel/preset-typescript"]
+      },
+      "modules": "umd",
+      "useBuiltIns": "usage",
+      "corejs": 3
+    }],
+    "@babel/typescript"
   ],
   "plugins": [
     "angularjs-annotate",

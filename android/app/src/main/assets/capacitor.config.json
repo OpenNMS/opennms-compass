@@ -1,0 +1,7 @@
+{
+  "appId": "com.opennms.compass",
+  "appName": "OpenNMS",
+  "bundledWebRuntime": false,
+  "npmClient": "yarn",
+  "webDir": "www"
+}

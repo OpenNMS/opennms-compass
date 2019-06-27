@@ -20,7 +20,7 @@ function AvailabilityNode(node) {
    * @propertyOf AvailabilityNode
    * @returns {number} Node ID
    */
-  self.id   = parseInt(node._id, 10);
+  self.id   = parseInt(node.id, 10);
 
   /**
    * @description
@@ -29,7 +29,7 @@ function AvailabilityNode(node) {
    * @propertyOf AvailabilityNode
    * @returns {number} Node's availability (as a percentage)
    */
-  self.availability = parseFloat(node._availability);
+  self.availability = parseFloat(node.availability);
 
   /**
    * @description
@@ -38,7 +38,7 @@ function AvailabilityNode(node) {
    * @propertyOf AvailabilityNode
    * @returns {number} The number of services on the node.
    */
-  self.serviceCount = parseInt(node['_service-count'], 10);
+  self.serviceCount = parseInt(node['service-count'], 10);
 
   /**
    * @description
@@ -47,7 +47,7 @@ function AvailabilityNode(node) {
    * @propertyOf AvailabilityNode
    * @returns {number} The number of down services on the node.
    */
-  self.serviceDownCount = parseInt(node['_service-down-count'], 10);
+  self.serviceDownCount = parseInt(node['service-down-count'], 10);
 
   var hashbits = [self.id, self.availability, self.serviceCount];
 
@@ -75,10 +75,10 @@ function AvailabilityNode(node) {
 
 AvailabilityNode.prototype.toJSON = function() {
   return {
-    _id: this.id,
-    _availability: this.availability,
-    '_service-count': this.serviceCount,
-    '_service-down-count': this.serviceDownCount,
+    id: this.id,
+    availability: this.availability,
+    'service-count': this.serviceCount,
+    'service-down-count': this.serviceDownCount,
     ipinterfaces: {
       ipinterface: this.ipinterfaces
     }

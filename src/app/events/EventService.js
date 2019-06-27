@@ -15,34 +15,23 @@
 	.factory('EventService', function($q, $log, RestService) {
 		$log.info('EventService: Initializing.');
 
-		var getEventsForNode = function(nodeId, limit) {
-			var deferred = $q.defer();
-
-			var params = {
+		const getEventsForNode = function(nodeId, limit) {
+			const params = {
 				limit: limit||Constants.DEFAULT_REST_EVENT_LIMIT,
 				'node.id': nodeId,
 				orderBy: 'eventTime',
 				order: 'desc'
 			};
 
-			RestService.getXml('/events', params).then(function(results) {
-				/* jshint -W069 */ /* "better written in dot notation" */
-				var ret = [];
-				if (results && results.events && results.events.event) {
-					var events = results.events.event;
-					if (!angular.isArray(events)) {
-						events = [events];
-					}
-					for (var i=0, len=events.length; i < len; i++) {
-						ret.push(new OnmsEvent(events[i]));
-					}
+			return RestService.getXml('/events', params).then(function(results) {
+				if (results && results.event_asArray) {
+					return results.event_asArray.map((ev) => new OnmsEvent(ev));
 				}
-				deferred.resolve(ret);
+				throw new Error('Invalid response.');
 			}).catch(function(err) {
 				err.caller = 'EventService.getEventsForNode';
-				deferred.reject(err);
+				return $q.reject(err);
 			});
-			return deferred.promise;
 		};
 
 		return {

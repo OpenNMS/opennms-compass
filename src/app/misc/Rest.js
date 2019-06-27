@@ -43,71 +43,15 @@
 			return deferred.promise;
 		};
 
-		var updateAuthorization = function() {
-			var username, password;
-
-			var oldReady = ready;
-			var newReady = $q.defer();
-
-			var done = function(reject) {
-				if (oldReady) {
-					if (reject) {
-						oldReady.reject(false);
-					} else {
-						oldReady.resolve(true);
-					}
-				}
-				if (reject) {
-					newReady.reject(false);
-				} else {
-					newReady.resolve(true);
-				}
-				return newReady.promise;
-			};
-
-			ready = newReady;
-			return clearCookies().then(function() {
-				$log.debug('RestService.updateAuthorization: cleared cookies.');
-				return Servers.getDefault();
-			}).then(function(server) {
-				currentServer = angular.copy(server);
-
-				$log.debug('update authorization: default server = ' + (server && server.name? server.name:'unknown'));
-				//$log.debug('username=' + server.username +', password=' + server.password);
-				if (!server || angular.isUndefined(server.username) || angular.isUndefined(server.password)) {
-					$log.info('RestService.updateAuthorization: username or password not set.');
-					HTTP.useBasicAuth(undefined, undefined).then(function() {
-						$log.debug('RestService.updateAuthorization: unconfigured basic auth.');
-						return done();
-					}).catch(function(err) {
-						$log.error('RestService.updateAuthorization: failed to unconfigure basic auth.');
-						return done();
-					});
-				} else {
-					//$log.debug('RestService.updateAuthorization: setting basic auth with username "' + server.username + '".');
-					HTTP.useBasicAuth(server.username, server.password).then(function() {
-						$log.debug('RestService.updateAuthorization: configured basic auth with username "' + server.username + '".');
-						return done();
-					}).catch(function(err) {
-						$log.error('RestService.updateAuthorization: failed to configure basic auth with username "' + server.username + '".');
-						return done();
-					});
-				}
-			}).catch(function(err) {
-				$log.error('RestService.updateAuthorization: failed: ' + angular.toJson(err));
-				return done(true);
-			});
-		};
-
-		var getUrl = function(_restFragment) {
+		const getUrl = (_restFragment) => {
 			$log.debug('RestService.getUrl: restFragment='+_restFragment);
-			var restFragment = _restFragment || '';
+			let restFragment = _restFragment || '';
 
-			var getUrlForServer = function(server) {
-				var restURL = server? server.restUrl() : undefined;
+			const getUrlForServer = function(server) {
+				const restURL = server? server.restUrl() : undefined;
 				//$log.debug('RestService.getUrl: restURL=' + restURL);
 				if (restURL) {
-					var uri = URI(restURL);
+					const uri = URI(restURL);
 					if (restFragment.startsWith('/')) {
 						restFragment = restFragment.slice(1); // eslint-disable-line no-magic-numbers
 					}
@@ -126,9 +70,9 @@
 			}).then(function(server) {
 				if (server && server._id) {
 					if (!currentServer || server._id !== currentServer._id) {
-						var currentServerId = currentServer? currentServer._id : undefined;
+						const currentServerId = currentServer? currentServer._id : undefined;
 						$log.debug('Rest.getUrl: current server has changed: ' + currentServerId + ' -> ' + server._id);
-						return updateAuthorization().then(function() {
+						return clearCookies().then(() => {
 							return getUrlForServer(server);
 						});
 					}
@@ -140,12 +84,6 @@
 				$log.warn('Rest.getUrl: current server is unset');
 				return undefined;
 			});
-		};
-
-		var encodeData = function(data) {
-			return Object.keys(data).map(function(key) {
-				return [key, data[key]].map(encodeURIComponent).join('=');
-			}).join('&');
 		};
 
 		var doQuery = function(method, restFragment, _params, _headers) {
@@ -237,9 +175,12 @@
 				});
 			},
 			getXml: function(restFragment, params, headers) {
-				return doGet(restFragment, params, headers).then(function(data) {
-					var json = x2js.xml2js(data);
-					// $log.debug('Rest.getXml:',json);
+				const h = headers || {};
+				if (h.Accept) { delete h.Accept; }
+				h.accept = 'application/xml';
+				return doGet(restFragment, params, h).then(function(data) {
+					const json = angular.isString(data) ? x2js.xml2js(data) : data;
+					$log.debug('Rest.getXml: json=', json);
 					return json;
 				});
 			},

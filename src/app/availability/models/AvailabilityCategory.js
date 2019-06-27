@@ -18,7 +18,7 @@ function AvailabilityCategory(cat) {
    * @propertyOf AvailabilityCategory
    * @returns {string} Category name
    */
-  self.name = cat._name;
+  self.name = cat.name;
 
   /**
    * @description
@@ -27,7 +27,7 @@ function AvailabilityCategory(cat) {
    * @propertyOf AvailabilityCategory
    * @returns {number} The threshold to be considered "normal" severity
    */
-  self.normalThreshold = parseFloat(cat['_normal-threshold']);
+  self.normalThreshold = parseFloat(cat['normal-threshold']);
 
   /**
    * @description
@@ -36,7 +36,7 @@ function AvailabilityCategory(cat) {
    * @propertyOf AvailabilityCategory
    * @returns {number} The threshold to be considered "warning" severity
    */
-  self.warningThreshold = parseFloat(cat['_warning-threshold']);
+  self.warningThreshold = parseFloat(cat['warning-threshold']);
 
   /**
    * @description
@@ -113,9 +113,9 @@ function AvailabilityCategory(cat) {
 
 AvailabilityCategory.prototype.toJSON = function() {
   return {
-    _name: this.name,
-    '_normal-threshold': this.normalThreshold,
-    '_warning-threshold': this.warningThreshold,
+    name: this.name,
+    'normal-threshold': this.normalThreshold,
+    'warning-threshold': this.warningThreshold,
     availability: this.availability,
     'availability-class': this.availabilityClass,
     comment: this.comment,

@@ -18,8 +18,6 @@
 		$log.info('NodeService: Initializing.');
 
 		var searchNodes = function(search, limit) {
-			var deferred = $q.defer();
-
 			var params = {
 				comparator: 'ilike',
 				match: 'any'
@@ -35,77 +33,55 @@
 				params.limit = limit;
 			}
 
-			RestService.getXml('/nodes', params).then(function(results) {
-				/* jshint -W069 */ /* "better written in dot notation" */
-				var ret = [];
-				if (results && results.nodes && results.nodes.node) {
-					var nodes = results.nodes.node;
-					if (!angular.isArray(nodes)) {
-						nodes = [nodes];
-					}
-					for (var i=0, len=nodes.length; i < len; i++) {
-						ret.push(new Node(nodes[i]));
-					}
+			return RestService.getXml('/nodes', params).then((results) => {
+				if (results && results.node_asArray) {
+					return results.node_asArray.map((node) => new Node(node));
 				}
-				deferred.resolve(ret);
+				throw new Error('Invalid response.');
 			}).catch(function(err) {
 				err.caller = 'NodeService.searchNodes';
-				deferred.reject(err);
+				return $q.reject(err);
 			});
-			return deferred.promise;
 		};
 
 		var getNode = function(nodeId) {
-			var deferred = $q.defer();
-
-			RestService.getXml('/nodes/' + nodeId).then(function(results) {
-				var ret;
-				if (results && results.node) {
-					ret = new Node(results.node);
+			return RestService.getXml('/nodes/' + nodeId).then(function(results) {
+				if (results && results.id) {
+					return new Node(results);
 				}
-				deferred.resolve(ret);
+				throw new Error('Invalid response.');
 			}).catch(function(err) {
 				err.caller = 'NodeService.getNode';
-				deferred.reject(err);
+				return $q.reject(err);
 			});
-			return deferred.promise;
 		};
 
 		var setLocation = function(node, longitude, latitude) {
-			var deferred = $q.defer();
-
-			RestService.put('/nodes/' + node.id + '/assetRecord', {
+			return RestService.put('/nodes/' + node.id + '/assetRecord', {
 				'geolocation.longitude': longitude,
 				'geolocation.latitude': latitude
-			}).then(function() {
-				deferred.resolve(true);
-			}).catch(function(err) {
+			}).then(() => {
+				return true;
+			}).catch((err) => {
 				if (err.toString().contains('request was redirected')) {
-					deferred.resolve(true);
+					return true;
 				} else if (err.status === Constants.HTTP_BAD_REQUEST || err.status === 0) { // eslint-disable-line no-magic-numbers
-					deferred.resolve(true);
-				} else {
-					err.caller = 'NodeService.setLocation';
-					deferred.reject(err);
+					return true;
 				}
-			});
-
-			return deferred.promise;
+				err.caller = 'NodeService.setLocation';
+				return $q.reject(err);
+		});
 		};
 
 		var getNodes = function(params) {
 			return RestService.getXml('/nodes', params).then(function(results) {
-				var ret = [];
-				if (results && results.nodes && results.nodes.node) {
-					var nodes = results.nodes.node;
-					if (!angular.isArray(nodes)) {
-						nodes = [nodes];
-					}
-					for (var i=0, len=nodes.length; i < len; i++) {
-						ret.push(new Node(nodes[i]));
-					}
+				if (results && results.node_asArray) {
+					return results.node_asArray.map((node) => new Node(node));
 				}
-				return ret;
+				throw new Error('Invalid response.');
+			}).catch(function(err) {
+				err.caller = 'NodeService.getNodes';
+				return $q.reject(err);
 			});
 		};
 

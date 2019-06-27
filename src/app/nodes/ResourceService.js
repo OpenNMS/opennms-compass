@@ -63,8 +63,8 @@
 			if (!hasGraphs) {
 				return $q.reject(new CapabilityError('graphs'));
 			}
-			return RestService.get('/resources/fornode/' + nodeId, {}, {Accept: 'application/json'}).then(function(res) {
-				//$log.debug('ResourceService.getResourcesForNode: res=' + angular.toJson(res));
+			return RestService.get('/resources/fornode/' + nodeId, {}, {accept: 'application/json'}).then(function(res) {
+				$log.debug('ResourceService.getResourcesForNode: res=' + angular.toJson(res));
 				var ret = {
 					label: res.label,
 					id: parseInt(res.name, 10),
@@ -87,7 +87,7 @@
 			if (!hasGraphs) {
 				return $q.reject(new CapabilityError('graphs'));
 			}
-			return RestService.get('/resources/' + encodeURIComponent(resourceId), {}, {Accept: 'application/json'}).then(function(res) {
+			return RestService.get('/resources/' + encodeURIComponent(resourceId), {}, {accept: 'application/json'}).then(function(res) {
 				if (res.children && res.children.resource) {
 					if (angular.isArray(res.children.resource)) {
 						res.children = res.children.resource;
@@ -105,7 +105,7 @@
 			if (!hasGraphs) {
 				return $q.reject(new CapabilityError('graphs'));
 			}
-			return RestService.get('/graphs/for/' + encodeURIComponent(resourceId), {}, {Accept: 'application/json'}).then(function(res) {
+			return RestService.get('/graphs/for/' + encodeURIComponent(resourceId), {}, {accept: 'application/json'}).then(function(res) {
 				if (res.name) {
 					if (angular.isArray(res.name)) {
 						return res.name;
@@ -123,7 +123,7 @@
 				return $q.reject(new CapabilityError('graphs'));
 			}
 			if (!_graphs.hasOwnProperty(graph)) {
-				_graphs[graph] = RestService.get('/graphs/' + graph, {}, {Accept: 'application/json'});
+				_graphs[graph] = RestService.get('/graphs/' + graph, {}, {accept: 'application/json'});
 			}
 			return _graphs[graph];
 		};

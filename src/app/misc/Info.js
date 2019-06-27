@@ -89,7 +89,7 @@
 
 				$log.info('Info.updateInfo: Initializing.');
 
-				return RestService.get('/info', {limit:0}, {Accept: 'application/json'}).then(function(_response) {
+				return RestService.get('/info', {limit:0}, {accept: 'application/json'}).then(function(_response) {
 					var response = angular.isString(_response)? angular.fromJson(_response) : _response;
 					doUpdate(response);
 					return response;
